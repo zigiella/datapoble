@@ -1,0 +1,2 @@
+territori_codi,ine5,nota
+25100,25100,"Gosol: al dataset electoral ntc4-rnwr territori_codi=25100 (mateix codi Idescat-derivat que mart_municipi). Verificat en viu 2026-06-02: l'INE canonic 25101 correspon a 'la Granadella' en aquest dataset, NO a Gosol. Per tant el crosswalk es identitat. Si una font futura usa l'INE canonic, afegir-hi 25101,25100."

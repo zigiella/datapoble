@@ -17,6 +17,10 @@ COMARCA_PILOT = "Berguedà"
 COMARCA_CODI_PILOT = "14"
 N_MUNICIPIS_BERGUEDA = 31
 
+# Convocatòries electorals del pilot (Parlament de Catalunya). id_eleccio = lletra
+# (tipus) + any + sufix de repetició. A20241 = Parlament 2024; A20211 = 2021.
+ELECCIONS_PILOT = ["A20241", "A20211"]
+
 # Endpoint base Socrata (Dades Obertes de Catalunya).
 SOCRATA_DOMAIN = "https://analisi.transparenciacatalunya.cat"
 
@@ -48,6 +52,14 @@ SOURCES: dict[str, dict] = {
         "url": f"{IDESCAT_EMEX_BASE}?id={{codi6}}",
         "llicencia": "Idescat, reutilització amb atribució",
         "kind": "idescat_emex",
+    },
+    "electoral": {
+        "organisme": "Generalitat — Departament competent en processos electorals",
+        "producte": "Processos electorals - Vots (resultats per territori)",
+        "dataset_id": "ntc4-rnwr",
+        "url": f"{SOCRATA_DOMAIN}/resource/ntc4-rnwr.json",
+        "llicencia": "Dades Obertes de Catalunya",
+        "kind": "socrata",
     },
 }
 

@@ -4,6 +4,7 @@
     python -m datapoble_ingestion rtc
     python -m datapoble_ingestion residus
     python -m datapoble_ingestion idescat_emex
+    python -m datapoble_ingestion electoral
 """
 from __future__ import annotations
 
@@ -11,12 +12,13 @@ import argparse
 import json
 import sys
 
-from . import idescat_emex, residus, rtc
+from . import electoral, idescat_emex, residus, rtc
 
 RUNNERS = {
     "rtc": rtc.run,
     "residus": residus.run,
     "idescat_emex": idescat_emex.run,
+    "electoral": electoral.run,
 }
 
 
