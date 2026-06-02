@@ -1,0 +1,50 @@
+"""Registre dels 31 municipis del Berguedà (pilot).
+
+Clau: codi Idescat de 6 dígits (= INE5 + dígit de control), tal com l'usen RTC,
+residus i EMEX. ``ine5`` és els 5 primers dígits → clau de join del contracte.
+
+Avís (codi): Gósol és al Berguedà però té prefix de província Lleida (25). El seu
+codi Idescat és 251001 → ine5 derivat = 25100. El codi INE canònic de Gósol és
+25101; la diferència ve del dígit de control d'Idescat. Per al join INTERN entre
+RTC/residus/EMEX és consistent (totes tres fonts usen 251001). Per a l'electoral
+(``ntc4-rnwr``, fora d'aquest PR), que usa l'INE canònic, caldrà un crosswalk per
+als municipis amb prefix no-08. Documentat per a Talaia.
+"""
+from __future__ import annotations
+
+# codi6 -> nom oficial (català)
+BERGUEDA: dict[str, str] = {
+    "080116": "Avià",
+    "080168": "Bagà",
+    "080229": "Berga",
+    "080240": "Borredà",
+    "080459": "Capolat",
+    "080497": "Casserres",
+    "080500": "Castellar del Riu",
+    "080522": "Castellar de n'Hug",
+    "080575": "Castell de l'Areny",
+    "080787": "l'Espunyola",
+    "080804": "Fígols",
+    "080924": "Gironella",
+    "080930": "Gisclareny",
+    "080996": "Guardiola de Berguedà",
+    "081304": "Montclar",
+    "081326": "Montmajor",
+    "081424": "la Nou de Berguedà",
+    "081445": "Olvan",
+    "081666": "la Pobla de Lillet",
+    "081751": "Puig-reig",
+    "081770": "la Quar",
+    "081884": "Sagàs",
+    "081901": "Saldes",
+    "082166": "Sant Jaume de Frontanyà",
+    "082554": "Santa Maria de Merlès",
+    "082687": "Cercs",
+    "082938": "Vallcebre",
+    "082994": "Vilada",
+    "083089": "Viver i Serrateix",
+    "089030": "Sant Julià de Cerdanyola",
+    "251001": "Gósol",
+}
+
+assert len(BERGUEDA) == 31, "El Berguedà té 31 municipis"

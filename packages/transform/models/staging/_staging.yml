@@ -1,0 +1,20 @@
+version: 2
+
+models:
+  - name: stg_rtc
+    description: Establiments RTC del Berguedà (1 fila/establiment), ine5 derivat.
+    columns:
+      - name: ine5
+        data_tests: [not_null]
+  - name: stg_residus
+    description: Residus municipals del Berguedà (1 fila/municipi×any).
+    columns:
+      - name: ine5
+        data_tests: [not_null]
+  - name: stg_idescat_emex
+    description: Indicadors EMEX pivotats (1 fila/municipi). 31 esperats.
+    columns:
+      - name: ine5
+        data_tests:
+          - not_null
+          - unique
