@@ -1,0 +1,25 @@
+# Ownership por frente. NOTA: todas las agentes operan bajo la misma cuenta
+# de GitHub (zigiella); la jurisdicción real se sostiene por convención
+# (CONTRIBUTING.md + bitácora + identity-inline), no por auto-review de GitHub.
+# Este fichero documenta quién es dueña de qué.
+
+# Por defecto: revisión de la coordinación
+*                       @zigiella
+
+# Datos / pipeline — Sondeig
+/packages/ingestion/    @zigiella
+/packages/transform/    @zigiella
+
+# IA / semántica — Brúixola
+/packages/ai/           @zigiella
+/semantic/              @zigiella
+
+# Frontend — Mirador
+/packages/web/          @zigiella
+
+# Dirección de arte — Llegenda
+/packages/design-system/ @zigiella
+
+# Contratos y docs — Talaia (coordinación) + voto de Bea
+/docs/                  @zigiella
+/semantic/metrics.yml   @zigiella

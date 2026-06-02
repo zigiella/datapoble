@@ -1,0 +1,33 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# CI esqueleto. Cada agente añade su job en su frente (jurisdicción).
+# Regla: ningún PR a main con CI en rojo.
+jobs:
+  structure:
+    name: repo structure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Required foundation files
+        run: |
+          set -e
+          for f in README.md LICENSE CONTRIBUTING.md .gitignore; do
+            test -f "$f" || { echo "::error::missing $f"; exit 1; }
+          done
+          echo "foundation OK"
+
+  # TODO(Sondeig): python lint (ruff) + dbt build + dbt test
+  # python:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - run: pipx run ruff check packages/ingestion packages/transform
+
+  # TODO(Brúixola): evals de la capa de IA (texto→SQL trazable)
+  # TODO(Mirador): pnpm install + build + vitest + playwright (a11y)
+  # TODO(Llegenda): regresión visual (Storybook/Chromatic)
