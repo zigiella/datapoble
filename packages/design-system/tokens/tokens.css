@@ -1,0 +1,224 @@
+/* ============================================================================
+   datapoble · design tokens → CSS custom properties
+   Contrato visual que consume Mirador (frontend). Espejo de tokens.json.
+   Autora: Llegenda · v0.1.0 · 2026-06-02 · propuesta (revisión Talaia + voto Bea).
+
+   En F1 estas variables están escritas a mano (espejo del JSON) para desbloquear
+   a Mirador sin build. En F2 se regenerarán con Style Dictionary desde tokens.json
+   (misma nomenclatura --dp-*), así el contrato no cambia al automatizar.
+
+   Convención de nombres:  --dp-<grupo>-<elemento>
+   Las paletas de DATOS:    --dp-exposure-N (secuencial), --dp-div-N (diverging),
+                            --dp-cat-N (cualitativa). Ver cartography/palette.md.
+   ============================================================================ */
+
+:root {
+  /* ---- color · neutral (slate frío / pizarra de montaña) ---- */
+  --dp-neutral-0:   #FFFFFF;
+  --dp-neutral-50:  #F6F7F9;
+  --dp-neutral-100: #ECEEF2;
+  --dp-neutral-200: #D9DDE4;
+  --dp-neutral-300: #BCC3CE;
+  --dp-neutral-400: #94A0AF;
+  --dp-neutral-500: #6B7889;
+  --dp-neutral-600: #515E6E;
+  --dp-neutral-700: #3C4756;
+  --dp-neutral-800: #2A323D;
+  --dp-neutral-900: #1B212A;
+  --dp-neutral-950: #10141A;
+
+  /* ---- color · accent (terracota / teula) ---- */
+  --dp-accent-50:  #FBF0EA;
+  --dp-accent-100: #F5DBCD;
+  --dp-accent-300: #E3A584;
+  --dp-accent-500: #C75D34;
+  --dp-accent-600: #AC4B27;
+  --dp-accent-700: #8A3C20;
+
+  /* ---- color · support (teal carena · verde bosque) ---- */
+  --dp-teal:       #2A7B7B;
+  --dp-teal-600:   #216262;
+  --dp-forest:     #2F6B4F;
+  --dp-forest-600: #255741;
+
+  /* ---- color · semantic (estado UI; acompañar SIEMPRE de icono/texto) ---- */
+  --dp-info:    #216C9B;
+  --dp-success: #2E7D55;
+  --dp-warning: #B7791F;
+  --dp-danger:  #B4452E;
+
+  /* ---- color · procedencia (dato / inferencia / negativo) ---- */
+  --dp-prov-measured: #3C4756; /* dato directo oficial            */
+  --dp-prov-derived:  #7A5BA6; /* inferencia / índice (datapoble) */
+  --dp-prov-negative: #94A0AF; /* resultado negativo / sin dato   */
+
+  /* ===========================================================================
+     PALETAS DE DATOS (cartografía + dataviz)
+     =========================================================================== */
+
+  /* Secuencial "exposició/pressió" — 6 pasos, claro→oscuro = bajo→alto.
+     Perceptualmente ordenada y CVD-safe (familia tierra tipo YlOrBr, sin rojo-verde). */
+  --dp-exposure-0: #FBF3D9;
+  --dp-exposure-1: #F3D9A0;
+  --dp-exposure-2: #E8B567;
+  --dp-exposure-3: #D98B3E;
+  --dp-exposure-4: #B5612A;
+  --dp-exposure-5: #7E3A1E;
+
+  /* Diverging (desviación vs media comarcal) — teal↔marrón tipo BrBG, neutro=3. */
+  --dp-div-0: #01665E;
+  --dp-div-1: #5AB4AC;
+  --dp-div-2: #C7EAE5;
+  --dp-div-3: #F5F5F0; /* neutro */
+  --dp-div-4: #DFC27D;
+  --dp-div-5: #BF812D;
+  --dp-div-6: #8C510A;
+
+  /* Cualitativa (categorías sin orden) — Okabe-Ito, CVD-safe.
+     NO para color político partidista sin acuerdo con Bea. */
+  --dp-cat-1: #E69F00;
+  --dp-cat-2: #56B4E9;
+  --dp-cat-3: #009E73;
+  --dp-cat-4: #F0E442;
+  --dp-cat-5: #0072B2;
+  --dp-cat-6: #D55E00;
+  --dp-cat-7: #CC79A7;
+  --dp-cat-8: #999999;
+
+  --dp-nodata: #E3E3DE; /* sin dato / secreto estadístico → hatch, no relleno */
+
+  /* ---- basemap apagado (detalle MapLibre en F2) ---- */
+  --dp-map-land:      #F2F1EC;
+  --dp-map-water:     #D8E2E4;
+  --dp-map-boundary:  #B9BEB6;
+  --dp-map-label:     #5A6066;
+  --dp-map-highlight: #1B212A;
+
+  /* ===========================================================================
+     TIPOGRAFÍA (diacríticas catalanas + cifras tabulares)
+     =========================================================================== */
+  --dp-font-sans:  'Inter', 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --dp-font-serif: 'IBM Plex Serif', Georgia, 'Times New Roman', serif;
+  --dp-font-mono:  'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Consolas, monospace;
+
+  --dp-font-feature-tnum: 'tnum' 1, 'lnum' 1; /* cifras tabulares — usar en número */
+  --dp-font-feature-frac: 'frac' 1;
+
+  --dp-fw-regular:  400;
+  --dp-fw-medium:   500;
+  --dp-fw-semibold: 600;
+  --dp-fw-bold:     700;
+
+  --dp-fs-xs:   0.75rem;
+  --dp-fs-sm:   0.875rem;
+  --dp-fs-base: 1rem;
+  --dp-fs-lg:   1.125rem;
+  --dp-fs-xl:   1.333rem;
+  --dp-fs-2xl:  1.602rem;
+  --dp-fs-3xl:  1.924rem;
+  --dp-fs-4xl:  2.488rem;
+
+  --dp-lh-tight:   1.2;
+  --dp-lh-snug:    1.35;
+  --dp-lh-normal:  1.5;
+  --dp-lh-relaxed: 1.6;  /* lectura larga; respira expansión ca/fr */
+
+  --dp-ls-tight:  -0.01em;
+  --dp-ls-normal: 0;
+  --dp-ls-wide:   0.02em;
+
+  /* ===========================================================================
+     ESPACIADO · RADIOS · SOMBRAS · BREAKPOINTS · MOVIMIENTO
+     =========================================================================== */
+  --dp-space-0: 0;
+  --dp-space-1: 0.25rem;
+  --dp-space-2: 0.5rem;
+  --dp-space-3: 0.75rem;
+  --dp-space-4: 1rem;
+  --dp-space-5: 1.5rem;
+  --dp-space-6: 2rem;
+  --dp-space-7: 3rem;
+  --dp-space-8: 4rem;
+  --dp-space-9: 6rem;
+
+  --dp-radius-none: 0;
+  --dp-radius-sm:   0.25rem;
+  --dp-radius-md:   0.5rem;
+  --dp-radius-lg:   0.75rem;
+  --dp-radius-xl:   1rem;
+  --dp-radius-full: 9999px;
+
+  --dp-shadow-sm: 0 1px 2px 0 rgba(16,20,26,0.06);
+  --dp-shadow-md: 0 2px 8px -1px rgba(16,20,26,0.10), 0 1px 3px -1px rgba(16,20,26,0.06);
+  --dp-shadow-lg: 0 8px 24px -4px rgba(16,20,26,0.12), 0 3px 8px -3px rgba(16,20,26,0.08);
+  --dp-shadow-focus: 0 0 0 3px rgba(33,108,155,0.45);
+
+  /* breakpoints (también consultables vía media queries; aquí como referencia) */
+  --dp-bp-sm: 30rem;
+  --dp-bp-md: 48rem;
+  --dp-bp-lg: 64rem;
+  --dp-bp-xl: 80rem;
+  --dp-bp-2xl: 96rem;
+
+  --dp-dur-fast:   120ms;
+  --dp-dur-normal: 220ms;
+  --dp-dur-slow:   400ms;
+  --dp-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --dp-ease-out:      cubic-bezier(0, 0, 0.2, 1);
+
+  /* ===========================================================================
+     ALIAS SEMÁNTICOS (lo que los componentes deberían usar; tema claro)
+     =========================================================================== */
+  --dp-bg:            var(--dp-neutral-0);
+  --dp-bg-subtle:     var(--dp-neutral-50);
+  --dp-surface:       var(--dp-neutral-0);
+  --dp-surface-sunken:var(--dp-neutral-100);
+  --dp-border:        var(--dp-neutral-200);
+  --dp-border-strong: var(--dp-neutral-300);
+  --dp-text:          var(--dp-neutral-900);  /* AA sobre --dp-bg */
+  --dp-text-muted:    var(--dp-neutral-600);  /* AA sobre --dp-bg */
+  --dp-text-subtle:   var(--dp-neutral-500);
+  --dp-text-on-accent:var(--dp-neutral-0);    /* AA sobre accent-600/700 */
+  --dp-link:          var(--dp-accent-600);
+  --dp-focus-ring:    var(--dp-shadow-focus);
+}
+
+/* ---- Tema oscuro (opt-in con [data-theme="dark"] o preferencia del sistema) ---- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --dp-bg:            var(--dp-neutral-950);
+    --dp-bg-subtle:     var(--dp-neutral-900);
+    --dp-surface:       var(--dp-neutral-900);
+    --dp-surface-sunken:var(--dp-neutral-800);
+    --dp-border:        var(--dp-neutral-700);
+    --dp-border-strong: var(--dp-neutral-600);
+    --dp-text:          var(--dp-neutral-50);
+    --dp-text-muted:    var(--dp-neutral-300);
+    --dp-text-subtle:   var(--dp-neutral-400);
+    --dp-link:          var(--dp-accent-300);
+  }
+}
+[data-theme="dark"] {
+  --dp-bg:            var(--dp-neutral-950);
+  --dp-bg-subtle:     var(--dp-neutral-900);
+  --dp-surface:       var(--dp-neutral-900);
+  --dp-surface-sunken:var(--dp-neutral-800);
+  --dp-border:        var(--dp-neutral-700);
+  --dp-border-strong: var(--dp-neutral-600);
+  --dp-text:          var(--dp-neutral-50);
+  --dp-text-muted:    var(--dp-neutral-300);
+  --dp-text-subtle:   var(--dp-neutral-400);
+  --dp-link:          var(--dp-accent-300);
+}
+
+/* ---- Utilidad: cifras tabulares para superficies con dato ---- */
+.dp-tnum { font-feature-settings: var(--dp-font-feature-tnum); font-variant-numeric: tabular-nums lining-nums; }
+
+/* ---- a11y: respeta prefers-reduced-motion (refuerzo del contrato) ---- */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dp-dur-fast:   1ms;
+    --dp-dur-normal: 1ms;
+    --dp-dur-slow:   1ms;
+  }
+}
