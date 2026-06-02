@@ -1,0 +1,120 @@
+# Eval set for Brúixola — question -> expected (offline-executable).
+#
+# Seeded from `semantic/metrics.yml: sample_questions` (ca + es), plus explicit
+# guardrail cases. Each case asserts the *shape* of a correct answer, not a
+# brittle exact string:
+#   expect: answer | refusal
+#   metric: contract key the answer must cite (for answers)
+#   reason: refusal reason enum (for refusals)
+#   municipality: expected municipality in the result rows (optional)
+#   contains: substrings that MUST appear in the answer text (optional)
+#
+# `source` tags where the question came from, so we can prove the contract's
+# own sample questions all pass.
+
+cases:
+  # ---- ca · contract sample_questions -------------------------------------
+  - id: ca_ietr_ranking
+    locale: ca
+    source: sample_questions
+    question: "Quin municipi té més exposició turística-residencial?"
+    expect: answer
+    metric: IETR
+    municipality: "Castellar de n'Hug"
+    contains: ["Castellar"]
+
+  - id: ca_habnoprincipal_lookup
+    locale: ca
+    source: sample_questions
+    question: "Quants habitatges no principals té Castellar de n'Hug?"
+    expect: answer
+    metric: hab_noprincipal
+    municipality: "Castellar de n'Hug"
+    contains: ["205"]            # verified value from data-sources.md §8
+
+  - id: ca_corr_index_residus
+    locale: ca
+    source: sample_questions
+    question: "Quina relació hi ha entre l'índex i els residus?"
+    expect: answer
+    metric: IETR
+    contains: ["Spearman"]
+
+  - id: ca_extrema_dreta_planned
+    locale: ca
+    source: sample_questions
+    question: "On creix més l'extrema dreta?"
+    expect: refusal
+    reason: metric_planned        # pct_extrema_dreta is status: planned
+
+  # ---- es · contract sample_questions -------------------------------------
+  - id: es_ietr_ranking
+    locale: es
+    source: sample_questions
+    question: "¿Qué municipio tiene mayor exposición turística-residencial?"
+    expect: answer
+    metric: IETR
+    municipality: "Castellar de n'Hug"
+    contains: ["Castellar"]
+
+  - id: es_habnoprincipal_lookup
+    locale: es
+    source: sample_questions
+    question: "¿Cuántas viviendas no principales tiene Castellar de n'Hug?"
+    expect: answer
+    metric: hab_noprincipal
+    municipality: "Castellar de n'Hug"
+    contains: ["205"]
+
+  - id: es_corr_index_residus
+    locale: es
+    source: sample_questions
+    question: "¿Qué relación hay entre el índice y los residuos?"
+    expect: answer
+    metric: IETR
+    contains: ["Spearman"]
+
+  - id: es_extrema_dreta_planned
+    locale: es
+    source: sample_questions
+    question: "¿Dónde crece más la extrema derecha?"
+    expect: refusal
+    reason: metric_planned
+
+  # ---- guardrails & extra coverage ----------------------------------------
+  - id: ca_poblacio_lookup
+    locale: ca
+    source: extra
+    question: "Quina població té Berga?"
+    expect: answer
+    metric: poblacio
+    municipality: "Berga"
+    contains: ["17.160"]
+
+  - id: ca_out_of_catalog
+    locale: ca
+    source: guardrail
+    question: "Quin és el PIB per càpita de Berga?"
+    expect: refusal
+    reason: out_of_catalog
+
+  - id: es_out_of_catalog
+    locale: es
+    source: guardrail
+    question: "¿Cuál es la tasa de paro de Berga?"
+    expect: refusal
+    reason: out_of_catalog
+
+  - id: ca_unknown_municipality
+    locale: ca
+    source: guardrail
+    question: "Quants habitatges no principals té Barcelona?"
+    expect: refusal
+    reason: unknown_municipality
+
+  - id: ca_rtc_ranking_min
+    locale: ca
+    source: extra
+    question: "Quin municipi té menys establiments turístics?"
+    expect: answer
+    metric: rtc_total
