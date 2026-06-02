@@ -1,0 +1,361 @@
+# datapoble · Capa semántica — CONTRATO ÚNICO
+# Fuente de verdad de las métricas. La consumen: pipeline (transform), IA (Brúixola) y frontend (Mirador).
+# Multilingüe: label/definicio en ca + es (en/fr se añaden vía catálogos i18n del producto).
+# Regla: ninguna métrica sin fórmula, fuente y fecha. Ningún número sin procedencia.
+
+meta:
+  project: datapoble
+  version: "1.0"
+  owner: Talaia
+  description:
+    ca: Definició única i traçable de cada indicador del observatori.
+    es: Definición única y trazable de cada indicador del observatorio.
+  locales: [ca, es]          # en, fr ampliables
+  default_locale: ca
+  join_key: ine5             # codi INE de 5 dígits
+  scope: "Berguedà (31 municipis) → Catalunya (~947) en investigació"
+
+# ----------------------------------------------------------------------------
+sources:
+  idescat_emex:
+    organisme: Idescat
+    producte: El municipi en xifres (EMEX) / Cens 2021
+    acces: "https://api.idescat.cat/emex/v1/dades.json?id={codi6}"
+    llicencia: "Idescat, reutilització amb atribució"
+  rtc:
+    organisme: Generalitat — Registre de Turisme de Catalunya
+    producte: Establiments d'allotjament turístic
+    dataset_id: t2h3-cgys
+    acces: "https://analisi.transparenciacatalunya.cat/resource/t2h3-cgys.json"
+    llicencia: Dades Obertes de Catalunya
+  residus:
+    organisme: Agència de Residus de Catalunya (ARC)
+    producte: Estadístiques de residus municipals
+    dataset_id: 69zu-w48s
+    llicencia: Dades Obertes de Catalunya
+  icaen:
+    organisme: ICAEN
+    producte: Certificats d'eficiència energètica d'edificis
+    dataset_id: j6ii-t3w2
+    llicencia: Dades Obertes de Catalunya
+  electoral:
+    organisme: Generalitat
+    producte: Processos electorals - Vots
+    dataset_id: ntc4-rnwr
+    llicencia: Dades Obertes de Catalunya
+    nota: "Lectura ECOLÒGICA (no individual). Volàtil en micromunicipis."
+  datapoble:
+    organisme: datapoble (calculat)
+    producte: Indicadors derivats i índex IETR
+    nota: "Inferència pròpia a partir de fonts oficials."
+
+# ----------------------------------------------------------------------------
+entities:
+  municipi:
+    label: {ca: Municipi, es: Municipio}
+    key: ine5
+    table: mart_municipi
+
+# ----------------------------------------------------------------------------
+# Estados: public (es visible) · planned (definido, aún no calculado)
+# table: mart de destino que produce el pipeline (Sondeig).
+metrics:
+
+  # --- Demografia / vivenda ---
+  poblacio:
+    label: {ca: Població, es: Población}
+    definicio:
+      ca: Població empadronada.
+      es: Población empadronada.
+    dimension: demografia
+    unit: {ca: habitants, es: habitantes}
+    formula: directe
+    source: idescat_emex
+    date: "2025"
+    table: mart_municipi
+    column: poblacio
+    visibility: public
+    synonyms: {ca: [població, habitants, gent], es: [población, habitantes, gente]}
+
+  hab_total:
+    label: {ca: Habitatges (total), es: Viviendas (total)}
+    definicio:
+      ca: Parc total d'habitatges (Cens 2021).
+      es: Parque total de viviendas (Censo 2021).
+    dimension: vivenda
+    unit: {ca: habitatges, es: viviendas}
+    formula: directe
+    source: idescat_emex
+    date: "2021"
+    table: mart_municipi
+    column: hab_total
+    visibility: public
+
+  hab_principal:
+    label: {ca: Habitatges principals, es: Viviendas principales}
+    definicio:
+      ca: Habitatges de residència habitual.
+      es: Viviendas de residencia habitual.
+    dimension: vivenda
+    unit: {ca: habitatges, es: viviendas}
+    formula: directe
+    source: idescat_emex
+    date: "2021"
+    table: mart_municipi
+    column: hab_principal
+    visibility: public
+
+  hab_noprincipal:
+    label: {ca: Habitatges no principals, es: Viviendas no principales}
+    definicio:
+      ca: Secundàries + buides (no residència habitual). Senyal estructural de segona residència.
+      es: Secundarias + vacías (no residencia habitual). Señal estructural de segunda residencia.
+    dimension: vivenda
+    unit: {ca: habitatges, es: viviendas}
+    formula: directe
+    source: idescat_emex
+    date: "2021"
+    table: mart_municipi
+    column: hab_noprincipal
+    visibility: public
+    synonyms: {ca: [segona residència, buides], es: [segunda residencia, vacías]}
+
+  pct_noprincipal:
+    label: {ca: "% habitatge no principal", es: "% vivienda no principal"}
+    definicio:
+      ca: Pes de l'habitatge no principal sobre el total.
+      es: Peso de la vivienda no principal sobre el total.
+    dimension: vivenda
+    unit: "%"
+    formula: "hab_noprincipal / hab_total * 100"
+    source: datapoble
+    origin_source: idescat_emex
+    date: "2021"
+    table: mart_municipi
+    column: pct_noprincipal
+    visibility: public
+
+  hab_per_hab:
+    label: {ca: Habitatges per habitant, es: Viviendas por habitante}
+    definicio:
+      ca: Sobredimensió del parc respecte a la població resident.
+      es: Sobredimensión del parque respecto a la población residente.
+    dimension: vivenda
+    unit: {ca: ràtio, es: ratio}
+    formula: "hab_total / poblacio"
+    source: datapoble
+    date: "2021/2025"
+    table: mart_municipi
+    column: hab_per_hab
+    visibility: public
+
+  index_envelliment:
+    label: {ca: Índex d'envelliment, es: Índice de envejecimiento}
+    definicio:
+      ca: "Població 65+ per cada 100 de 0-14. Eix demogràfic per a l'anàlisi extrema dreta × edat."
+      es: "Población 65+ por cada 100 de 0-14. Eje demográfico para el análisis extrema derecha × edad."
+    dimension: demografia
+    unit: {ca: "65+/0-14 ×100", es: "65+/0-14 ×100"}
+    formula: "poblacio_65_mes / poblacio_0_14 * 100"
+    source: idescat_emex
+    date: "2025"
+    table: mart_municipi
+    column: index_envelliment
+    visibility: public
+    status: planned
+
+  # --- Turisme ---
+  rtc_total:
+    label: {ca: Establiments turístics, es: Establecimientos turísticos}
+    definicio:
+      ca: Allotjaments turístics reglats (HUT, hotel, rural, càmping).
+      es: Alojamientos turísticos reglados (HUT, hotel, rural, camping).
+    dimension: turisme
+    unit: {ca: establiments, es: establecimientos}
+    formula: directe
+    source: rtc
+    date: "2026"
+    table: mart_municipi
+    column: rtc_total
+    visibility: public
+
+  rtc_hut:
+    label: {ca: "HUT (habitatges d'ús turístic)", es: "HUT (viviendas de uso turístico)"}
+    definicio:
+      ca: Subconjunt d'habitatges d'ús turístic.
+      es: Subconjunto de viviendas de uso turístico.
+    dimension: turisme
+    unit: {ca: establiments, es: establecimientos}
+    formula: directe
+    source: rtc
+    date: "2026"
+    table: mart_municipi
+    column: rtc_hut
+    visibility: public
+
+  rtc_per_1000hab:
+    label: {ca: Establiments / 1000 hab, es: Establecimientos / 1000 hab}
+    definicio:
+      ca: Intensitat turística reglada per càpita.
+      es: Intensidad turística reglada per cápita.
+    dimension: turisme
+    unit: {ca: per mil, es: por mil}
+    formula: "rtc_total / poblacio * 1000"
+    source: datapoble
+    table: mart_municipi
+    column: rtc_per_1000hab
+    visibility: public
+    synonyms: {ca: [intensitat turística], es: [intensidad turística]}
+
+  rtc_per_100hab_viv:
+    label: {ca: Establiments / 100 habitatges, es: Establecimientos / 100 viviendas}
+    definicio:
+      ca: Penetració del turisme reglat en el parc.
+      es: Penetración del turismo reglado en el parque.
+    dimension: turisme
+    unit: {ca: per cent, es: por cien}
+    formula: "rtc_total / hab_total * 100"
+    source: datapoble
+    table: mart_municipi
+    column: rtc_per_100hab_viv
+    visibility: public
+
+  # --- Pressió / càrrega real ---
+  kg_hab_any:
+    label: {ca: Residus kg/hab/any, es: Residuos kg/hab/año}
+    definicio:
+      ca: Generació de residus per habitant empadronat. Proxy de càrrega real (població fantasma).
+      es: Generación de residuos por habitante empadronado. Proxy de carga real (población fantasma).
+    dimension: pressio
+    unit: {ca: kg/hab/any, es: kg/hab/año}
+    formula: directe
+    source: residus
+    date: "2024"
+    table: mart_municipi
+    column: kg_hab_any
+    visibility: public
+    synonyms: {ca: [residus, brossa, població fantasma], es: [residuos, basura, población fantasma]}
+
+  # --- Energia / rehabilitació ---
+  pct_icaen_EFG:
+    label: {ca: "% certificats E-G", es: "% certificados E-G"}
+    definicio:
+      ca: Pes de qualificacions baixes (E,F,G). Proxy de potencial de rehabilitació.
+      es: Peso de calificaciones bajas (E,F,G). Proxy de potencial de rehabilitación.
+    dimension: energia
+    unit: "%"
+    formula: "icaen_EFG / icaen_total * 100"
+    source: datapoble
+    origin_source: icaen
+    table: mart_municipi
+    column: pct_icaen_EFG
+    visibility: public
+
+  # --- Índex IETR ---
+  IETR:
+    label: {ca: Índex d'Exposició Turística-Residencial, es: Índice de Exposición Turística-Residencial}
+    definicio:
+      ca: "Exposició estructural a la pressió turística-residencial, relativa a la distribució (0=mín, 100=màx). Validat externament amb residus (r=0,87)."
+      es: "Exposición estructural a la presión turística-residencial, relativa a la distribución (0=mín, 100=máx). Validado externamente con residuos (r=0,87)."
+    dimension: index
+    unit: "0-100"
+    formula: "0.5*A_resid + 0.5*B_turis (min-max winsoritzat, pesos iguals)"
+    source: datapoble
+    table: mart_municipi
+    column: IETR
+    visibility: public
+    nota:
+      ca: "És exposició estructural (stock), no pressió realitzada. Robust a normalització (Spearman>0,97) i a pesos."
+      es: "Es exposición estructural (stock), no presión realizada. Robusto a normalización (Spearman>0,97) y a pesos."
+    synonyms: {ca: [índex, exposició, ietr], es: [índice, exposición, ietr]}
+
+  IETR_rank:
+    label: {ca: Rànquing IETR, es: Ranking IETR}
+    definicio:
+      ca: Posició del municipi dins la distribució (1 = major exposició).
+      es: Posición del municipio dentro de la distribución (1 = mayor exposición).
+    dimension: index
+    unit: {ca: posició, es: posición}
+    formula: "rank(IETR desc)"
+    source: datapoble
+    table: mart_municipi
+    column: IETR_rank
+    visibility: public
+
+  # --- Política (visible, lectura ecològica) ---
+  pct_indep:
+    label: {ca: "% vot independentista", es: "% voto independentista"}
+    definicio:
+      ca: "Quota del bloc independentista (ERC, Junts, CUP, Aliança.cat, Alhora…) sobre vot vàlid."
+      es: "Cuota del bloque independentista (ERC, Junts, CUP, Aliança.cat, Alhora…) sobre voto válido."
+    dimension: politica
+    unit: "%"
+    formula: "vots_independentistes / vots_valids * 100"
+    source: electoral
+    date: "2024"
+    table: mart_electoral
+    column: pct_indep_A20241
+    visibility: public
+    nota:
+      ca: "Lectura ECOLÒGICA (no individual; falàcia ecològica). Volàtil en micromunicipis (N petit)."
+      es: "Lectura ECOLÓGICA (no individual; falacia ecológica). Volátil en micromunicipios (N pequeño)."
+
+  pct_esquerra:
+    label: {ca: "% vot esquerra", es: "% voto izquierda"}
+    definicio:
+      ca: "Quota del bloc d'esquerra (PSC, ERC, CUP, Comuns…) sobre vot vàlid."
+      es: "Cuota del bloque de izquierda (PSC, ERC, CUP, Comuns…) sobre voto válido."
+    dimension: politica
+    unit: "%"
+    formula: "vots_esquerra / vots_valids * 100"
+    source: electoral
+    date: "2024"
+    table: mart_electoral
+    column: pct_esq_A20241
+    visibility: public
+
+  pct_extrema_dreta:
+    label: {ca: "% vot extrema dreta", es: "% voto extrema derecha"}
+    definicio:
+      ca: "Quota de l'extrema dreta (Vox + Aliança Catalana + PxC històric) sobre vot vàlid. Sèrie temporal per captar la irrupció."
+      es: "Cuota de la extrema derecha (Vox + Aliança Catalana + PxC histórico) sobre voto válido. Serie temporal para captar la irrupción."
+    dimension: politica
+    unit: "%"
+    formula: "vots_extrema_dreta / vots_valids * 100"
+    source: electoral
+    date: "2017-2024"
+    table: mart_electoral
+    column: pct_extrema_dreta
+    visibility: public
+    status: planned
+    nota:
+      ca: "Lectura ecològica. Aliança Catalana és el focus (extrema dreta independentista, emergent i rural)."
+      es: "Lectura ecológica. Aliança Catalana es el foco (extrema derecha independentista, emergente y rural)."
+
+  guanya:
+    label: {ca: Candidatura guanyadora, es: Candidatura ganadora}
+    definicio:
+      ca: Candidatura més votada al municipi.
+      es: Candidatura más votada en el municipio.
+    dimension: politica
+    unit: {ca: sigla, es: sigla}
+    formula: "argmax(vots)"
+    source: electoral
+    date: "2024"
+    table: mart_electoral
+    column: guanya_A20241
+    visibility: public
+
+# ----------------------------------------------------------------------------
+# Preguntas tipo (semilla para evals de la IA)
+sample_questions:
+  ca:
+    - Quin municipi té més exposició turística-residencial?
+    - Quants habitatges no principals té Castellar de n'Hug?
+    - Quina relació hi ha entre l'índex i els residus?
+    - On creix més l'extrema dreta?
+  es:
+    - ¿Qué municipio tiene mayor exposición turística-residencial?
+    - ¿Cuántas viviendas no principales tiene Castellar de n'Hug?
+    - ¿Qué relación hay entre el índice y los residuos?
+    - ¿Dónde crece más la extrema derecha?
