@@ -1,0 +1,12 @@
+# Perfil dbt-duckdb local. DuckDB és un sol fitxer (gitignored).
+# L'extensió spatial no cal per a mart_municipi (sense geo en aquest PR), però
+# es deixa preparada per al milestone geo (Catastro/ICGC).
+datapoble:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "datapoble.duckdb"
+      threads: 4
+      extensions:
+        - spatial

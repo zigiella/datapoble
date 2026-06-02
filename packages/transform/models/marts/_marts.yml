@@ -1,0 +1,86 @@
+version: 2
+
+models:
+  - name: mart_municipi
+    description: >
+      1 fila per municipi del Berguedà (clau ine5). Columnes segons el contracte
+      semantic/metrics.yml (table: mart_municipi). IETR/IETR_rank i pct_icaen_EFG
+      són NULL en aquest PR (els defineix Talaia / requereixen connector ICAEN).
+    columns:
+      - name: ine5
+        description: Codi INE de 5 dígits (clau de join del contracte).
+        data_tests:
+          - unique
+          - not_null
+      - name: codi6
+        description: Codi Idescat de 6 dígits (INE5 + dígit de control).
+        data_tests:
+          - not_null
+      - name: municipi
+        description: Nom oficial del municipi.
+        data_tests:
+          - not_null
+      - name: poblacio
+        description: Població empadronada (Idescat EMEX 2025).
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 0, max_value: 10000000 }
+      - name: hab_total
+        description: Habitatges familiars totals (Cens 2021).
+        data_tests:
+          - not_null
+      - name: hab_principal
+        description: Habitatges familiars principals (Cens 2021).
+      - name: hab_noprincipal
+        description: Habitatges familiars no principals (Cens 2021).
+      - name: pct_noprincipal
+        description: "% habitatge no principal sobre el total. 0-100."
+        data_tests:
+          - between:
+              arguments: { min_value: 0, max_value: 100 }
+      - name: hab_per_hab
+        description: Habitatges per habitant (ràtio).
+        data_tests:
+          - between:
+              arguments: { min_value: 0, max_value: 100 }
+      - name: index_envelliment
+        description: Població 65+ per cada 100 de 0-14.
+        data_tests:
+          - between:
+              arguments: { min_value: 0, max_value: 100000 }
+      - name: rtc_total
+        description: Establiments turístics reglats d'alta (RTC).
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 0, max_value: 100000 }
+      - name: rtc_hut
+        description: Subconjunt d'habitatges d'ús turístic (HUT).
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 0, max_value: 100000 }
+      - name: rtc_per_1000hab
+        description: Establiments per 1000 habitants.
+        data_tests:
+          - between:
+              arguments: { min_value: 0, max_value: 100000 }
+      - name: rtc_per_100hab_viv
+        description: Establiments per 100 habitatges.
+        data_tests:
+          - between:
+              arguments: { min_value: 0, max_value: 100000 }
+      - name: kg_hab_any
+        description: Residus kg/hab/any (ARC, darrer any = 2024).
+        data_tests:
+          - between:
+              arguments: { min_value: 0, max_value: 100000 }
+      - name: pct_icaen_EFG
+        description: "% certificats E-G (ICAEN). NULL: connector pendent."
+      - name: IETR
+        description: "Índex IETR. NULL: el defineix Talaia."
+      - name: IETR_rank
+        description: "Rànquing IETR. NULL: el defineix Talaia."
+      - name: kg_hab_any_year
+        description: Any del tall de residus (traçabilitat temporal).

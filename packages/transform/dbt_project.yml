@@ -1,0 +1,31 @@
+name: "datapoble_transform"
+version: "0.1.0"
+config-version: 2
+
+profile: "datapoble"
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+analysis-paths: ["analyses"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+# Variables d'execució. comarca = filtre del pilot (escala a Catalunya = canviar
+# aquest valor i regenerar la raw amb tota Catalunya, fora d'aquest PR).
+vars:
+  comarca: "Berguedà"
+  n_municipis_expected: 31
+  # arrel de la raw, relativa a packages/transform (on s'invoca dbt)
+  raw_root: "../../data/raw"
+  marts_root: "../../data/marts"
+
+models:
+  datapoble_transform:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table
