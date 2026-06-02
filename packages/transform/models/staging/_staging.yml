@@ -18,3 +18,12 @@ models:
         data_tests:
           - not_null
           - unique
+  - name: stg_electoral
+    description: >
+      Vots electorals del Berguedà (1 fila/convocatòria×municipi×candidatura),
+      nivell Municipi. ine5 via crosswalk; sigla_norm normalitzada. Lectura ecològica.
+    columns:
+      - name: ine5
+        data_tests: [not_null]
+      - name: vots
+        data_tests: [not_null]

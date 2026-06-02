@@ -4,8 +4,9 @@ models:
   - name: mart_municipi
     description: >
       1 fila per municipi del Berguedà (clau ine5). Columnes segons el contracte
-      semantic/metrics.yml (table: mart_municipi). IETR/IETR_rank i pct_icaen_EFG
-      són NULL en aquest PR (els defineix Talaia / requereixen connector ICAEN).
+      semantic/metrics.yml (table: mart_municipi). IETR/IETR_rank es calculen amb
+      la metodologia de Talaia (min-max winsoritzat p5/p95, dues dimensions a pesos
+      iguals). pct_icaen_EFG segueix NULL (requereix connector ICAEN, fora d'aquest PR).
     columns:
       - name: ine5
         description: Codi INE de 5 dígits (clau de join del contracte).
@@ -79,8 +80,91 @@ models:
       - name: pct_icaen_EFG
         description: "% certificats E-G (ICAEN). NULL: connector pendent."
       - name: IETR
-        description: "Índex IETR. NULL: el defineix Talaia."
+        description: >
+          Índex d'Exposició Turística-Residencial (0-100). Min-max winsoritzat
+          (p5/p95) sobre els 31 municipis, eix residencial + eix turístic a pesos
+          iguals. Ancoratges: Castellar (08052) ≈ 89,4 (#1); Berga (08022) ≈ 0,3 (#31).
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 0, max_value: 100 }
       - name: IETR_rank
-        description: "Rànquing IETR. NULL: el defineix Talaia."
+        description: "Rànquing IETR (1 = major exposició). Únic i not_null."
+        data_tests:
+          - unique
+          - not_null
       - name: kg_hab_any_year
         description: Any del tall de residus (traçabilitat temporal).
+
+  - name: mart_electoral
+    description: >
+      Resultats electorals agregats per municipi (clau ine5), Parlament de
+      Catalunya 2024 (A20241) i 2021 (A20211), Berguedà. Columnes amb sufix de
+      convocatòria. Percentatges sobre vot vàlid (suma de candidatures).
+      LECTURA ECOLÒGICA: agregat municipal, NO individual (falàcia ecològica);
+      volàtil en micromunicipis. Classificació de blocs (extrema dreta / indep /
+      esquerra) segons la metodologia de Talaia; vegeu bitàcora. Ancoratge
+      verificat (Castellar 08052, 2024): guanya=CAT-JUNTS+, pct_indep≈84,
+      pct_extrema_dreta≈27 (Vox + Aliança Catalana).
+    columns:
+      - name: ine5
+        description: Codi INE de 5 dígits (clau de join amb mart_municipi; crosswalk aplicat).
+        data_tests:
+          - unique
+          - not_null
+      - name: municipi
+        description: Nom oficial del municipi (de mart_municipi).
+        data_tests:
+          - not_null
+      # --- Parlament 2024 ---
+      - name: vots_valids_A20241
+        description: Vot vàlid (suma de candidatures) · Parlament 2024.
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 0, max_value: 10000000 }
+      - name: pct_extrema_dreta_A20241
+        description: "% extrema dreta (Vox + Aliança Catalana + PxC…) sobre vot vàlid · 2024."
+        data_tests:
+          - between:
+              arguments: { min_value: 0, max_value: 100 }
+      - name: pct_indep_A20241
+        description: "% bloc independentista sobre vot vàlid · 2024."
+        data_tests:
+          - between:
+              arguments: { min_value: 0, max_value: 100 }
+      - name: pct_esq_A20241
+        description: "% bloc d'esquerra sobre vot vàlid · 2024."
+        data_tests:
+          - between:
+              arguments: { min_value: 0, max_value: 100 }
+      - name: guanya_A20241
+        description: Candidatura més votada (sigla) · 2024.
+        data_tests:
+          - not_null
+      # --- Parlament 2021 ---
+      - name: vots_valids_A20211
+        description: Vot vàlid (suma de candidatures) · Parlament 2021.
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 0, max_value: 10000000 }
+      - name: pct_extrema_dreta_A20211
+        description: "% extrema dreta sobre vot vàlid · 2021."
+        data_tests:
+          - between:
+              arguments: { min_value: 0, max_value: 100 }
+      - name: pct_indep_A20211
+        description: "% bloc independentista sobre vot vàlid · 2021."
+        data_tests:
+          - between:
+              arguments: { min_value: 0, max_value: 100 }
+      - name: pct_esq_A20211
+        description: "% bloc d'esquerra sobre vot vàlid · 2021."
+        data_tests:
+          - between:
+              arguments: { min_value: 0, max_value: 100 }
+      - name: guanya_A20211
+        description: Candidatura més votada (sigla) · 2021.
+        data_tests:
+          - not_null

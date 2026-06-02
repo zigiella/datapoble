@@ -48,3 +48,14 @@ BERGUEDA: dict[str, str] = {
 }
 
 assert len(BERGUEDA) == 31, "El Berguedà té 31 municipis"
+
+# ine5 (5 primers dígits del codi Idescat) -> nom. Clau de join del contracte i
+# clau ``territori_codi`` de l'electoral (``ntc4-rnwr``).
+# Verificat en viu (2026-06-02): ntc4-rnwr usa AQUEST mateix codi (no l'INE
+# canònic). Gósol = 25100 al dataset electoral i a mart_municipi (coincideixen);
+# l'INE canònic 25101 correspon a "la Granadella" en aquest dataset. Per tant el
+# crosswalk Gósol és identitat aquí (vegeu seeds/crosswalk_ine5.csv).
+BERGUEDA_INE5: dict[str, str] = {codi6[:5]: nom for codi6, nom in BERGUEDA.items()}
+
+assert len(BERGUEDA_INE5) == 31, "31 ine5 únics"
+assert BERGUEDA_INE5.get("25100") == "Gósol"

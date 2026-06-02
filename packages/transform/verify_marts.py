@@ -27,15 +27,28 @@ ANCHORS: dict[str, dict[str, tuple[float, float]]] = {
         "hab_per_hab": (1.66, 0.01),
         "rtc_total": (30, 0),
         "rtc_per_1000hab": (181, 1),
+        "IETR": (89.4, 0.5),       # prototip: #1 de la comarca
+        "IETR_rank": (1, 0),
     },
     "08022": {  # Berga
         "rtc_total": (45, 0),
         "rtc_hut": (36, 0),
         "rtc_per_1000hab": (2.6, 0.1),
+        "IETR": (0.3, 0.5),        # prototip: #31 de la comarca
+        "IETR_rank": (31, 0),
     },
 }
 
 N_MUNICIPIS = 31
+
+# Validació externa de l'IETR: ha de predir la càrrega real (residus). Spearman
+# entre IETR i kg_hab_any > llindar. En el prototip va sortir 0,87.
+SPEARMAN_MIN = 0.8
+
+
+def _spearman(a: "pd.Series", b: "pd.Series") -> float:
+    """Correlació de Spearman = Pearson sobre els rangs (sense dependència de scipy)."""
+    return float(a.rank().corr(b.rank()))
 
 
 def main() -> int:
@@ -58,6 +71,14 @@ def main() -> int:
             got = row[col]
             if pd.isna(got) or abs(float(got) - expected) > tol:
                 errors.append(f"{ine5}.{col}: got={got} expected={expected}±{tol}")
+
+    # Validació externa IETR ↔ residus (l'índex prediu la càrrega real).
+    if {"IETR", "kg_hab_any"}.issubset(df.columns) and df["IETR"].notna().any():
+        rho = _spearman(df["IETR"], df["kg_hab_any"])
+        if pd.isna(rho) or rho <= SPEARMAN_MIN:
+            errors.append(f"Spearman(IETR, kg_hab_any)={rho:.3f} <= {SPEARMAN_MIN}")
+        else:
+            print(f"Spearman(IETR, kg_hab_any) = {rho:.3f} (> {SPEARMAN_MIN}) · l'IETR prediu la càrrega real")
 
     if errors:
         print("VERIFICACIÓ FALLIDA:", file=sys.stderr)

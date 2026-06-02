@@ -1,0 +1,25 @@
+version: 2
+
+seeds:
+  - name: crosswalk_electoral_ine5
+    description: >
+      Crosswalk territori_codi (dataset electoral ntc4-rnwr) → ine5 (mart_municipi).
+      Al Berguedà és identitat: verificat en viu (2026-06-02) que ntc4-rnwr usa el
+      mateix codi Idescat-derivat que RTC/residus/EMEX (Gósol=25100 en ambdós; l'INE
+      canònic 25101 és 'la Granadella' en aquest dataset). El seed existeix com a
+      infraestructura: si una font futura usa l'INE canònic, s'hi afegeix la fila.
+    config:
+      column_types:
+        territori_codi: varchar
+        ine5: varchar
+        nota: varchar
+    columns:
+      - name: territori_codi
+        description: Codi de territori tal com apareix a ntc4-rnwr (nivell Municipi).
+        data_tests:
+          - unique
+          - not_null
+      - name: ine5
+        description: Codi ine5 de mart_municipi al qual mapeja.
+        data_tests:
+          - not_null
