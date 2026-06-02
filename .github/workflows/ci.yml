@@ -28,6 +28,25 @@ jobs:
   #     - uses: actions/checkout@v4
   #     - run: pipx run ruff check packages/ingestion packages/transform
 
-  # TODO(Brúixola): evals de la capa de IA (texto→SQL trazable)
+  # Brúixola: evals de la capa de IA (texto→SQL trazable). Corre OFFLINE
+  # (sin OPENROUTER_API_KEY): determinista, sin red. Gate anti-regresión.
+  ai-evals:
+    name: ai evals (offline)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/ai
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install package (+ dev)
+        run: pip install -e ".[dev]"
+      - name: Lint (ruff)
+        run: ruff check src evals tests
+      - name: Test suite + eval gate
+        run: pytest
+
   # TODO(Mirador): pnpm install + build + vitest + playwright (a11y)
   # TODO(Llegenda): regresión visual (Storybook/Chromatic)
