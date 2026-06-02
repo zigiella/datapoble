@@ -1,0 +1,121 @@
+/*
+ * Estils base de l'app (Mirador).
+ *
+ * IMPORTANT — sistema de disseny: els TOKENS (color, tipografia, espaiat, radis,
+ * cartografia, dataviz) són jurisdicció de Llegenda (packages/design-system).
+ * Aquí NOMÉS hi ha valors PROVISIONALS perquè l'scaffold sigui usable. Quan
+ * Llegenda publiqui els tokens (Style Dictionary -> CSS custom properties),
+ * es reemplacen aquestes variables :root per la importació del paquet.
+ *
+ * TODO(tokens · Llegenda): substituir aquest bloc :root per `@import` dels tokens
+ * de design-system i esborrar els valors hardcodejats.
+ */
+
+:root {
+	/* TODO(tokens): paleta provisional — la marca la fixa Llegenda. */
+	--dp-color-bg: #f4f1e8;
+	--dp-color-surface: #ffffff;
+	--dp-color-text: #1c2321;
+	--dp-color-muted: #5b6360;
+	--dp-color-accent: #1f6f54;
+	--dp-color-accent-weak: #e2efe9;
+	--dp-color-border: #d9d6cb;
+	--dp-color-warning: #8a5a00;
+
+	/* TODO(tokens): escala d'espaiat provisional. */
+	--dp-space-1: 0.25rem;
+	--dp-space-2: 0.5rem;
+	--dp-space-3: 0.75rem;
+	--dp-space-4: 1rem;
+	--dp-space-5: 1.5rem;
+	--dp-space-6: 2rem;
+	--dp-space-8: 3rem;
+
+	--dp-radius: 10px;
+	--dp-radius-sm: 6px;
+
+	/* TODO(tokens): tipografia provisional (sistema). */
+	--dp-font-sans:
+		system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	--dp-font-mono: ui-monospace, 'SFMono-Regular', 'Menlo', 'Consolas', monospace;
+
+	--dp-maxw: 72rem;
+}
+
+@media (prefers-color-scheme: dark) {
+	/* TODO(tokens): mode fosc el defineix Llegenda; valors provisionals. */
+	:root {
+		--dp-color-bg: #14181a;
+		--dp-color-surface: #1d2224;
+		--dp-color-text: #eef0ee;
+		--dp-color-muted: #a7adaa;
+		--dp-color-accent: #4fbf97;
+		--dp-color-accent-weak: #1f2e2a;
+		--dp-color-border: #2c3336;
+		--dp-color-warning: #e0b057;
+	}
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	background: var(--dp-color-bg);
+	color: var(--dp-color-text);
+	font-family: var(--dp-font-sans);
+	line-height: 1.5;
+	-webkit-font-smoothing: antialiased;
+}
+
+a {
+	color: var(--dp-color-accent);
+}
+
+h1,
+h2,
+h3 {
+	line-height: 1.2;
+	margin: 0 0 var(--dp-space-3);
+}
+
+/* A11y: respecta la preferència de moviment reduït (requisit AA, F1). */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.001ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.001ms !important;
+		scroll-behavior: auto !important;
+	}
+}
+
+/* Enllaç "salta al contingut" per a navegació amb teclat. */
+.skip-link {
+	position: absolute;
+	left: var(--dp-space-2);
+	top: -3rem;
+	background: var(--dp-color-surface);
+	color: var(--dp-color-text);
+	padding: var(--dp-space-2) var(--dp-space-3);
+	border-radius: var(--dp-radius-sm);
+	border: 1px solid var(--dp-color-border);
+	z-index: 100;
+	transition: top 0.15s ease;
+}
+
+.skip-link:focus {
+	top: var(--dp-space-2);
+}
+
+:focus-visible {
+	outline: 2px solid var(--dp-color-accent);
+	outline-offset: 2px;
+}

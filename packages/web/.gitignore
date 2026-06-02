@@ -1,0 +1,15 @@
+# Sortida del compilador de Paraglide (regenerada per `npm run paraglide`).
+# És un artefacte de build; no es versiona. La font de la i18n són
+# project.inlang/settings.json + messages/*.json (sí versionats).
+/src/lib/paraglide/
+
+# SvelteKit / Vite (també coberts pel .gitignore arrel del repo)
+.svelte-kit/
+build/
+.vite/
+
+# Dependències
+node_modules/
+
+# Logs locals
+*.log
