@@ -1,0 +1,29 @@
+[project]
+name = "datapoble-signals"
+version = "0.1.0"
+description = "datapoble · pilar 2 (el cabal) — taula d'events des de rastres administratius. Connector de contractació (ybgg-dgi6) amb procedència."
+requires-python = ">=3.11"
+authors = [{ name = "Cabal", email = "cabal@datapoble.local" }]
+license = { text = "MIT" }
+dependencies = [
+    "requests>=2.30",
+    "pandas>=2.0",
+    "duckdb>=1.0",
+    "pyarrow>=14",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8.0"]
+
+[project.scripts]
+datapoble-signals = "datapoble_signals.__main__:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["datapoble_signals"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
