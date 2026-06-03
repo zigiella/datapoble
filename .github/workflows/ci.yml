@@ -48,5 +48,27 @@ jobs:
       - name: Test suite + eval gate
         run: pytest
 
-  # TODO(Mirador): pnpm install + build + vitest + playwright (a11y)
+  # Mirador: build + type-check del frontend (SvelteKit + TS, i18n Paraglide).
+  # npm (hay package-lock.json en packages/web; aún no hay workspace pnpm en raíz).
+  # vitest + playwright (a11y) llegan en un PR posterior.
+  web:
+    name: web build + check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: packages/web/package-lock.json
+      - name: Install (npm ci)
+        run: npm ci
+      - name: Type-check (svelte-check)
+        run: npm run check
+      - name: Build (producción)
+        run: npm run build
+
   # TODO(Llegenda): regresión visual (Storybook/Chromatic)
