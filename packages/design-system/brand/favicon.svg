@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="riusdegent">
+  <title>riusdegent — favicon</title>
+  <desc>Favicon: marca simplificada per a mides petites (16–32 px). Línies de cabal que travessen una divisòria; el riu va ple a l'esquerra i s'aprima a la dreta. Fons slate fosc dels tokens perquè ressalti a la pestanya tant en tema clar com fosc.</desc>
+
+  <!-- contenidor arrodonit, slate fosc (token dp-neutral-900) -->
+  <rect x="0" y="0" width="64" height="64" rx="14" fill="#1B212A"/>
+
+  <!-- divisoria (terracota dp-accent-300, mes clara per contrastar sobre fosc) -->
+  <line x1="32" y1="16" x2="32" y2="48" stroke="#E3A584" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- vessant ple (teal clar perquè brilli en mida petita) -->
+  <g fill="none" stroke="#5FB6B6" stroke-linecap="round">
+    <path d="M14 26 C 21 22, 26 22, 31 26" stroke-width="4"/>
+    <path d="M13 34 C 21 29, 26 29, 31 33" stroke-width="5"/>
+    <path d="M14 42 C 21 38, 26 38, 31 42" stroke-width="4"/>
+  </g>
+
+  <!-- vessant sec (s'aprima; un tram puntejat per llegir l'assecament) -->
+  <g fill="none" stroke="#5FB6B6" stroke-linecap="round">
+    <path d="M33 26 C 40 22, 45 22, 50 25" stroke-width="3"/>
+    <path d="M33 34 C 41 29, 46 30, 52 28" stroke-width="3"/>
+  </g>
+  <path d="M33 42 C 40 38, 45 38, 51 37" fill="none" stroke="#5FB6B6" stroke-width="3" stroke-linecap="round" stroke-dasharray="0.1 6"/>
+</svg>

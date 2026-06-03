@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="340" height="96" viewBox="0 0 340 96" fill="currentColor" role="img" aria-label="riusdegent — Dades per entendre com s'habita el territori">
+  <title>riusdegent — logotip monocrom</title>
+  <desc>Versió a una sola tinta. Tot hereta currentColor (per defecte neutral-900): posa color: #1B212A per a tinta fosca sobre clar, o color: #F6F7F9 per a tinta clara sobre fosc. La divisòria es manté com a línia continua; el contrast ple↔sec es conf a la opacitat i al puntejat. Per a 1-tinta de premsa, embossing o segell.</desc>
+
+  <g transform="translate(0,4)">
+    <line x1="48" y1="14" x2="48" y2="74" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- vessant ple: tinta plena -->
+    <g fill="none" stroke="currentColor" stroke-linecap="round">
+      <path d="M12 30 C 23 25, 35 25, 46 30" stroke-width="4"/>
+      <path d="M10 41 C 23 35, 35 35, 46 40" stroke-width="5.5"/>
+      <path d="M10 53 C 23 47, 35 47, 46 52" stroke-width="5.5"/>
+      <path d="M12 64 C 23 59, 35 59, 46 64" stroke-width="4"/>
+    </g>
+    <!-- vessant sec: mateixa tinta, atenuada amb opacitat + puntejat (sense color de suport) -->
+    <g fill="none" stroke="currentColor" stroke-linecap="round" opacity="0.55">
+      <path d="M50 30 C 60 25, 69 25, 77 29" stroke-width="2.75"/>
+      <path d="M50 40 C 61 35, 71 36, 82 33" stroke-width="3.25"/>
+    </g>
+    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2.75" stroke-dasharray="0.1 7" opacity="0.55">
+      <path d="M50 52 C 61 47, 71 48, 84 45"/>
+      <path d="M50 64 C 60 59, 68 60, 78 58"/>
+    </g>
+  </g>
+
+  <text x="104" y="50"
+        font-family="'Inter','Source Sans 3',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif"
+        font-size="34" font-weight="600" letter-spacing="-0.34" fill="currentColor">riusdegent</text>
+
+  <text x="105" y="72"
+        font-family="'Inter','Source Sans 3',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif"
+        font-size="11.5" font-weight="400" letter-spacing="0.1" fill="currentColor" opacity="0.7">Dades per entendre com s'habita el territori</text>
+</svg>

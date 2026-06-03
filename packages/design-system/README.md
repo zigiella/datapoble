@@ -11,7 +11,12 @@ Brief complet: `docs/art-direction.md` · Spec d'aquest encàrrec: `bitacora/202
 ```
 packages/design-system/
 ├─ brand/
-│  └─ identity-routes.md     # 3 rutes d'identitat perquè Bea n'esculli una (proposta)
+│  ├─ identity-routes.md      # 3 rutes d'identitat (1r encàrrec; nom ja triat → riusdegent)
+│  ├─ brand-guide.md          # guia de marca d'1 pàgina (logo, paleta, to, hero)
+│  ├─ riusdegent-logo.svg     # logotip principal (clar) · -dark · -mono
+│  ├─ riusdegent-mark.svg     # marca / símbol sol (hidrogràfic)
+│  ├─ favicon.svg             # favicon (SVG; ICO pendent, veure guia)
+│  └─ hero-mockup.html        # mockup de referència del hero (no producte)
 ├─ tokens/
 │  ├─ tokens.json            # contracte visual (W3C DTCG / Style Dictionary): color, tipografia,
 │  │                         #   espaiat, radis, ombres, breakpoints, moviment + paletes de dada
@@ -35,8 +40,10 @@ packages/design-system/
   Totes amb diacrítiques catalanes completes (à è é í ï ò ó ú ü ç l·l) i `tnum`.
 - **Paleta de dada:** seqüencial terra "exposició" (6 passos) i diverging teal↔marró, **sense
   vermell-verd** (segures per a daltonisme). Detall i hex a `cartography/palette.md`.
-- **Marca:** el nom públic encara **no està decidit** — `brand/identity-routes.md` proposa 3 rutes;
-  els tokens són **neutres respecte al nom**, així que la decisió de marca no bloqueja Mirador.
+- **Marca:** nom públic tancat = **`riusdegent`** (*rius de gent* — el cabal humà que omple o buida el
+  territori). Identitat de sortida a `brand/` (logo SVG clar/fosc/mono, marca, favicon, guia d'1 pàgina);
+  **aplica** els tokens sense redefinir-los. El **dibuix** del traç és proposta a refinar per un humà;
+  el vot final de marca és de Bea.
 
 ## Estat i abast
 
