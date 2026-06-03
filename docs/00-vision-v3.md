@@ -1,64 +1,64 @@
-# riusdegent — Visión v3 (documento constitucional)
+# riusdegent — Visió v3 (document constitucional)
 
 **riusdegent · Dades per entendre com s'habita el territori**
 
 > Persones que arriben, marxen, tornen, pernocten, lloguen, compren, hereten, visiten, treballen, voten, ocupen places, omplen segones residències o desapareixen del padró real de la vida quotidiana.
 
-**Estado:** constitución v3 — **supersede** la spec V0.1 (`docs/00-project-spec.md`, preservada como evidencia histórica, no se borra).
-**Autora:** Talaia · **Decide la narrativa:** Bea.
+**Estat:** constitució v3 — **supersedeix** l'spec V0.1 (`docs/00-project-spec.md`, preservada com a evidència històrica; no s'esborra).
+**Autora:** Talaia · **Decideix la narrativa:** Bea. · **Llengua de treball: català** (a partir d'ara).
 
 ---
 
-## 0. El giro
-De *"observatorio de presión turística-residencial"* a **observatorio de cómo se habita el territorio**. No es cosmético: pasa del foco en la *presión* (alarmista, parcial) a la *habitança* (humana, completa — presencia **y** ausencia, flujo **y** stock, los que vienen y los que desaparecen). El nombre lo dice: **rius de gent**, el caudal humano que atraviesa y llena (o vacía) cada municipio. El IETR deja de ser *el punto* para ser *un indicador* dentro de un observatorio más ancho.
+## 0. El gir
+De *"observatori de pressió turística-residencial"* a **observatori de com s'habita el territori**. No és cosmètic: passa del focus en la *pressió* (alarmista, parcial) a la *habitança* (humana, completa — presència **i** absència, flux **i** estoc, els que vénen i els que desapareixen). El nom ho diu: **rius de gent**, el cabal humà que travessa i omple (o buida) cada municipi. L'IETR deixa de ser *el punt* per ser *un indicador* dins d'un observatori més ample.
 
-## 1. La tesis / el norte
-**El gap entre el padrón oficial y la habitança real.** Hacer visible la **población invisible**: los que **no constan pero llenan** el territorio (excursionistas, segunda residencia, estacionales) y los que **constan pero ya no viven** la vida cotidiana (despoblación, padrón fantasma). Ese gap es el relato que nadie más tiene — y ya tenemos los proxies para medirlo.
+## 1. La tesi / el nord
+**El gap entre el padró oficial i la habitança real.** Fer visible la **població invisible**: els que **no consten però omplen** el territori (excursionistes, segona residència, estacionals) i els que **consten però ja no hi viuen** la vida quotidiana (despoblació, padró fantasma). Aquest gap és el relat que ningú més té — i ja en tenim els proxies per mesurar-lo.
 
-## 2. Los dos pilares
+## 2. Els dos pilars
 
-### Pilar 1 — Capas de habitança (datos estructurados: stock + flujo)
-*La forma del río.* Marts reproducibles por municipio: vivienda (vacío/segunda residencia), turismo (flujo reglado y observado), exposición (IETR, validado r=0,87), política (quién vota), edad (quién envejece / quién es joven y se va).
-- **Indicador estrella: "población real estimada" vs padrón** (proxies: residuos = fantasmas, IMD, tren, museo). Un número y un mapa propios.
-- **"Rius de gent": el pulso estacional** — quién entra y sale de cada municipio a lo largo del año.
+### Pilar 1 — Capes d'habitança (dades estructurades: estoc + flux)
+*La forma del riu.* Marts reproduïbles per municipi: vivenda (buit/segona residència), turisme (flux reglat i observat), exposició (IETR, validat r=0,87), política (qui vota), edat (qui envelleix / qui és jove i marxa).
+- **Indicador estrella: "població real estimada" vs padró** (proxies: residus = fantasmes, IMD, tren, museu). Un número i un mapa propis.
+- **"Rius de gent": el pols estacional** — qui entra i surt de cada municipi al llarg de l'any.
 
-### Pilar 2 — El cabal (inteligencia territorial desde los rastros)
-*El caudal del río:* la corriente de actividad en tiempo real, medida por los **rastros** que el territorio deja cuando un fenómeno no tiene dataset limpio. *(El principio de los kg de residuos, generalizado: leer el "tubo de escape" administrativo y digital.)*
-- **Motor: tabla de eventos + convergencia.** Todo (un pliego, un corte de tráfico, una noticia, un decreto de sequía) → evento *tipado, fechado, geolocalizado* (`ine5`). La inteligencia es la **convergencia**: señales independientes que coinciden en municipio+ventana = confianza (el mismo principio que validó el IETR contra los residuos).
-- **Oro: licitaciones y presupuestos como indicador *adelantado*.** Lo que un ayuntamiento contrata revela lo que espera. Semi-estructurado, fechado, geolocalizable.
-- **Ciclo de vida del fenómeno:** anticipación (licitaciones) → realización (agendas, cortes, refuerzos) → reacción (ordenanzas, tasas, noticias de quejas).
-- **Catálogo de proxies** (recetario: *fenómeno → rastro → fuente → caveat*).
-- **Extracción con LLM anclada** (vía OpenRouter): de texto messy a evento tipado, **citando siempre el fragmento fuente**; si no puede, rechaza. **Dato vs inferencia** explícito.
-- **Fuentes, por orden de señal/ruido:** contratación pública + BOPB/DOGC (incl. sequía) primero; agendas, webs y noticias después.
-- **Right-sizing:** 2-3 fuentes de alta señal sobre los 2 pilotos + comarca; *luego* ensanchar. Legal: boletines y contratación son reutilizables por diseño; webs/noticias → robots/ToS, hecho+enlace (no copia), sin datos personales.
+### Pilar 2 — El cabal (intel·ligència territorial des dels rastres)
+*El cabal del riu:* el corrent d'activitat en temps real, mesurat pels **rastres** que el territori deixa quan un fenomen no té dataset net. *(El principi dels kg de residus, generalitzat: llegir el "tub d'escapament" administratiu i digital.)*
+- **Motor: taula d'esdeveniments + convergència.** Tot (un plec, un tall de trànsit, una notícia, un decret de sequera) → esdeveniment *tipat, datat, geolocalitzat* (`ine5`). La intel·ligència és la **convergència**: senyals independents que coincideixen en municipi+finestra = confiança (el mateix principi que va validar l'IETR contra els residus).
+- **Or: licitacions i pressupostos com a indicador *avançat*.** El que un ajuntament contracta revela el que espera. Semi-estructurat, datat, geolocalitzable.
+- **Cicle de vida del fenomen:** anticipació (licitacions) → realització (agendes, talls, reforços) → reacció (ordenances, taxes, notícies de queixes).
+- **Catàleg de proxies** (receptari: *fenomen → rastre → font → caveat*).
+- **Extracció amb LLM ancorada** (via OpenRouter): de text messy a esdeveniment tipat, **citant sempre el fragment font**; si no pot, rebutja. **Dada vs inferència** explícit.
+- **Fonts, per ordre de senyal/soroll:** contractació pública + BOPB/DOGC (incl. sequera) primer; agendes, webs i notícies després.
+- **Right-sizing:** 2-3 fonts d'alta senyal sobre els 2 pilots + comarca; *després* eixamplar. Legal: butlletins i contractació són reutilitzables per disseny; webs/notícies → robots/ToS, fet+enllaç (no còpia), sense dades personals.
 
-## 3. Principios (reafirmados)
-Right-sizing · reproducibilidad · **trazabilidad** (ningún número sin fuente·fecha·fórmula; dato vs inferencia) · diseño como producto · **honestidad incluidos los "no"** · privacidad (lectura ecológica, no individual) · accesibilidad · abierto.
+## 3. Principis (reafirmats)
+Right-sizing · reproductibilitat · **traçabilitat** (cap número sense font·data·fórmula; dada vs inferència) · disseny com a producte · **honestedat inclosos els "no"** · privacitat (lectura ecològica, no individual) · accessibilitat · obert.
 
-## 4. Qué ya tenemos (balance)
-Repo vivo + equipo de 4 agentes. **F0 y F1 integrados** (7 PRs): sistema de diseño, pipeline reproducible con IETR validado + mart electoral, IA texto→SQL trazable, frontend SvelteKit i18n ca/es. Investigación: el auge de la extrema derecha en Catalunya mapeado (951 munis) + **tres "no" honestos** (ni edad municipal, ni inmigración, ni tamaño lo explican → es geográfico, el fenómeno Aliança) + el ángulo del **voto joven** (capa de encuesta, CEO).
+## 4. Què ja tenim (balanç)
+Repo viu + equip de 4 agents. **F0 i F1 integrats** (7 PRs): sistema de disseny, pipeline reproduïble amb IETR validat + mart electoral, IA text→SQL traçable, frontend SvelteKit i18n ca/es. Recerca: l'auge de l'extrema dreta a Catalunya mapejat (951 munis) + **tres "no" honestos** (ni edat municipal, ni immigració, ni mida l'expliquen → és geogràfic, el fenomen Aliança) + l'angle del **vot jove** (capa d'enquesta, CEO).
 
 ## 5. Arquitectura
-Los dos pilares sobre el mismo stack.
-- **Pilar 1:** connectors → dbt + DuckDB → marts (clave `ine5`).
-- **Pilar 2:** harvest → esquema de evento → **extracción LLM (OpenRouter)** → **events table (clave `ine5`)**.
-- La events table hace **join** con los marts: el mismo municipio visto como *forma* (stock) y como *cabal* (señales).
-- Salidas: artefactos estáticos + API IA. Frontend: SvelteKit + MapLibre, scrollytelling, i18n ca/es (en/fr).
+Els dos pilars sobre el mateix stack.
+- **Pilar 1:** connectors → dbt + DuckDB → marts (clau `ine5`).
+- **Pilar 2:** harvest → esquema d'esdeveniment → **extracció LLM (OpenRouter)** → **events table (clau `ine5`)**.
+- La events table fa **join** amb els marts: el mateix municipi vist com a *forma* (estoc) i com a *cabal* (senyals).
+- Sortides: artefactes estàtics + API IA. Frontend: SvelteKit + MapLibre, scrollytelling, i18n ca/es (en/fr).
 
-## 6. Equipo
-Talaia (coord + investigación) · Sondeig (datos) · **Cabal** *(nueva: señales/rastros)* · Brúixola (IA) · Mirador (frontend) · Llegenda (arte + identidad `riusdegent`). Bea: voto narrativo.
+## 6. Equip
+Talaia (coord + recerca) · Sondeig (dades) · **Cabal** *(nova: senyals/rastres)* · Brúixola (IA) · Mirador (frontend) · Llegenda (art + identitat `riusdegent`). Bea: vet narratiu.
 
-## 7. Roadmap a lanzamiento
-- **F2 · Identidad + datos reales:** identidad `riusdegent` (Llegenda) · Mirador con tokens + marts reales · escala Catalunya (Sondeig).
-- **F3 · Cabal (pilar 2):** primer experimento (licitaciones como anticipación, 2 pilotos) → events table → convergencia.
-- **F4 · Indicador estrella:** "población real vs padrón" + el pulso estacional.
-- **F5 · IA en vivo** (OpenRouter) + scrollytelling.
-- **F6 · Lanzamiento público** (Cloudflare + dominio `riusdegent.cat`).
+## 7. Full de ruta cap al llançament
+- **F2 · Identitat + dades reals:** identitat `riusdegent` (Llegenda) · Mirador amb tokens + marts reals · escala Catalunya (Sondeig).
+- **F3 · Cabal (pilar 2):** primer experiment (licitacions com a anticipació, 2 pilots) → events table → convergència.
+- **F4 · Indicador estrella:** "població real vs padró" + el pols estacional.
+- **F5 · IA en viu** (OpenRouter) + scrollytelling.
+- **F6 · Llançament públic** (Cloudflare + domini `riusdegent.cat`).
 
-## 8. Primeros encargos
-1. **Llegenda:** identidad `riusdegent` (logo, favicon, guía) sobre los tokens ya definidos.
-2. **Cabal (nueva) / Sondeig:** experimento *"licitaciones como anticipación"* — contratación pública de Castellar/Berga + Berguedà, clasificada por tema (neteja, aigua, aparcament, turisme, residus, seguretat), buscando la *huella de gasto* estacional. El "kg de residuos" del pilar 2.
-3. **Talaia:** el indicador *"población real vs padrón"* con los proxies que ya tenemos.
+## 8. Primers encàrrecs
+1. **Llegenda:** identitat `riusdegent` (logo, favicon, guia) sobre els tokens ja definits.
+2. **Cabal (nova) / Sondeig:** experiment *"licitacions com a anticipació"* — contractació pública de Castellar/Berga + Berguedà, classificada per tema (neteja, aigua, aparcament, turisme, residus, seguretat), buscant la *petjada de despesa* estacional. El "kg de residus" del pilar 2.
+3. **Talaia:** l'indicador *"població real vs padró"* amb els proxies que ja tenim.
 
 ---
-*Supersede `docs/00-project-spec.md` (V0.1). Este documento es el contrato del que cuelgan los encargos. Cambios → bitácora + PR.*
+*Supersedeix `docs/00-project-spec.md` (V0.1). Aquest document és el contracte del qual pengen els encàrrecs. Canvis → bitàcola + PR.*
