@@ -32,11 +32,16 @@ class Agent:
                  mode: str = "auto",
                  metrics_path: str | Path | None = None,
                  marts_dir: Path | None = None,
+                 use_fixtures: bool = False,
                  spend_guard: SpendGuard | None = None):
         self.catalog = catalog or load_catalog(
             str(metrics_path) if metrics_path else None
         )
-        self.warehouse = warehouse or Warehouse(self.catalog, marts_dir=marts_dir)
+        # `use_fixtures=True` pins the seed warehouse — used by the deterministic
+        # offline gate so it tests the logic, not whichever marts are on disk.
+        self.warehouse = warehouse or Warehouse(
+            self.catalog, marts_dir=marts_dir, use_fixtures=use_fixtures
+        )
         # The hard spend cap is only meaningful on the LLM path; the offline
         # backend never spends, so it ignores it.
         self.spend_guard = spend_guard

@@ -106,13 +106,17 @@ spend cap) and the **multi-model eval script** described below are implemented
 and tested **offline** (no key); only the *live* LLM calls they gate need the
 secret.
 
-**Data boundary:** at scaffold time `data/marts/` was empty (Sondeig had not
-industrialised the marts), so the offline path runs against seed **fixtures**
-in `fixtures/`. Two rows are *real* (Castellar de n'Hug, Berga — transcribed
-from `docs/data-sources.md` §8, verified 2026-06-01); the rest are synthetic
-placeholders so ranking/correlation have a distribution. Every answer's
-provenance carries `is_fixture: true` while fixtures are in use. See
-`fixtures/README.md`.
+**Data boundary:** Sondeig has now industrialised the marts, so `data/marts/`
+holds **real** `mart_municipi.parquet` / `mart_electoral.parquet`, and the
+runtime agent/API query those (provenance `is_fixture: false`). The seed
+**fixtures** in `fixtures/` are retained as the pinned input for the
+deterministic offline **gate** (the test suite + `evals/run_evals.py` build
+their warehouse with `use_fixtures=True`), so the gate exercises the router
+logic against a fixed distribution and is decoupled from how the real marts
+evolve. In the fixtures, two rows are *real* (Castellar de n'Hug, Berga —
+transcribed from `docs/data-sources.md` §8, verified 2026-06-01); the rest are
+synthetic placeholders so ranking/correlation have a distribution. See
+`fixtures/README.md` and "Pointing at the real marts" below.
 
 ---
 
@@ -270,11 +274,24 @@ network, no key.**
 
 ## Pointing at the real marts
 
-When Sondeig ships `data/marts/mart_municipi.parquet` (and `mart_electoral`),
-the warehouse prefers them automatically (real `*.parquet`/`*.csv` over the
-fixtures), and `is_fixture` flips to `false` in the provenance. Override the
-location explicitly with `Agent(marts_dir=Path(...))` if needed. Once the real
-marts land, delete the fixtures.
+Sondeig now ships `data/marts/mart_municipi.parquet` (and `mart_electoral`), and
+the warehouse **prefers them automatically** (real `*.parquet`/`*.csv` over the
+fixtures): `Agent()` / the API run against the real data and `is_fixture` is
+`false` in the provenance. Override the location explicitly with
+`Agent(marts_dir=Path(...))` if needed.
+
+**The fixtures are kept on purpose.** The deterministic offline gate (the test
+suite and `evals/run_evals.py`) pins them via `use_fixtures=True`, so the gate
+grades the **router logic against a known distribution** and stays green and
+stable no matter how the real marts change. That keeps a clean separation:
+
+| Caller | Data | Why |
+|---|---|---|
+| `Agent()` / API (offline or LLM) | real marts (fixtures only if absent) | honest answers; `is_fixture` tells you which |
+| Test suite + eval gate | **fixtures, always** (`use_fixtures=True`) | deterministic, decoupled from disk |
+
+So a question like "Quina població té Berga?" returns the real **17.539** at
+runtime, while the gate asserts against the fixture's **17.160** — by design.
 
 ---
 
@@ -282,9 +299,13 @@ marts land, delete the fixtures.
 
 - **`OPENROUTER_API_KEY`** (from Bea) to activate the live LLM path; then a live
   eval pass (`evals/compare_models.py`) to pick a model on quality-vs-cost.
-- **Real marts** from Sondeig to replace the seed fixtures (note: the current
-  `data/marts/mart_*_bergueda.parquet` are not yet picked up — the warehouse
-  expects `mart_municipi.parquet` / `mart_electoral.parquet`).
+- ~~**Real marts** from Sondeig to replace the seed fixtures.~~ **Done:**
+  Sondeig now ships `data/marts/mart_municipi.parquet` and
+  `mart_electoral.parquet` with real data, so the agent/API run against them
+  automatically (`is_fixture: false`). The fixtures are retained on purpose as
+  the **pinned input for the deterministic offline gate** (see "Pointing at the
+  real marts"), so the gate proves the router logic and stays stable as the
+  marts evolve.
 - Optional, when traffic warrants: a **persistent / shared cache** (Redis/KV)
   to survive restarts and span Render instances (the in-memory LRU is per-process).
 - Future (v1.1+, out of scope here): the Mirador UI, new metrics (Talaia),

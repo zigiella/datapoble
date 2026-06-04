@@ -45,6 +45,19 @@ SOURCES: dict[str, dict] = {
         "llicencia": "Dades Obertes de Catalunya",
         "kind": "socrata",
     },
+    # STUB (Sondeig, 2026-06-04): consum elèctric municipal per a l'indicador
+    # "població real vs padró". Verificat en viu: cdmun=ine5, 2013-2024, sector
+    # USOS DOMÈSTICS sobreviu al secret estadístic fins i tot a micromunicipis.
+    # El connector existeix (icaen_consum.py) però NO està cablejat a l'`all`
+    # fins que Talaia validi l'indicador. Vegeu docs/poblacio-real-fonts.md.
+    "icaen_consum": {
+        "organisme": "Institut Català d'Energia (ICAEN)",
+        "producte": "Consum d'energia elèctrica per municipis i sectors de Catalunya",
+        "dataset_id": "8idm-becu",
+        "url": f"{SOCRATA_DOMAIN}/resource/8idm-becu.json",
+        "llicencia": "Dades Obertes de Catalunya",
+        "kind": "socrata",
+    },
     "idescat_emex": {
         "organisme": "Idescat",
         "producte": "El municipi en xifres (EMEX) / Cens 2021",

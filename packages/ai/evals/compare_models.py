@@ -157,7 +157,10 @@ def main(argv: list[str] | None = None) -> int:
     pricing = _load_pricing(args.pricing)
     cases = load_cases()
     catalog = load_catalog()
-    warehouse = Warehouse(catalog)
+    # Same fixture distribution as the offline gate: `cases.yml` asserts against
+    # the seed values, so grade every model on the same known data (decoupled
+    # from whichever real marts are on disk).
+    warehouse = Warehouse(catalog, use_fixtures=True)
 
     reports: list[ModelReport] = []
     try:

@@ -1,6 +1,6 @@
 {{ config(
     post_hook="COPY (SELECT * FROM {{ this }} ORDER BY ine5) TO '"
-              ~ var('marts_root') ~ "/mart_electoral_bergueda.parquet' (FORMAT PARQUET)"
+              ~ var('marts_root') ~ "/mart_electoral.parquet' (FORMAT PARQUET)"
 ) }}
 -- mart_electoral · 1 fila per municipi (clau: ine5), columnes amb sufix de
 -- convocatòria (A20241 = Parlament 2024, A20211 = 2021). Berguedà.

@@ -13,7 +13,7 @@ from pathlib import Path
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
-MART = REPO / "data" / "marts" / "mart_municipi_bergueda.parquet"
+MART = REPO / "data" / "marts" / "mart_municipi.parquet"
 
 # Ancoratges de docs/data-sources.md (§8 "Hechos verificados clave").
 # (valor_esperat, tolerància_absoluta)
