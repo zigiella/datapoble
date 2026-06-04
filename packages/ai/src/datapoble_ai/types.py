@@ -28,6 +28,8 @@ class RefusalReason(str, Enum):
     UNKNOWN_MUNICIPALITY = "unknown_municipality"
     UNSUPPORTED_QUESTION = "unsupported_question"  # understood metric, can't map intent
     GUARDRAIL_VIOLATION = "guardrail_violation"    # write/raw/illegal SQL attempt
+    BUDGET_EXCEEDED = "budget_exceeded"            # AI spend ceiling reached; LLM paused
+    RATE_LIMITED = "rate_limited"                  # too many requests (per IP/user)
 
 
 @dataclass

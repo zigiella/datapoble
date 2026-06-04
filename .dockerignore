@@ -1,0 +1,35 @@
+# Build context hygiene for packages/ai/Dockerfile (built from the repo root).
+# The AI image only needs packages/ai, semantic/ and data/. Everything else —
+# other packages, node deps, caches, VCS — is excluded to keep the context and
+# the image small and the build fast. (This is NOT .gitignore; it only scopes
+# the Docker build context.)
+
+# Other agents' packages — not needed by the AI API image.
+packages/web/
+packages/design-system/
+packages/ingestion/
+packages/transform/
+packages/signals/
+
+# Python / tooling caches and build artefacts.
+**/__pycache__/
+**/*.pyc
+**/.pytest_cache/
+**/.ruff_cache/
+**/*.egg-info/
+**/.venv/
+**/.mypy_cache/
+
+# Node / frontend.
+**/node_modules/
+**/.svelte-kit/
+**/build/
+**/dist/
+
+# VCS, CI, docs, scratch.
+.git/
+.github/
+bitacora/
+docs/
+*.md
+!packages/ai/README.md

@@ -20,6 +20,8 @@ dependencies = [
 [project.optional-dependencies]
 # The LLM path. Inert (and unimported) until OPENROUTER_API_KEY is provided.
 openrouter = ["openai>=1.30"]
+# ASGI server for running the API in a container (Render / Docker).
+server = ["uvicorn>=0.29"]
 # Local dev / CI.
 dev = [
     "pytest>=8.0",

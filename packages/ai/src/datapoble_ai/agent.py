@@ -17,6 +17,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from .catalog import Catalog, load_catalog
+from .costcontrol import SpendGuard
 from .llm import LLMBackend, OfflineBackend, OpenRouterBackend
 from .types import Answer
 from .warehouse import Warehouse
@@ -30,21 +31,27 @@ class Agent:
                  backend: LLMBackend | None = None,
                  mode: str = "auto",
                  metrics_path: str | Path | None = None,
-                 marts_dir: Path | None = None):
+                 marts_dir: Path | None = None,
+                 spend_guard: SpendGuard | None = None):
         self.catalog = catalog or load_catalog(
             str(metrics_path) if metrics_path else None
         )
         self.warehouse = warehouse or Warehouse(self.catalog, marts_dir=marts_dir)
+        # The hard spend cap is only meaningful on the LLM path; the offline
+        # backend never spends, so it ignores it.
+        self.spend_guard = spend_guard
         self.backend = backend or self._select_backend(mode)
 
     def _select_backend(self, mode: str) -> LLMBackend:
         if mode == "offline":
             return OfflineBackend(self.catalog, self.warehouse)
         if mode == "openrouter":
-            return OpenRouterBackend(self.catalog, self.warehouse)
+            return OpenRouterBackend(self.catalog, self.warehouse,
+                                     spend_guard=self.spend_guard)
         # auto: prefer the LLM only if the secret is actually present.
         if mode == "auto" and OpenRouterBackend.available():
-            return OpenRouterBackend(self.catalog, self.warehouse)
+            return OpenRouterBackend(self.catalog, self.warehouse,
+                                     spend_guard=self.spend_guard)
         return OfflineBackend(self.catalog, self.warehouse)
 
     @property
