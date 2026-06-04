@@ -1,91 +1,62 @@
 /*
  * Estils base de l'app (Mirador).
  *
- * IMPORTANT — sistema de disseny: els TOKENS (color, tipografia, espaiat, radis,
- * cartografia, dataviz) són jurisdicció de Llegenda (packages/design-system).
- * Aquí NOMÉS hi ha valors PROVISIONALS perquè l'scaffold sigui usable. Quan
- * Llegenda publiqui els tokens (Style Dictionary -> CSS custom properties),
- * es reemplacen aquestes variables :root per la importació del paquet.
+ * FONT ÚNICA DE VERITAT = el design-system (packages/design-system, autora Llegenda).
+ * Aquí ja NO es defineixen tokens: s'importen els reals i només s'hi afegeix una capa
+ * mínima d'àlies d'APLICACIÓ (mides de layout que no són tokens) i el chrome propi.
  *
- * TODO(tokens · Llegenda): substituir aquest bloc :root per `@import` dels tokens
- * de design-system i esborrar els valors hardcodejats.
+ * Adopció (F2, Mirador):
+ *  1. tokens/tokens.css  → totes les variables --dp- (color, tipografia, espaiat, radis,
+ *     cartografia --dp-map-, paletes de dada exposure/div, tema clar/fosc).
+ *  2. sistema/sistema.css → biblioteca de components (.card .kpi-card .tbl .legend .prov…)
+ *     i el registre visual "Quota". Consumeix els tokens; no els redefineix.
+ *
+ * Es consumeixen per ruta relativa: el monorepo no té workspaces npm i el design-system
+ * no es publica com a paquet; Vite resol l'import del CSS i n'inclou els assets.
  */
 
+@import '../../design-system/tokens/tokens.css';
+@import '../../design-system/sistema/sistema.css';
+
 :root {
-	/* TODO(tokens): paleta provisional — la marca la fixa Llegenda. */
-	--dp-color-bg: #f4f1e8;
-	--dp-color-surface: #ffffff;
-	--dp-color-text: #1c2321;
-	--dp-color-muted: #5b6360;
-	--dp-color-accent: #1f6f54;
-	--dp-color-accent-weak: #e2efe9;
-	--dp-color-border: #d9d6cb;
-	--dp-color-warning: #8a5a00;
-
-	/* TODO(tokens): escala d'espaiat provisional. */
-	--dp-space-1: 0.25rem;
-	--dp-space-2: 0.5rem;
-	--dp-space-3: 0.75rem;
-	--dp-space-4: 1rem;
-	--dp-space-5: 1.5rem;
-	--dp-space-6: 2rem;
-	--dp-space-8: 3rem;
-
-	--dp-radius: 10px;
-	--dp-radius-sm: 6px;
-
-	/* TODO(tokens): tipografia provisional (sistema). */
-	--dp-font-sans:
-		system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-	--dp-font-mono: ui-monospace, 'SFMono-Regular', 'Menlo', 'Consolas', monospace;
-
-	--dp-maxw: 72rem;
+	/* Àlies d'APLICACIÓ (no són tokens de marca; són mides del layout de Mirador).
+	   Es deriven dels tokens reals on és possible. */
+	--dp-maxw: var(--maxw, 1160px); /* amplada de columna; --maxw ve de sistema.css */
+	--dp-radius: var(--dp-radius-lg); /* radi de targeta per defecte (reconciliat) */
+	/* Tint verd suau per a estats actius/seleccionats (Nav, MetricRow destacat).
+	   No hi ha token pla per a això: es deriva del forest de marca. */
+	--dp-accent-weak: color-mix(in srgb, var(--dp-forest) 12%, var(--dp-bg));
 }
 
+[data-theme='dark'] {
+	--dp-accent-weak: color-mix(in srgb, var(--dp-forest) 26%, var(--dp-bg));
+}
 @media (prefers-color-scheme: dark) {
-	/* TODO(tokens): mode fosc el defineix Llegenda; valors provisionals. */
-	:root {
-		--dp-color-bg: #14181a;
-		--dp-color-surface: #1d2224;
-		--dp-color-text: #eef0ee;
-		--dp-color-muted: #a7adaa;
-		--dp-color-accent: #4fbf97;
-		--dp-color-accent-weak: #1f2e2a;
-		--dp-color-border: #2c3336;
-		--dp-color-warning: #e0b057;
+	:root:not([data-theme='light']) {
+		--dp-accent-weak: color-mix(in srgb, var(--dp-forest) 26%, var(--dp-bg));
 	}
 }
 
-* {
-	box-sizing: border-box;
-}
-
-html,
-body {
-	margin: 0;
-	padding: 0;
-}
+/* sistema.css ja fixa box-sizing, body (font/color/bg) i a{color:--dp-link}.
+   Aquí només els retocs propis de l'app. */
 
 body {
-	background: var(--dp-color-bg);
-	color: var(--dp-color-text);
-	font-family: var(--dp-font-sans);
-	line-height: 1.5;
+	/* Inter per a UI/dada (sistema ja ho posa); reforcem antialiasing. */
 	-webkit-font-smoothing: antialiased;
 }
 
-a {
-	color: var(--dp-color-accent);
-}
-
+/* Titulars de producte amb el display de marca (Archivo) — identitat F2. */
 h1,
 h2,
 h3 {
-	line-height: 1.2;
+	font-family: var(--dp-font-display);
+	line-height: var(--dp-lh-tight);
+	letter-spacing: var(--dp-ls-tight);
 	margin: 0 0 var(--dp-space-3);
 }
 
-/* A11y: respecta la preferència de moviment reduït (requisit AA, F1). */
+/* A11y: respecta la preferència de moviment reduït (requisit AA, F1).
+   Els tokens de durada ja s'anul·len a tokens.css; aquí reforcem animacions/scroll. */
 @media (prefers-reduced-motion: reduce) {
 	*,
 	*::before,
@@ -102,13 +73,13 @@ h3 {
 	position: absolute;
 	left: var(--dp-space-2);
 	top: -3rem;
-	background: var(--dp-color-surface);
-	color: var(--dp-color-text);
+	background: var(--dp-surface);
+	color: var(--dp-text);
 	padding: var(--dp-space-2) var(--dp-space-3);
 	border-radius: var(--dp-radius-sm);
-	border: 1px solid var(--dp-color-border);
+	border: 1px solid var(--dp-border);
 	z-index: 100;
-	transition: top 0.15s ease;
+	transition: top var(--dp-dur-fast) var(--dp-ease-out);
 }
 
 .skip-link:focus {
@@ -116,6 +87,6 @@ h3 {
 }
 
 :focus-visible {
-	outline: 2px solid var(--dp-color-accent);
+	outline: 2px solid var(--dp-link);
 	outline-offset: 2px;
 }

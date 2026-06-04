@@ -53,7 +53,7 @@
 		flex-direction: column;
 		gap: var(--dp-space-4);
 		padding-bottom: var(--dp-space-4);
-		border-bottom: 1px solid var(--dp-color-border);
+		border-bottom: 1px solid var(--dp-border);
 	}
 
 	.shell__bar {
@@ -75,12 +75,12 @@
 		font-size: 1.35rem;
 		font-weight: 800;
 		letter-spacing: -0.01em;
-		color: var(--dp-color-accent);
+		color: var(--dp-forest);
 	}
 
 	.brand__tag {
 		font-size: 0.8rem;
-		color: var(--dp-color-muted);
+		color: var(--dp-text-muted);
 	}
 
 	.shell__main {
@@ -89,10 +89,10 @@
 	}
 
 	.shell__footer {
-		border-top: 1px solid var(--dp-color-border);
+		border-top: 1px solid var(--dp-border);
 		padding-top: var(--dp-space-4);
 		font-size: 0.78rem;
-		color: var(--dp-color-muted);
+		color: var(--dp-text-muted);
 	}
 
 	.shell__footer p {

@@ -40,7 +40,7 @@
 	.lang {
 		display: inline-flex;
 		gap: 2px;
-		border: 1px solid var(--dp-color-border);
+		border: 1px solid var(--dp-border);
 		border-radius: var(--dp-radius-sm);
 		overflow: hidden;
 	}
@@ -50,12 +50,12 @@
 		font-size: 0.8rem;
 		font-weight: 600;
 		text-decoration: none;
-		color: var(--dp-color-muted);
-		background: var(--dp-color-surface);
+		color: var(--dp-text-muted);
+		background: var(--dp-surface);
 	}
 
 	.lang__item.is-active {
-		background: var(--dp-color-accent);
+		background: var(--dp-forest);
 		color: #fff;
 	}
 </style>

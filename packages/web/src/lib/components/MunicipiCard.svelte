@@ -73,8 +73,8 @@
 
 <style>
 	.card {
-		background: var(--dp-color-surface);
-		border: 1px solid var(--dp-color-border);
+		background: var(--dp-surface);
+		border: 1px solid var(--dp-border);
 		border-radius: var(--dp-radius);
 		padding: var(--dp-space-5);
 		display: flex;
@@ -106,7 +106,7 @@
 
 	.card__rank-label {
 		font-size: 0.68rem;
-		color: var(--dp-color-muted);
+		color: var(--dp-text-muted);
 		text-transform: uppercase;
 		letter-spacing: 0.03em;
 	}
@@ -114,7 +114,7 @@
 	.card__rank-value {
 		font-size: 1.1rem;
 		font-weight: 700;
-		color: var(--dp-color-accent);
+		color: var(--dp-forest);
 		font-variant-numeric: tabular-nums;
 	}
 
@@ -122,7 +122,7 @@
 		grid-column: 1;
 		font-family: var(--dp-font-mono);
 		font-size: 0.72rem;
-		color: var(--dp-color-muted);
+		color: var(--dp-text-muted);
 	}
 
 	.card__metrics {
@@ -133,14 +133,14 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--dp-space-2);
-		border-left: 3px solid var(--dp-color-warning);
+		border-left: 3px solid var(--dp-warning);
 		padding-left: var(--dp-space-3);
 	}
 
 	.card__note {
 		margin: 0;
 		font-size: 0.78rem;
-		color: var(--dp-color-muted);
+		color: var(--dp-text-muted);
 		font-style: italic;
 	}
 </style>

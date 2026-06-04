@@ -24,7 +24,7 @@
 	.err__code {
 		font-size: 3rem;
 		font-weight: 800;
-		color: var(--dp-color-muted);
+		color: var(--dp-text-muted);
 		margin: 0;
 	}
 
@@ -33,7 +33,7 @@
 	}
 
 	.err__body {
-		color: var(--dp-color-muted);
+		color: var(--dp-text-muted);
 		margin: 0;
 	}
 </style>

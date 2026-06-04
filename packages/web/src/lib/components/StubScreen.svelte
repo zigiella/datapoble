@@ -42,8 +42,8 @@
 		font-size: 0.7rem;
 		text-transform: uppercase;
 		letter-spacing: 0.08em;
-		color: var(--dp-color-warning);
-		border: 1px solid var(--dp-color-warning);
+		color: var(--dp-warning);
+		border: 1px solid var(--dp-warning);
 		border-radius: var(--dp-radius-sm);
 		padding: 2px var(--dp-space-2);
 	}
@@ -54,7 +54,7 @@
 	}
 
 	.stub__body {
-		color: var(--dp-color-muted);
+		color: var(--dp-text-muted);
 		margin: 0;
 	}
 
