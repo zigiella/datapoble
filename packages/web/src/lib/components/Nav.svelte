@@ -58,19 +58,19 @@
 		padding: var(--dp-space-2) var(--dp-space-3);
 		border-radius: var(--dp-radius-sm);
 		text-decoration: none;
-		color: var(--dp-color-muted);
+		color: var(--dp-text-muted);
 		font-size: 0.9rem;
 		font-weight: 500;
 	}
 
 	.mainnav a:hover {
-		background: var(--dp-color-accent-weak);
-		color: var(--dp-color-text);
+		background: var(--dp-accent-weak);
+		color: var(--dp-text);
 	}
 
 	.mainnav a.is-active {
-		background: var(--dp-color-accent-weak);
-		color: var(--dp-color-accent);
+		background: var(--dp-accent-weak);
+		color: var(--dp-forest);
 		font-weight: 700;
 	}
 </style>

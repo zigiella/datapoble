@@ -41,8 +41,8 @@
 
 <style>
 	.kpi {
-		background: var(--dp-color-surface);
-		border: 1px solid var(--dp-color-border);
+		background: var(--dp-surface);
+		border: 1px solid var(--dp-border);
 		border-radius: var(--dp-radius);
 		padding: var(--dp-space-4);
 		display: flex;
@@ -60,17 +60,17 @@
 		font-size: 1.9rem;
 		font-weight: 700;
 		font-variant-numeric: tabular-nums;
-		color: var(--dp-color-accent);
+		color: var(--dp-forest);
 	}
 
 	.kpi__na {
-		color: var(--dp-color-muted);
+		color: var(--dp-text-muted);
 		font-weight: 600;
 	}
 
 	.kpi__unit {
 		font-size: 0.85rem;
-		color: var(--dp-color-muted);
+		color: var(--dp-text-muted);
 	}
 
 	.kpi__label {
@@ -80,7 +80,7 @@
 
 	.kpi__meta {
 		font-size: 0.72rem;
-		color: var(--dp-color-muted);
+		color: var(--dp-text-muted);
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--dp-space-1);

@@ -88,13 +88,13 @@
 
 	.resum__intro {
 		max-width: 52ch;
-		color: var(--dp-color-muted);
+		color: var(--dp-text-muted);
 		margin: 0;
 	}
 
 	.resum__hint {
 		max-width: 60ch;
-		color: var(--dp-color-muted);
+		color: var(--dp-text-muted);
 		font-size: 0.9rem;
 		margin: 0 0 var(--dp-space-4);
 	}
