@@ -35,9 +35,13 @@
   --dp-accent-600: #AC4B27;
   --dp-accent-700: #8A3C20;
 
-  /* ---- color · support (teal carena · verde bosque) ---- */
-  --dp-teal:       #2A7B7B;
-  --dp-teal-600:   #216262;
+  /* ---- color · support (verde bosque) ----
+     Dirección de arte (handoff): el verde de soporte de marca pasa de TEAL a FOREST.
+     Mantenemos el NOMBRE --dp-teal* para no romper el contrato que ya consume el sistema/Mirador,
+     pero el VALOR es forest (#2F6B4F). teal == forest == support (un único verde).
+     F2 (Style Dictionary): renombrar --dp-teal* → --dp-support-* (ver tokens.json $meta.renaming). */
+  --dp-teal:       #2F6B4F;
+  --dp-teal-600:   #255741;
   --dp-forest:     #2F6B4F;
   --dp-forest-600: #255741;
 
@@ -97,6 +101,7 @@
   /* ===========================================================================
      TIPOGRAFÍA (diacríticas catalanas + cifras tabulares)
      =========================================================================== */
+  --dp-font-display: 'Archivo', 'Inter', 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --dp-font-sans:  'Inter', 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --dp-font-serif: 'IBM Plex Serif', Georgia, 'Times New Roman', serif;
   --dp-font-mono:  'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Consolas, monospace;
@@ -104,10 +109,11 @@
   --dp-font-feature-tnum: 'tnum' 1, 'lnum' 1; /* cifras tabulares — usar en número */
   --dp-font-feature-frac: 'frac' 1;
 
-  --dp-fw-regular:  400;
-  --dp-fw-medium:   500;
-  --dp-fw-semibold: 600;
-  --dp-fw-bold:     700;
+  --dp-fw-regular:   400;
+  --dp-fw-medium:    500;
+  --dp-fw-semibold:  600;
+  --dp-fw-bold:      700;
+  --dp-fw-extrabold: 800;  /* solo display (Archivo): cifra grande / hero */
 
   --dp-fs-xs:   0.75rem;
   --dp-fs-sm:   0.875rem;

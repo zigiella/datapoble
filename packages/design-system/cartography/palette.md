@@ -1,7 +1,8 @@
 # Cartografia · Paleta coroplètica + classificació
 
 **Autora:** Llegenda (direcció d'art) · **Frontera dada↔disseny:** acordat amb Talaia
-**Data:** 2026-06-02 · **Estat:** proposta — pendent validació CVD i acord final de classificació amb Talaia
+**Data:** 2026-06-02 · **Actualitzat:** 2026-06-04 (decisions de classificació tancades per Talaia)
+**Estat:** classificació **acordada** · **pendent** validació CVD de la rampa seqüencial (§7)
 
 Aquest document és l'spec de **com es pinta el mapa** de l'observatori. Els hex viuen com a tokens
 a `tokens/tokens.json` → `color.scale.*` i a `tokens/tokens.css` (`--dp-exposure-*`, `--dp-div-*`).
@@ -98,25 +99,30 @@ basada en com són les dades reals del pilot (`docs/data-sources.md`):
 
 ### Recomanació per mètrica
 
-| Mètrica | Mètode recomanat | Per què |
+| Mètrica | Mètode acordat | Per què |
 |---|---|---|
-| **IETR (0-100)** | **Cuantils (5-6 classes)** | Ja és relatiu a la distribució; cuantils dóna lectura de rànquing robusta i omple la rampa. Casa amb `IETR_rank`. |
-| `kg_hab_any`, `pct_noprincipal`, `rtc_per_1000hab` | **Jenks (natural breaks), 5 classes** | Hi ha *gaps* naturals reals (l'outlier Castellar). Jenks respecta els salts i evita que un extrem aixafi la resta en una sola classe. |
+| **IETR (0-100)** i índexs normalitzats | **Cuantils, 5 classes** | Ja és relatiu a la distribució; cuantils dóna lectura de rànquing robusta i omple la rampa. Casa amb `IETR_rank`. |
+| `kg_hab_any`, `pct_noprincipal`, `rtc_per_1000hab` i magnituds crues | **Jenks (natural breaks), 5 classes** | Hi ha *gaps* naturals reals (l'outlier Castellar). Jenks respecta els salts i evita que un extrem aixafi la resta en una sola classe. |
 | Diverging (desviació) | **Talls simètrics al voltant de la mitjana** (no cuantils) | El neutre ha de coincidir amb el zero; cuantils desplaçaria el centre. |
 
-### Regla general acordada
-- **Per defecte: Jenks de 5 classes** per a magnituds amb cua (la majoria d'aquest pilot), perquè
-  els *natural breaks* són honestos amb un territori on hi ha extrems reals (el patró "dos extrems"
-  Castellar↔Berga del brief).
-- **Cuantils** per a índexs ja normalitzats (IETR) i quan l'objectiu és **comparar rànquing**.
-- **Mai** *equal interval* amb aquestes distribucions: l'outlier deixaria 28 municipis al primer color.
-- **Sempre** a la llegenda: nom del mètode + nº de classes + que els talls poden canviar si entren
-  més municipis (l'escala a Catalunya, ~947, recalcularà breaks → documentar-ho).
+### Regla general acordada (decisió de Talaia, 2026-06-04)
+- **Per defecte: 5 classes**, sigui quin sigui el mètode. És l'estàndard del sistema (llegibilitat en
+  municipi petit; la rampa de 5 trams és inequívoca a la pestanya i a la llegenda).
+- **Mètode per mètrica:**
+  - **Cuantils** per a **índexs normalitzats** (IETR i derivats): ja són relatius a la distribució i
+    l'objectiu és **comparar rànquing**.
+  - **Jenks (natural breaks)** per a **magnituds crues** (`kg_hab_any`, `pct_noprincipal`,
+    `rtc_per_1000hab`…): els *natural breaks* són honestos amb un territori d'extrems reals (el patró
+    "dos extrems" Castellar↔Berga del brief) i eviten que un *outlier* aixafi la resta.
+- **La rampa seqüencial conserva 6 stops** (`--dp-exposure-0..5`) com a **recurs de color** (escala
+  contínua, *swatches*, casos amb 6 trams si mai calen). El **render coroplètic per defecte usa 5
+  classes**: es prenen 5 mostres de la rampa, no els 6 stops literals.
+- **Mai** *equal interval* amb aquestes distribucions: l'outlier deixaria ~28 municipis al primer color.
+- **Sempre** a la llegenda: **mètode + nº de classes + font·data** de la mètrica (contracte: cap número
+  sense procedència). Indicar també que els talls poden canviar si entren més municipis (l'escala a
+  Catalunya, ~947, recalcularà *breaks* → documentar-ho).
 - **Coherència temporal:** si es comparen dos anys, **fixar els talls** del primer perquè el color
   sigui comparable entre mapes (si no, el mateix color voldria dir coses diferents).
-
-> Decisió oberta per a Talaia: confirmar **5 vs 6 classes** com a estàndard. Jo proposo **5** per a
-> Jenks (llegibilitat en municipi petit) i **6** quan s'usi la rampa completa en IETR.
 
 ---
 
@@ -137,7 +143,9 @@ basada en com són les dades reals del pilot (`docs/data-sources.md`):
 - [ ] **Validació CVD real** (protan/deuteran/tritan) de la rampa seqüencial amb simulador — ara és
       proposta basada en principis i en famílies de referència (ColorBrewer/Okabe-Ito), **no verificada**
       pas a pas en aquest encàrrec.
-- [ ] Confirmar amb Talaia **5 vs 6 classes** i el mètode per defecte definitiu.
+- [x] ~~Confirmar amb Talaia **5 vs 6 classes** i el mètode per defecte~~ → **tancat (2026-06-04):**
+      5 classes per defecte; cuantils per a índexs normalitzats, Jenks per a magnituds crues; la rampa
+      manté 6 stops com a recurs de color (render per defecte 5 classes). Veure §5.
 - [ ] Mockup del mapa del prototip re-acolorit amb aquesta paleta (DoD de la spec) — el munta Mirador
       amb aquests tokens; jo entrego l'spec i els hex.
 - [ ] Estil MapLibre complet (basemap apagat, etiquetes en català, relleu de muntanya) → F2.

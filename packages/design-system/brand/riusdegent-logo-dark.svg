@@ -1,32 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="340" height="96" viewBox="0 0 340 96" role="img" aria-label="riusdegent — Dades per entendre com s'habita el territori">
+<svg xmlns="http://www.w3.org/2000/svg" width="340" height="96" viewBox="0 0 340 96" role="img" aria-label="riusdegent — Dades per entendre com s&#39;habita el territori">
   <title>riusdegent — logotip principal (fosc)</title>
   <desc>Versió per a fons fosc. La marca conserva el teal de carena; el wordmark passa a neutral clar i el tagline a neutral mitjà, segons els àlies de tema fosc dels tokens. Pensat sobre dp-neutral-950 (#10141A).</desc>
 
   <g transform="translate(0,4)">
-    <line x1="48" y1="14" x2="48" y2="74" stroke="#E3A584" stroke-width="2.5" stroke-linecap="round"/>
-    <g fill="none" stroke="#3E9B9B" stroke-linecap="round">
-      <path d="M12 30 C 23 25, 35 25, 46 30" stroke-width="4"/>
-      <path d="M10 41 C 23 35, 35 35, 46 40" stroke-width="5.5"/>
-      <path d="M10 53 C 23 47, 35 47, 46 52" stroke-width="5.5"/>
-      <path d="M12 64 C 23 59, 35 59, 46 64" stroke-width="4"/>
+    <line x1="48" y1="14" x2="48" y2="74" stroke="#E3A584" stroke-width="2.5" stroke-linecap="round"></line>
+    <g fill="none" stroke="#4E9576" stroke-linecap="round">
+      <path d="M12 30 C 23 25, 35 25, 46 30" stroke-width="4"></path>
+      <path d="M10 41 C 23 35, 35 35, 46 40" stroke-width="5.5"></path>
+      <path d="M10 53 C 23 47, 35 47, 46 52" stroke-width="5.5"></path>
+      <path d="M12 64 C 23 59, 35 59, 46 64" stroke-width="4"></path>
     </g>
-    <g fill="none" stroke="#3E9B9B" stroke-linecap="round">
-      <path d="M50 30 C 60 25, 69 25, 77 29" stroke-width="2.75"/>
-      <path d="M50 40 C 61 35, 71 36, 82 33" stroke-width="3.25"/>
+    <g fill="none" stroke="#4E9576" stroke-linecap="round">
+      <path d="M50 30 C 60 25, 69 25, 77 29" stroke-width="2.75"></path>
+      <path d="M50 40 C 61 35, 71 36, 82 33" stroke-width="3.25"></path>
     </g>
-    <g fill="none" stroke="#3E9B9B" stroke-linecap="round" stroke-width="2.75" stroke-dasharray="0.1 7">
-      <path d="M50 52 C 61 47, 71 48, 84 45"/>
-      <path d="M50 64 C 60 59, 68 60, 78 58"/>
+    <g fill="none" stroke="#4E9576" stroke-linecap="round" stroke-width="2.75" stroke-dasharray="0.1 7">
+      <path d="M50 52 C 61 47, 71 48, 84 45"></path>
+      <path d="M50 64 C 60 59, 68 60, 78 58"></path>
     </g>
   </g>
 
-  <text x="104" y="50"
-        font-family="'Inter','Source Sans 3',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif"
-        font-size="34" font-weight="600" letter-spacing="-0.34">
-    <tspan fill="#F6F7F9">rius</tspan><tspan fill="#5FB6B6">degent</tspan>
+  <text x="104" y="50" font-family="&#39;Inter&#39;,&#39;Source Sans 3&#39;,system-ui,-apple-system,&#39;Segoe UI&#39;,Roboto,sans-serif" font-size="34" font-weight="600" letter-spacing="-0.34">
+    <tspan fill="#F6F7F9">rius</tspan><tspan fill="#6FB395">degent</tspan>
   </text>
 
-  <text x="105" y="72"
-        font-family="'Inter','Source Sans 3',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif"
-        font-size="11.5" font-weight="400" letter-spacing="0.1" fill="#BCC3CE">Dades per entendre com s'habita el territori</text>
+  <text x="105" y="72" font-family="&#39;Inter&#39;,&#39;Source Sans 3&#39;,system-ui,-apple-system,&#39;Segoe UI&#39;,Roboto,sans-serif" font-size="11.5" font-weight="400" letter-spacing="0.1" fill="#BCC3CE">Dades per entendre com s&#39;habita el territori</text>
 </svg>
