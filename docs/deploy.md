@@ -33,6 +33,18 @@ L'únic cost que creix amb l'ús són les trucades a OpenRouter. Disseny perquè
 4. **Tope de despesa dur** a OpenRouter (sostre de gasto).
 5. **Test de model/preu** amb els **evals de Brúixola** (mateixa infra): qualitat vs cost per model abans de fixar-ne un.
 
+> Implementat a `packages/ai` (mòdul `costcontrol.py`, tot *key-independent* i testejat offline). Detall operatiu i variables d'entorn al [README de packages/ai](../packages/ai/README.md#desplegament-a-render--control-de-cost).
+
+## L'API a Render (Brúixola)
+
+L'API FastAPI es desplega com a **contenidor** (`packages/ai/Dockerfile`):
+
+- **Imatge:** `python:3.11-slim`, usuari no-root, *healthcheck* a `/health`.
+- **Context de build = arrel del repo** (l'agent llegeix `semantic/metrics.yml` i `data/marts/`): `docker build -f packages/ai/Dockerfile -t datapoble-ai .`.
+- **Port:** escolta a `$PORT` (Render l'injecta; per defecte 8000 en local).
+- **Arrencada:** `python -m datapoble_ai.api` (uvicorn a `0.0.0.0:$PORT`).
+- **Config a Render** (Environment): `OPENROUTER_API_KEY` (**secret**), i opcionalment els topalls `AI_DAILY_USD`, `AI_MONTHLY_USD`, `AI_RATE_CAPACITY`, `AI_RATE_REFILL_PER_SEC`, `AI_CACHE_MAXSIZE`, `OPENROUTER_MODEL`. Sense la key, l'API funciona en mode **offline** (determinista) — útil per a un primer desplegament.
+
 ## Secrets
 
 `OPENROUTER_API_KEY` → **Render + GitHub Actions**, mai al repo (ja a `.gitignore`). Per cablejar el deploy calen: **token API de Cloudflare**, **servei a Render**, **DNS a Dinahosting**. (Els aporta Bea/IT.)

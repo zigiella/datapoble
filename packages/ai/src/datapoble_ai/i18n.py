@@ -68,6 +68,16 @@ PHRASES: dict[str, dict[str, str]] = {
             "Petició bloquejada pels guardarraïls: només lectura, només "
             "mètriques del contracte, mai sobre dades crues (raw). Motiu: {why}"
         ),
+        "refusal_budget_exceeded": (
+            "Avui hem arribat al límit de consultes d'IA. Les consultes "
+            "directes sobre el catàleg segueixen funcionant; torna-ho a provar "
+            "demà per a les preguntes en llenguatge lliure. Gràcies per la "
+            "paciència!"
+        ),
+        "refusal_rate_limited": (
+            "Has fet moltes consultes seguides. Espera uns segons i torna-ho a "
+            "provar, si us plau. Gràcies!"
+        ),
         "note_prefix": "Nota: ",
         "provenance_line": (
             "Font: {source} ({date}). Fórmula: {formula}."
@@ -106,6 +116,16 @@ PHRASES: dict[str, dict[str, str]] = {
         "refusal_guardrail": (
             "Petición bloqueada por los guardarraíles: solo lectura, solo "
             "métricas del contrato, nunca sobre datos crudos (raw). Motivo: {why}"
+        ),
+        "refusal_budget_exceeded": (
+            "Hoy hemos alcanzado el límite de consultas de IA. Las consultas "
+            "directas sobre el catálogo siguen funcionando; vuelve a intentarlo "
+            "mañana para las preguntas en lenguaje libre. ¡Gracias por la "
+            "paciencia!"
+        ),
+        "refusal_rate_limited": (
+            "Has hecho muchas consultas seguidas. Espera unos segundos y "
+            "vuelve a intentarlo, por favor. ¡Gracias!"
         ),
         "note_prefix": "Nota: ",
         "provenance_line": (

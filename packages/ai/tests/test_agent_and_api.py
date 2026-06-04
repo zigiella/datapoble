@@ -23,12 +23,24 @@ def test_auto_mode_selects_openrouter_when_key_present(monkeypatch):
 
 
 def test_openrouter_is_inert_without_key(monkeypatch):
-    # Scaffolded but must not pretend to work: asking without a key raises a
-    # clear, actionable error (never a silent fake answer).
+    # Scaffolded but must not pretend to work: a question that genuinely needs
+    # the LLM (free text the deterministic router can't map to a metric) raises
+    # a clear, actionable error without a key (never a silent fake answer).
     monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
     with Agent(mode="openrouter") as a:
         with pytest.raises(RuntimeError, match="OPENROUTER_API_KEY"):
-            a.ask("Quina població té Berga?", locale="ca")
+            a.ask("parla'm del paisatge i la vida al poble", locale="ca")
+
+
+def test_openrouter_resolves_deterministically_without_key(monkeypatch):
+    # Deterministic-first: a question the router can answer must NOT touch the
+    # LLM (so it costs nothing and needs no key) even in openrouter mode.
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+    with Agent(mode="openrouter") as a:
+        ans = a.ask("Quina població té Berga?", locale="ca")
+        assert ans.is_answer
+        assert ans.metric_key == "poblacio"
+        assert a.backend.last_call_used_llm is False
 
 
 def test_answer_serializes_to_dict(agent):

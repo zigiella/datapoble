@@ -13,6 +13,13 @@ from __future__ import annotations
 
 from .agent import Agent
 from .catalog import Catalog, Metric, Source, load_catalog
+from .costcontrol import (
+    CostControl,
+    QuestionCache,
+    RateLimiter,
+    SpendGuard,
+    normalize_question,
+)
 from .llm import LLMBackend, OfflineBackend, OpenRouterBackend
 from .types import Answer, AnswerKind, Provenance, RefusalReason
 from .warehouse import Warehouse, WarehouseError
@@ -34,4 +41,9 @@ __all__ = [
     "AnswerKind",
     "Provenance",
     "RefusalReason",
+    "CostControl",
+    "QuestionCache",
+    "RateLimiter",
+    "SpendGuard",
+    "normalize_question",
 ]

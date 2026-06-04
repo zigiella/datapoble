@@ -97,11 +97,14 @@ backend.
 **Scaffold / inert until the secret arrives:**
 - `OpenRouterBackend` is fully wired (system prompt, enum-constrained tool
   schema, dispatch back into the guarded `Router`) but **does not run without
-  `OPENROUTER_API_KEY`** — calling it without the key raises a clear
-  `RuntimeError` instead of faking an answer. The `openai` client is an
-  *optional* dependency, imported lazily only on that path.
-- **Caching** of LLM responses is noted in the spec but not implemented yet
-  (the offline path is deterministic, so it needs none).
+  `OPENROUTER_API_KEY`** — calling free text it can't resolve deterministically
+  without the key raises a clear `RuntimeError` instead of faking an answer. The
+  `openai` client is an *optional* dependency, imported lazily only on that path.
+
+The **cost controls** (deterministic-first, question cache, rate-limit, hard
+spend cap) and the **multi-model eval script** described below are implemented
+and tested **offline** (no key); only the *live* LLM calls they gate need the
+secret.
 
 **Data boundary:** at scaffold time `data/marts/` was empty (Sondeig had not
 industrialised the marts), so the offline path runs against seed **fixtures**
@@ -174,6 +177,97 @@ they transparently fall back to the offline backend. Force a backend with
 
 ---
 
+## Desplegament a Render + control de cost
+
+The API ships as a container (`Dockerfile`) for **Render** (EU region), and the
+LLM bill is kept bounded by four layers — **all key-independent and tested
+offline** (`src/datapoble_ai/costcontrol.py`):
+
+### Cost control (why the LLM is cheap)
+
+1. **Deterministic-first.** Even in `openrouter` mode the agent runs the
+   keyword router *first*. A question it can answer (lookup / ranking /
+   correlation) or precisely refuse (planned metric, unknown municipality) is
+   served at **zero cost** — the LLM is called **only** for genuinely free text
+   the router can't map to a metric. This is the biggest lever: most real
+   questions never reach OpenRouter.
+2. **Question cache.** Normalized `(question, locale)` → answer, in an in-memory
+   LRU. An identical repeat question is free. *Persistence note:* Render's
+   filesystem is ephemeral and the service may scale to several instances, so a
+   cache that survives restarts would need an external store (Redis / KV). The
+   in-process LRU is the cheap 80% and never lies — cached answers keep their
+   full provenance.
+3. **Rate-limit** per IP/user (token bucket). Over budget → HTTP **429** with a
+   friendly message in the active locale (`Retry-After` header set).
+4. **Hard spend cap.** A `SpendGuard` tracks *estimated* OpenRouter spend per
+   UTC day and month against a ceiling. Once crossed, the agent **stops calling
+   the LLM** and returns a graceful "daily AI limit reached" message — the
+   deterministic answers keep working, because they never touch the guard.
+
+All knobs are env vars (safe defaults; an unconfigured prod deploy fails
+*cheap*, not surprising):
+
+| Env var | Default | Meaning |
+|---|---|---|
+| `AI_CACHE_MAXSIZE` | `512` | LRU size; `0` disables the cache |
+| `AI_RATE_CAPACITY` | `30` | token-bucket burst; `0` disables limiting |
+| `AI_RATE_REFILL_PER_SEC` | `0.5` | sustained rate (≈30/min) |
+| `AI_DAILY_USD` | `1.0` | daily spend ceiling; `0` = unbounded |
+| `AI_MONTHLY_USD` | `20.0` | monthly spend ceiling; `0` = unbounded |
+| `AI_USD_PER_CALL` | `0.01` | conservative per-call estimate (fallback) |
+| `OPENROUTER_MODEL` | `anthropic/claude-3.5-sonnet` | model id |
+
+`GET /health` reports the live cost-control state (cache hits/size, spend
+to-date vs caps, rate-limit config).
+
+### The container
+
+Build **from the repo root** (the agent reads `semantic/metrics.yml` and
+`data/marts/`, both outside this package):
+
+```bash
+docker build -f packages/ai/Dockerfile -t datapoble-ai .
+docker run --rm -p 8000:8000 \
+    -e OPENROUTER_API_KEY=sk-... \        # the SECRET — runtime only, never baked in
+    -e AI_DAILY_USD=1.0 -e AI_MONTHLY_USD=20.0 \
+    datapoble-ai
+# http://127.0.0.1:8000/health
+```
+
+- `python:3.11-slim`, non-root user, `HEALTHCHECK` on `/health`.
+- Listens on `$PORT` (Render injects it; defaults to 8000 locally).
+- Start command: `python -m datapoble_ai.api` (uvicorn on `0.0.0.0:$PORT`).
+
+**On Render:** create a *Web Service* from this repo, Docker runtime, Dockerfile
+path `packages/ai/Dockerfile`, region EU. Set `OPENROUTER_API_KEY` as a secret
+and any caps above as plain env vars. Health check path `/health`. Without the
+key the service still runs in **offline** mode (deterministic), which is a fine
+first deploy.
+
+---
+
+## Multi-model evals (quality vs cost) — `evals/compare_models.py`
+
+A **separate, key-dependent** script (NOT part of CI) that runs the same
+`cases.yml` set against several OpenRouter models and reports **pass-rate vs
+estimated USD per model**, so a model is chosen on evidence:
+
+```bash
+export OPENROUTER_API_KEY=sk-...                    # required; makes real paid calls
+PYTHONPATH=src python evals/compare_models.py
+PYTHONPATH=src python evals/compare_models.py \
+    --models anthropic/claude-3-haiku openai/gpt-4o-mini google/gemini-flash-1.5 --json
+PYTHONPATH=src python evals/compare_models.py --pricing prices.json   # override the price table
+```
+
+It forces every case through the model (deterministic-first off) so it grades
+the *LLM*, not the offline router. Per-model prices live in
+`src/datapoble_ai/pricing.py` (reference values, overridable). **The offline CI
+gate (`run_evals.py` / `tests/test_evals.py`) is untouched: deterministic, no
+network, no key.**
+
+---
+
 ## Pointing at the real marts
 
 When Sondeig ships `data/marts/mart_municipi.parquet` (and `mart_electoral`),
@@ -186,9 +280,12 @@ marts land, delete the fixtures.
 
 ## Pending
 
-- **`OPENROUTER_API_KEY`** (from Bea) to activate the LLM path; then a live
-  eval pass against the model + response caching.
-- **Real marts** from Sondeig to replace the seed fixtures.
-- CI job for the evals (added to `.github/workflows/ci.yml` in this PR).
+- **`OPENROUTER_API_KEY`** (from Bea) to activate the live LLM path; then a live
+  eval pass (`evals/compare_models.py`) to pick a model on quality-vs-cost.
+- **Real marts** from Sondeig to replace the seed fixtures (note: the current
+  `data/marts/mart_*_bergueda.parquet` are not yet picked up — the warehouse
+  expects `mart_municipi.parquet` / `mart_electoral.parquet`).
+- Optional, when traffic warrants: a **persistent / shared cache** (Redis/KV)
+  to survive restarts and span Render instances (the in-memory LRU is per-process).
 - Future (v1.1+, out of scope here): the Mirador UI, new metrics (Talaia),
   RAG over long docs.

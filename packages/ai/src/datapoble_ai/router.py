@@ -484,6 +484,10 @@ class Router:
             text = t(locale, "refusal_unknown_municipality", name=name or "?")
         elif reason == RefusalReason.GUARDRAIL_VIOLATION:
             text = t(locale, "refusal_guardrail", why=detail or "—")
+        elif reason == RefusalReason.BUDGET_EXCEEDED:
+            text = t(locale, "refusal_budget_exceeded")
+        elif reason == RefusalReason.RATE_LIMITED:
+            text = t(locale, "refusal_rate_limited")
         else:  # UNSUPPORTED_QUESTION
             m = self.match_metric(normalize(question), locale)
             text = t(locale, "refusal_unsupported",

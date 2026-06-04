@@ -25,6 +25,8 @@ import os
 from abc import ABC, abstractmethod
 
 from .catalog import Catalog, normalize
+from .costcontrol import SpendGuard
+from .pricing import estimate_call_usd
 from .router import Intent, Router
 from .types import Answer, RefusalReason
 from .warehouse import Warehouse
@@ -32,6 +34,14 @@ from .warehouse import Warehouse
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 # A model that is strong in ca/es by default; overridable via env/ctor.
 DEFAULT_MODEL = "anthropic/claude-3.5-sonnet"
+
+# Refusals the deterministic router emits when it simply could not *find* a
+# metric / map an intent. Only these escalate to the LLM (which may understand
+# phrasing the keyword router missed). A precise refusal (planned metric,
+# unknown municipality) is already correct and must NOT cost an LLM call.
+_ESCALATABLE_REFUSALS = frozenset(
+    {RefusalReason.OUT_OF_CATALOG, RefusalReason.UNSUPPORTED_QUESTION}
+)
 
 
 class LLMBackend(ABC):
@@ -150,19 +160,32 @@ class OpenRouterBackend(LLMBackend):
 
     def __init__(self, catalog: Catalog, warehouse: Warehouse,
                  api_key: str | None = None, model: str | None = None,
-                 base_url: str = OPENROUTER_BASE_URL):
+                 base_url: str = OPENROUTER_BASE_URL,
+                 spend_guard: SpendGuard | None = None,
+                 deterministic_first: bool = True):
         self.catalog = catalog
         self.warehouse = warehouse
         self.router = Router(catalog, warehouse)
         self.api_key = api_key or os.environ.get("OPENROUTER_API_KEY")
         self.model = model or os.environ.get("OPENROUTER_MODEL", DEFAULT_MODEL)
         self.base_url = base_url
+        # Cost levers (all optional; offline-testable). The spend guard, when
+        # present, gates every would-be LLM call against a hard ceiling.
+        self.spend_guard = spend_guard
+        self.deterministic_first = deterministic_first
         self._client = None  # lazily constructed on first call
+        # Tracks whether the *last* ask actually hit the network (for the API's
+        # cache decision: only LLM-backed answers are worth caching).
+        self.last_call_used_llm = False
 
     @classmethod
     def available(cls) -> bool:
         """True if a key is present in the environment (no key in repo, ever)."""
         return bool(os.environ.get("OPENROUTER_API_KEY"))
+
+    def _estimated_call_usd(self) -> float | None:
+        """Best per-call cost estimate for the configured model (or None)."""
+        return estimate_call_usd(self.model)
 
     def _ensure_client(self):
         if self._client is not None:
@@ -184,6 +207,33 @@ class OpenRouterBackend(LLMBackend):
 
     def ask(self, question: str, locale: str | None = None) -> Answer:
         loc = self.catalog.resolve_locale(locale)
+        self.last_call_used_llm = False
+
+        # --- (1) deterministic-first: keep free LLM-free answers free ---------
+        # The keyword router resolves most real questions (lookup / ranking /
+        # correlation) and emits *precise* refusals (planned metric, unknown
+        # municipality) at zero cost. Only when it can't even find a metric do
+        # we pay for the LLM, which may parse phrasing the router missed.
+        if self.deterministic_first:
+            parsed = self.router.parse(question, loc)
+            if isinstance(parsed, RefusalReason):
+                if parsed not in _ESCALATABLE_REFUSALS:
+                    return self.router._refuse(question, loc, parsed, self.name)
+                # else: fall through to the LLM (genuinely unmatched text)
+            else:
+                # A confident structured interpretation — execute it offline.
+                return self.router.execute_intent(question, loc, parsed, self.name)
+
+        # --- (2) hard spend cap: stop before the network if over the ceiling --
+        if self.spend_guard is not None and not self.spend_guard.can_spend(
+            self._estimated_call_usd()
+        ):
+            # Budget exhausted: don't call the LLM. Refuse gracefully; the
+            # deterministic path above still served everything it could.
+            return self.router._refuse(
+                question, loc, RefusalReason.BUDGET_EXCEEDED, self.name)
+
+        # --- (3) the actual (paid) LLM call ----------------------------------
         self._ensure_client()
         tools = [
             _intent_tool_schema(self.catalog, loc),
@@ -199,7 +249,24 @@ class OpenRouterBackend(LLMBackend):
             tool_choice="required",
             temperature=0,
         )
+        self.last_call_used_llm = True  # pragma: no cover - needs key
+        self._record_spend(resp)  # pragma: no cover - needs key
         return self._dispatch(question, loc, resp)  # pragma: no cover - needs key
+
+    def _record_spend(self, resp) -> None:  # pragma: no cover - needs key
+        """Account the call's cost against the spend guard (actual if known)."""
+        if self.spend_guard is None:
+            return
+        cost = self._estimated_call_usd()
+        usage = getattr(resp, "usage", None)
+        if usage is not None:
+            pt = getattr(usage, "prompt_tokens", None)
+            ct = getattr(usage, "completion_tokens", None)
+            if pt is not None and ct is not None:
+                actual = estimate_call_usd(self.model, pt, ct)
+                if actual is not None:
+                    cost = actual
+        self.spend_guard.record(cost)
 
     def _dispatch(self, question: str, locale: str, resp) -> Answer:  # pragma: no cover - needs key
         """Turn the model's tool call into a guarded Router execution."""
