@@ -1,11 +1,16 @@
 # Fixtures — seed marts for the offline path
 
-These CSVs are a **stand-in** for the real `data/marts/*` that Sondeig
-industrialises (the pipeline). At the time this package was scaffolded,
-`data/marts/` was empty, so the offline/deterministic agent needs a small
-warehouse to actually run SQL against and return numbers. When the real marts
-land, point the warehouse at them and delete these (see
-`packages/ai/README.md`, "Pointing at the real marts").
+These CSVs seed a small warehouse so the deterministic agent can run SQL and
+return numbers. At scaffold time they stood in for the real `data/marts/*`
+(empty then). **Now the real marts exist** (Sondeig's pipeline ships
+`mart_municipi.parquet` / `mart_electoral.parquet`), and the runtime
+agent/API prefer them automatically.
+
+These fixtures are **kept on purpose, not deleted**: the deterministic offline
+**gate** (the test suite and `evals/run_evals.py`) pins them via
+`use_fixtures=True`, so it grades the router logic against a fixed, known
+distribution and stays green and stable independently of how the real marts
+evolve. See `packages/ai/README.md`, "Pointing at the real marts".
 
 ## Honesty boundary — what is real vs synthetic
 

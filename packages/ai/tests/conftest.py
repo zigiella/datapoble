@@ -22,14 +22,21 @@ def catalog() -> Catalog:
 
 @pytest.fixture()
 def warehouse(catalog) -> Warehouse:
-    wh = Warehouse(catalog)
+    # Pin the seed fixtures: the suite asserts against the known fixture
+    # distribution, so it must not depend on whether the real `data/marts`
+    # happen to be present (they are, once Sondeig's pipeline runs).
+    wh = Warehouse(catalog, use_fixtures=True)
     yield wh
     wh.close()
 
 
 @pytest.fixture()
 def agent() -> Agent:
-    """Offline agent (no key) — the default test subject."""
-    a = Agent(mode="offline")
+    """Offline agent (no key) — the default test subject.
+
+    Forces the seed fixtures so the deterministic gate proves the router logic
+    and stays stable regardless of the real marts on disk.
+    """
+    a = Agent(mode="offline", use_fixtures=True)
     yield a
     a.close()

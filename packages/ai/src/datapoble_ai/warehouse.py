@@ -69,12 +69,21 @@ class Warehouse:
         Directory of real mart files (``*.parquet``/``*.csv``). If a required
         table is missing there, the matching fixture CSV is used instead, and
         the table name is recorded in :attr:`using_fixture`.
+    use_fixtures:
+        Force the seed fixtures and ignore ``marts_dir`` entirely. This is for
+        the **deterministic offline gate** (tests / ``run_evals.py``): it pins
+        the warehouse to the known fixture distribution so the gate proves the
+        router *logic* and stays green and stable regardless of whether the real
+        marts happen to be on disk. Runtime callers leave it ``False`` so the
+        agent/API keep preferring the real marts.
     """
 
-    def __init__(self, catalog: Catalog, marts_dir: Path | None = None):
+    def __init__(self, catalog: Catalog, marts_dir: Path | None = None,
+                 use_fixtures: bool = False):
         self.catalog = catalog
         self.marts_dir = marts_dir or default_marts_dir(catalog)
         self.fixtures = fixtures_dir()
+        self.use_fixtures = use_fixtures
         self.allowed_tables: set[str] = set(catalog.tables())
         self.using_fixture: dict[str, bool] = {}
         # Build a single in-memory DB, register each mart as a real table, then
@@ -85,11 +94,17 @@ class Warehouse:
 
     # --- setup ---
     def _source_for(self, table: str) -> tuple[Path, bool]:
-        """Return (path, is_fixture) for a mart table, preferring real data."""
-        for ext in ("parquet", "csv"):
-            candidate = self.marts_dir / f"{table}.{ext}"
-            if candidate.is_file():
-                return candidate, False
+        """Return (path, is_fixture) for a mart table, preferring real data.
+
+        When :attr:`use_fixtures` is set the real marts are skipped entirely and
+        only the seed fixture is considered, so the offline gate is decoupled
+        from whatever happens to live in ``data/marts``.
+        """
+        if not self.use_fixtures:
+            for ext in ("parquet", "csv"):
+                candidate = self.marts_dir / f"{table}.{ext}"
+                if candidate.is_file():
+                    return candidate, False
         fixture = self.fixtures / f"{table}.csv"
         if fixture.is_file():
             return fixture, True

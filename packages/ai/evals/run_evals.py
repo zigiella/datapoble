@@ -104,8 +104,10 @@ def check_case(agent: Agent, case: dict) -> CaseResult:
 
 def run(cases: list[dict] | None = None) -> list[CaseResult]:
     cases = cases if cases is not None else load_cases()
-    # Force offline so the eval gate never depends on a key or the network.
-    with Agent(mode="offline") as agent:
+    # Force offline (no key / no network) AND pin the seed fixtures, so the gate
+    # is deterministic and decoupled from whichever marts are on disk: it grades
+    # the router logic against a known distribution, not the live data.
+    with Agent(mode="offline", use_fixtures=True) as agent:
         return [check_case(agent, c) for c in cases]
 
 
