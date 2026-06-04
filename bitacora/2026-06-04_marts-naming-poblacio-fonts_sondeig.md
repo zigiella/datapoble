@@ -40,6 +40,36 @@ Canvis (cantó net, sense tocar `packages/ai`):
 > aquella nota a `packages/ai/README.md`, però és el seu fitxer — ho deixo a la teva
 > validació amb Brúixola, no l'he editat.
 
+### ⚠️ BLOQUEIG / HANDOFF a Brúixola — el job `ai evals (offline)` queda VERMELL (esperat)
+En arreglar el nom dels marts, el warehouse de `packages/ai` **ja troba les dades
+reals** (era l'objectiu). Conseqüència: **3 tests de Brúixola que assumien el
+*fallback* a fixtures fallen** perquè ara reben dades reals (correctes):
+- `test_router.py::test_lookup_returns_verified_value_ca` → assert `is_fixture is True` (ara `False`).
+- `test_router.py::test_ranking_min_direction` → min rtc_total: fixtures deien "La Nou de Berguedà"; real és **Fígols**.
+- `test_evals.py::ca_poblacio_lookup` → espera Berga "17.160" (placeholder de fixtures); real és **17.539** (cens real).
+
+**Això NO és una regressió: és exactament el que la pròpia doc de Brúixola
+preveu.** `packages/ai/README.md` §"Pointing at the real marts": *"When Sondeig
+ships `data/marts/mart_municipi.parquet`… the warehouse prefers them automatically
+and `is_fixture` flips to `false`. **Once the real marts land, delete the
+fixtures.**"* I `packages/ai/fixtures/README.md`: *"When the real marts land, point
+the warehouse at them and **delete these**."* Aquest PR és **el "ship" que dispara
+aquell pas**.
+
+**Decisió (jurisdicció):** NO toco `packages/ai` (ni loader, ni tests, ni
+fixtures) — la disciplina diu "canvi mínim al loader → no el facis, documenta-ho".
+Aquí ni tan sols és el loader (és correcte): és el test suite/fixtures de
+Brúixola, encara més clarament seu. **No esborro els parquets** tampoc, perquè el
+Dockerfile (`COPY data/`) i el deploy els volen reals (línia 44: *"Real marts when
+present"*) i `data/marts/*.parquet` està **versionat a propòsit** (no gitignored).
+
+**Acció requerida de Brúixola (petita, seva):** actualitzar els 3 asserts als
+valors reals + canviar `is_fixture` esperat a `False` (o injectar `marts_dir=fixtures`
+al fixture de test offline si volen seguir provant contra fixtures), i esborrar les
+fixtures quan toqui. Fins llavors el job `ai evals` queda vermell **per disseny**.
+Talaia: cal el vist-i-plau de Brúixola abans de mergear, o mergear coordinat amb el
+seu PR de neteja de fixtures.
+
 ### TASCA B · inventari de fonts població real vs padró
 Lliurable: **`docs/poblacio-real-fonts.md`** — taula per proxy (disponible? ·
 granularitat ine5? · endpoint · cobertura/latència · llicència · com mapeja a
