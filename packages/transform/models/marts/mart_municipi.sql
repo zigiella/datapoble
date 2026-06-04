@@ -1,6 +1,6 @@
 {{ config(
     post_hook="COPY (SELECT * FROM {{ this }} ORDER BY ine5) TO '"
-              ~ var('marts_root') ~ "/mart_municipi_bergueda.parquet' (FORMAT PARQUET)"
+              ~ var('marts_root') ~ "/mart_municipi.parquet' (FORMAT PARQUET)"
 ) }}
 -- mart_municipi · 1 fila per municipi (clau: ine5).
 -- Columnes segons el contracte (semantic/metrics.yml, table: mart_municipi).

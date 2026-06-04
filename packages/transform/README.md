@@ -19,8 +19,10 @@ data/raw/ (parquet, el genera packages/ingestion)
    ▼ marts/          mart_municipi · mart_electoral              (table + export parquet)
 ```
 
-Les marts exporten automàticament a `data/marts/mart_municipi_bergueda.parquet` i
-`data/marts/mart_electoral_bergueda.parquet` (via post-hook `COPY`).
+Les marts exporten automàticament a `data/marts/mart_municipi.parquet` i
+`data/marts/mart_electoral.parquet` (via post-hook `COPY`). El nom és **canònic**
+(sense sufix de pilot): la mart es clava per `ine5` i escala a Catalunya canviant
+el filtre `comarca`, no el nom. És el nom que espera el warehouse de `packages/ai`.
 
 ## Com executar
 
