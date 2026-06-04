@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="ca" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>riusdegent · Sistema — Components</title>
+<link rel="icon" type="image/svg+xml" href="../../brand/favicon.svg">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=Archivo:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../sistema.css">
+</head>
+<body>
+
+<header class="ds-top">
+  <a class="ds-top__brand" href="Fonaments.html" aria-label="riusdegent">
+    <svg width="26" height="26" viewBox="0 0 96 96" aria-hidden="true">
+      <line x1="48" y1="14" x2="48" y2="82" stroke="#C75D34" stroke-width="3" stroke-linecap="round"/>
+      <g fill="none" stroke="#2F6B4F" stroke-linecap="round">
+        <path d="M12 32 C 22 27, 34 27, 46 32" stroke-width="5"/>
+        <path d="M10 47 C 22 41, 34 41, 46 46" stroke-width="6.5"/>
+        <path d="M12 62 C 22 56, 34 56, 46 62" stroke-width="5"/>
+      </g>
+      <g fill="none" stroke="#2F6B4F" stroke-linecap="round">
+        <path d="M50 32 C 60 27, 70 27, 78 31" stroke-width="3.5"/>
+      </g>
+      <g fill="none" stroke="#2F6B4F" stroke-linecap="round" stroke-width="3.5" stroke-dasharray="0.1 8">
+        <path d="M50 47 C 62 41, 72 42, 84 39"/>
+        <path d="M50 62 C 60 57, 68 58, 80 56"/>
+      </g>
+    </svg>
+    <span class="wm">rius<b>degent</b></span>
+  </a>
+  <span class="ds-tag">Sistema · v0.2 · Quota</span>
+  <nav class="ds-nav">
+    <a href="Fonaments.html">Fonaments</a>
+    <a href="Components.html" class="on">Components</a>
+    <a href="Pantalles.html">Pantalles</a>
+  </nav>
+  <div class="ds-top__right">
+    <div class="themer" role="group" aria-label="Tema">
+      <button data-theme="light">Clar</button>
+      <button data-theme="dark">Fosc</button>
+    </div>
+  </div>
+</header>
+
+<section class="ds-hero">
+  <svg class="ds-hero__field" viewBox="0 0 1000 360" preserveAspectRatio="none" aria-hidden="true"></svg>
+  <div class="ds-hero__in">
+    <p class="ds-eyebrow"><span>Sistema de disseny</span><b>· Components</b></p>
+    <h1>Peces que parlen de <span class="q">dada honesta</span>.</h1>
+    <p>Tots els components respiren el contracte semàntic: cap número sense procedència, xifres tabulars sempre, i estats que no depenen només del color. Commuta el tema a dalt — tot deriva dels àlies <span class="mono">--dp-*</span>.</p>
+  </div>
+</section>
+
+<main class="ds-main">
+
+  <!-- ===== BOTONS ===== -->
+  <section class="ds-sec" id="botons">
+    <div class="ds-sec__hd"><span class="ref">B · 01</span><h2>Botons</h2></div>
+    <p class="lead">Acció primària en terracota (color d'acció dels tokens). Neutral fosc per a accions sòlides; contorn i ghost per a secundàries.</p>
+    <div class="demo">
+      <button class="btn btn-primary">Explora el territori</button>
+      <button class="btn btn-neutral">Obre el full</button>
+      <button class="btn btn-outline">Exporta</button>
+      <button class="btn btn-ghost">Metodologia →</button>
+      <button class="btn btn-primary" disabled>Desactivat</button>
+    </div>
+    <div class="demo" style="margin-top:14px">
+      <button class="btn btn-primary btn-sm">Petit</button>
+      <button class="btn btn-primary">Mitjà</button>
+      <button class="btn btn-primary btn-lg">Gran</button>
+      <button class="btn btn-outline">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2v9M4 7l4 4 4-4M3 14h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Descarrega CSV
+      </button>
+    </div>
+  </section>
+
+  <!-- ===== CAMPS ===== -->
+  <section class="ds-sec" id="camps">
+    <div class="ds-sec__hd"><span class="ref">B · 02</span><h2>Camps de formulari</h2></div>
+    <p class="lead">Focus amb anell AA (<span class="mono">--dp-shadow-focus</span>). L'error mai és només color: porta missatge.</p>
+    <div class="demo col">
+      <div class="grid g3" style="width:100%">
+        <div class="field">
+          <label>Municipi</label>
+          <input class="input" type="text" placeholder="Cerca al Berguedà…" value="Castellar de n'Hug">
+          <span class="help">31 municipis disponibles al pilot.</span>
+        </div>
+        <div class="field">
+          <label>Mètrica</label>
+          <select class="select">
+            <option>IETR · índex d'exposició</option>
+            <option>% habitatge no principal</option>
+            <option>Residus kg/hab/any</option>
+          </select>
+          <span class="help">Determina la paleta del mapa.</span>
+        </div>
+        <div class="field err">
+          <label>Any <span class="req">*</span></label>
+          <input class="input" type="text" value="2019">
+          <span class="help">Sense dada per a aquest any. Tria 2021–2024.</span>
+        </div>
+      </div>
+      <div class="field" style="max-width:520px">
+        <label>Nota de context</label>
+        <textarea class="textarea" placeholder="Afegeix una nota metodològica visible al costat de la xifra…"></textarea>
+      </div>
+      <div class="demo" style="background:transparent;border:none;padding:0;gap:22px">
+        <label class="checkrow"><input type="checkbox" checked> Mostra la divisòria comarcal</label>
+        <label class="checkrow"><input type="checkbox"> Ressalta el patró «dos extrems»</label>
+        <label class="checkrow"><span class="switch"><input type="checkbox" checked><span class="track"></span></span> Xifres tabulars</label>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== BADGES + PROCEDÈNCIA ===== -->
+  <section class="ds-sec" id="badges">
+    <div class="ds-sec__hd"><span class="ref">B · 03</span><h2>Badges i procedència</h2></div>
+    <p class="lead">Els badges semàntics sempre amb text. Les etiquetes de procedència són el component signatura del projecte: distingeixen <b>dada</b>, <b>inferència</b> i <b>resultat negatiu</b>.</p>
+    <div class="demo">
+      <span class="badge badge--info">Actualitzat</span>
+      <span class="badge badge--success">Verificat</span>
+      <span class="badge badge--warning">Provisional</span>
+      <span class="badge badge--danger">Revisar</span>
+      <span class="badge badge--neutral">Esborrany</span>
+    </div>
+    <div class="demo" style="margin-top:14px">
+      <span class="prov prov--measured"><span class="dot"></span>mesurat · IDESCAT</span>
+      <span class="prov prov--derived"><span class="dot"></span>derivat · IETR datapoble</span>
+      <span class="prov prov--negative"><span class="dot"></span>sense dada · secret estadístic</span>
+    </div>
+  </section>
+
+  <!-- ===== TARGETES ===== -->
+  <section class="ds-sec" id="targetes">
+    <div class="ds-sec__hd"><span class="ref">B · 04</span><h2>Targetes</h2></div>
+    <p class="lead">De contingut i de KPI. El número és protagonista (Archivo + xifres tabulars); la procedència, sempre present.</p>
+    <div class="grid g4 ds-block">
+      <div class="kpi-card tnum">
+        <p class="k"><span class="prov prov--derived" style="border:none;padding:0"><span class="dot"></span></span>IETR · Castellar</p>
+        <div class="n">92<span class="u">/100</span></div>
+        <p class="d up">▲ +7 vs mitjana comarcal</p>
+      </div>
+      <div class="kpi-card tnum">
+        <p class="k"><span class="prov prov--measured" style="border:none;padding:0"><span class="dot"></span></span>Hab. no principal</p>
+        <div class="n">74,3<span class="u">%</span></div>
+        <p class="d">mesurat · cens 2021</p>
+      </div>
+      <div class="kpi-card tnum">
+        <p class="k"><span class="prov prov--negative" style="border:none;padding:0"><span class="dot"></span></span>Padró · 10 anys</p>
+        <div class="n">−18<span class="u">%</span></div>
+        <p class="d">resultat negatiu</p>
+      </div>
+      <div class="card">
+        <h3>Fitxa de municipi</h3>
+        <p>Targeta de contingut estàndard. Combina títol, cos i una acció discreta al peu.</p>
+        <p style="margin-top:14px"><a class="btn btn-ghost btn-sm" href="#" style="padding-left:0">Obre la fitxa →</a></p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rd-divide" style="margin:46px 0 8px">
+
+  <!-- ===== NAVEGACIÓ ===== -->
+  <section class="ds-sec" id="nav">
+    <div class="ds-sec__hd"><span class="ref">B · 05</span><h2>Navegació</h2></div>
+    <p class="lead">Engrunes en mono (com una referència de full), pestanyes per a vistes, i segmentat per al mètode de classificació.</p>
+    <div class="demo col">
+      <div class="crumb"><span>Catalunya</span><span class="sep">/</span><span>Berguedà</span><span class="sep">/</span><b>Castellar de n'Hug</b></div>
+      <div class="tabs" style="width:100%">
+        <button class="on">Resum</button>
+        <button>Mapa</button>
+        <button>Sèries</button>
+        <button>Metodologia</button>
+        <button>Descàrregues</button>
+      </div>
+      <div class="seg">
+        <button>Cuantils</button>
+        <button class="on">Jenks · 5</button>
+        <button>Igual interval</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TAULA ===== -->
+  <section class="ds-sec" id="taula">
+    <div class="ds-sec__hd"><span class="ref">B · 06</span><h2>Taula de dada</h2></div>
+    <p class="lead">Xifres tabulars i alineades a la dreta. Capçaleres ordenables. El «sense dada» va amb tramat, mai en blanc. Clica una capçalera numèrica per ordenar.</p>
+    <div class="tbl-wrap ds-block">
+      <table class="tbl tnum">
+        <thead>
+          <tr>
+            <th>Municipi</th>
+            <th data-sort class="num">IETR <span class="ar"></span></th>
+            <th data-sort class="num">% no principal <span class="ar"></span></th>
+            <th data-sort class="num">Estab./1.000 <span class="ar"></span></th>
+            <th>Procedència</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="place"><span class="spot-h" style="font-family:var(--dp-font-sans)"></span>Castellar de n'Hug</td><td class="num">92</td><td class="num">74,3</td><td class="num">181</td><td><span class="prov prov--derived"><span class="dot"></span>derivat</span></td></tr>
+          <tr><td class="place">Berga</td><td class="num">38</td><td class="num">21,0</td><td class="num">2,6</td><td><span class="prov prov--measured"><span class="dot"></span>mesurat</span></td></tr>
+          <tr><td class="place">Bagà</td><td class="num">54</td><td class="num">41,8</td><td class="num">12,4</td><td><span class="prov prov--measured"><span class="dot"></span>mesurat</span></td></tr>
+          <tr><td class="place">Gósol</td><td class="num">71</td><td class="num">58,2</td><td class="num">33,9</td><td><span class="prov prov--measured"><span class="dot"></span>mesurat</span></td></tr>
+          <tr><td class="place">Gisclareny</td><td class="num" data-v="0"><span class="hatch-cell" title="secret estadístic"></span></td><td class="num">—</td><td class="num">—</td><td><span class="prov prov--negative"><span class="dot"></span>sense dada</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== LLEGENDA ===== -->
+  <section class="ds-sec" id="llegenda">
+    <div class="ds-sec__hd"><span class="ref">B · 07</span><h2>Llegenda de mapa</h2></div>
+    <p class="lead">El component més riusdegent: el color comunica el mètode. La capçalera diu sempre el mètode i el nombre de classes; el peu, font i data. Inclou entrada explícita de «sense dada».</p>
+    <div class="grid g2 ds-block" style="align-items:start">
+      <div class="legend">
+        <p class="legend__hd"><span>IETR · índex d'exposició</span><span>0–100</span></p>
+        <div class="legend__bar">
+          <i style="background:#FBF3D9"></i><i style="background:#F3D9A0"></i><i style="background:#E8B567"></i><i style="background:#D98B3E"></i><i style="background:#B5612A"></i><i style="background:#7E3A1E"></i>
+        </div>
+        <div class="legend__scale"><span>baix</span><span>20</span><span>40</span><span>60</span><span>80</span><span>alt</span></div>
+        <div class="legend__nodata"><span class="hatch-cell"></span>sense dada / secret estadístic</div>
+        <p class="legend__foot">JENKS · 5 CLASSES · FONT: IDESCAT 2024 · DERIVAT datapoble<br>els talls es recalculen en ampliar a Catalunya (~947 municipis)</p>
+      </div>
+      <div class="legend">
+        <p class="legend__hd"><span>Desviació vs mitjana comarcal</span><span>diverging</span></p>
+        <div class="legend__bar">
+          <i style="background:#01665E"></i><i style="background:#5AB4AC"></i><i style="background:#C7EAE5"></i><i style="background:#F5F5F0"></i><i style="background:#DFC27D"></i><i style="background:#BF812D"></i><i style="background:#8C510A"></i>
+        </div>
+        <div class="legend__scale"><span>−3σ</span><span></span><span></span><span>mitjana</span><span></span><span></span><span>+3σ</span></div>
+        <div class="legend__nodata"><span class="hatch-cell"></span>sense dada</div>
+        <p class="legend__foot">TALLS SIMÈTRICS AL VOLTANT DE LA MITJANA · neutre = gris-os, mai verd brillant (CVD-safe)</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== AVISOS + DIÀLEG ===== -->
+  <section class="ds-sec" id="avisos">
+    <div class="ds-sec__hd"><span class="ref">B · 08</span><h2>Avisos i diàleg</h2></div>
+    <p class="lead">To sobri, mai alarmista (el tema és sensible). El diàleg fosqueja el fons i centra la decisió.</p>
+    <div class="demo col" style="gap:12px">
+      <div class="alert ok"><div class="bar"></div><div><b>Dada verificada.</b> Cens de població i habitatges 2021 (IDESCAT), contrastat amb el padró continu.</div></div>
+      <div class="alert warn"><div class="bar"></div><div><b>Inferència, no mesura.</b> L'IETR és un índex derivat: combina diversos indicadors. Vegeu la fórmula a Metodologia.</div></div>
+      <div class="alert bad"><div class="bar"></div><div><b>Secret estadístic.</b> Castellar i els micromunicipis no es publiquen en encreuaments fins per protegir la privacitat.</div></div>
+    </div>
+    <div class="grid g2 ds-block" style="align-items:start">
+      <div class="modal-stage">
+        <div class="modal-scrim"></div>
+        <div class="modal">
+          <h3>Exporta les dades</h3>
+          <p>Descarregaràs l'indicador IETR del Berguedà (31 municipis, 2024) amb la columna de procedència i la nota de mètode.</p>
+          <div class="modal__row">
+            <button class="btn btn-outline btn-sm">Cancel·la</button>
+            <button class="btn btn-primary btn-sm">Descarrega CSV</button>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;justify-content:center">
+        <p class="ds-block__lab" style="border:none;margin:0">Tooltip</p>
+        <div class="tip">IETR 92 · derivat · IDESCAT 2024</div>
+        <p style="font-size:.86rem;color:var(--dp-text-muted);line-height:1.55;margin:0;max-width:40ch">Sobre el mapa, el tooltip porta sempre valor + procedència + font. Cap número orfe.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rd-divide" style="margin:46px 0 8px">
+
+  <!-- ===== FILTRES ===== -->
+  <section class="ds-sec" id="filtres">
+    <div class="ds-sec__hd"><span class="ref">B · 09</span><h2>Filtres</h2></div>
+    <p class="lead">Xips de filtre actius, eliminables. La clau en mono (com una etiqueta de full); el valor, llegible. Sempre visibles perquè es vegi exactament què s'està mirant.</p>
+    <div class="demo">
+      <div class="filterbar">
+        <span class="chip-f"><span class="k">comarca:</span>Berguedà <button class="x" aria-label="treu">×</button></span>
+        <span class="chip-f"><span class="k">mètrica:</span>IETR <button class="x" aria-label="treu">×</button></span>
+        <span class="chip-f"><span class="k">període:</span>2021–2024 <button class="x" aria-label="treu">×</button></span>
+        <span class="chip-f"><span class="k">procedència:</span>mesurat <button class="x" aria-label="treu">×</button></span>
+        <button class="chip-add">+ Afegeix filtre</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PAGINACIÓ ===== -->
+  <section class="ds-sec" id="paginacio">
+    <div class="ds-sec__hd"><span class="ref">B · 10</span><h2>Paginació</h2></div>
+    <p class="lead">Per a llistats llargs (947 municipis a escala Catalunya). Xifres tabulars; informa sempre del rang i el total.</p>
+    <div class="demo">
+      <div class="pager">
+        <button disabled>←</button>
+        <button class="on">1</button>
+        <button>2</button>
+        <button>3</button>
+        <button>4</button>
+        <button disabled>…</button>
+        <button>32</button>
+        <button>→</button>
+        <span class="info">1–30 de 947 municipis</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PERÍODE ===== -->
+  <section class="ds-sec" id="periode">
+    <div class="ds-sec__hd"><span class="ref">B · 11</span><h2>Selector de període</h2></div>
+    <p class="lead">El temps importa: comparar dos anys exigeix fixar els talls. Selector ràpid de període + calendari de rang per a dates concretes.</p>
+    <div class="demo" style="align-items:flex-start;gap:24px">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="field" style="max-width:230px">
+          <label>Rang de dates</label>
+          <input class="input mono" type="text" value="10 — 18 juny 2024" readonly>
+        </div>
+        <div class="seg">
+          <button>Any</button>
+          <button class="on">Trimestre</button>
+          <button>Mes</button>
+        </div>
+      </div>
+      <div class="cal" aria-hidden="true">
+        <div class="cal__hd"><button>←</button><span class="m">Juny 2024</span><button>→</button></div>
+        <div class="cal__grid" id="calGrid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ESTATS BUITS ===== -->
+  <section class="ds-sec" id="buits">
+    <div class="ds-sec__hd"><span class="ref">B · 12</span><h2>Estats buits</h2></div>
+    <p class="lead">Honestos i útils: diuen per què no hi ha res i què fer. Mai una pantalla morta.</p>
+    <div class="grid g2 ds-block">
+      <div class="empty">
+        <svg width="46" height="46" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="1.5" stroke-dasharray="0.1 6" stroke-linecap="round"/>
+          <circle cx="24" cy="24" r="11" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="24" y1="6" x2="24" y2="42" stroke="#C75D34" stroke-width="1.5" stroke-dasharray="0.1 5" stroke-linecap="round"/>
+        </svg>
+        <h3>Cap municipi trobat</h3>
+        <p>No hi ha cap resultat per a «Castelldefels» al Berguedà. Revisa el nom o amplia la cerca a tot Catalunya.</p>
+        <button class="btn btn-outline btn-sm">Amplia a Catalunya</button>
+      </div>
+      <div class="empty">
+        <svg width="46" height="46" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <rect x="8" y="10" width="32" height="28" rx="3" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M8 18h32" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M14 26h10M14 31h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="0.1 5"/>
+        </svg>
+        <h3>Secret estadístic</h3>
+        <p>Aquest encreuament no es publica per a Castellar (166 hab): protegim la privacitat quan el denominador és diminut.</p>
+        <button class="btn btn-ghost btn-sm">Per què? →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TOASTS ===== -->
+  <section class="ds-sec" id="toasts">
+    <div class="ds-sec__hd"><span class="ref">B · 13</span><h2>Notificacions</h2></div>
+    <p class="lead">Sòbries, no intrusives. Confirmació d'accions i avís de processos llargs (recàlcul de talls en ampliar el territori).</p>
+    <div class="demo">
+      <div class="toast-stack">
+        <div class="toast ok"><div class="bar"></div><div class="msg">CSV descarregat <span class="sub">IETR · Berguedà · 2024 · amb columna de procedència</span></div><button class="x" aria-label="tanca">×</button></div>
+        <div class="toast work"><div class="bar"></div><div class="msg">Recalculant talls de Jenks… <span class="sub">947 municipis · l'escala de color canviarà</span></div><button class="x" aria-label="tanca">×</button></div>
+        <div class="toast"><div class="bar"></div><div class="msg">Dades de 2024 disponibles <span class="sub">IDESCAT ha publicat el cens actualitzat</span></div><button class="x" aria-label="tanca">×</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SKELETONS ===== -->
+  <section class="ds-sec" id="skeletons">
+    <div class="ds-sec__hd"><span class="ref">B · 14</span><h2>Càrrega · skeletons</h2></div>
+    <p class="lead">Mentre arriba la dada, reservem l'espai amb l'esquelet de la fitxa — mai un salt de layout. Respecta <span class="mono">prefers-reduced-motion</span>.</p>
+    <div class="grid g4 ds-block">
+      <div class="kpi-card">
+        <div class="sk" style="height:11px;width:60%;margin-bottom:14px"></div>
+        <div class="sk" style="height:34px;width:80%;margin-bottom:12px"></div>
+        <div class="sk" style="height:9px;width:70%"></div>
+      </div>
+      <div class="kpi-card">
+        <div class="sk" style="height:11px;width:55%;margin-bottom:14px"></div>
+        <div class="sk" style="height:34px;width:65%;margin-bottom:12px"></div>
+        <div class="sk" style="height:9px;width:75%"></div>
+      </div>
+      <div class="card">
+        <div class="sk" style="height:13px;width:50%;margin-bottom:14px"></div>
+        <div class="sk" style="height:9px;width:100%;margin-bottom:8px"></div>
+        <div class="sk" style="height:9px;width:92%;margin-bottom:8px"></div>
+        <div class="sk" style="height:9px;width:78%"></div>
+      </div>
+      <div class="card">
+        <div class="sk" style="height:13px;width:60%;margin-bottom:14px"></div>
+        <div class="sk" style="height:9px;width:96%;margin-bottom:8px"></div>
+        <div class="sk" style="height:9px;width:88%;margin-bottom:8px"></div>
+        <div class="sk" style="height:9px;width:70%"></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="ds-foot">
+  <div class="ds-foot__in">
+    <span>riusdegent · components · registre Quota</span>
+    <span><a href="Pantalles.html" style="color:var(--dp-link);text-decoration:none">Veure els components en pantalles reals →</a></span>
+  </div>
+</footer>
+
+<script src="../sistema.js"></script>
+<script>
+  // calendari demo · juny 2024 (l'1 cau en dissabte) · rang 10–18
+  (function(){
+    var g=document.getElementById('calGrid'); if(!g) return;
+    var dow=['Dl','Dt','Dc','Dj','Dv','Ds','Dg'], h='';
+    dow.forEach(function(d){ h+='<div class="dow">'+d+'</div>'; });
+    var prev=[27,28,29,30,31]; // maig, omple fins dissabte
+    prev.forEach(function(n){ h+='<div class="d mut">'+n+'</div>'; });
+    for(var d=1; d<=30; d++){
+      var c='d';
+      if(d>=10 && d<=18) c+=' in';
+      if(d===10 || d===18) c='d edge';
+      h+='<div class="'+c+'">'+d+'</div>';
+    }
+    g.innerHTML=h;
+  })();
+</script>
+</body>
+</html>

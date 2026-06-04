@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="ca" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>riusdegent · Sistema — Fonaments</title>
+<link rel="icon" type="image/svg+xml" href="../../brand/favicon.svg">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=Archivo:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../sistema.css">
+</head>
+<body>
+
+<!-- ============ TOP BAR ============ -->
+<header class="ds-top">
+  <a class="ds-top__brand" href="Fonaments.html" aria-label="riusdegent">
+    <svg width="26" height="26" viewBox="0 0 96 96" aria-hidden="true">
+      <line x1="48" y1="14" x2="48" y2="82" stroke="#C75D34" stroke-width="3" stroke-linecap="round"/>
+      <g fill="none" stroke="#2F6B4F" stroke-linecap="round">
+        <path d="M12 32 C 22 27, 34 27, 46 32" stroke-width="5"/>
+        <path d="M10 47 C 22 41, 34 41, 46 46" stroke-width="6.5"/>
+        <path d="M12 62 C 22 56, 34 56, 46 62" stroke-width="5"/>
+      </g>
+      <g fill="none" stroke="#2F6B4F" stroke-linecap="round">
+        <path d="M50 32 C 60 27, 70 27, 78 31" stroke-width="3.5"/>
+      </g>
+      <g fill="none" stroke="#2F6B4F" stroke-linecap="round" stroke-width="3.5" stroke-dasharray="0.1 8">
+        <path d="M50 47 C 62 41, 72 42, 84 39"/>
+        <path d="M50 62 C 60 57, 68 58, 80 56"/>
+      </g>
+    </svg>
+    <span class="wm">rius<b>degent</b></span>
+  </a>
+  <span class="ds-tag">Sistema · v0.2 · Quota</span>
+  <nav class="ds-nav">
+    <a href="Fonaments.html" class="on">Fonaments</a>
+    <a href="Components.html">Components</a>
+    <a href="Pantalles.html">Pantalles</a>
+  </nav>
+  <div class="ds-top__right">
+    <div class="themer" role="group" aria-label="Tema">
+      <button data-theme="light">Clar</button>
+      <button data-theme="dark">Fosc</button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="ds-hero">
+  <svg class="ds-hero__field" viewBox="0 0 1000 360" preserveAspectRatio="none" aria-hidden="true"></svg>
+  <div class="ds-hero__in">
+    <p class="ds-eyebrow"><span>Sistema de disseny</span><b>· Fonaments</b><span class="spot-h"><span class="e">42°16′N</span></span></p>
+    <h1>Color, tipus i mesura, llegits com un <span class="q">full topogràfic</span>.</h1>
+    <p>Els fonaments del sistema riusdegent. Tot deriva dels tokens <span class="mono">--dp-*</span>: aquí els veus aplicats, amb la veu cartogràfica de Quota. La dada mai competeix amb la marca — <em>el color viu només on hi ha valor</em>.</p>
+  </div>
+</section>
+
+<main class="ds-main">
+
+  <!-- ============ COLOR ============ -->
+  <section class="ds-sec" id="color">
+    <div class="ds-sec__hd"><span class="ref">A · 01</span><h2>Color</h2></div>
+    <p class="lead">Slate fred com a base (pedra de muntanya), terracota com a detall humà i acció, teal de carena com a aigua. Les <b>paletes de dada</b> són un sistema a part: pinten mapes i charts, no la interfície.</p>
+
+    <div class="ds-block">
+      <p class="ds-block__lab">Neutrals · slate <span class="hint">base d'UI, text i basemap</span></p>
+      <div class="grid g4">
+        <div class="sw"><div class="sw__chip" style="background:#1B212A"></div><div class="sw__meta"><div class="nm">neutral-900</div><div class="hex">#1B212A · text</div></div></div>
+        <div class="sw"><div class="sw__chip" style="background:#3C4756"></div><div class="sw__meta"><div class="nm">neutral-700</div><div class="hex">#3C4756</div></div></div>
+        <div class="sw"><div class="sw__chip" style="background:#6B7889"></div><div class="sw__meta"><div class="nm">neutral-500</div><div class="hex">#6B7889</div></div></div>
+        <div class="sw"><div class="sw__chip" style="background:#BCC3CE"></div><div class="sw__meta"><div class="nm">neutral-300</div><div class="hex">#BCC3CE</div></div></div>
+        <div class="sw"><div class="sw__chip" style="background:#D9DDE4"></div><div class="sw__meta"><div class="nm">neutral-200</div><div class="hex">#D9DDE4 · vora</div></div></div>
+        <div class="sw"><div class="sw__chip" style="background:#ECEEF2"></div><div class="sw__meta"><div class="nm">neutral-100</div><div class="hex">#ECEEF2</div></div></div>
+        <div class="sw"><div class="sw__chip" style="background:#F6F7F9"></div><div class="sw__meta"><div class="nm">neutral-50</div><div class="hex">#F6F7F9</div></div></div>
+        <div class="sw"><div class="sw__chip" style="background:#10141A"></div><div class="sw__meta"><div class="nm">neutral-950</div><div class="hex">#10141A · fons fosc</div></div></div>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <p class="ds-block__lab">Marca i acció</p>
+      <div class="grid g4">
+        <div class="sw"><div class="sw__chip" style="background:#C75D34"></div><div class="sw__meta"><div class="nm">accent-500</div><div class="hex">#C75D34 · terracota</div></div></div>
+        <div class="sw"><div class="sw__chip" style="background:#AC4B27"></div><div class="sw__meta"><div class="nm">accent-600</div><div class="hex">#AC4B27 · enllaç</div></div></div>
+        <div class="sw"><div class="sw__chip" style="background:#E3A584"></div><div class="sw__meta"><div class="nm">accent-300</div><div class="hex">#E3A584 · sobre fosc</div></div></div>
+        <div class="sw"><div class="sw__chip" style="background:#2F6B4F"></div><div class="sw__meta"><div class="nm">teal</div><div class="hex">#2F6B4F · aigua</div></div></div>
+        <div class="sw"><div class="sw__chip" style="background:#255741"></div><div class="sw__meta"><div class="nm">teal-600</div><div class="hex">#255741</div></div></div>
+        <div class="sw"><div class="sw__chip" style="background:#2F6B4F"></div><div class="sw__meta"><div class="nm">forest</div><div class="hex">#2F6B4F</div></div></div>
+        <div class="sw"><div class="sw__chip" style="background:#FBF0EA"></div><div class="sw__meta"><div class="nm">accent-50</div><div class="hex">#FBF0EA</div></div></div>
+        <div class="sw"><div class="sw__chip" style="background:#F5DBCD"></div><div class="sw__meta"><div class="nm">accent-100</div><div class="hex">#F5DBCD</div></div></div>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <p class="ds-block__lab">Semàntic <span class="hint">acompanyar sempre d'icona o text — mai només color</span></p>
+      <div class="grid g4">
+        <div class="sw"><div class="sw__chip" style="background:#216C9B"></div><div class="sw__meta"><div class="nm">info</div><div class="hex">#216C9B</div></div></div>
+        <div class="sw"><div class="sw__chip" style="background:#2E7D55"></div><div class="sw__meta"><div class="nm">success</div><div class="hex">#2E7D55</div></div></div>
+        <div class="sw"><div class="sw__chip" style="background:#B7791F"></div><div class="sw__meta"><div class="nm">warning</div><div class="hex">#B7791F</div></div></div>
+        <div class="sw"><div class="sw__chip" style="background:#B4452E"></div><div class="sw__meta"><div class="nm">danger</div><div class="hex">#B4452E</div></div></div>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <p class="ds-block__lab">Procedència del dada <span class="hint">el contracte: cap número sense origen</span></p>
+      <div class="demo">
+        <span class="prov prov--measured"><span class="dot"></span>mesurat · font oficial</span>
+        <span class="prov prov--derived"><span class="dot"></span>derivat · índex datapoble</span>
+        <span class="prov prov--negative"><span class="dot"></span>resultat negatiu / sense dada</span>
+      </div>
+    </div>
+
+    <hr class="rd-divide" style="margin:34px 0">
+
+    <div class="ds-block">
+      <p class="ds-block__lab">Paleta de dada · seqüencial «exposició» <span class="hint">6 passos · clar→fosc = baix→alt · CVD-safe</span></p>
+      <div class="ramp labeled">
+        <i style="background:#FBF3D9;color:#7E3A1E">0</i><i style="background:#F3D9A0;color:#7E3A1E">1</i><i style="background:#E8B567;color:#7E3A1E">2</i><i style="background:#D98B3E;color:#fff">3</i><i style="background:#B5612A;color:#fff">4</i><i style="background:#7E3A1E;color:#fff">5</i>
+      </div>
+    </div>
+    <div class="ds-block">
+      <p class="ds-block__lab">Paleta de dada · diverging «desviació» <span class="hint">7 passos · neutre al centre · teal↔marró</span></p>
+      <div class="ramp labeled">
+        <i style="background:#01665E;color:#fff">−3</i><i style="background:#5AB4AC;color:#10141A">−2</i><i style="background:#C7EAE5;color:#10141A">−1</i><i style="background:#F5F5F0;color:#6B7889">0</i><i style="background:#DFC27D;color:#10141A">+1</i><i style="background:#BF812D;color:#fff">+2</i><i style="background:#8C510A;color:#fff">+3</i>
+      </div>
+    </div>
+    <div class="ds-block">
+      <div class="grid g2">
+        <div>
+          <p class="ds-block__lab">Qualitativa · Okabe-Ito <span class="hint">categories sense ordre</span></p>
+          <div class="ramp">
+            <i style="background:#E69F00"></i><i style="background:#56B4E9"></i><i style="background:#009E73"></i><i style="background:#F0E442"></i><i style="background:#0072B2"></i><i style="background:#D55E00"></i><i style="background:#CC79A7"></i><i style="background:#999999"></i>
+          </div>
+        </div>
+        <div>
+          <p class="ds-block__lab">Sense dada · secret estadístic</p>
+          <div class="legend__nodata" style="margin-top:4px"><span class="hatch-cell"></span>tramat (hatch), mai farciment pla — perquè no es confongui amb un valor baix.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TIPOGRAFIA ============ -->
+  <section class="ds-sec" id="tipografia">
+    <div class="ds-sec__hd"><span class="ref">A · 02</span><h2>Tipografia</h2></div>
+    <p class="lead">Quatre veus. <b>Archivo</b> per a títols (la veu institucional de Quota), <b>Inter</b> per a interfície i dada amb xifres tabulars, <b>IBM Plex Serif</b> per a lectura llarga — i és la <em>veu d'aigua en itàlica</em>, com s'etiqueta la hidrografia als mapes. <b>IBM Plex Mono</b> per a coordenades, codi i etiquetes de mapa.</p>
+
+    <div class="grid g2 ds-block">
+      <div class="font-card">
+        <p class="role">Display · Archivo 800 — proposta d'extensió dels tokens</p>
+        <p class="big" style="font-family:'Archivo';font-weight:800;letter-spacing:-0.02em">Aiguavés</p>
+        <p class="gly" style="font-family:'Archivo'">AÀBCÇDEÈÉ · aàbcçdeèé · 0123456789 · l·l</p>
+      </div>
+      <div class="font-card">
+        <p class="role">UI / dada · Inter — cifres tabulars</p>
+        <p class="big" style="font-family:'Inter';font-weight:600;letter-spacing:-0.01em">Berguedà</p>
+        <p class="gly" style="font-family:'Inter'">AÀBCÇDEÈÉ · aàbcçdeèé · <span class="tnum">0123456789</span> · l·l</p>
+      </div>
+      <div class="font-card">
+        <p class="role">Lectura / aigua · IBM Plex Serif</p>
+        <p class="big" style="font-family:'IBM Plex Serif'">El cabal <em style="color:var(--dp-teal-600)">s'asseca</em></p>
+        <p class="gly" style="font-family:'IBM Plex Serif'">AÀBCÇDEÈÉ · aàbcçdeèé · 0123456789 · l·l</p>
+      </div>
+      <div class="font-card">
+        <p class="role">Mono / mapa · IBM Plex Mono</p>
+        <p class="big" style="font-family:'IBM Plex Mono';font-size:2rem">1.245 m</p>
+        <p class="gly" style="font-family:'IBM Plex Mono'">42°16′N · 1°53′E · IETR 92/100</p>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <p class="ds-block__lab">Escala tipogràfica <span class="hint">modular ~1,2 · base 16px</span></p>
+      <div class="type-row"><div class="spec">4xl · 2.488rem<br>Archivo 700</div><div class="sample" style="font-family:'Archivo';font-weight:700;font-size:2.488rem;line-height:1.1;letter-spacing:-0.02em">Com s'habita el territori</div></div>
+      <div class="type-row"><div class="spec">3xl · 1.924rem<br>Archivo 700</div><div class="sample" style="font-family:'Archivo';font-weight:700;font-size:1.924rem;line-height:1.15">Pressió i despoblació</div></div>
+      <div class="type-row"><div class="spec">2xl · 1.602rem<br>Serif 400</div><div class="sample" style="font-family:'IBM Plex Serif';font-size:1.602rem;line-height:1.3">El riu va ple i <em style="color:var(--dp-teal-600)">s'asseca</em></div></div>
+      <div class="type-row"><div class="spec">xl · 1.333rem<br>Inter 600</div><div class="sample" style="font-family:'Inter';font-weight:600;font-size:1.333rem">Fitxa de municipi</div></div>
+      <div class="type-row"><div class="spec">base · 1rem<br>Inter 400</div><div class="sample" style="font-family:'Inter';font-size:1rem;line-height:1.6">Dades oficials, traçables, amb font, data i fórmula visibles per a cada indicador del territori.</div></div>
+      <div class="type-row"><div class="spec">sm · 0.875rem<br>Inter 400</div><div class="sample" style="font-family:'Inter';font-size:.875rem;color:var(--dp-text-muted)">Nota metodològica i peus de taula.</div></div>
+      <div class="type-row"><div class="spec">xs · 0.75rem<br>Mono</div><div class="sample mono" style="font-size:.75rem;letter-spacing:.04em;color:var(--dp-text-subtle)">JENKS · 5 CLASSES · IDESCAT 2024</div></div>
+    </div>
+  </section>
+
+  <!-- ============ ESPAIAT ============ -->
+  <section class="ds-sec" id="espaiat">
+    <div class="ds-sec__hd"><span class="ref">A · 03</span><h2>Espaiat</h2></div>
+    <p class="lead">Escala base 4px. La generositat és intencional: el català corre llarg i la lectura territorial demana aire.</p>
+    <div class="ds-block">
+      <div class="viz-row"><span class="nm">space-1 · 4px</span><div class="viz-bar" style="width:4px"></div></div>
+      <div class="viz-row"><span class="nm">space-2 · 8px</span><div class="viz-bar" style="width:8px"></div></div>
+      <div class="viz-row"><span class="nm">space-3 · 12px</span><div class="viz-bar" style="width:12px"></div></div>
+      <div class="viz-row"><span class="nm">space-4 · 16px</span><div class="viz-bar" style="width:16px"></div></div>
+      <div class="viz-row"><span class="nm">space-5 · 24px</span><div class="viz-bar" style="width:24px"></div></div>
+      <div class="viz-row"><span class="nm">space-6 · 32px</span><div class="viz-bar" style="width:32px"></div></div>
+      <div class="viz-row"><span class="nm">space-7 · 48px</span><div class="viz-bar" style="width:48px"></div></div>
+      <div class="viz-row"><span class="nm">space-8 · 64px</span><div class="viz-bar" style="width:64px"></div></div>
+      <div class="viz-row"><span class="nm">space-9 · 96px</span><div class="viz-bar" style="width:96px"></div></div>
+    </div>
+  </section>
+
+  <!-- ============ RADIS + OMBRES ============ -->
+  <section class="ds-sec" id="radis">
+    <div class="ds-sec__hd"><span class="ref">A · 04</span><h2>Radis i ombres</h2></div>
+    <p class="lead">Cantonades contingudes (el registre és sobri, no startup). Ombres fredes i discretes — mai neó.</p>
+    <div class="grid g2 ds-block">
+      <div>
+        <p class="ds-block__lab">Radis</p>
+        <div class="grid g3">
+          <div><div class="radius-demo" style="border-radius:0"></div><p class="mono" style="font-size:.66rem;color:var(--dp-text-subtle);margin:8px 0 0">none · 0</p></div>
+          <div><div class="radius-demo" style="border-radius:.25rem"></div><p class="mono" style="font-size:.66rem;color:var(--dp-text-subtle);margin:8px 0 0">sm · 4px</p></div>
+          <div><div class="radius-demo" style="border-radius:.5rem"></div><p class="mono" style="font-size:.66rem;color:var(--dp-text-subtle);margin:8px 0 0">md · 8px</p></div>
+          <div><div class="radius-demo" style="border-radius:.75rem"></div><p class="mono" style="font-size:.66rem;color:var(--dp-text-subtle);margin:8px 0 0">lg · 12px</p></div>
+          <div><div class="radius-demo" style="border-radius:1rem"></div><p class="mono" style="font-size:.66rem;color:var(--dp-text-subtle);margin:8px 0 0">xl · 16px</p></div>
+          <div><div class="radius-demo" style="border-radius:9999px"></div><p class="mono" style="font-size:.66rem;color:var(--dp-text-subtle);margin:8px 0 0">full</p></div>
+        </div>
+      </div>
+      <div>
+        <p class="ds-block__lab">Ombres</p>
+        <div class="grid g3">
+          <div><div class="shadow-demo" style="box-shadow:var(--dp-shadow-sm)"></div><p class="mono" style="font-size:.66rem;color:var(--dp-text-subtle);margin:8px 0 0">sm</p></div>
+          <div><div class="shadow-demo" style="box-shadow:var(--dp-shadow-md)"></div><p class="mono" style="font-size:.66rem;color:var(--dp-text-subtle);margin:8px 0 0">md</p></div>
+          <div><div class="shadow-demo" style="box-shadow:var(--dp-shadow-lg)"></div><p class="mono" style="font-size:.66rem;color:var(--dp-text-subtle);margin:8px 0 0">lg</p></div>
+        </div>
+        <div class="shadow-demo" style="box-shadow:var(--dp-shadow-focus);margin-top:18px;display:flex;align-items:center;justify-content:center;color:var(--dp-text-muted);font-size:.8rem">anell de focus · AA</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MOVIMENT ============ -->
+  <section class="ds-sec" id="moviment">
+    <div class="ds-sec__hd"><span class="ref">A · 05</span><h2>Moviment</h2></div>
+    <p class="lead">Discret i funcional. Respecta <span class="mono">prefers-reduced-motion</span>. Passa el ratolí per les mostres.</p>
+    <div class="demo">
+      <div class="mo-demo" style="--d:120ms">fast · 120ms</div>
+      <div class="mo-demo" style="--d:220ms">normal · 220ms</div>
+      <div class="mo-demo" style="--d:400ms">slow · 400ms</div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="ds-foot">
+  <div class="ds-foot__in">
+    <span>riusdegent · sistema de disseny · registre Quota</span>
+    <span>aplica els tokens --dp-* · no els redefineix</span>
+  </div>
+</footer>
+
+<style>
+  .mo-demo{ font-family:var(--dp-font-mono); font-size:.74rem; color:var(--dp-text-muted); background:var(--dp-surface);
+    border:1px solid var(--dp-border-strong); border-radius:var(--dp-radius-sm); padding:14px 18px; cursor:pointer;
+    transition:transform var(--d) var(--dp-ease-standard), background var(--d), color var(--d); }
+  .mo-demo:hover{ transform:translateX(14px); background:var(--dp-accent-500); color:#fff; border-color:var(--dp-accent-500); }
+  @media (prefers-reduced-motion:reduce){ .mo-demo{ transition:none; } }
+</style>
+<script src="../sistema.js"></script>
+</body>
+</html>

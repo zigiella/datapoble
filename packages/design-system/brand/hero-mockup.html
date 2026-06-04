@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ca" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>riusdegent · mockup hero + full de marca</title>
+<!-- Consumeix els tokens reals (no els redefineix) -->
+<link rel="stylesheet" href="../tokens/tokens.css">
+<!-- Inter + IBM Plex Serif (les famílies dels tokens) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  /* Aquesta pàgina és REFERÈNCIA (mockup + contact sheet), no producte.
+     Mirador implementa de veritat. Tot surt dels àlies/tokens --dp-*. */
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: var(--dp-font-sans);
+    color: var(--dp-text);
+    background: var(--dp-bg);
+  }
+  .wrap { max-width: 72rem; margin: 0 auto; padding: var(--dp-space-7) var(--dp-space-5); }
+  section { margin-bottom: var(--dp-space-8); }
+  h2.label {
+    font-size: var(--dp-fs-sm); font-weight: var(--dp-fw-semibold);
+    text-transform: uppercase; letter-spacing: var(--dp-ls-wide);
+    color: var(--dp-text-subtle); margin: 0 0 var(--dp-space-4);
+    border-bottom: 1px solid var(--dp-border); padding-bottom: var(--dp-space-2);
+  }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    background: var(--dp-neutral-950);
+    border-radius: var(--dp-radius-xl);
+    padding: var(--dp-space-8) var(--dp-space-7);
+    position: relative; overflow: hidden;
+  }
+  .hero__logo { height: 40px; margin-bottom: var(--dp-space-7); display:block; }
+  .hero__eyebrow {
+    font-size: var(--dp-fs-sm); font-weight: var(--dp-fw-medium);
+    letter-spacing: var(--dp-ls-wide); text-transform: uppercase;
+    color: #5FB6B6; margin: 0 0 var(--dp-space-3);
+  }
+  /* El paràgraf hero de Bea: serif editorial, els verbs respiren */
+  .hero__para {
+    font-family: var(--dp-font-serif);
+    font-size: var(--dp-fs-3xl); line-height: var(--dp-lh-snug);
+    font-weight: 400; color: var(--dp-neutral-50);
+    max-width: 32ch; margin: 0;
+  }
+  .hero__para em { font-style: italic; color: #7FC6C6; } /* els que "desapareixen" */
+  .hero__verbs b { font-weight: var(--dp-fw-semibold); color: var(--dp-accent-300); font-style: normal; }
+  .hero__sub {
+    margin-top: var(--dp-space-6); max-width: 46ch;
+    font-size: var(--dp-fs-lg); line-height: var(--dp-lh-relaxed);
+    color: var(--dp-neutral-300);
+  }
+  .hero__cta {
+    display:inline-block; margin-top: var(--dp-space-6);
+    background: var(--dp-accent-500); color: #fff;
+    font-weight: var(--dp-fw-semibold); font-size: var(--dp-fs-base);
+    padding: var(--dp-space-3) var(--dp-space-5); border-radius: var(--dp-radius-md);
+    text-decoration: none;
+  }
+
+  /* ---------- contact sheet ---------- */
+  .grid { display:grid; grid-template-columns: 1fr 1fr; gap: var(--dp-space-5); }
+  .card {
+    border: 1px solid var(--dp-border); border-radius: var(--dp-radius-lg);
+    padding: var(--dp-space-5); display:flex; flex-direction:column; gap: var(--dp-space-3);
+    align-items:flex-start; justify-content:center;
+  }
+  .card.dark { background: var(--dp-neutral-950); border-color: var(--dp-neutral-800); }
+  .card.light { background: var(--dp-neutral-0); }
+  .card.subtle { background: var(--dp-neutral-50); }
+  .card img.logo { height: 38px; }
+  .card img.logo.sm { height: 26px; }
+  .cap { font-size: var(--dp-fs-xs); color: var(--dp-text-subtle); font-family: var(--dp-font-mono); }
+  .card.dark .cap { color: var(--dp-neutral-400); }
+  .swatchrow { display:flex; gap: var(--dp-space-3); flex-wrap:wrap; }
+  .favs { display:flex; align-items:center; gap: var(--dp-space-5); }
+  .favs .f16 { width:16px; height:16px; } .favs .f32 { width:32px; height:32px; }
+  .favs .f48 { width:48px; height:48px; } .favs .f64 { width:64px; height:64px; }
+  .mono-ink { color: var(--dp-neutral-900); }
+  .card.dark .mono-ink { color: var(--dp-neutral-50); }
+
+  /* paleta */
+  .pal { display:grid; grid-template-columns: repeat(6, 1fr); gap: var(--dp-space-2); }
+  .chip { height: 56px; border-radius: var(--dp-radius-sm); border:1px solid rgba(0,0,0,.06);
+          display:flex; align-items:flex-end; padding: 4px 6px; font-size: 10px;
+          font-family: var(--dp-font-mono); color: #fff; }
+  .chip.dk { color: var(--dp-neutral-900); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============ HERO MOCKUP ============ -->
+  <section>
+    <h2 class="label">Mockup · hero de la home (referència, no producte)</h2>
+    <div class="hero">
+      <img class="hero__logo" src="riusdegent-logo-dark.svg" alt="riusdegent">
+      <p class="hero__eyebrow">Observatori del territori</p>
+      <p class="hero__para hero__verbs">
+        Persones que <b>arriben</b>, <b>marxen</b>, <b>tornen</b>, pernocten, lloguen, compren, hereten, visiten, treballen, voten, omplen segones residències o <em>desapareixen del padró real de la vida quotidiana.</em>
+      </p>
+      <p class="hero__sub">El cabal humà que travessa, omple o buida cada municipi. Dades oficials, traçables, amb font, data i fórmula visibles.</p>
+      <a class="hero__cta" href="#">Explora el territori</a>
+    </div>
+  </section>
+
+  <!-- ============ LOGO LOCKUPS ============ -->
+  <section>
+    <h2 class="label">Logotip · versions</h2>
+    <div class="grid">
+      <div class="card light"><img class="logo" src="riusdegent-logo.svg" alt="riusdegent principal clar"><span class="cap">principal · clar</span></div>
+      <div class="card dark"><img class="logo" src="riusdegent-logo-dark.svg" alt="riusdegent principal fosc"><span class="cap">principal · fosc</span></div>
+      <div class="card light mono-ink"><img class="logo" src="riusdegent-logo-mono.svg" alt="riusdegent monocrom tinta fosca" style="color:currentColor"><span class="cap">monocrom · tinta fosca (currentColor)</span></div>
+      <div class="card dark mono-ink"><img class="logo" src="riusdegent-logo-mono.svg" alt="riusdegent monocrom tinta clara" style="color:currentColor"><span class="cap">monocrom · tinta clara (currentColor)</span></div>
+    </div>
+  </section>
+
+  <!-- ============ MARCA SOLA ============ -->
+  <section>
+    <h2 class="label">Marca / símbol sol</h2>
+    <div class="grid">
+      <div class="card light" style="align-items:center"><img src="riusdegent-mark.svg" alt="marca" style="height:88px"><span class="cap">marca · color · clar</span></div>
+      <div class="card dark" style="align-items:center"><img src="favicon.svg" alt="favicon contenidor" style="height:88px"><span class="cap">favicon (marca en contenidor)</span></div>
+    </div>
+  </section>
+
+  <!-- ============ FAVICON A MIDES REALS ============ -->
+  <section>
+    <h2 class="label">Favicon · mides reals</h2>
+    <div class="card subtle">
+      <div class="favs">
+        <img class="f16" src="favicon.svg" alt="16"><span class="cap">16</span>
+        <img class="f32" src="favicon.svg" alt="32"><span class="cap">32</span>
+        <img class="f48" src="favicon.svg" alt="48"><span class="cap">48</span>
+        <img class="f64" src="favicon.svg" alt="64"><span class="cap">64</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PALETA (referint tokens) ============ -->
+  <section>
+    <h2 class="label">Paleta de marca (subconjunt dels tokens — no es redefineix)</h2>
+    <div class="pal">
+      <div class="chip" style="background:#1B212A">neutral-900</div>
+      <div class="chip" style="background:#3C4756">neutral-700</div>
+      <div class="chip" style="background:#2A7B7B">teal</div>
+      <div class="chip" style="background:#216262">teal-600</div>
+      <div class="chip" style="background:#C75D34">accent-500</div>
+      <div class="chip dk" style="background:#E3A584">accent-300</div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="ca" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>riusdegent · Sistema — Pantalles</title>
+<link rel="icon" type="image/svg+xml" href="../../brand/favicon.svg">
+<link rel="stylesheet" href="../../tokens/tokens.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=Archivo:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../sistema.css">
+<style>
+  /* ---- browser frame ---- */
+  .win{ border:1px solid var(--dp-border); border-radius:var(--dp-radius-lg); overflow:hidden;
+        box-shadow:var(--dp-shadow-lg); background:var(--dp-surface); }
+  .win__bar{ display:flex; align-items:center; gap:12px; padding:10px 14px; background:var(--dp-bg-subtle);
+             border-bottom:1px solid var(--dp-border); }
+  .win__dots{ display:flex; gap:6px; } .win__dots i{ width:11px; height:11px; border-radius:50%; background:var(--dp-border-strong); }
+  .win__url{ font-family:var(--dp-font-mono); font-size:.72rem; color:var(--dp-text-subtle); background:var(--dp-surface);
+             border:1px solid var(--dp-border); border-radius:var(--dp-radius-full); padding:5px 16px; }
+
+  /* ---- Mirador workspace ---- */
+  .mir-app{ background:var(--dp-bg); }
+  .mir-app__bar{ display:flex; align-items:center; gap:14px; padding:11px 16px; border-bottom:1px solid var(--dp-border); flex-wrap:wrap; }
+  .mir-search{ position:relative; flex:1; min-width:160px; max-width:300px; }
+  .mir-search input{ width:100%; font-family:var(--dp-font-sans); font-size:.85rem; color:var(--dp-text);
+    background:var(--dp-surface); border:1px solid var(--dp-border-strong); border-radius:var(--dp-radius-sm); padding:8px 12px 8px 32px; }
+  .mir-search svg{ position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--dp-text-subtle); }
+  .mir-app__body{ display:grid; grid-template-columns:208px 1fr 312px; min-height:480px; }
+  .mir-rail{ border-right:1px solid var(--dp-border); padding:12px 0; }
+  .mir-rail .grp{ font-family:var(--dp-font-mono); font-size:.6rem; letter-spacing:.1em; text-transform:uppercase;
+                  color:var(--dp-text-subtle); padding:10px 16px 6px; }
+  .mir-rail .it{ display:flex; justify-content:space-between; align-items:center; padding:8px 16px; font-size:.84rem;
+                 color:var(--dp-text-muted); cursor:pointer; border-left:2px solid transparent; }
+  .mir-rail .it:hover{ background:var(--dp-bg-subtle); }
+  .mir-rail .it.on{ background:var(--dp-bg-subtle); border-left-color:var(--dp-accent-500); color:var(--dp-text); font-weight:500; }
+  .mir-rail .it .v{ font-family:var(--dp-font-mono); font-size:.74rem; color:var(--dp-text-subtle); }
+
+  .mir-map{ position:relative; background:var(--dp-map-land,#F2F1EC); overflow:hidden; }
+  [data-theme="dark"] .mir-map{ background:#141A20; }
+  .mir-map__contours{ position:absolute; inset:0; width:100%; height:100%; opacity:.6; }
+  .mir-choro{ position:absolute; inset:34px 34px 96px; display:grid; grid-template-columns:repeat(9,1fr);
+              grid-auto-rows:1fr; gap:3px; }
+  .mir-choro span{ border-radius:2px; }
+  .mir-choro span.sel{ outline:2px solid var(--dp-neutral-900); outline-offset:1px; }
+  [data-theme="dark"] .mir-choro span.sel{ outline-color:var(--dp-neutral-0); }
+  .mir-choro span.sel2{ outline:2px solid var(--dp-accent-500); outline-offset:1px; }
+  .mir-pin{ position:absolute; font-family:var(--dp-font-mono); font-size:.64rem; color:var(--dp-text);
+            background:color-mix(in srgb,var(--dp-bg) 82%, transparent); padding:2px 6px; border-radius:var(--dp-radius-sm);
+            display:flex; align-items:center; gap:5px; pointer-events:none; }
+  .mir-pin::before{ content:""; width:6px; height:6px; border:1.5px solid var(--dp-accent-500); border-radius:50%; background:var(--dp-bg); }
+  .mir-legend{ position:absolute; left:18px; bottom:18px; }
+
+  .mir-dossier{ border-left:1px solid var(--dp-border); padding:18px; display:flex; flex-direction:column; gap:14px; overflow:auto; }
+  .mir-dossier__hd{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+  .mir-dossier h3{ font-family:'Archivo',var(--dp-font-sans); font-weight:700; font-size:1.4rem; letter-spacing:-0.015em;
+                   margin:0; color:var(--dp-text); line-height:1.1; }
+  .mir-dossier .comarca{ font-family:var(--dp-font-mono); font-size:.66rem; letter-spacing:.06em; color:var(--dp-text-subtle); margin:5px 0 0; }
+
+  /* ---- phones ---- */
+  .phones{ display:flex; gap:34px; flex-wrap:wrap; justify-content:center; }
+  .phone-unit{ text-align:center; }
+  .phone-unit .cap{ font-family:var(--dp-font-mono); font-size:.66rem; letter-spacing:.08em; text-transform:uppercase;
+                    color:var(--dp-text-subtle); margin-bottom:14px; }
+  .phone{ width:312px; flex:none; background:#0A0D11; border-radius:46px; padding:13px; box-shadow:var(--dp-shadow-lg); }
+  .phone__screen{ border-radius:34px; overflow:hidden; background:var(--dp-bg); height:660px; position:relative;
+                  display:flex; flex-direction:column; color:var(--dp-text); }
+  .ph-status{ display:flex; justify-content:space-between; align-items:center; padding:14px 22px 8px;
+              font-family:var(--dp-font-mono); font-size:.7rem; color:var(--dp-text); }
+  .ph-status .dots{ display:flex; gap:4px; align-items:center; }
+  .ph-status .dots i{ width:5px; height:5px; border-radius:50%; background:var(--dp-text-muted); }
+  .ph-top{ display:flex; align-items:center; gap:10px; padding:6px 18px 12px; }
+  .ph-search{ flex:1; position:relative; }
+  .ph-search input{ width:100%; font-family:var(--dp-font-sans); font-size:.85rem; color:var(--dp-text);
+     background:var(--dp-surface-sunken); border:1px solid var(--dp-border); border-radius:var(--dp-radius-full); padding:9px 12px 9px 32px; }
+  .ph-search svg{ position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--dp-text-subtle); }
+  .ph-body{ flex:1; overflow:auto; padding:6px 18px 18px; }
+  .ph-fitxa-hd{ display:flex; align-items:center; gap:12px; padding:8px 0 14px; }
+  .ph-fitxa-hd h3{ font-family:'Archivo',var(--dp-font-sans); font-weight:700; font-size:1.5rem; margin:0; letter-spacing:-0.015em; line-height:1.05; color:var(--dp-text); }
+  .ph-fitxa-hd .comarca{ font-family:var(--dp-font-mono); font-size:.64rem; letter-spacing:.05em; color:var(--dp-text-subtle); margin:4px 0 0; }
+  .ph-hero-n{ background:var(--dp-bg-subtle); border:1px solid var(--dp-border); border-radius:var(--dp-radius-lg);
+              padding:16px; margin-bottom:14px; }
+  .ph-hero-n .lab{ font-family:var(--dp-font-mono); font-size:.62rem; letter-spacing:.08em; text-transform:uppercase;
+                   color:var(--dp-text-subtle); display:flex; align-items:center; gap:7px; margin-bottom:6px; }
+  .ph-hero-n .n{ font-family:'Archivo',var(--dp-font-sans); font-weight:800; font-size:3rem; line-height:.95;
+                 color:var(--dp-text); letter-spacing:-0.02em; }
+  .ph-hero-n .n .u{ font-size:.8rem; font-weight:600; color:var(--dp-text-subtle); margin-left:4px; }
+  .ph-mini-legend{ margin-top:12px; }
+  .ph-mini-legend .bar{ display:flex; border-radius:2px; overflow:hidden; }
+  .ph-mini-legend .bar i{ flex:1; height:10px; position:relative; }
+  .ph-mini-legend .bar i.here::after{ content:""; position:absolute; left:50%; top:-4px; transform:translateX(-50%);
+     border-left:4px solid transparent; border-right:4px solid transparent; border-top:5px solid var(--dp-text); }
+  .ph-mini-legend .sc{ display:flex; justify-content:space-between; font-family:var(--dp-font-mono); font-size:.56rem;
+                       color:var(--dp-text-subtle); margin-top:4px; }
+  .ph-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 0; border-bottom:1px solid var(--dp-border); }
+  .ph-row:last-child{ border-bottom:none; }
+  .ph-row .k{ font-size:.85rem; color:var(--dp-text-muted); display:flex; align-items:center; gap:8px; }
+  .ph-row .val{ font-family:var(--dp-font-sans); font-weight:600; font-size:1.05rem; color:var(--dp-text); font-variant-numeric:tabular-nums; }
+  .ph-row .val .u{ font-size:.66rem; font-weight:500; color:var(--dp-text-subtle); margin-left:2px; }
+  .ph-method{ font-family:var(--dp-font-mono); font-size:.6rem; letter-spacing:.02em; color:var(--dp-text-subtle); margin-top:14px; line-height:1.6; }
+  .ph-tabs{ display:flex; border-top:1px solid var(--dp-border); background:var(--dp-surface); padding:8px 8px 18px; }
+  .ph-tabs a{ flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; text-decoration:none;
+              font-family:var(--dp-font-mono); font-size:.56rem; letter-spacing:.04em; color:var(--dp-text-subtle); padding:6px 0; }
+  .ph-tabs a.on{ color:var(--dp-accent-600); }
+  [data-theme="dark"] .ph-tabs a.on{ color:var(--dp-accent-300); }
+  .ph-tabs a svg{ display:block; }
+
+  @media (max-width:768px){ .mir-app__body{ grid-template-columns:1fr; } .mir-rail,.mir-dossier{ border:none; border-top:1px solid var(--dp-border); }
+    .mir-map{ min-height:300px; } }
+</style>
+</head>
+<body>
+
+<header class="ds-top">
+  <a class="ds-top__brand" href="Fonaments.html" aria-label="riusdegent">
+    <svg width="26" height="26" viewBox="0 0 96 96" aria-hidden="true">
+      <line x1="48" y1="14" x2="48" y2="82" stroke="#C75D34" stroke-width="3" stroke-linecap="round"/>
+      <g fill="none" stroke="#2F6B4F" stroke-linecap="round">
+        <path d="M12 32 C 22 27, 34 27, 46 32" stroke-width="5"/>
+        <path d="M10 47 C 22 41, 34 41, 46 46" stroke-width="6.5"/>
+        <path d="M12 62 C 22 56, 34 56, 46 62" stroke-width="5"/>
+      </g>
+      <g fill="none" stroke="#2F6B4F" stroke-linecap="round">
+        <path d="M50 32 C 60 27, 70 27, 78 31" stroke-width="3.5"/>
+      </g>
+      <g fill="none" stroke="#2F6B4F" stroke-linecap="round" stroke-width="3.5" stroke-dasharray="0.1 8">
+        <path d="M50 47 C 62 41, 72 42, 84 39"/>
+        <path d="M50 62 C 60 57, 68 58, 80 56"/>
+      </g>
+    </svg>
+    <span class="wm">rius<b>degent</b></span>
+  </a>
+  <span class="ds-tag">Sistema · v0.2 · Quota</span>
+  <nav class="ds-nav">
+    <a href="Fonaments.html">Fonaments</a>
+    <a href="Components.html">Components</a>
+    <a href="Pantalles.html" class="on">Pantalles</a>
+  </nav>
+  <div class="ds-top__right">
+    <div class="themer" role="group" aria-label="Tema">
+      <button data-theme="light">Clar</button>
+      <button data-theme="dark">Fosc</button>
+    </div>
+  </div>
+</header>
+
+<section class="ds-hero">
+  <svg class="ds-hero__field" viewBox="0 0 1000 360" preserveAspectRatio="none" aria-hidden="true"></svg>
+  <div class="ds-hero__in">
+    <p class="ds-eyebrow"><span>Sistema de disseny</span><b>· Pantalles</b></p>
+    <h1>El sistema, muntat en <span class="q">producte real</span>.</h1>
+    <p>Dues superfícies amb els mateixos components: <b>Mirador</b> (web) per treballar el mapa, i el <b>mòbil de consulta</b> per a l'alcalde i el veí. Commuta el tema a dalt — i compara els dos mòbils, un en cada mode.</p>
+  </div>
+</section>
+
+<main class="ds-main">
+
+  <!-- ===== WEB · MIRADOR ===== -->
+  <section class="ds-sec" id="web">
+    <div class="ds-sec__hd"><span class="ref">C · 01</span><h2>Web · Mirador</h2></div>
+    <p class="lead">L'instrument. Rail de mètriques i capes, mapa coroplètic amb la rampa d'exposició sobre basemap apagat, i el dossier del municipi a la dreta amb procedència a cada xifra. Segueix el tema global.</p>
+
+    <div class="win ds-block">
+      <div class="win__bar">
+        <div class="win__dots"><i></i><i></i><i></i></div>
+        <span class="win__url">riusdegent.cat/bergueda/ietr</span>
+      </div>
+      <div class="mir-app">
+        <div class="mir-app__bar">
+          <div class="crumb"><span>Catalunya</span><span class="sep">/</span><b>Berguedà</b></div>
+          <div class="mir-search">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            <input type="text" placeholder="Cerca municipi…">
+          </div>
+          <div class="seg">
+            <button>Cuantils</button><button class="on">Jenks · 5</button><button>Igual</button>
+          </div>
+          <button class="btn btn-outline btn-sm">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2v9M4 7l4 4 4-4M3 14h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            CSV
+          </button>
+        </div>
+        <div class="mir-app__body">
+          <aside class="mir-rail">
+            <div class="grp">Mètriques</div>
+            <div class="it on">IETR <span class="v">0–100</span></div>
+            <div class="it">% no principal <span class="v">74,3</span></div>
+            <div class="it">Residus kg/hab <span class="v">412</span></div>
+            <div class="it">Estab./1.000 <span class="v">181</span></div>
+            <div class="grp" style="margin-top:6px">Capes</div>
+            <div class="it">Divisòria comarcal</div>
+            <div class="it">Patró «dos extrems»</div>
+            <div class="it">Corbes de nivell</div>
+          </aside>
+
+          <div class="mir-map">
+            <svg class="mir-map__contours" data-contours viewBox="0 0 1000 540" preserveAspectRatio="none" aria-hidden="true"></svg>
+            <div class="mir-choro" id="mapChoro"></div>
+            <div class="mir-pin" style="left:30%;top:24%">Castellar · 92</div>
+            <div class="mir-pin" style="left:60%;top:62%">Berga · 38</div>
+            <div class="mir-legend">
+              <div class="legend" style="max-width:300px;box-shadow:var(--dp-shadow-md)">
+                <p class="legend__hd"><span>IETR · exposició</span><span>0–100</span></p>
+                <div class="legend__bar"><i style="background:#FBF3D9"></i><i style="background:#F3D9A0"></i><i style="background:#E8B567"></i><i style="background:#D98B3E"></i><i style="background:#B5612A"></i><i style="background:#7E3A1E"></i></div>
+                <div class="legend__scale"><span>baix</span><span>40</span><span>60</span><span>alt</span></div>
+                <div class="legend__nodata"><span class="hatch-cell"></span>sense dada</div>
+                <p class="legend__foot">JENKS · 5 CLASSES · IDESCAT 2024 · DERIVAT datapoble</p>
+              </div>
+            </div>
+          </div>
+
+          <aside class="mir-dossier tnum">
+            <div class="mir-dossier__hd">
+              <div>
+                <h3>Castellar de n'Hug</h3>
+                <p class="comarca">BERGUEDÀ · 166 HAB · 1.245 M</p>
+              </div>
+              <svg width="40" height="40" viewBox="0 0 96 96" aria-hidden="true" style="flex:none">
+                <line x1="48" y1="16" x2="48" y2="80" stroke="#C75D34" stroke-width="3" stroke-linecap="round"/>
+                <g fill="none" stroke="#2F6B4F" stroke-linecap="round"><path d="M12 34 C 22 28, 34 28, 46 34" stroke-width="5"/><path d="M12 48 C 22 42, 34 42, 46 48" stroke-width="6.5"/><path d="M12 62 C 22 56, 34 56, 46 62" stroke-width="5"/></g>
+                <g fill="none" stroke="#2F6B4F" stroke-linecap="round" stroke-width="3.5" stroke-dasharray="0.1 8"><path d="M50 48 C 62 42, 72 43, 84 40"/><path d="M50 62 C 60 57, 68 58, 80 56"/></g>
+              </svg>
+            </div>
+            <div class="kpi-card">
+              <p class="k"><span class="prov prov--derived" style="border:none;padding:0"><span class="dot"></span></span>IETR · índex d'exposició</p>
+              <div class="n">92<span class="u">/100</span></div>
+              <p class="d up">▲ +7 vs mitjana comarcal</p>
+            </div>
+            <div class="ph-row" style="padding-top:0"><span class="k"><span class="prov prov--measured" style="border:none;padding:0"><span class="dot"></span></span>Hab. no principal</span><span class="val">74,3<span class="u">%</span></span></div>
+            <div class="ph-row"><span class="k"><span class="prov prov--measured" style="border:none;padding:0"><span class="dot"></span></span>Establiments/1.000</span><span class="val">181<span class="u">‰</span></span></div>
+            <div class="ph-row"><span class="k"><span class="prov prov--negative" style="border:none;padding:0"><span class="dot"></span></span>Padró real · 10 anys</span><span class="val">−18<span class="u">%</span></span></div>
+            <div class="alert warn" style="margin-top:2px"><div class="bar"></div><div style="font-size:.82rem"><b>Patró «dos extrems».</b> Castellar omple; el padró s'asseca. El riu creix i s'eixuga alhora.</div></div>
+            <button class="btn btn-primary" style="justify-content:center">Obre la fitxa completa</button>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rd-divide" style="margin:46px 0 8px">
+
+  <!-- ===== MÒBIL · CONSULTA ===== -->
+  <section class="ds-sec" id="mobil">
+    <div class="ds-sec__hd"><span class="ref">C · 02</span><h2>Mòbil · consulta</h2></div>
+    <p class="lead">Per a l'alcalde i el veí: cercar un municipi i llegir-ne la xifra amb context — valor, on cau dins la comarca, procedència i mètode. Sense soroll. Aquí els dos modes, costat a costat.</p>
+
+    <div class="phones ds-block">
+      <!-- LIGHT -->
+      <div class="phone-unit">
+        <p class="cap">Tema clar</p>
+        <div class="phone"><div class="phone__screen" data-theme="light">
+          <div class="ph-status"><span>9:41</span><span class="dots"><i></i><i></i><i></i></span></div>
+          <div class="ph-top">
+            <svg width="26" height="26" viewBox="0 0 96 96" aria-hidden="true" style="flex:none">
+              <line x1="48" y1="16" x2="48" y2="80" stroke="#C75D34" stroke-width="3.5" stroke-linecap="round"/>
+              <g fill="none" stroke="#2F6B4F" stroke-linecap="round"><path d="M12 34 C 22 28, 34 28, 46 34" stroke-width="5.5"/><path d="M12 48 C 22 42, 34 42, 46 48" stroke-width="7"/><path d="M12 62 C 22 56, 34 56, 46 62" stroke-width="5.5"/></g>
+              <g fill="none" stroke="#2F6B4F" stroke-linecap="round" stroke-width="4" stroke-dasharray="0.1 8"><path d="M50 48 C 62 42, 72 43, 84 40"/></g>
+            </svg>
+            <div class="ph-search">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              <input type="text" value="Castellar de n'Hug" readonly>
+            </div>
+          </div>
+          <div class="ph-body tnum">
+            <div class="ph-fitxa-hd">
+              <div><h3>Castellar de n'Hug</h3><p class="comarca">BERGUEDÀ · 166 HAB · 1.245 M</p></div>
+            </div>
+            <div class="ph-hero-n">
+              <p class="lab"><span class="prov prov--derived" style="border:none;padding:0"><span class="dot"></span></span>IETR · índex d'exposició</p>
+              <div class="n">92<span class="u">/100</span></div>
+              <div class="ph-mini-legend">
+                <div class="bar"><i style="background:#FBF3D9"></i><i style="background:#F3D9A0"></i><i style="background:#E8B567"></i><i style="background:#D98B3E"></i><i style="background:#B5612A"></i><i class="here" style="background:#7E3A1E"></i></div>
+                <div class="sc"><span>baix</span><span>molt alt al Berguedà</span></div>
+              </div>
+            </div>
+            <div class="ph-row"><span class="k"><span class="prov prov--measured" style="border:none;padding:0"><span class="dot"></span></span>Hab. no principal</span><span class="val">74,3<span class="u">%</span></span></div>
+            <div class="ph-row"><span class="k"><span class="prov prov--measured" style="border:none;padding:0"><span class="dot"></span></span>Establiments/1.000</span><span class="val">181<span class="u">‰</span></span></div>
+            <div class="ph-row"><span class="k"><span class="prov prov--negative" style="border:none;padding:0"><span class="dot"></span></span>Padró · 10 anys</span><span class="val">−18<span class="u">%</span></span></div>
+            <p class="ph-method">JENKS · 5 CLASSES · FONT IDESCAT 2024<br>derivat datapoble · cap número sense procedència</p>
+          </div>
+          <nav class="ph-tabs">
+            <a class="on"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6"/><path d="M14 14l3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Cerca</a>
+            <a><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 2l6 4-6 4-6-4 6-4zM4 11l6 4 6-4" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Mapa</a>
+            <a><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M5 14V8M10 14V5M15 14v-3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Compara</a>
+            <a><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="4" cy="10" r="1.4" fill="currentColor"/><circle cx="10" cy="10" r="1.4" fill="currentColor"/><circle cx="16" cy="10" r="1.4" fill="currentColor"/></svg>Més</a>
+          </nav>
+        </div></div>
+      </div>
+
+      <!-- DARK -->
+      <div class="phone-unit">
+        <p class="cap">Tema fosc</p>
+        <div class="phone"><div class="phone__screen" data-theme="dark">
+          <div class="ph-status"><span>9:41</span><span class="dots"><i></i><i></i><i></i></span></div>
+          <div class="ph-top">
+            <svg width="26" height="26" viewBox="0 0 96 96" aria-hidden="true" style="flex:none">
+              <line x1="48" y1="16" x2="48" y2="80" stroke="#E3A584" stroke-width="3.5" stroke-linecap="round"/>
+              <g fill="none" stroke="#6FB395" stroke-linecap="round"><path d="M12 34 C 22 28, 34 28, 46 34" stroke-width="5.5"/><path d="M12 48 C 22 42, 34 42, 46 48" stroke-width="7"/><path d="M12 62 C 22 56, 34 56, 46 62" stroke-width="5.5"/></g>
+              <g fill="none" stroke="#6FB395" stroke-linecap="round" stroke-width="4" stroke-dasharray="0.1 8"><path d="M50 48 C 62 42, 72 43, 84 40"/></g>
+            </svg>
+            <div class="ph-search">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              <input type="text" value="Castellar de n'Hug" readonly>
+            </div>
+          </div>
+          <div class="ph-body tnum">
+            <div class="ph-fitxa-hd">
+              <div><h3>Castellar de n'Hug</h3><p class="comarca">BERGUEDÀ · 166 HAB · 1.245 M</p></div>
+            </div>
+            <div class="ph-hero-n">
+              <p class="lab"><span class="prov prov--derived" style="border:none;padding:0"><span class="dot"></span></span>IETR · índex d'exposició</p>
+              <div class="n">92<span class="u">/100</span></div>
+              <div class="ph-mini-legend">
+                <div class="bar"><i style="background:#FBF3D9"></i><i style="background:#F3D9A0"></i><i style="background:#E8B567"></i><i style="background:#D98B3E"></i><i style="background:#B5612A"></i><i class="here" style="background:#7E3A1E"></i></div>
+                <div class="sc"><span>baix</span><span>molt alt al Berguedà</span></div>
+              </div>
+            </div>
+            <div class="ph-row"><span class="k"><span class="prov prov--measured" style="border:none;padding:0"><span class="dot"></span></span>Hab. no principal</span><span class="val">74,3<span class="u">%</span></span></div>
+            <div class="ph-row"><span class="k"><span class="prov prov--measured" style="border:none;padding:0"><span class="dot"></span></span>Establiments/1.000</span><span class="val">181<span class="u">‰</span></span></div>
+            <div class="ph-row"><span class="k"><span class="prov prov--negative" style="border:none;padding:0"><span class="dot"></span></span>Padró · 10 anys</span><span class="val">−18<span class="u">%</span></span></div>
+            <p class="ph-method">JENKS · 5 CLASSES · FONT IDESCAT 2024<br>derivat datapoble · cap número sense procedència</p>
+          </div>
+          <nav class="ph-tabs">
+            <a class="on"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6"/><path d="M14 14l3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Cerca</a>
+            <a><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 2l6 4-6 4-6-4 6-4zM4 11l6 4 6-4" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Mapa</a>
+            <a><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M5 14V8M10 14V5M15 14v-3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Compara</a>
+            <a><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="4" cy="10" r="1.4" fill="currentColor"/><circle cx="10" cy="10" r="1.4" fill="currentColor"/><circle cx="16" cy="10" r="1.4" fill="currentColor"/></svg>Més</a>
+          </nav>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="ds-foot">
+  <div class="ds-foot__in">
+    <span>riusdegent · pantalles · registre Quota</span>
+    <span>mockups de referència · Mirador els implementa amb els tokens</span>
+  </div>
+</footer>
+
+<script src="../sistema.js"></script>
+<script>
+  // choropleth del mapa web (rampa d'exposició, distribució de cua llarga)
+  (function(){
+    var ramp=['#FBF3D9','#F3D9A0','#E8B567','#D98B3E','#B5612A','#7E3A1E'];
+    var cells=[1,0,1,2,0,1,3,0,1, 0,2,1,4,1,0,2,1,0, 2,1,3,1,5,2,1,0,1, 1,0,2,1,4,3,1,2,0,
+               0,1,2,0,1,2,1,0,1, 2,1,0,3,1,0,2,1,1, 1,2,1,0,2,1,3,0,1, 0,1,2,1,0,1,2,1,0];
+    var nod=20, sel=12, sel2=49, host=document.getElementById('mapChoro'); if(!host) return;
+    var h='';
+    for(var i=0;i<cells.length;i++){
+      var cls='', st='background:'+ramp[cells[i]];
+      if(i===nod){ cls='hatch'; st='background:repeating-linear-gradient(45deg,#b7bcae 0 2px,transparent 2px 6px);border:1px solid #cfd0c7'; }
+      if(i===sel) cls+=' sel'; if(i===sel2) cls+=' sel2';
+      h+='<span class="'+cls.trim()+'" style="'+st+'"></span>';
+    }
+    host.innerHTML=h;
+  })();
+</script>
+</body>
+</html>
