@@ -1,0 +1,37 @@
+name: daily-report
+
+# Resum diari de riusdegent per correu a la direccio humana (Bea).
+# 21:00 Europe/Madrid: doble cron (19/20 UTC) + guarda al script (nomes a les 21h
+# locals), perque l'horari d'estiu/hivern no desplaci l'hora de l'enviament.
+on:
+  schedule:
+    - cron: "0 19 * * *"   # 21:00 CEST (estiu)
+    - cron: "0 20 * * *"   # 21:00 CET  (hivern)
+  workflow_dispatch: {}     # enviament de prova manual
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: daily-report
+  cancel-in-progress: false
+
+jobs:
+  send:
+    name: compila i envia el resum
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # historial complet per al git log de la finestra
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compila i envia el resum diari
+        env:
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}   # secret, mai al repo
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}   # opcional (resum executiu)
+          GH_TOKEN: ${{ github.token }}                           # per a `gh pr list`
+          REPORT_TO: zigiella@gmail.com
+        run: python tools/daily_report.py
