@@ -6,9 +6,12 @@
 	 *  - basemap APAGAT amb tokens --dp-map-* (el dada resalta, el mapa s'apaga);
 	 *  - cap dependència de tile-server: estil autocontingut (fons + geometria local) →
 	 *    desplegable a Cloudflare Pages estàtic i funcional offline;
-	 *  - coroplètic amb la rampa "exposició" (--dp-exposure-*), 5 classes per defecte
-	 *    (cuantils per IETR, Jenks per magnituds crues — palette.md §5);
+	 *  - coroplètic amb la rampa "exposició" (--dp-exposure-*) o, per a desviacions amb signe
+	 *    (gap població real↔padró), la rampa DIVERGENT (--dp-div-*) ancorada a 0;
+	 *    5 classes per defecte (cuantils per IETR, Jenks per magnituds crues, divergent pel gap);
 	 *  - "sense dada" amb TRAMAT (hatch) sobre --dp-nodata, mai relleno pla (secret estadístic);
+	 *  - CONFIANÇA BAIXA de l'estimació: opacitat reduïda + tramat damunt del color (honestedat:
+	 *    el mapa no afirma un gap sòlid on l'estimació és feble);
 	 *  - hover (contorn --dp-map-label) i selecció (--dp-map-highlight).
 	 *
 	 * Només client: MapLibre toca `window`; el mòdul es carrega a onMount (import dinàmic).
@@ -19,12 +22,17 @@
 	import type { FeatureCollection } from 'geojson';
 	import type { MunicipisDataset, MetricKey } from '$lib/contract/types';
 	import { type Classification } from '$lib/map/classify';
-	import { rampColors, NODATA, MAP } from '$lib/map/palette';
+	import { rampColors, divergingColors, NODATA, MAP } from '$lib/map/palette';
+
+	/** Nivell de confiança de l'estimació que rep tractament d'honestedat (no es pinta sòlid). */
+	const LOW_CONFIDENCE = 'baixa';
 
 	interface HoverPayload {
 		ine5: string;
 		nom: string;
 		value: number | string | null;
+		/** Confiança de l'estimació (clau `confianca` del contracte); null si no n'hi ha. */
+		conf: string | null;
 		x: number;
 		y: number;
 	}
@@ -50,6 +58,7 @@
 	const SRC = 'bergueda';
 	const FILL = 'mun-fill';
 	const HATCH = 'mun-hatch';
+	const LOWCONF = 'mun-lowconf';
 	const LINE = 'mun-line';
 	const HOVER = 'mun-hover';
 	const SELECT = 'mun-select';
@@ -77,13 +86,45 @@
 	}
 
 	/**
+	 * Tramat SEMITRANSPARENT per a confiança baixa: s'apila DAMUNT del color del gap perquè
+	 * el municipi no es llegeixi com una afirmació sòlida (honestedat visual). El fons és
+	 * transparent (deixa veure el color de sota) i només hi ha les ratlles fosques tènues.
+	 */
+	function makeLowConfHatch(): ImageData {
+		const size = 8;
+		const c = document.createElement('canvas');
+		c.width = size;
+		c.height = size;
+		const ctx = c.getContext('2d')!;
+		ctx.clearRect(0, 0, size, size); // fons transparent → es veu el gap de sota
+		ctx.strokeStyle = 'rgba(36,40,46,0.42)'; // --dp-map-highlight, tènue
+		ctx.lineWidth = 1;
+		ctx.beginPath();
+		ctx.moveTo(0, size);
+		ctx.lineTo(size, 0);
+		ctx.moveTo(-2, 2);
+		ctx.lineTo(2, -2);
+		ctx.moveTo(size - 2, size + 2);
+		ctx.lineTo(size + 2, size - 2);
+		ctx.stroke();
+		return ctx.getImageData(0, 0, size, size);
+	}
+
+	/** Colors per classe segons el mètode: divergent (ancorat a 0) o seqüencial "exposició". */
+	function classColors(c: Classification): string[] {
+		return c.method === 'diverging' && c.center !== undefined
+			? divergingColors(c.domain, c.center)
+			: rampColors(c.classes);
+	}
+
+	/**
 	 * Expressió data-driven de MapLibre per al color de farciment.
 	 * Es construeix una rampa step a partir dels talls de la classificació i els colors
-	 * mostrejats de la rampa "exposició". El valor de cada municipi s'injecta com a feature
+	 * mostrejats de la rampa activa. El valor de cada municipi s'injecta com a feature
 	 * property `__val` (join amb el dataset) abans de crear la font.
 	 */
 	function fillColorExpression(c: Classification): unknown {
-		const colors = rampColors(c.classes);
+		const colors = classColors(c);
 		if (c.classes <= 1 || c.breaks.length === 0) {
 			// una sola classe (o tots iguals): color únic; el "sense dada" el tapa la capa hatch.
 			return colors[0] ?? MAP.land;
@@ -96,7 +137,11 @@
 		return expr;
 	}
 
-	/** Injecta el valor de l'indicador actiu a cada feature (property __val + __hasval). */
+	/**
+	 * Injecta a cada feature el valor de l'indicador actiu (__val/__hasval) i la confiança de
+	 * l'estimació (__conf/__lowconf). La confiança ve del contracte (clau `confianca`) i serveix
+	 * per al tractament d'honestedat: els municipis de confiança baixa no es pinten sòlids.
+	 */
 	function joinValues(fc: FeatureCollection, key: MetricKey): FeatureCollection {
 		return {
 			...fc,
@@ -105,13 +150,17 @@
 				const row = dataset.municipis[ine5];
 				const raw = row?.values?.[key];
 				const hasVal = typeof raw === 'number' && Number.isFinite(raw);
+				const conf = (row?.values?.confianca as string | undefined) ?? null;
 				return {
 					...f,
 					id: ine5, // feature-state per hover/select
 					properties: {
 						...f.properties,
 						__val: hasVal ? (raw as number) : null,
-						__hasval: hasVal
+						__hasval: hasVal,
+						__conf: conf,
+						// confiança baixa NOMÉS és rellevant quan hi ha valor a pintar (gap/estimació).
+						__lowconf: hasVal && conf === LOW_CONFIDENCE
 					}
 				};
 			})
@@ -156,6 +205,11 @@
 				// addImage accepta ImageData a MapLibre v5.
 				map.addImage('hatch', img as unknown as ImageBitmap, { pixelRatio: 1 });
 			}
+			if (!map.hasImage('hatch-lowconf')) {
+				map.addImage('hatch-lowconf', makeLowConfHatch() as unknown as ImageBitmap, {
+					pixelRatio: 1
+				});
+			}
 
 			map.addSource(SRC, { type: 'geojson', data: buildData(indicator), promoteId: 'ine5' });
 
@@ -168,7 +222,8 @@
 				paint: { 'fill-pattern': 'hatch' }
 			});
 
-			// Capa coroplètica: només municipis amb dada.
+			// Capa coroplètica: només municipis amb dada. La confiança baixa es pinta amb
+			// opacitat reduïda (honestedat: l'estimació és menys ferma) + tramat a sobre (LOWCONF).
 			map.addLayer({
 				id: FILL,
 				type: 'fill',
@@ -176,8 +231,18 @@
 				filter: ['get', '__hasval'],
 				paint: {
 					'fill-color': fillColorExpression(classification) as never,
-					'fill-opacity': 0.92
+					'fill-opacity': ['case', ['boolean', ['get', '__lowconf'], false], 0.55, 0.92]
 				}
+			});
+
+			// Tractament de CONFIANÇA BAIXA: tramat semitransparent damunt del color del gap,
+			// perquè el mapa no sobre-afirmi on l'estimació és feble (mateix gest que "sense dada").
+			map.addLayer({
+				id: LOWCONF,
+				type: 'fill',
+				source: SRC,
+				filter: ['boolean', ['get', '__lowconf'], false],
+				paint: { 'fill-pattern': 'hatch-lowconf' }
 			});
 
 			// Contorns de municipi (basemap apagat).
@@ -236,7 +301,8 @@
 
 	function wireInteractions() {
 		if (!map) return;
-		const interactive = [FILL, HATCH];
+		// LOWCONF s'apila sobre FILL: cal que també capti el hover dels munis de confiança baixa.
+		const interactive = [FILL, LOWCONF, HATCH];
 
 		for (const layer of interactive) {
 			map.on('mousemove', layer, (e) => {
@@ -257,6 +323,7 @@
 					ine5,
 					nom: (feat.properties?.nom as string) ?? row?.nom ?? ine5,
 					value,
+					conf: (row?.values?.confianca as string | undefined) ?? null,
 					x: e.point.x,
 					y: e.point.y
 				});

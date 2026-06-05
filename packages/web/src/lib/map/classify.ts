@@ -8,28 +8,38 @@
  *  - **Jenks (natural breaks)** per a magnituds crues (kg_hab_any, pct_noprincipal,
  *    rtc_per_1000hab…): respecta els salts reals (l'outlier Castellar) i evita que un extrem
  *    aixafi la resta en una sola classe.
+ *  - **Divergent** per a desviacions amb signe (el gap població real↔padró): centrat a 0.
  *  - El "sense dada" NO és una classe de color: es pinta amb tramat (hatch) sobre --dp-nodata.
  *
  * El color comunica el mètode: la llegenda mostra sempre **mètode + nº de classes + font·data**.
- * Aquí calculem els TALLS i les ETIQUETES de rang; el pintat (rampa --dp-exposure-*) viu al
- * component de mapa, que pren 5 mostres de la rampa de 6 stops.
+ * Aquí calculem els TALLS i les ETIQUETES de rang; el pintat (rampes --dp-exposure-* / --dp-div-*)
+ * viu al component de mapa, que pren les mostres de color corresponents.
  */
 
 import type { MetricFormat, MetricKey } from '$lib/contract/types';
 
-export type ClassMethod = 'quantiles' | 'jenks';
+export type ClassMethod = 'quantiles' | 'jenks' | 'diverging';
 
 /** Nombre de classes per defecte del sistema (decisió de Talaia, 2026-06-04). */
 export const DEFAULT_CLASSES = 5;
 
 /**
  * Mètode de classificació per clau de mètrica (palette.md §5).
- * Índexs normalitzats → cuantils; la resta (magnituds crues) → Jenks.
+ * Índexs normalitzats → cuantils; desviacions amb signe (gap vs 0) → divergent centrat a 0;
+ * la resta (magnituds crues) → Jenks.
  * `guanya` és categòrica (text) i no entra al coroplètic seqüencial.
  */
 const QUANTILE_KEYS = new Set<MetricKey>(['IETR', 'IETR_rank']);
 
+/**
+ * Mètriques que són una DESVIACIÓ respecte a un punt neutre (0): el gap població real↔padró.
+ * gap=0 → no hi ha població invisible; >0 → exposició (càlid); <0 → menys gent que el padró (teal).
+ * Es classifiquen amb rampa divergent centrada a 0 (no Jenks ni cuantils, que amagarien el signe).
+ */
+const DIVERGING_KEYS = new Set<MetricKey>(['gap_pct', 'gap_abs']);
+
 export function methodFor(key: MetricKey): ClassMethod {
+	if (DIVERGING_KEYS.has(key)) return 'diverging';
 	return QUANTILE_KEYS.has(key) ? 'quantiles' : 'jenks';
 }
 
@@ -50,6 +60,12 @@ export interface Classification {
 	domain: number[];
 	/** Nombre de valors numèrics no nuls usats (la resta són "sense dada"). */
 	n: number;
+	/**
+	 * Punt neutre de la rampa divergent (només per `method='diverging'`): el valor (0)
+	 * que separa el costat teal del càlid i marca quina vora és el zero. `undefined` per
+	 * a mètodes seqüencials. La rampa de color s'ancora aquí (no al centre de l'escala).
+	 */
+	center?: number;
 }
 
 /** Quantil lineal (interpolació tipus R-7) sobre una llista ja ordenada. */
@@ -133,9 +149,52 @@ function jenksBreaks(data: number[], nClasses: number): number[] {
 }
 
 /**
+ * Talls per a una rampa DIVERGENT ancorada al `center` (per defecte 0).
+ *
+ * Una desviació amb signe (el gap població↔padró) no es pot classificar com una magnitud
+ * crua: el missatge és "a quina banda del zero cau i quant". Per això:
+ *  - el `center` (0) és SEMPRE una vora interna → cap classe barreja signe positiu i negatiu;
+ *  - a cada costat es col·loquen sub-vores per cuantils dels valors d'aquell costat, de manera
+ *    que la rampa teal (negatiu) i la càlida (positiu) reparteixen els municipis de forma
+ *    equilibrada (i no que un sol outlier —Sant Jaume +176%— aixafi tota la banda càlida).
+ *
+ * El nombre d'interior breaks que rep cada costat és proporcional a quants municipis hi cauen
+ * (mínim 1 si el costat té valors). Retorna les vores internes ordenades, amb el 0 inclòs.
+ */
+function divergingBreaks(data: number[], nClasses: number, center: number): number[] {
+	const neg = data.filter((v) => v < center).sort((a, b) => a - b);
+	const pos = data.filter((v) => v > center).sort((a, b) => a - b);
+	// vores interiors a repartir, a banda del tall del propi center.
+	const interior = Math.max(0, nClasses - 2);
+
+	// Repartiment proporcional al recompte de cada costat (cada costat amb dades ≥ 1 vora).
+	let nNeg = 0;
+	let nPos = 0;
+	if (neg.length && pos.length && interior > 0) {
+		nNeg = Math.max(1, Math.round((interior * neg.length) / (neg.length + pos.length)));
+		nNeg = Math.min(nNeg, interior - 1, Math.max(0, neg.length - 1));
+		nPos = Math.min(interior - nNeg, Math.max(0, pos.length - 1));
+	} else if (neg.length && interior > 0) {
+		nNeg = Math.min(interior, Math.max(0, neg.length - 1));
+	} else if (pos.length && interior > 0) {
+		nPos = Math.min(interior, Math.max(0, pos.length - 1));
+	}
+
+	// Sub-vores per cuantils dins de cada costat (exclou els extrems del propi grup).
+	const sub = (group: number[], count: number): number[] => {
+		const out: number[] = [];
+		for (let i = 1; i <= count; i++) out.push(quantileSorted(group, i / (count + 1)));
+		return out;
+	};
+
+	const breaks = [...sub(neg, nNeg), center, ...sub(pos, nPos)];
+	return breaks.sort((a, b) => a - b);
+}
+
+/**
  * Classifica una sèrie de valors d'una mètrica.
  * @param values  valors crus (poden incloure null/undefined/NaN → "sense dada", s'ignoren).
- * @param method  cuantils o Jenks (per defecte segons la mètrica).
+ * @param method  cuantils, Jenks o divergent (per defecte segons la mètrica via methodFor).
  * @param classes nombre de classes (per defecte 5).
  */
 export function classify(
@@ -153,12 +212,18 @@ export function classify(
 	const uniqueCount = new Set(sorted).size;
 	const effClasses = Math.max(1, Math.min(classes, uniqueCount));
 
+	// Punt neutre de la rampa divergent (gap respecte 0). Per a la resta de mètodes no aplica.
+	const center = method === 'diverging' ? 0 : undefined;
+
 	let breaks: number[] = [];
 	if (effClasses > 1) {
-		breaks = method === 'quantiles' ? quantileBreaks(sorted, effClasses) : jenksBreaks(nums, effClasses);
+		if (method === 'quantiles') breaks = quantileBreaks(sorted, effClasses);
+		else if (method === 'diverging') breaks = divergingBreaks(nums, effClasses, center ?? 0);
+		else breaks = jenksBreaks(nums, effClasses);
 		// vores estrictament creixents i dins [min,max]; desduplica per robustesa.
+		// El tall del center (0) es conserva encara que toqui un extrem: ancora el signe de la rampa.
 		breaks = breaks
-			.filter((b) => b > min && b < max)
+			.filter((b) => (b === center ? b >= min && b <= max : b > min && b < max))
 			.sort((a, b) => a - b)
 			.filter((b, i, arr) => i === 0 || b !== arr[i - 1]);
 	}
@@ -170,7 +235,8 @@ export function classify(
 		min,
 		max,
 		domain: [min, ...breaks, max],
-		n: nums.length
+		n: nums.length,
+		center
 	};
 }
 
@@ -187,15 +253,17 @@ export function classOf(value: number | string | null | undefined, c: Classifica
 }
 
 /**
- * Etiquetes de rang per classe, formatades segons el format de la mètrica i el locale.
+ * Etiquetes de rang per classe, formatades segons la mètrica i el locale.
  * length = classification.classes. Ex.: ["0–20", "20–41", …] amb cifres del locale.
+ * Rep la `key` per poder aplicar el format específic del gap (ràtio amb signe).
  */
 export function classRangeLabels(
 	c: Classification,
 	format: MetricFormat,
-	locale: string
+	locale: string,
+	key?: MetricKey
 ): string[] {
-	const fmt = makeFormatter(format, locale);
+	const fmt = makeMetricFormatter(key, format, locale);
 	const edges = c.domain;
 	const labels: string[] = [];
 	for (let i = 0; i < c.classes; i++) {
@@ -224,4 +292,34 @@ export function makeFormatter(format: MetricFormat, locale: string): (n: number)
 		default:
 			return (n) => String(n);
 	}
+}
+
+/**
+ * Conjunt de claus el valor de les quals és una RÀTIO (escala 0-1) que s'ha de mostrar
+ * com a percentatge amb SIGNE explícit. El gap es publica així al contracte
+ * (`gap_pct = gap_abs / poblacio`, vegeu docs/poblacio-real-metode.md §7): a diferència de
+ * `pct_noprincipal` (escala 0-100), aquí cal multiplicar per 100 i marcar el +/− perquè es
+ * llegeixi com una desviació respecte al padró (+139 %, −21 %), no com "1,4 %".
+ */
+const SIGNED_RATIO_PCT_KEYS = new Set<MetricKey>(['gap_pct']);
+
+/**
+ * Formatador sensible a la CLAU de mètrica (no només al format). Igual que `makeFormatter`
+ * tret de les mètriques de ràtio amb signe (gap), on converteix la ràtio 0-1 a percentatge
+ * amb signe explícit. La resta de claus deleguen al formatador per format.
+ */
+export function makeMetricFormatter(
+	key: MetricKey | undefined,
+	format: MetricFormat,
+	locale: string
+): (n: number) => string {
+	if (key && SIGNED_RATIO_PCT_KEYS.has(key)) {
+		const loc = locale === 'es' ? 'es-ES' : 'ca-ES';
+		return (n) =>
+			new Intl.NumberFormat(loc, {
+				maximumFractionDigits: 0,
+				signDisplay: 'exceptZero'
+			}).format(n * 100) + ' %';
+	}
+	return makeFormatter(format, locale);
 }

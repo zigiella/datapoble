@@ -2,12 +2,15 @@
 	/**
 	 * Pantalla "Mapa coroplètic" (F2, Mirador) — pilot Berguedà.
 	 *
-	 * Coroplètic amb la rampa "exposició" (5 classes per defecte; cuantils per IETR, Jenks per
-	 * magnituds crues — palette.md §5), tramat per "sense dada", basemap apagat (--dp-map-*),
-	 * llegenda amb mètode·classes·font·data, selector d'indicador i tooltip amb procedència.
+	 * Per defecte mostra el GAP població real estimada vs padró (indicador estrella de
+	 * riusdegent): rampa divergent centrada a 0 (càlid = població invisible, teal = menys gent
+	 * que el padró). La resta d'indicadors: cuantils per IETR, Jenks per magnituds crues
+	 * (palette.md §5). Tramat per "sense dada" i per confiança baixa de l'estimació (honestedat),
+	 * basemap apagat (--dp-map-*), llegenda amb mètode·classes·font·data, selector i tooltip
+	 * amb procedència i confiança.
 	 *
-	 * Dades: dataset MOCK amb forma de contracte (es cablejarà al mart/API real). Geometria:
-	 * GeoJSON oficial dels municipis (INE/IGN), carregat com a actiu estàtic.
+	 * Dades: dataset REAL dels 31 municipis (marts de datapoble). Geometria: GeoJSON oficial
+	 * dels municipis (INE/IGN), carregat com a actiu estàtic.
 	 */
 	import { browser } from '$app/environment';
 	import ChoroplethMap from '$lib/components/ChoroplethMap.svelte';
@@ -43,6 +46,7 @@
 		ine5: string;
 		nom: string;
 		value: number | string | null;
+		conf: string | null;
 		x: number;
 		y: number;
 	}
@@ -76,7 +80,15 @@
 					onhover={(p) => (hover = p)}
 				/>
 				{#if hover}
-					<MapTooltip nom={hover.nom} {def} value={hover.value} x={hover.x} y={hover.y} />
+					<MapTooltip
+						nom={hover.nom}
+						metricKey={indicator}
+						{def}
+						value={hover.value}
+						conf={hover.conf}
+						x={hover.x}
+						y={hover.y}
+					/>
 				{/if}
 			{:else}
 				<div class="mapscreen__ssr" aria-hidden="true">{m.map_loading()}</div>
@@ -84,7 +96,7 @@
 		</div>
 
 		<div class="mapscreen__side">
-			<MapLegend {def} {classification} />
+			<MapLegend metricKey={indicator} {def} {classification} />
 			<p class="mapscreen__caveat">{m.map_data_caveat()}</p>
 		</div>
 	</div>
