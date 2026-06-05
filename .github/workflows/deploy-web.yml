@@ -1,0 +1,72 @@
+name: deploy-web
+
+# Desplegament del web (estàtic) a Cloudflare Pages — la nostra manera: versionat
+# i automàtic. A cada push a main que toqui el front, build + deploy a Pages.
+#
+# DORMENT FINS QUE IT CONFIGURI ELS SECRETS. Sense `CLOUDFLARE_API_TOKEN`, el job
+# acaba en VERD saltant el deploy (no embruta el CI). Per activar-lo, IT afegeix:
+#   - secret  CLOUDFLARE_API_TOKEN   (permís "Cloudflare Pages — Edit")
+#   - secret  CLOUDFLARE_ACCOUNT_ID  (l'ID del compte)
+# i (un cop) crea o deixa crear el projecte Pages "riusdegent".
+# Després: push a main → el mapa es publica a https://riusdegent.pages.dev
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "packages/web/**"
+      - "packages/design-system/**"
+      - "data/web/**"
+      - ".github/workflows/deploy-web.yml"
+  workflow_dispatch: {}      # primer desplegament manual quan IT posi els secrets
+
+permissions:
+  contents: read
+  deployments: write
+
+concurrency:
+  group: deploy-web
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: build + deploy a Cloudflare Pages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comprova el secret (deixa el job verd si encara no hi és)
+        id: gate
+        env:
+          TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Deploy dorment::Falta CLOUDFLARE_API_TOKEN — deploy saltat. IT: afegiu els secrets per activar-lo."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - if: steps.gate.outputs.skip != 'true'
+        uses: actions/checkout@v4
+
+      - if: steps.gate.outputs.skip != 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: packages/web/package-lock.json
+
+      - if: steps.gate.outputs.skip != 'true'
+        name: Install (npm ci)
+        run: npm --prefix packages/web ci
+
+      - if: steps.gate.outputs.skip != 'true'
+        name: Build (estàtic; el prebuild copia data/web → static/)
+        run: npm --prefix packages/web run build
+
+      - if: steps.gate.outputs.skip != 'true'
+        name: Deploy a Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy packages/web/build --project-name=riusdegent --branch=main
