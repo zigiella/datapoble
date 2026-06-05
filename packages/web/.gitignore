@@ -3,6 +3,10 @@
 # project.inlang/settings.json + messages/*.json (sí versionats).
 /src/lib/paraglide/
 
+# Dada copiada per `prebuild` (scripts/copy-data.mjs) des de data/web/ (font: Sondeig).
+# És un artefacte de build, NO la font: no es versiona aquí. Regenerable amb `npm run copy-data`.
+/static/data/
+
 # SvelteKit / Vite (també coberts pel .gitignore arrel del repo)
 .svelte-kit/
 build/

@@ -7,10 +7,14 @@
   "scripts": {
     "machine-translate": "paraglide-js compile --project ./project.inlang --outdir ./src/lib/paraglide",
     "paraglide": "paraglide-js compile --project ./project.inlang --outdir ./src/lib/paraglide",
+    "copy-data": "node scripts/copy-data.mjs",
     "prepare": "npm run paraglide && svelte-kit sync || echo 'prepare skipped'",
+    "predev": "npm run copy-data",
     "dev": "npm run paraglide && vite dev",
+    "prebuild": "npm run copy-data",
     "build": "npm run paraglide && vite build",
     "preview": "vite preview",
+    "precheck": "npm run copy-data",
     "check": "npm run paraglide && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
   },

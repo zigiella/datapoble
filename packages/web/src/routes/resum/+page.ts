@@ -1,16 +1,16 @@
 /**
  * Càrrega de dades del "resum".
  *
- * Avui llegeix el MOCK (src/lib/mock/municipis.ts), que té la forma del contracte.
- * Punt d'enganxament: quan el pipeline publiqui el mart o l'API estigui llesta,
- * es canvia aquesta funció per un `fetch` a l'endpoint/artefacte; la forma
- * (`MunicipisDataset`) i la resta de la pantalla no canvien.
+ * Llegeix les dades REALS dels 31 municipis (forma `MunicipisDataset`), font de Sondeig
+ * (`data/web/municipis.bergueda.json`, copiat a static/ pel prebuild) via `$lib/data/dataset`
+ * amb el `fetch` de SvelteKit (prerender-safe). La forma i la resta de la pantalla no canvien
+ * respecte del mock: només canvia l'origen de les dades.
  */
-import { getMunicipisDataset, FEATURED_INE5 } from '$lib/mock/municipis';
+import { loadMunicipisDataset, FEATURED_INE5 } from '$lib/data/dataset';
 import type { PageLoad } from './$types';
 
-export const load: PageLoad = () => {
-	const dataset = getMunicipisDataset();
+export const load: PageLoad = async ({ fetch }) => {
+	const dataset = await loadMunicipisDataset(fetch);
 	return {
 		dataset,
 		featured: {

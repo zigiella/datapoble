@@ -10,8 +10,9 @@
  * l'etiqueta és, doncs, dada del contracte, no missatge d'interfície.
  *
  * Quan el pipeline publiqui els marts (parquet/JSON) o l'API, aquesta forma és el
- * que esperem rebre. Mentrestant, `src/lib/mock/municipis.ts` la implementa amb dades
- * verificades del prototip (docs/data-sources.md).
+ * que esperem rebre. El loader real (`src/lib/data/dataset.ts`) carrega l'artefacte
+ * `data/web/municipis.bergueda.json` (generat per Sondeig des dels marts) amb aquesta
+ * mateixa forma; els 31 municipis del Berguedà amb dades reals.
  */
 
 /** Locales del producte. en/fr són ampliables via catàlegs i18n. */
