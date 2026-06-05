@@ -3,30 +3,58 @@
 	 * Tooltip del mapa: nom del municipi + valor de l'indicador + PROCEDÈNCIA.
 	 * La procedència fa servir la signatura `.prov` del design-system (sistema.css):
 	 * cada número arrossega el seu origen (contracte editorial). "Sense dada" és explícit.
+	 *
+	 * Per a la família d'estimació de població (gap / presència real) afegeix, a més:
+	 *  - la CONFIANÇA del municipi (alta/mitjana/baixa, clau `confianca` del contracte);
+	 *  - un recordatori que és INFERÈNCIA (no cens), reforçant la procedència morada.
 	 */
-	import type { MetricDef } from '$lib/contract/types';
-	import { makeFormatter } from '$lib/map/classify';
+	import type { MetricDef, MetricKey } from '$lib/contract/types';
+	import { makeMetricFormatter } from '$lib/map/classify';
 	import { provenanceOf } from '$lib/map/provenance';
 	import { pick, currentLocale } from '$lib/i18n';
 	import { m } from '$lib/paraglide/messages';
 
 	interface Props {
 		nom: string;
+		/** Clau de la mètrica activa (per al format específic del gap i el caveat d'inferència). */
+		metricKey: MetricKey;
 		def: MetricDef;
 		value: number | string | null;
+		/** Confiança de l'estimació (clau `confianca`); només es mostra per a estimacions. */
+		conf?: string | null;
 		/** Posició en píxels dins del contenidor del mapa. */
 		x: number;
 		y: number;
 	}
-	let { nom, def, value, x, y }: Props = $props();
+	let { nom, metricKey, def, value, conf = null, x, y }: Props = $props();
 
 	const locale = $derived(currentLocale());
 	const hasVal = $derived(typeof value === 'number' && Number.isFinite(value));
 	const prov = $derived(provenanceOf(def, hasVal));
 	const formatted = $derived.by(() => {
-		if (typeof value === 'number') return makeFormatter(def.format, locale)(value);
+		if (typeof value === 'number') return makeMetricFormatter(metricKey, def.format, locale)(value);
 		if (typeof value === 'string') return value;
 		return m.value_not_available();
+	});
+
+	/**
+	 * És una mètrica d'ESTIMACIÓ de població (gap / presència real)? En aquest cas el tooltip
+	 * recorda que és inferència i mostra la confiança del municipi. Es detecta per la clau de
+	 * la família població real.
+	 */
+	const ESTIMATE_KEYS = new Set<MetricKey>([
+		'gap_pct',
+		'gap_abs',
+		'poblacio_real_est',
+		'poblacio_real_rel'
+	]);
+	const isEstimate = $derived(ESTIMATE_KEYS.has(metricKey));
+	/** Etiqueta localitzada del nivell de confiança (alta/mitjana/baixa). */
+	const confLabel = $derived.by(() => {
+		if (conf === 'alta') return m.map_confidence_high();
+		if (conf === 'mitjana') return m.map_confidence_mid();
+		if (conf === 'baixa') return m.map_confidence_low();
+		return null;
 	});
 	const unit = $derived(pick(def.unit, locale));
 	// Mostra la unitat només quan és un nom de magnitud (habitants, establiments, kg/hab/any…).
@@ -63,9 +91,21 @@
 	{:else}
 		<div class="tip__val tip__val--nodata">{m.map_tooltip_nodata()}</div>
 	{/if}
+
+	{#if isEstimate && hasVal && confLabel}
+		<div class="tip__conf tip__conf--{conf}">
+			<span class="tip__conf-lbl">{m.map_confidence_label()}:</span>
+			<span class="tip__conf-val">{confLabel}</span>
+		</div>
+	{/if}
+
 	<div class="prov prov--{prov}">
 		<span class="dot"></span>{provLabel}
 	</div>
+
+	{#if isEstimate && hasVal}
+		<p class="tip__caveat">{m.map_gap_tooltip_caveat()}</p>
+	{/if}
 </div>
 
 <style>
@@ -113,5 +153,39 @@
 		font-size: 0.85rem;
 		font-weight: 600;
 		color: var(--dp-text-muted);
+	}
+	.tip__conf {
+		display: flex;
+		align-items: baseline;
+		gap: 5px;
+		font-family: var(--dp-font-mono);
+		font-size: 0.62rem;
+		margin: 0 0 6px;
+	}
+	.tip__conf-lbl {
+		color: var(--dp-text-subtle);
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+	}
+	.tip__conf-val {
+		font-weight: 700;
+		color: var(--dp-text);
+	}
+	/* La confiança baixa es marca en càlid d'avís perquè es llegeixi com a senyal feble. */
+	.tip__conf--baixa .tip__conf-val {
+		color: var(--dp-warning, #b5612a);
+	}
+	.tip__conf--alta .tip__conf-val {
+		color: var(--dp-success, #2f6b4f);
+	}
+	.tip__caveat {
+		margin: 7px 0 0;
+		padding-top: 6px;
+		border-top: 1px solid var(--dp-border);
+		font-family: var(--dp-font-mono);
+		font-size: 0.56rem;
+		line-height: 1.4;
+		color: var(--dp-text-subtle);
+		max-width: 220px;
 	}
 </style>

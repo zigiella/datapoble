@@ -48,6 +48,12 @@ export type MetricKey =
 	| 'rtc_per_100hab_viv'
 	// Pressió / càrrega real
 	| 'kg_hab_any'
+	// Població real estimada vs padró (indicador estrella; mètode a docs/poblacio-real-metode.md)
+	| 'poblacio_real_est'
+	| 'poblacio_real_rel'
+	| 'gap_abs'
+	| 'gap_pct'
+	| 'confianca'
 	// Energia / rehabilitació
 	| 'pct_icaen_EFG'
 	// Índex IETR
