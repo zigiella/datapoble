@@ -89,13 +89,12 @@ def window_start() -> datetime.datetime:
 
 SINCE = window_start()
 SINCE_UTC = SINCE.astimezone(UTC)
-EVENT = os.environ.get("GITHUB_EVENT_NAME", "manual")
 
-# Guarda: en cron nomes enviem a les 21h locals (el doble cron 19/20 UTC fa que
-# un dels dos encerti les 21h Madrid tant a l'estiu com a l'hivern).
-if EVENT == "schedule" and NOW.hour != 21:
-    print(f"[skip] no son les 21h a Madrid (ara {NOW.hour}h).")
-    sys.exit(0)
+# Un sol cron diari (0 19 * * * UTC) -> enviem SEMPRE que s'executa. NO posem guard
+# d'hora exacta: GitHub endarrereix els crons (fins a ~2 h) i un guard estricte
+# "nomes a les 21h" ho saltava tot. Millor un correu "al vespre" que cap correu.
+# La finestra del report (window_start) ja cobreix el dia sencer encara que
+# l'execucio sigui tardana.
 
 
 # --------------------------------------------------------------------------- #

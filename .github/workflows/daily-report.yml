@@ -5,9 +5,12 @@ name: daily-report
 # locals), perque l'horari d'estiu/hivern no desplaci l'hora de l'enviament.
 on:
   schedule:
-    - cron: "0 19 * * *"   # 21:00 CEST (estiu)
-    - cron: "0 20 * * *"   # 21:00 CET  (hivern)
-  workflow_dispatch: {}     # enviament de prova manual
+    # ~21:00 Europe/Madrid (CEST). NOTA: GitHub pot endarrerir els crons fins a
+    # ~1-2 h sota carrega, aixi que el correu arriba "al vespre, sobre les 21-22 h".
+    # Un sol cron = un sol correu/dia (no posem guard d'hora exacta: l'endarreriment
+    # el saltava). A l'hivern (CET) sortira ~20 h; revisar a l'octubre si cal.
+    - cron: "0 19 * * *"
+  workflow_dispatch: {}     # enviament manual / de prova
 
 permissions:
   contents: read
