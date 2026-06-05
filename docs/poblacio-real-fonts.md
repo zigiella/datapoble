@@ -130,10 +130,15 @@ turística municipal (exclou Berga i Castellar), aigua-volum (només comarca), m
 - La **reclamació final població-real és de Talaia**: aquest doc para deliberadament a l'inventari.
 
 ## Pendent
-- [ ] Si Talaia tria l'elèctric: connector `icaen_consum` (`8idm-becu`) → `data/raw/icaen_consum`,
-      `stg_icaen_consum` (filtre `codi_sector='7'` USOS DOMÈSTICS, comarca Berguedà), unió per `ine5`.
-      Hi ha un **stub** a `packages/ingestion/.../icaen_consum.py` (no cablejat al `all`).
-- [ ] Confirmar amb Talaia la normalització del numerador (per llar vs per habitatge vs absolut).
+- [x] **Fet (2026-06-05).** Connector `icaen_consum` (`8idm-becu`) cablejat a `all` →
+      `data/raw/icaen_consum`; `stg_icaen_consum` + `mart_consum_electric` (sector 7
+      USOS DOMÈSTICS, comarca Berguedà, unió per `ine5`) materialitzat a
+      `data/marts/mart_consum_electric.parquet`. **Cobertura: 31/31 municipis ×
+      2013–2024 (372 files), zero forats.** Castellar 2024 = 266.857 kWh, Berga 2024 =
+      21.019.904 kWh (coincideixen amb la verificació en viu del §2). NO normalitzat
+      encara (consum brut anual, fidel a la font).
+- [ ] Confirmar amb Talaia la normalització del numerador (per llar vs per habitatge vs absolut)
+      i la fórmula del *gap*; llavors afegir la columna derivada a `mart_municipi`.
 - [ ] Explorar si l'ARC publica fracció **RESTA** estacional (no comprovat) — donaria senyal intra-anual que el total anual amaga.
 
 ## Enllaços
