@@ -64,6 +64,15 @@ jobs:
         run: npm --prefix packages/web run build
 
       - if: steps.gate.outputs.skip != 'true'
+        name: Assegura el projecte Pages (idempotent; si ja existeix, continua)
+        continue-on-error: true
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages project create riusdegent --production-branch=main
+
+      - if: steps.gate.outputs.skip != 'true'
         name: Deploy a Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
