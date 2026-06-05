@@ -27,3 +27,13 @@ models:
         data_tests: [not_null]
       - name: vots
         data_tests: [not_null]
+  - name: stg_icaen_consum
+    description: >
+      Consum elèctric ICAEN (8idm-becu) del Berguedà, 1 fila/municipi×any×sector,
+      sèrie 2013–2024. ine5 derivat de cdmun. Tots els sectors (consum_kwh NULL si
+      secret estadístic); la selecció del sector USOS DOMÈSTICS es fa a mart.
+    columns:
+      - name: ine5
+        data_tests: [not_null]
+      - name: any_consum
+        data_tests: [not_null]

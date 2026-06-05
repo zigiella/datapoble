@@ -1,0 +1,1141 @@
+{
+  "contractVersion": "1.0",
+  "scope": "Berguedà (31 municipis) → Catalunya (~947) en investigació",
+  "metrics": {
+    "poblacio": {
+      "key": "poblacio",
+      "label": {
+        "ca": "Població",
+        "es": "Población"
+      },
+      "unit": {
+        "ca": "habitants",
+        "es": "habitantes"
+      },
+      "dimension": "demografia",
+      "format": "integer",
+      "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
+      "date": "2025",
+      "status": "public"
+    },
+    "hab_total": {
+      "key": "hab_total",
+      "label": {
+        "ca": "Habitatges (total)",
+        "es": "Viviendas (total)"
+      },
+      "unit": {
+        "ca": "habitatges",
+        "es": "viviendas"
+      },
+      "dimension": "vivenda",
+      "format": "integer",
+      "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
+      "date": "2021",
+      "status": "public"
+    },
+    "hab_principal": {
+      "key": "hab_principal",
+      "label": {
+        "ca": "Habitatges principals",
+        "es": "Viviendas principales"
+      },
+      "unit": {
+        "ca": "habitatges",
+        "es": "viviendas"
+      },
+      "dimension": "vivenda",
+      "format": "integer",
+      "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
+      "date": "2021",
+      "status": "public"
+    },
+    "hab_noprincipal": {
+      "key": "hab_noprincipal",
+      "label": {
+        "ca": "Habitatges no principals",
+        "es": "Viviendas no principales"
+      },
+      "unit": {
+        "ca": "habitatges",
+        "es": "viviendas"
+      },
+      "dimension": "vivenda",
+      "format": "integer",
+      "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
+      "date": "2021",
+      "status": "public"
+    },
+    "pct_noprincipal": {
+      "key": "pct_noprincipal",
+      "label": {
+        "ca": "% habitatge no principal",
+        "es": "% vivienda no principal"
+      },
+      "unit": {
+        "ca": "%",
+        "es": "%"
+      },
+      "dimension": "vivenda",
+      "format": "percent",
+      "source": "datapoble (calculat) — Indicadors derivats i índex IETR · Idescat",
+      "date": "2021",
+      "status": "public"
+    },
+    "hab_per_hab": {
+      "key": "hab_per_hab",
+      "label": {
+        "ca": "Habitatges per habitant",
+        "es": "Viviendas por habitante"
+      },
+      "unit": {
+        "ca": "ràtio",
+        "es": "ratio"
+      },
+      "dimension": "vivenda",
+      "format": "ratio",
+      "source": "datapoble (calculat) — Indicadors derivats i índex IETR",
+      "date": "2021/2025",
+      "status": "public"
+    },
+    "index_envelliment": {
+      "key": "index_envelliment",
+      "label": {
+        "ca": "Índex d'envelliment",
+        "es": "Índice de envejecimiento"
+      },
+      "unit": {
+        "ca": "65+/0-14 ×100",
+        "es": "65+/0-14 ×100"
+      },
+      "dimension": "demografia",
+      "format": "decimal",
+      "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
+      "date": "2025",
+      "status": "planned"
+    },
+    "rtc_total": {
+      "key": "rtc_total",
+      "label": {
+        "ca": "Establiments turístics",
+        "es": "Establecimientos turísticos"
+      },
+      "unit": {
+        "ca": "establiments",
+        "es": "establecimientos"
+      },
+      "dimension": "turisme",
+      "format": "integer",
+      "source": "Generalitat — Registre de Turisme de Catalunya — Establiments d'allotjament turístic",
+      "date": "2026",
+      "status": "public"
+    },
+    "rtc_hut": {
+      "key": "rtc_hut",
+      "label": {
+        "ca": "HUT (habitatges d'ús turístic)",
+        "es": "HUT (viviendas de uso turístico)"
+      },
+      "unit": {
+        "ca": "establiments",
+        "es": "establecimientos"
+      },
+      "dimension": "turisme",
+      "format": "integer",
+      "source": "Generalitat — Registre de Turisme de Catalunya — Establiments d'allotjament turístic",
+      "date": "2026",
+      "status": "public"
+    },
+    "rtc_per_1000hab": {
+      "key": "rtc_per_1000hab",
+      "label": {
+        "ca": "Establiments / 1000 hab",
+        "es": "Establecimientos / 1000 hab"
+      },
+      "unit": {
+        "ca": "per mil",
+        "es": "por mil"
+      },
+      "dimension": "turisme",
+      "format": "decimal",
+      "source": "datapoble (calculat) — Indicadors derivats i índex IETR",
+      "status": "public"
+    },
+    "rtc_per_100hab_viv": {
+      "key": "rtc_per_100hab_viv",
+      "label": {
+        "ca": "Establiments / 100 habitatges",
+        "es": "Establecimientos / 100 viviendas"
+      },
+      "unit": {
+        "ca": "per cent",
+        "es": "por cien"
+      },
+      "dimension": "turisme",
+      "format": "decimal",
+      "source": "datapoble (calculat) — Indicadors derivats i índex IETR",
+      "status": "public"
+    },
+    "kg_hab_any": {
+      "key": "kg_hab_any",
+      "label": {
+        "ca": "Residus kg/hab/any",
+        "es": "Residuos kg/hab/año"
+      },
+      "unit": {
+        "ca": "kg/hab/any",
+        "es": "kg/hab/año"
+      },
+      "dimension": "pressio",
+      "format": "decimal",
+      "source": "Agència de Residus de Catalunya (ARC) — Estadístiques de residus municipals",
+      "date": "2024",
+      "status": "public"
+    },
+    "pct_icaen_EFG": {
+      "key": "pct_icaen_EFG",
+      "label": {
+        "ca": "% certificats E-G",
+        "es": "% certificados E-G"
+      },
+      "unit": {
+        "ca": "%",
+        "es": "%"
+      },
+      "dimension": "energia",
+      "format": "percent",
+      "source": "datapoble (calculat) — Indicadors derivats i índex IETR · ICAEN",
+      "status": "public"
+    },
+    "IETR": {
+      "key": "IETR",
+      "label": {
+        "ca": "Índex d'Exposició Turística-Residencial",
+        "es": "Índice de Exposición Turística-Residencial"
+      },
+      "unit": {
+        "ca": "0-100",
+        "es": "0-100"
+      },
+      "dimension": "index",
+      "format": "decimal",
+      "source": "datapoble (calculat) — Indicadors derivats i índex IETR",
+      "note": {
+        "ca": "És exposició estructural (stock), no pressió realitzada. Robust a normalització (Spearman>0,97) i a pesos.",
+        "es": "Es exposición estructural (stock), no presión realizada. Robusto a normalización (Spearman>0,97) y a pesos."
+      },
+      "status": "public"
+    },
+    "IETR_rank": {
+      "key": "IETR_rank",
+      "label": {
+        "ca": "Rànquing IETR",
+        "es": "Ranking IETR"
+      },
+      "unit": {
+        "ca": "posició",
+        "es": "posición"
+      },
+      "dimension": "index",
+      "format": "rank",
+      "source": "datapoble (calculat) — Indicadors derivats i índex IETR",
+      "status": "public"
+    },
+    "pct_indep": {
+      "key": "pct_indep",
+      "label": {
+        "ca": "% vot independentista",
+        "es": "% voto independentista"
+      },
+      "unit": {
+        "ca": "%",
+        "es": "%"
+      },
+      "dimension": "politica",
+      "format": "percent",
+      "source": "Generalitat — Processos electorals - Vots",
+      "date": "2024",
+      "note": {
+        "ca": "Lectura ECOLÒGICA (no individual; falàcia ecològica). Volàtil en micromunicipis (N petit).",
+        "es": "Lectura ECOLÓGICA (no individual; falacia ecológica). Volátil en micromunicipios (N pequeño)."
+      },
+      "status": "public"
+    },
+    "pct_esquerra": {
+      "key": "pct_esquerra",
+      "label": {
+        "ca": "% vot esquerra",
+        "es": "% voto izquierda"
+      },
+      "unit": {
+        "ca": "%",
+        "es": "%"
+      },
+      "dimension": "politica",
+      "format": "percent",
+      "source": "Generalitat — Processos electorals - Vots",
+      "date": "2024",
+      "status": "public"
+    },
+    "pct_extrema_dreta": {
+      "key": "pct_extrema_dreta",
+      "label": {
+        "ca": "% vot extrema dreta",
+        "es": "% voto extrema derecha"
+      },
+      "unit": {
+        "ca": "%",
+        "es": "%"
+      },
+      "dimension": "politica",
+      "format": "percent",
+      "source": "Generalitat — Processos electorals - Vots",
+      "date": "2017-2024",
+      "note": {
+        "ca": "Lectura ecològica. Aliança Catalana és el focus (extrema dreta independentista, emergent i rural).",
+        "es": "Lectura ecológica. Aliança Catalana es el foco (extrema derecha independentista, emergente y rural)."
+      },
+      "status": "planned"
+    },
+    "guanya": {
+      "key": "guanya",
+      "label": {
+        "ca": "Candidatura guanyadora",
+        "es": "Candidatura ganadora"
+      },
+      "unit": {
+        "ca": "sigla",
+        "es": "sigla"
+      },
+      "dimension": "politica",
+      "format": "text",
+      "source": "Generalitat — Processos electorals - Vots",
+      "date": "2024",
+      "status": "public"
+    }
+  },
+  "municipis": {
+    "08011": {
+      "ine5": "08011",
+      "nom": "Avià",
+      "idescat6": "080116",
+      "values": {
+        "poblacio": 2263,
+        "hab_total": 1107,
+        "hab_principal": 824,
+        "hab_noprincipal": 283,
+        "pct_noprincipal": 25.56,
+        "hab_per_hab": 0.489,
+        "index_envelliment": 168.4,
+        "rtc_total": 28,
+        "rtc_hut": 18,
+        "rtc_per_1000hab": 12.37,
+        "rtc_per_100hab_viv": 2.53,
+        "kg_hab_any": 376.16,
+        "pct_icaen_EFG": null,
+        "IETR": 3.78,
+        "IETR_rank": 28,
+        "pct_indep": 83.85,
+        "pct_esquerra": 38.35,
+        "pct_extrema_dreta": 13.12,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08016": {
+      "ine5": "08016",
+      "nom": "Bagà",
+      "idescat6": "080168",
+      "values": {
+        "poblacio": 2167,
+        "hab_total": 1696,
+        "hab_principal": 909,
+        "hab_noprincipal": 787,
+        "pct_noprincipal": 46.4,
+        "hab_per_hab": 0.783,
+        "index_envelliment": 295.7,
+        "rtc_total": 46,
+        "rtc_hut": 37,
+        "rtc_per_1000hab": 21.23,
+        "rtc_per_100hab_viv": 2.71,
+        "kg_hab_any": 444.73,
+        "pct_icaen_EFG": null,
+        "IETR": 24.56,
+        "IETR_rank": 24,
+        "pct_indep": 62.02,
+        "pct_esquerra": 52.28,
+        "pct_extrema_dreta": 8.51,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08022": {
+      "ine5": "08022",
+      "nom": "Berga",
+      "idescat6": "080229",
+      "values": {
+        "poblacio": 17539,
+        "hab_total": 9010,
+        "hab_principal": 6831,
+        "hab_noprincipal": 2179,
+        "pct_noprincipal": 24.18,
+        "hab_per_hab": 0.514,
+        "index_envelliment": 182,
+        "rtc_total": 45,
+        "rtc_hut": 36,
+        "rtc_per_1000hab": 2.57,
+        "rtc_per_100hab_viv": 0.5,
+        "kg_hab_any": 458.79,
+        "pct_icaen_EFG": null,
+        "IETR": 0.3,
+        "IETR_rank": 31,
+        "pct_indep": 72.72,
+        "pct_esquerra": 41.05,
+        "pct_extrema_dreta": 13.9,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08024": {
+      "ine5": "08024",
+      "nom": "Borredà",
+      "idescat6": "080240",
+      "values": {
+        "poblacio": 434,
+        "hab_total": 392,
+        "hab_principal": 178,
+        "hab_noprincipal": 214,
+        "pct_noprincipal": 54.59,
+        "hab_per_hab": 0.903,
+        "index_envelliment": 361.8,
+        "rtc_total": 26,
+        "rtc_hut": 16,
+        "rtc_per_1000hab": 59.91,
+        "rtc_per_100hab_viv": 6.63,
+        "kg_hab_any": 858.18,
+        "pct_icaen_EFG": null,
+        "IETR": 44.14,
+        "IETR_rank": 13,
+        "pct_indep": 73.61,
+        "pct_esquerra": 43.06,
+        "pct_extrema_dreta": 11.11,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08045": {
+      "ine5": "08045",
+      "nom": "Capolat",
+      "idescat6": "080459",
+      "values": {
+        "poblacio": 93,
+        "hab_total": 60,
+        "hab_principal": 34,
+        "hab_noprincipal": 26,
+        "pct_noprincipal": 43.33,
+        "hab_per_hab": 0.645,
+        "index_envelliment": 106.3,
+        "rtc_total": 13,
+        "rtc_hut": 5,
+        "rtc_per_1000hab": 139.78,
+        "rtc_per_100hab_viv": 21.67,
+        "kg_hab_any": 906.48,
+        "pct_icaen_EFG": null,
+        "IETR": 60.54,
+        "IETR_rank": 5,
+        "pct_indep": 89.58,
+        "pct_esquerra": 39.58,
+        "pct_extrema_dreta": 12.5,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08049": {
+      "ine5": "08049",
+      "nom": "Casserres",
+      "idescat6": "080497",
+      "values": {
+        "poblacio": 1665,
+        "hab_total": 996,
+        "hab_principal": 646,
+        "hab_noprincipal": 350,
+        "pct_noprincipal": 35.14,
+        "hab_per_hab": 0.598,
+        "index_envelliment": 202.6,
+        "rtc_total": 30,
+        "rtc_hut": 6,
+        "rtc_per_1000hab": 18.02,
+        "rtc_per_100hab_viv": 3.01,
+        "kg_hab_any": 397.81,
+        "pct_icaen_EFG": null,
+        "IETR": 13.27,
+        "IETR_rank": 26,
+        "pct_indep": 80.84,
+        "pct_esquerra": 36.28,
+        "pct_extrema_dreta": 15.35,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08050": {
+      "ine5": "08050",
+      "nom": "Castellar del Riu",
+      "idescat6": "080500",
+      "values": {
+        "poblacio": 151,
+        "hab_total": 115,
+        "hab_principal": 63,
+        "hab_noprincipal": 52,
+        "pct_noprincipal": 45.22,
+        "hab_per_hab": 0.762,
+        "index_envelliment": 117.4,
+        "rtc_total": 17,
+        "rtc_hut": 11,
+        "rtc_per_1000hab": 112.58,
+        "rtc_per_100hab_viv": 14.78,
+        "kg_hab_any": 1028.05,
+        "pct_icaen_EFG": null,
+        "IETR": 55.15,
+        "IETR_rank": 8,
+        "pct_indep": 90.36,
+        "pct_esquerra": 24.1,
+        "pct_extrema_dreta": 15.66,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08052": {
+      "ine5": "08052",
+      "nom": "Castellar de n'Hug",
+      "idescat6": "080522",
+      "values": {
+        "poblacio": 166,
+        "hab_total": 276,
+        "hab_principal": 71,
+        "hab_noprincipal": 205,
+        "pct_noprincipal": 74.28,
+        "hab_per_hab": 1.663,
+        "index_envelliment": 466.7,
+        "rtc_total": 30,
+        "rtc_hut": 20,
+        "rtc_per_1000hab": 180.72,
+        "rtc_per_100hab_viv": 10.87,
+        "kg_hab_any": 980.42,
+        "pct_icaen_EFG": null,
+        "IETR": 89.45,
+        "IETR_rank": 1,
+        "pct_indep": 84.31,
+        "pct_esquerra": 26.47,
+        "pct_extrema_dreta": 27.45,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08057": {
+      "ine5": "08057",
+      "nom": "Castell de l'Areny",
+      "idescat6": "080575",
+      "values": {
+        "poblacio": 68,
+        "hab_total": 66,
+        "hab_principal": 31,
+        "hab_noprincipal": 35,
+        "pct_noprincipal": 53.03,
+        "hab_per_hab": 0.971,
+        "index_envelliment": 450,
+        "rtc_total": 6,
+        "rtc_hut": 3,
+        "rtc_per_1000hab": 88.24,
+        "rtc_per_100hab_viv": 9.09,
+        "kg_hab_any": 898.72,
+        "pct_icaen_EFG": null,
+        "IETR": 52.77,
+        "IETR_rank": 9,
+        "pct_indep": 76.6,
+        "pct_esquerra": 40.43,
+        "pct_extrema_dreta": 12.77,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08078": {
+      "ine5": "08078",
+      "nom": "Espunyola, l'",
+      "idescat6": "080787",
+      "values": {
+        "poblacio": 260,
+        "hab_total": 128,
+        "hab_principal": 89,
+        "hab_noprincipal": 39,
+        "pct_noprincipal": 30.47,
+        "hab_per_hab": 0.492,
+        "index_envelliment": 176.5,
+        "rtc_total": 17,
+        "rtc_hut": 3,
+        "rtc_per_1000hab": 65.38,
+        "rtc_per_100hab_viv": 13.28,
+        "kg_hab_any": 836.21,
+        "pct_icaen_EFG": null,
+        "IETR": 30.39,
+        "IETR_rank": 20,
+        "pct_indep": 87.5,
+        "pct_esquerra": 26.47,
+        "pct_extrema_dreta": 22.06,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08080": {
+      "ine5": "08080",
+      "nom": "Fígols",
+      "idescat6": "080804",
+      "values": {
+        "poblacio": 41,
+        "hab_total": 34,
+        "hab_principal": 22,
+        "hab_noprincipal": 12,
+        "pct_noprincipal": 35.29,
+        "hab_per_hab": 0.829,
+        "index_envelliment": 1100,
+        "rtc_total": 3,
+        "rtc_hut": 2,
+        "rtc_per_1000hab": 73.17,
+        "rtc_per_100hab_viv": 8.82,
+        "kg_hab_any": 759.88,
+        "pct_icaen_EFG": null,
+        "IETR": 35.77,
+        "IETR_rank": 17,
+        "pct_indep": 68,
+        "pct_esquerra": 28,
+        "pct_extrema_dreta": 20,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08092": {
+      "ine5": "08092",
+      "nom": "Gironella",
+      "idescat6": "080924",
+      "values": {
+        "poblacio": 5082,
+        "hab_total": 2628,
+        "hab_principal": 1935,
+        "hab_noprincipal": 693,
+        "pct_noprincipal": 26.37,
+        "hab_per_hab": 0.517,
+        "index_envelliment": 185.6,
+        "rtc_total": 20,
+        "rtc_hut": 14,
+        "rtc_per_1000hab": 3.94,
+        "rtc_per_100hab_viv": 0.76,
+        "kg_hab_any": 323.51,
+        "pct_icaen_EFG": null,
+        "IETR": 0.62,
+        "IETR_rank": 30,
+        "pct_indep": 72.97,
+        "pct_esquerra": 41.13,
+        "pct_extrema_dreta": 15.03,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08093": {
+      "ine5": "08093",
+      "nom": "Gisclareny",
+      "idescat6": "080930",
+      "values": {
+        "poblacio": 28,
+        "hab_total": 43,
+        "hab_principal": 15,
+        "hab_noprincipal": 28,
+        "pct_noprincipal": 65.12,
+        "hab_per_hab": 1.536,
+        "index_envelliment": 650,
+        "rtc_total": 4,
+        "rtc_hut": 3,
+        "rtc_per_1000hab": 142.86,
+        "rtc_per_100hab_viv": 9.3,
+        "kg_hab_any": 1038.94,
+        "pct_icaen_EFG": null,
+        "IETR": 82.23,
+        "IETR_rank": 3,
+        "pct_indep": 83.33,
+        "pct_esquerra": 45.83,
+        "pct_extrema_dreta": 4.17,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08099": {
+      "ine5": "08099",
+      "nom": "Guardiola de Berguedà",
+      "idescat6": "080996",
+      "values": {
+        "poblacio": 962,
+        "hab_total": 720,
+        "hab_principal": 423,
+        "hab_noprincipal": 297,
+        "pct_noprincipal": 41.25,
+        "hab_per_hab": 0.748,
+        "index_envelliment": 286.8,
+        "rtc_total": 44,
+        "rtc_hut": 39,
+        "rtc_per_1000hab": 45.74,
+        "rtc_per_100hab_viv": 6.11,
+        "kg_hab_any": 477.4,
+        "pct_icaen_EFG": null,
+        "IETR": 29.34,
+        "IETR_rank": 21,
+        "pct_indep": 63.46,
+        "pct_esquerra": 55.36,
+        "pct_extrema_dreta": 7.22,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08130": {
+      "ine5": "08130",
+      "nom": "Montclar",
+      "idescat6": "081304",
+      "values": {
+        "poblacio": 133,
+        "hab_total": 87,
+        "hab_principal": 46,
+        "hab_noprincipal": 41,
+        "pct_noprincipal": 47.13,
+        "hab_per_hab": 0.654,
+        "index_envelliment": 140.9,
+        "rtc_total": 11,
+        "rtc_hut": 6,
+        "rtc_per_1000hab": 82.71,
+        "rtc_per_100hab_viv": 12.64,
+        "kg_hab_any": 592.72,
+        "pct_icaen_EFG": null,
+        "IETR": 46.03,
+        "IETR_rank": 10,
+        "pct_indep": 91.89,
+        "pct_esquerra": 22.97,
+        "pct_extrema_dreta": 17.57,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08132": {
+      "ine5": "08132",
+      "nom": "Montmajor",
+      "idescat6": "081326",
+      "values": {
+        "poblacio": 471,
+        "hab_total": 289,
+        "hab_principal": 166,
+        "hab_noprincipal": 123,
+        "pct_noprincipal": 42.56,
+        "hab_per_hab": 0.614,
+        "index_envelliment": 211.3,
+        "rtc_total": 18,
+        "rtc_hut": 10,
+        "rtc_per_1000hab": 38.22,
+        "rtc_per_100hab_viv": 6.23,
+        "kg_hab_any": 843.28,
+        "pct_icaen_EFG": null,
+        "IETR": 26.04,
+        "IETR_rank": 23,
+        "pct_indep": 78.67,
+        "pct_esquerra": 27.56,
+        "pct_extrema_dreta": 12,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08142": {
+      "ine5": "08142",
+      "nom": "Nou de Berguedà, la",
+      "idescat6": "081424",
+      "values": {
+        "poblacio": 163,
+        "hab_total": 123,
+        "hab_principal": 64,
+        "hab_noprincipal": 59,
+        "pct_noprincipal": 47.97,
+        "hab_per_hab": 0.755,
+        "index_envelliment": 391.7,
+        "rtc_total": 11,
+        "rtc_hut": 3,
+        "rtc_per_1000hab": 67.48,
+        "rtc_per_100hab_viv": 8.94,
+        "kg_hab_any": 939.09,
+        "pct_icaen_EFG": null,
+        "IETR": 41.15,
+        "IETR_rank": 15,
+        "pct_indep": 82.18,
+        "pct_esquerra": 37.62,
+        "pct_extrema_dreta": 12.87,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08144": {
+      "ine5": "08144",
+      "nom": "Olvan",
+      "idescat6": "081445",
+      "values": {
+        "poblacio": 926,
+        "hab_total": 530,
+        "hab_principal": 360,
+        "hab_noprincipal": 170,
+        "pct_noprincipal": 32.08,
+        "hab_per_hab": 0.572,
+        "index_envelliment": 221.2,
+        "rtc_total": 19,
+        "rtc_hut": 8,
+        "rtc_per_1000hab": 20.52,
+        "rtc_per_100hab_viv": 3.58,
+        "kg_hab_any": 400.01,
+        "pct_icaen_EFG": null,
+        "IETR": 11.99,
+        "IETR_rank": 27,
+        "pct_indep": 69.5,
+        "pct_esquerra": 43.35,
+        "pct_extrema_dreta": 14.68,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08166": {
+      "ine5": "08166",
+      "nom": "Pobla de Lillet, la",
+      "idescat6": "081666",
+      "values": {
+        "poblacio": 1106,
+        "hab_total": 989,
+        "hab_principal": 474,
+        "hab_noprincipal": 515,
+        "pct_noprincipal": 52.07,
+        "hab_per_hab": 0.894,
+        "index_envelliment": 407.1,
+        "rtc_total": 31,
+        "rtc_hut": 24,
+        "rtc_per_1000hab": 28.03,
+        "rtc_per_100hab_viv": 3.13,
+        "kg_hab_any": 458.57,
+        "pct_icaen_EFG": null,
+        "IETR": 32.3,
+        "IETR_rank": 18,
+        "pct_indep": 69.79,
+        "pct_esquerra": 48.41,
+        "pct_extrema_dreta": 8.3,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08175": {
+      "ine5": "08175",
+      "nom": "Puig-reig",
+      "idescat6": "081751",
+      "values": {
+        "poblacio": 4558,
+        "hab_total": 2376,
+        "hab_principal": 1742,
+        "hab_noprincipal": 634,
+        "pct_noprincipal": 26.68,
+        "hab_per_hab": 0.521,
+        "index_envelliment": 218.7,
+        "rtc_total": 20,
+        "rtc_hut": 8,
+        "rtc_per_1000hab": 4.39,
+        "rtc_per_100hab_viv": 0.84,
+        "kg_hab_any": 334.03,
+        "pct_icaen_EFG": null,
+        "IETR": 1,
+        "IETR_rank": 29,
+        "pct_indep": 71.17,
+        "pct_esquerra": 41.52,
+        "pct_extrema_dreta": 12.44,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08177": {
+      "ine5": "08177",
+      "nom": "Quar, la",
+      "idescat6": "081770",
+      "values": {
+        "poblacio": 44,
+        "hab_total": 31,
+        "hab_principal": 18,
+        "hab_noprincipal": 13,
+        "pct_noprincipal": 41.94,
+        "hab_per_hab": 0.705,
+        "index_envelliment": 240,
+        "rtc_total": 4,
+        "rtc_hut": 3,
+        "rtc_per_1000hab": 90.91,
+        "rtc_per_100hab_viv": 12.9,
+        "kg_hab_any": 803.9,
+        "pct_icaen_EFG": null,
+        "IETR": 45.68,
+        "IETR_rank": 11,
+        "pct_indep": 73.68,
+        "pct_esquerra": 47.37,
+        "pct_extrema_dreta": 5.26,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08188": {
+      "ine5": "08188",
+      "nom": "Sagàs",
+      "idescat6": "081884",
+      "values": {
+        "poblacio": 153,
+        "hab_total": 78,
+        "hab_principal": 44,
+        "hab_noprincipal": 34,
+        "pct_noprincipal": 43.59,
+        "hab_per_hab": 0.51,
+        "index_envelliment": 163.2,
+        "rtc_total": 20,
+        "rtc_hut": 0,
+        "rtc_per_1000hab": 130.72,
+        "rtc_per_100hab_viv": 25.64,
+        "kg_hab_any": 764.49,
+        "pct_icaen_EFG": null,
+        "IETR": 56.15,
+        "IETR_rank": 7,
+        "pct_indep": 85.88,
+        "pct_esquerra": 29.41,
+        "pct_extrema_dreta": 12.94,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08190": {
+      "ine5": "08190",
+      "nom": "Saldes",
+      "idescat6": "081901",
+      "values": {
+        "poblacio": 301,
+        "hab_total": 367,
+        "hab_principal": 141,
+        "hab_noprincipal": 226,
+        "pct_noprincipal": 61.58,
+        "hab_per_hab": 1.219,
+        "index_envelliment": 359.3,
+        "rtc_total": 23,
+        "rtc_hut": 12,
+        "rtc_per_1000hab": 76.41,
+        "rtc_per_100hab_viv": 6.27,
+        "kg_hab_any": 927.26,
+        "pct_icaen_EFG": null,
+        "IETR": 57.84,
+        "IETR_rank": 6,
+        "pct_indep": 75,
+        "pct_esquerra": 43.6,
+        "pct_extrema_dreta": 8.72,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08216": {
+      "ine5": "08216",
+      "nom": "Sant Jaume de Frontanyà",
+      "idescat6": "082166",
+      "values": {
+        "poblacio": 25,
+        "hab_total": 39,
+        "hab_principal": 17,
+        "hab_noprincipal": 22,
+        "pct_noprincipal": 56.41,
+        "hab_per_hab": 1.56,
+        "index_envelliment": 350,
+        "rtc_total": 5,
+        "rtc_hut": 1,
+        "rtc_per_1000hab": 200,
+        "rtc_per_100hab_viv": 12.82,
+        "kg_hab_any": 1132.47,
+        "pct_icaen_EFG": null,
+        "IETR": 85.46,
+        "IETR_rank": 2,
+        "pct_indep": 21.43,
+        "pct_esquerra": 50,
+        "pct_extrema_dreta": 35.71,
+        "guanya": "PSC"
+      }
+    },
+    "08255": {
+      "ine5": "08255",
+      "nom": "Santa Maria de Merlès",
+      "idescat6": "082554",
+      "values": {
+        "poblacio": 179,
+        "hab_total": 111,
+        "hab_principal": 59,
+        "hab_noprincipal": 52,
+        "pct_noprincipal": 46.85,
+        "hab_per_hab": 0.62,
+        "index_envelliment": 87.5,
+        "rtc_total": 14,
+        "rtc_hut": 0,
+        "rtc_per_1000hab": 78.21,
+        "rtc_per_100hab_viv": 12.61,
+        "kg_hab_any": 686.95,
+        "pct_icaen_EFG": null,
+        "IETR": 44.32,
+        "IETR_rank": 12,
+        "pct_indep": 81.82,
+        "pct_esquerra": 42.05,
+        "pct_extrema_dreta": 10.23,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08268": {
+      "ine5": "08268",
+      "nom": "Cercs",
+      "idescat6": "082687",
+      "values": {
+        "poblacio": 1236,
+        "hab_total": 1095,
+        "hab_principal": 517,
+        "hab_noprincipal": 578,
+        "pct_noprincipal": 52.79,
+        "hab_per_hab": 0.886,
+        "index_envelliment": 270,
+        "rtc_total": 29,
+        "rtc_hut": 25,
+        "rtc_per_1000hab": 23.46,
+        "rtc_per_100hab_viv": 2.65,
+        "kg_hab_any": 486.23,
+        "pct_icaen_EFG": null,
+        "IETR": 31.14,
+        "IETR_rank": 19,
+        "pct_indep": 65.31,
+        "pct_esquerra": 46.26,
+        "pct_extrema_dreta": 17.35,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08293": {
+      "ine5": "08293",
+      "nom": "Vallcebre",
+      "idescat6": "082938",
+      "values": {
+        "poblacio": 260,
+        "hab_total": 260,
+        "hab_principal": 122,
+        "hab_noprincipal": 138,
+        "pct_noprincipal": 53.08,
+        "hab_per_hab": 1,
+        "index_envelliment": 537.5,
+        "rtc_total": 15,
+        "rtc_hut": 11,
+        "rtc_per_1000hab": 57.69,
+        "rtc_per_100hab_viv": 5.77,
+        "kg_hab_any": 837.38,
+        "pct_icaen_EFG": null,
+        "IETR": 43.86,
+        "IETR_rank": 14,
+        "pct_indep": 75.16,
+        "pct_esquerra": 43.31,
+        "pct_extrema_dreta": 5.1,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08299": {
+      "ine5": "08299",
+      "nom": "Vilada",
+      "idescat6": "082994",
+      "values": {
+        "poblacio": 430,
+        "hab_total": 325,
+        "hab_principal": 181,
+        "hab_noprincipal": 144,
+        "pct_noprincipal": 44.31,
+        "hab_per_hab": 0.756,
+        "index_envelliment": 325,
+        "rtc_total": 7,
+        "rtc_hut": 5,
+        "rtc_per_1000hab": 16.28,
+        "rtc_per_100hab_viv": 2.15,
+        "kg_hab_any": 362.07,
+        "pct_icaen_EFG": null,
+        "IETR": 21.06,
+        "IETR_rank": 25,
+        "pct_indep": 76.36,
+        "pct_esquerra": 51.55,
+        "pct_extrema_dreta": 12.02,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08308": {
+      "ine5": "08308",
+      "nom": "Viver i Serrateix",
+      "idescat6": "083089",
+      "values": {
+        "poblacio": 178,
+        "hab_total": 95,
+        "hab_principal": 55,
+        "hab_noprincipal": 40,
+        "pct_noprincipal": 42.11,
+        "hab_per_hab": 0.534,
+        "index_envelliment": 122.9,
+        "rtc_total": 13,
+        "rtc_hut": 0,
+        "rtc_per_1000hab": 73.03,
+        "rtc_per_100hab_viv": 13.68,
+        "kg_hab_any": 675.03,
+        "pct_icaen_EFG": null,
+        "IETR": 40.12,
+        "IETR_rank": 16,
+        "pct_indep": 93.81,
+        "pct_esquerra": 24.74,
+        "pct_extrema_dreta": 11.34,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "08903": {
+      "ine5": "08903",
+      "nom": "Sant Julià de Cerdanyola",
+      "idescat6": "089030",
+      "values": {
+        "poblacio": 234,
+        "hab_total": 230,
+        "hab_principal": 116,
+        "hab_noprincipal": 114,
+        "pct_noprincipal": 49.57,
+        "hab_per_hab": 0.983,
+        "index_envelliment": 281.8,
+        "rtc_total": 4,
+        "rtc_hut": 2,
+        "rtc_per_1000hab": 17.09,
+        "rtc_per_100hab_viv": 1.74,
+        "kg_hab_any": 506.47,
+        "pct_icaen_EFG": null,
+        "IETR": 29.08,
+        "IETR_rank": 22,
+        "pct_indep": 85.8,
+        "pct_esquerra": 46.15,
+        "pct_extrema_dreta": 6.51,
+        "guanya": "CAT-JUNTS+"
+      }
+    },
+    "25100": {
+      "ine5": "25100",
+      "nom": "Gósol",
+      "idescat6": "251001",
+      "values": {
+        "poblacio": 207,
+        "hab_total": 333,
+        "hab_principal": 107,
+        "hab_noprincipal": 226,
+        "pct_noprincipal": 67.87,
+        "hab_per_hab": 1.609,
+        "index_envelliment": 310.5,
+        "rtc_total": 20,
+        "rtc_hut": 14,
+        "rtc_per_1000hab": 96.62,
+        "rtc_per_100hab_viv": 6.01,
+        "kg_hab_any": 1059.74,
+        "pct_icaen_EFG": null,
+        "IETR": 72.14,
+        "IETR_rank": 4,
+        "pct_indep": 80,
+        "pct_esquerra": 45.45,
+        "pct_extrema_dreta": 8.18,
+        "guanya": "CAT-JUNTS+"
+      }
+    }
+  },
+  "comarca": {
+    "label": {
+      "ca": "Berguedà",
+      "es": "Berguedà"
+    },
+    "num_municipis": 31,
+    "values": {
+      "poblacio": 41523,
+      "hab_total": 24629,
+      "pct_noprincipal": 33.8,
+      "rtc_total": 593,
+      "rtc_per_1000hab": 14.28,
+      "kg_hab_any": 452.4,
+      "IETR": 40.1
+    }
+  }
+}

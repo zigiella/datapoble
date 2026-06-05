@@ -1,14 +1,13 @@
-"""STUB · Connector consum elèctric municipal — ICAEN (Socrata ``8idm-becu``).
+"""Connector consum elèctric municipal — ICAEN (Socrata ``8idm-becu``).
 
 Proxy de **presència humana real** per a l'indicador "població real vs padró"
 (vegeu ``docs/poblacio-real-fonts.md``). Una fila per municipi × any × sector.
 
-Estat: **stub**. El connector funciona (mateix patró que ``residus.py``), però
-**NO** està cablejat a ``python -m datapoble_ingestion all`` ni té model dbt
-encara: queda a l'espera que Talaia validi la metodologia de l'indicador. Es pot
-executar a mà (``python -m datapoble_ingestion.icaen_consum``) per a exploració.
+Estat: **actiu**. Cablejat a ``python -m datapoble_ingestion all`` (mateix patró
+que ``residus.py``). La capa transform (``stg_icaen_consum`` → ``mart_consum_electric``)
+selecciona el sector USOS DOMÈSTICS i materialitza la sèrie 2013–2024 per ``ine5``.
 
-Fets verificats en viu (2026-06-04), motiu de la tria:
+Fets verificats en viu (2026-06-04, reconfirmats 2026-06-05), motiu de la tria:
   · ``cdmun`` = INE5 (join directe amb ``mart_municipi.ine5``, sense crosswalk).
   · Cobertura 2013–2024, anual, latència ~1 any.
   · 6 sectors; el sector **7 = USOS DOMÈSTICS** és el rellevant per a presència i
@@ -74,7 +73,7 @@ def run(comarca: str = COMARCA_PILOT) -> dict:
         extra={
             "loader": "dlt",
             "dlt_load_id": str(load_info.loads_ids[0]) if load_info.loads_ids else None,
-            "note": "stub · no cablejat a `all`; sector USOS DOMÈSTICS (7) = proxy de presència",
+            "note": "cablejat a `all`; raw = tots els sectors; sector USOS DOMÈSTICS (7) = proxy de presència (selecció a transform)",
         },
     )
     return {"source": SOURCE, "rows": row_count, "files": files}

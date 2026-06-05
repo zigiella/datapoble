@@ -5,11 +5,9 @@ Scope d'aquest PR: Berguedà (31 municipis). Fonts actives:
   - Residus municipals (ARC)                 · Socrata 69zu-w48s
   - Idescat EMEX (El municipi en xifres)     · API pròpia (no Socrata)
   - Electoral (Processos electorals - Vots)  · Socrata ntc4-rnwr
-
-Stub (no cablejat a `all`, a l'espera de validació de l'indicador):
   - icaen_consum (consum elèctric municipal) · Socrata 8idm-becu
-    proxy de presència per a "població real vs padró"
-    (vegeu docs/poblacio-real-fonts.md).
+    proxy de presència per a "població real vs padró"; sector USOS
+    DOMÈSTICS (vegeu docs/poblacio-real-fonts.md). Cablejat a `all`.
 
 Cada connector deixa les dades crues a ``data/raw/<source>/`` i un sidecar
 ``_provenance.json`` (source, url, dataset_id, fetched_at, llicència, files).

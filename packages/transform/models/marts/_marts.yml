@@ -96,6 +96,40 @@ models:
       - name: kg_hab_any_year
         description: Any del tall de residus (traçabilitat temporal).
 
+  - name: mart_consum_electric
+    description: >
+      Sèrie de consum elèctric DOMÈSTIC per municipi × any (format llarg, clau
+      ine5+any_consum), Berguedà 2013–2024 (31×12 = 372 files). Font ICAEN
+      8idm-becu, sector USOS DOMÈSTICS (l'únic que sobreviu al secret estadístic
+      a micromunicipis). Proxy de presència per a "població real vs padró"
+      (docs/poblacio-real-fonts.md). NO normalitzat: consum brut anual, fidel a
+      la font; la normalització i el *gap* són síntesi de Talaia (fora d'aquest PR).
+    columns:
+      - name: ine5
+        description: Codi INE de 5 dígits (clau de join amb mart_municipi).
+        data_tests:
+          - not_null
+      - name: codi6
+        description: Codi Idescat de 6 dígits (de mart_municipi).
+        data_tests:
+          - not_null
+      - name: municipi
+        description: Nom oficial del municipi.
+        data_tests:
+          - not_null
+      - name: any_consum
+        description: Any de la dada de consum (2013–2024).
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 2013, max_value: 2024 }
+      - name: consum_kwh_domestic
+        description: Consum elèctric del sector USOS DOMÈSTICS (kWh/any).
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 0, max_value: 1000000000 }
+
   - name: mart_electoral
     description: >
       Resultats electorals agregats per municipi (clau ine5), Parlament de
