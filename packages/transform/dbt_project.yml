@@ -22,6 +22,21 @@ vars:
   # arrel de la raw, relativa a packages/transform (on s'invoca dbt)
   raw_root: "../../data/raw"
   marts_root: "../../data/marts"
+  # --- Indicador població real vs padró (mètode de Talaia, docs/poblacio-real-metode.md) ---
+  # base_residencial: kg/hab/any d'un resident "normal" = generació de les viles de
+  #   vall amb poc turisme del Berguedà (IETR<5: Avià, Berga, Gironella, Puig-reig)
+  #   = 410 (observat; estable: amb IETR<12 surt 409). TALL ABSOLUT (sub-recompte).
+  #   PARAMETRITZABLE: a escala Catalunya serà per COMARCA, no una sola (§8 del mètode).
+  # base_comarcal: mitjana comarcal pop-ponderada = 452. TALL RELATIU (redistribució
+  #   espacial dins la comarca, suma zero). Vista opcional.
+  base_residencial: 410
+  base_comarcal: 452
+  # poblacio_min_confianca: per sota d'aquest padró un municipi és micro (secret
+  #   estadístic, soroll de denominador) → confiança SEMPRE baixa.
+  poblacio_min_confianca: 75
+  # any_corroborador_electric: darrer any amb cobertura plena del consum domèstic
+  #   (31/31, zero forats) usat com a corroborador secundari de presència.
+  any_corroborador_electric: 2024
 
 models:
   datapoble_transform:

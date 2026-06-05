@@ -58,7 +58,10 @@ METRIC_KEYS = [
     "poblacio", "hab_total", "hab_principal", "hab_noprincipal",
     "pct_noprincipal", "hab_per_hab", "index_envelliment",
     "rtc_total", "rtc_hut", "rtc_per_1000hab", "rtc_per_100hab_viv",
-    "kg_hab_any", "pct_icaen_EFG", "IETR", "IETR_rank",
+    "kg_hab_any",
+    # Indicador estrella: població real estimada vs padró (derived, inferència).
+    "poblacio_real_est", "gap_abs", "gap_pct", "poblacio_real_rel", "confianca",
+    "pct_icaen_EFG", "IETR", "IETR_rank",
     "pct_indep", "pct_esquerra", "pct_extrema_dreta", "guanya",
 ]
 
@@ -70,6 +73,10 @@ FORMAT_BY_KEY = {
     "hab_per_hab": "ratio", "index_envelliment": "decimal",
     "rtc_total": "integer", "rtc_hut": "integer", "rtc_per_1000hab": "decimal",
     "rtc_per_100hab_viv": "decimal", "kg_hab_any": "decimal",
+    # Indicador estrella: comptes d'habitants → integer; gap_pct és fracció →
+    # percent; confianca és categòrica → text (alta/mitjana/baixa).
+    "poblacio_real_est": "integer", "gap_abs": "integer", "gap_pct": "percent",
+    "poblacio_real_rel": "integer", "confianca": "text",
     "pct_icaen_EFG": "percent", "IETR": "decimal", "IETR_rank": "rank",
     "pct_indep": "percent", "pct_esquerra": "percent",
     "pct_extrema_dreta": "percent", "guanya": "text",
@@ -83,8 +90,15 @@ COL_MUNI = {
     "index_envelliment": "index_envelliment", "rtc_total": "rtc_total",
     "rtc_hut": "rtc_hut", "rtc_per_1000hab": "rtc_per_1000hab",
     "rtc_per_100hab_viv": "rtc_per_100hab_viv", "kg_hab_any": "kg_hab_any",
+    # Indicador estrella (població real vs padró).
+    "poblacio_real_est": "poblacio_real_est", "gap_abs": "gap_abs",
+    "gap_pct": "gap_pct", "poblacio_real_rel": "poblacio_real_rel",
+    "confianca": "confianca",
     "pct_icaen_EFG": "pct_icaen_EFG", "IETR": "IETR", "IETR_rank": "IETR_rank",
 }
+
+# Columnes de mart_municipi que són TEXT (no numèriques) → no passen per _num().
+TEXT_COLS_MUNI = {"confianca"}
 COL_ELEC = {
     "pct_indep": f"pct_indep_{ELEC}",
     "pct_esquerra": f"pct_esq_{ELEC}",
@@ -166,7 +180,13 @@ def build_municipis(muni: pd.DataFrame, elec: pd.DataFrame) -> dict[str, dict]:
         ine5 = str(r["ine5"])
         values: dict[str, Any] = {}
         for key, col in COL_MUNI.items():
-            values[key] = _num(r[col]) if col in muni.columns else None
+            if col not in muni.columns:
+                values[key] = None
+            elif col in TEXT_COLS_MUNI:
+                v = r[col]
+                values[key] = None if pd.isna(v) else str(v)
+            else:
+                values[key] = _num(r[col])
         # Polítics des de mart_electoral (A20241). guanya és text (sigla) o None.
         if ine5 in elec_by.index:
             er = elec_by.loc[ine5]
