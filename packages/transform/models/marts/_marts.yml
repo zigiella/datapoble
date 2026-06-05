@@ -77,6 +77,46 @@ models:
         data_tests:
           - between:
               arguments: { min_value: 0, max_value: 100000 }
+      # --- Indicador estrella: població real estimada vs padró (INFERÈNCIA) ---
+      - name: poblacio_real_est
+        description: >
+          Presència humana real estimada (tall ABSOLUT, base residencial=410):
+          round(poblacio * kg_hab_any / base_residencial). Inferència, no cens;
+          es comunica com a rang + caveat (vegeu semantic/metrics.yml).
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 0, max_value: 10000000 }
+      - name: gap_abs
+        description: >
+          Població que el padró no veu: poblacio_real_est − poblacio. Pot ser
+          negatiu (municipi que genera menys residus que la base residencial).
+        data_tests:
+          - not_null
+      - name: gap_pct
+        description: "Gap relatiu: gap_abs / poblacio (fracció; 0,12 = +12%)."
+        data_tests:
+          - not_null
+      - name: poblacio_real_rel
+        description: >
+          Presència estimada (tall RELATIU, base comarcal=452): vista espacial
+          "qui acull més DINS la comarca" (≈ suma zero). Opcional.
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 0, max_value: 10000000 }
+      - name: confianca
+        description: >
+          Bandera de confiança de l'estimació (alta/mitjana/baixa). baixa als
+          micro-munis (poblacio<75, secret estadístic) i on els senyals
+          divergeixen; alta quan residus i un corroborador (elèctric/càpita o
+          % no principal) superen la mediana comarcal. Honestedat abans que
+          precisió falsa.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["alta", "mitjana", "baixa"]
       - name: pct_icaen_EFG
         description: "% certificats E-G (ICAEN). NULL: connector pendent."
       - name: IETR

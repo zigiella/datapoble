@@ -236,6 +236,122 @@ metrics:
     visibility: public
     synonyms: {ca: [residus, brossa, població fantasma], es: [residuos, basura, población fantasma]}
 
+  # --- Indicador estrella: població real estimada vs padró (DERIVED, inferència) ---
+  # Mètode validat per Talaia: docs/poblacio-real-metode.md. Tot el bloc és
+  # INFERÈNCIA (no cens): categoria derived, es comunica com a RANG + caveat.
+  poblacio_real_est:
+    label: {ca: Població real estimada, es: Población real estimada}
+    label_ca: Població real estimada
+    label_es: Población real estimada
+    definicio:
+      ca: "Presència humana real estimada (residents + no registrats + 2a residència + estacionals) a partir de la generació de residus per habitant. Tall absolut (base residencial)."
+      es: "Presencia humana real estimada (residentes + no registrados + 2ª residencia + estacionales) a partir de la generación de residuos por habitante. Corte absoluto (base residencial)."
+    dimension: pressio
+    categoria: derived
+    unit: {ca: habitants (est.), es: habitantes (est.)}
+    formula: "round(poblacio * kg_hab_any / BASE)  · BASE=410 (base residencial, parametritzable per comarca)"
+    source: datapoble
+    origin_source: residus
+    font: "ARC (residus, kg/hab/any) + Idescat (padró)"
+    date: "2024/2025"
+    table: mart_municipi
+    column: poblacio_real_est
+    visibility: public
+    caveat:
+      ca: "INFERÈNCIA, no cens. La generació de residus és un proxy de presència; la BASE (kg/hab d'un resident normal) té incertesa → la xifra es llegeix com a RANG (el Berguedà sosté com a mínim ~10%, plausiblement ~15-25%, més gent que la registrada). Els residus inclouen part de comerç a les viles (sostre de la base, terra del gap). Lectura ECOLÒGICA (sobre el municipi, mai sobre individus). Vegeu confianca."
+      es: "INFERENCIA, no censo. La generación de residuos es un proxy de presencia; la BASE (kg/hab de un residente normal) tiene incertidumbre → la cifra se lee como RANGO (el Berguedà sostiene como mínimo ~10%, plausiblemente ~15-25%, más gente que la registrada). Los residuos incluyen parte de comercio en las villas (techo de la base, suelo del gap). Lectura ECOLÓGICA (sobre el municipio, nunca sobre individuos). Véase confianza."
+    synonyms: {ca: [població real, presència real, població invisible, gent real], es: [población real, presencia real, población invisible, gente real]}
+
+  gap_abs:
+    label: {ca: "Gap població (absolut)", es: "Gap población (absoluto)"}
+    label_ca: "Gap població (absolut)"
+    label_es: "Gap población (absoluto)"
+    definicio:
+      ca: "Població que el padró no veu: població real estimada − padró. La 'gent dels rius de gent' que omple el territori sense constar."
+      es: "Población que el padrón no ve: población real estimada − padrón. La 'gente de los ríos de gente' que llena el territorio sin constar."
+    dimension: pressio
+    categoria: derived
+    unit: {ca: habitants, es: habitantes}
+    formula: "poblacio_real_est - poblacio"
+    source: datapoble
+    origin_source: residus
+    font: "ARC (residus) + Idescat (padró)"
+    date: "2024/2025"
+    table: mart_municipi
+    column: gap_abs
+    visibility: public
+    caveat:
+      ca: "Derivat de poblacio_real_est: hereta la seva incertesa (rang, no decimal exacte). Pot ser negatiu (genera menys residus que la base). Es concentra a les muntanyes turístiques, no a les viles. Lectura ecològica."
+      es: "Derivado de poblacio_real_est: hereda su incertidumbre (rango, no decimal exacto). Puede ser negativo (genera menos residuos que la base). Se concentra en las montañas turísticas, no en las villas. Lectura ecológica."
+    synonyms: {ca: [gap, població fantasma, diferència padró], es: [gap, población fantasma, diferencia padrón]}
+
+  gap_pct:
+    label: {ca: "Gap població (%)", es: "Gap población (%)"}
+    label_ca: "Gap població (%)"
+    label_es: "Gap población (%)"
+    definicio:
+      ca: "Gap relatiu sobre el padró: quant per cent més de gent hi ha de la registrada."
+      es: "Gap relativo sobre el padrón: cuánto por ciento más de gente hay de la registrada."
+    dimension: pressio
+    categoria: derived
+    unit: "%"
+    formula: "gap_abs / poblacio"
+    source: datapoble
+    origin_source: residus
+    font: "ARC (residus) + Idescat (padró)"
+    date: "2024/2025"
+    table: mart_municipi
+    column: gap_pct
+    visibility: public
+    caveat:
+      ca: "Fracció (0,12 = +12%). Volàtil als micromunicipis (denominador petit) → mirar sempre la bandera confianca. Inferència, lectura ecològica."
+      es: "Fracción (0,12 = +12%). Volátil en micromunicipios (denominador pequeño) → mirar siempre la bandera confianza. Inferencia, lectura ecológica."
+
+  poblacio_real_rel:
+    label: {ca: Població real (tall relatiu), es: Población real (corte relativo)}
+    label_ca: Població real (tall relatiu)
+    label_es: Población real (corte relativo)
+    definicio:
+      ca: "Presència estimada amb base comarcal (mitjana pop-ponderada). Vista espacial: qui acull més DINS la comarca (≈ suma zero, redistribució)."
+      es: "Presencia estimada con base comarcal (media pop-ponderada). Vista espacial: quién acoge más DENTRO de la comarca (≈ suma cero, redistribución)."
+    dimension: pressio
+    categoria: derived
+    unit: {ca: habitants (est.), es: habitantes (est.)}
+    formula: "round(poblacio * kg_hab_any / BASE_COMARCAL)  · BASE_COMARCAL=452 (mitjana comarcal)"
+    source: datapoble
+    origin_source: residus
+    font: "ARC (residus) + Idescat (padró)"
+    date: "2024/2025"
+    table: mart_municipi
+    column: poblacio_real_rel
+    visibility: public
+    caveat:
+      ca: "Tall RELATIU: conserva el total comarcal (suma zero) → mostra distribució espacial, NO sub-recompte global (per a això, poblacio_real_est). Inferència, lectura ecològica."
+      es: "Corte RELATIVO: conserva el total comarcal (suma cero) → muestra distribución espacial, NO sub-recuento global (para eso, poblacio_real_est). Inferencia, lectura ecológica."
+
+  confianca:
+    label: {ca: Confiança de l'estimació, es: Confianza de la estimación}
+    label_ca: Confiança de l'estimació
+    label_es: Confianza de la estimación
+    definicio:
+      ca: "Bandera de fiabilitat de la població real estimada: alta/mitjana/baixa segons la corroboració entre senyals (residus, elèctric domèstic/càpita, % habitatge no principal) i la mida del municipi."
+      es: "Bandera de fiabilidad de la población real estimada: alta/mitjana/baixa según la corroboración entre señales (residuos, eléctrico doméstico/cápita, % vivienda no principal) y el tamaño del municipio."
+    dimension: pressio
+    categoria: derived
+    unit: {ca: "alta/mitjana/baixa", es: "alta/mitjana/baixa"}
+    formula: "baixa si poblacio<75 O senyals divergents; alta si residus>mediana I (elèctric/càpita O %no-principal)>mediana I poblacio>=75; mitjana la resta"
+    source: datapoble
+    origin_source: residus
+    font: "ARC (residus) + ICAEN (consum domèstic) + Idescat (habitatge/padró)"
+    date: "2024/2025"
+    table: mart_municipi
+    column: confianca
+    visibility: public
+    caveat:
+      ca: "Un buit honest val més que un fals precís: 'baixa' marca micromunicipis (secret estadístic, soroll de denominador) i casos on els senyals divergeixen (p. ex. residus alts però elèctric baix per calefacció de llenya a muntanya, com Castellar de n'Hug). L'elèctric NO es pondera igual que els residus (és corroborador, no senyal primari)."
+      es: "Un vacío honesto vale más que un falso preciso: 'baixa' marca micromunicipios (secreto estadístico, ruido de denominador) y casos donde las señales divergen (p. ej. residuos altos pero eléctrico bajo por calefacción de leña en montaña, como Castellar de n'Hug). El eléctrico NO se pondera igual que los residuos (es corroborador, no señal primaria)."
+    synonyms: {ca: [confiança, fiabilitat, banderola], es: [confianza, fiabilidad, banderola]}
+
   # --- Energia / rehabilitació ---
   pct_icaen_EFG:
     label: {ca: "% certificats E-G", es: "% certificados E-G"}

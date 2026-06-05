@@ -11,6 +11,13 @@
 --   · pct_icaen_EFG      -> requereix connector ICAEN (j6ii-t3w2), fora d'aquest PR. NULL.
 --   · index_envelliment  -> status: planned al contracte, però el calculem (dades EMEX disponibles).
 --
+-- Població real estimada vs padró (INDICADOR ESTRELLA) — mètode de Talaia,
+--   docs/poblacio-real-metode.md. Columnes poblacio_real_est / gap_abs / gap_pct /
+--   poblacio_real_rel / confianca. presència = padró × kg_hab_any / BASE, amb BASE
+--   PARAMETRITZABLE (vars base_residencial=410 absolut, base_comarcal=452 relatiu).
+--   És INFERÈNCIA (no cens): es comunica com a rang + caveat (vegeu el contracte).
+--   confianca marca 'baixa' sense por als micro-munis i on els senyals divergeixen.
+--
 -- IETR (Índex d'Exposició Turística-Residencial) — metodologia de Talaia:
 --   min-max WINSORITZAT (p5/p95) sobre els 31 municipis, dues dimensions a pesos
 --   iguals. Eix A (residencial): pct_noprincipal + hab_per_hab. Eix B (turístic):
@@ -29,6 +36,13 @@ rtc as (
 
 residus as (
     select * from {{ ref('int_residus_latest') }}
+),
+
+-- Corroborador secundari de presència (docs/poblacio-real-metode.md §3): consum
+-- elèctric domèstic per càpita del darrer any amb cobertura plena. Ve de l'staging
+-- (no del mart elèctric) per evitar dependència circular — vegeu int_consum_electric_pc.
+elec_pc as (
+    select * from {{ ref('int_consum_electric_pc') }}
 ),
 
 noms as (
@@ -54,11 +68,23 @@ ind as (
         round(coalesce(rtc.rtc_total, 0) / nullif(emex.poblacio, 0) * 1000, 2) as rtc_per_1000hab,
         round(coalesce(rtc.rtc_total, 0) / nullif(emex.hab_total, 0) * 100, 2) as rtc_per_100hab_viv,
         residus.kg_hab_any                                          as kg_hab_any,
-        residus.residus_any                                         as kg_hab_any_year
+        residus.residus_any                                         as kg_hab_any_year,
+        elec_pc.kwh_domestic_pc                                     as kwh_domestic_pc
     from emex
     left join rtc      on emex.ine5 = rtc.ine5
     left join residus  on emex.ine5 = residus.ine5
+    left join elec_pc  on emex.ine5 = elec_pc.ine5
     left join noms     on emex.ine5 = noms.ine5
+),
+
+-- med: medianes comarcals dels senyals de presència (per a la bandera de
+-- confiança, §6). Es calculen sobre els 31 municipis del pilot.
+med as (
+    select
+        median(kg_hab_any)      as kg_hab_any_med,
+        median(pct_noprincipal) as pct_noprincipal_med,
+        median(kwh_domestic_pc) as kwh_domestic_pc_med
+    from ind
 ),
 
 -- q: percentils p5/p95 per a la winsorització (sobre els 31 municipis).
@@ -115,6 +141,50 @@ select
     -- Pressió (residus, darrer any)
     ind.kg_hab_any,
 
+    -- ===================================================================
+    -- INDICADOR ESTRELLA: població real estimada vs padró (INFERÈNCIA, no cens).
+    -- Mètode de Talaia, docs/poblacio-real-metode.md (§2, §4, §7). Tot es
+    -- comunica com a RANG i amb caveat (semantic/metrics.yml). Lectura ECOLÒGICA.
+    -- ===================================================================
+    -- Tall ABSOLUT (base residencial = var base_residencial = 410): capta el
+    -- sub-recompte comarcal. Indicador principal de presència real.
+    cast({{ poblacio_real('ind.poblacio', 'ind.kg_hab_any', var('base_residencial')) }} as integer)
+                                                                as poblacio_real_est,
+    -- Gap = presència estimada − padró (la població que el padró no veu).
+    cast({{ poblacio_real('ind.poblacio', 'ind.kg_hab_any', var('base_residencial')) }} - ind.poblacio as integer)
+                                                                as gap_abs,
+    round(
+        ({{ poblacio_real('ind.poblacio', 'ind.kg_hab_any', var('base_residencial')) }} - ind.poblacio)
+        / nullif(ind.poblacio, 0), 3)                           as gap_pct,
+    -- Tall RELATIU (base comarcal = var base_comarcal = 452): vista espacial
+    -- "qui acull més DINS la comarca" (suma zero). Opcional.
+    cast({{ poblacio_real('ind.poblacio', 'ind.kg_hab_any', var('base_comarcal')) }} as integer)
+                                                                as poblacio_real_rel,
+    -- Bandera de CONFIANÇA (§6): honestedat abans que precisió falsa.
+    --   baixa  = micro-muni (padró < poblacio_min_confianca, secret/soroll) O
+    --            els senyals DIVERGEIXEN (residus alt però corroboradors baixos,
+    --            o residus baix però corroboradors alts).
+    --   alta   = residus > mediana comarcal I almenys un corroborador (elèctric/
+    --            càpita de l'últim any de cobertura plena, O % no principal) també
+    --            > mediana, I padró >= poblacio_min_confianca.
+    --   mitjana= la resta.
+    case
+        when ind.poblacio < {{ var('poblacio_min_confianca') }} then 'baixa'
+        when (ind.kg_hab_any > med.kg_hab_any_med
+              and not (ind.pct_noprincipal > med.pct_noprincipal_med)
+              and not (ind.kwh_domestic_pc > med.kwh_domestic_pc_med))
+          or (not (ind.kg_hab_any > med.kg_hab_any_med)
+              and ind.pct_noprincipal > med.pct_noprincipal_med
+              and ind.kwh_domestic_pc > med.kwh_domestic_pc_med)
+            then 'baixa'
+        when ind.kg_hab_any > med.kg_hab_any_med
+             and (ind.pct_noprincipal > med.pct_noprincipal_med
+                  or ind.kwh_domestic_pc > med.kwh_domestic_pc_med)
+             and ind.poblacio >= {{ var('poblacio_min_confianca') }}
+            then 'alta'
+        else 'mitjana'
+    end                                                         as confianca,
+
     -- Energia (ICAEN) — connector pendent
     cast(null as double)                                        as pct_icaen_EFG,
 
@@ -127,4 +197,5 @@ select
 
 from ind
 join ietr on ind.ine5 = ietr.ine5
+cross join med
 order by ind.ine5
