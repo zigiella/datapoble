@@ -44,6 +44,11 @@ SOURCES: dict[str, dict] = {
         "url": f"{SOCRATA_DOMAIN}/resource/69zu-w48s.json",
         "llicencia": "Dades Obertes de Catalunya",
         "kind": "socrata",
+        # NOTA (Sondeig, 2026-06-06): aquest MATEIX dataset conté totes les fraccions
+        # de recollida selectiva per municipi (vidre, paper_i_cartr, envasos_lleugers,
+        # mat_ria_org_nica…). El VIDRE és proxy d'hostaleria/turisme per a l'afinament
+        # "pernocta vs excursionista de dia". L'stub `residus_fraccions.py` (no cablejat
+        # a `all`) hi accedeix focalitzat; vegeu docs/poblacio-real-fonts.md §turisme.
     },
     # STUB (Sondeig, 2026-06-04): consum elèctric municipal per a l'indicador
     # "població real vs padró". Verificat en viu: cdmun=ine5, 2013-2024, sector
