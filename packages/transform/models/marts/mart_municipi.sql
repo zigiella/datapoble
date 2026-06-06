@@ -45,12 +45,21 @@ elec_pc as (
     select * from {{ ref('int_consum_electric_pc') }}
 ),
 
+-- Senyal físic de la capa L3 (pressió turística/hostaleria): vidre kg/hab/any
+-- del darrer any. Fracció del MATEIX dataset ARC que els residus.
+vidre as (
+    select * from {{ ref('int_residus_fraccions') }}
+),
+
 noms as (
     -- nom oficial: residus té els 31 amb nom net
     select distinct ine5, municipi from {{ ref('stg_residus') }}
 ),
 
--- ind: una fila per municipi amb els ràtios base (inputs de l'IETR).
+-- ind: una fila per municipi amb els ràtios base (inputs de l'IETR i de les 3
+-- capes). El senyal de vidre ve d'int_residus_fraccions, materialitzat com a TAULA
+-- (no vista) perquè la vista sobre read_parquet+union_by_name resolia vidre_tones
+-- com a NULL quan stg_residus es referenciava per múltiples camins en aquesta sentència.
 ind as (
     select
         emex.ine5,
@@ -69,11 +78,17 @@ ind as (
         round(coalesce(rtc.rtc_total, 0) / nullif(emex.hab_total, 0) * 100, 2) as rtc_per_100hab_viv,
         residus.kg_hab_any                                          as kg_hab_any,
         residus.residus_any                                         as kg_hab_any_year,
-        elec_pc.kwh_domestic_pc                                     as kwh_domestic_pc
+        -- Senyal L1 (pernocta): consum elèctric domèstic per càpita. kwh_hab és el
+        -- nom de contracte; ve d'int_consum_electric_pc (kwh_domestic_pc).
+        elec_pc.kwh_domestic_pc                                     as kwh_hab,
+        -- Senyal L3 (turisme): vidre kg/hab/any. NULL→0 no s'aplica (cobertura 31/31).
+        vidre.vidre_hab                                             as vidre_hab,
+        vidre.vidre_any                                             as vidre_any
     from emex
     left join rtc      on emex.ine5 = rtc.ine5
     left join residus  on emex.ine5 = residus.ine5
     left join elec_pc  on emex.ine5 = elec_pc.ine5
+    left join vidre    on emex.ine5 = vidre.ine5
     left join noms     on emex.ine5 = noms.ine5
 ),
 
@@ -83,8 +98,30 @@ med as (
     select
         median(kg_hab_any)      as kg_hab_any_med,
         median(pct_noprincipal) as pct_noprincipal_med,
-        median(kwh_domestic_pc) as kwh_domestic_pc_med
+        median(kwh_hab)         as kwh_hab_med
     from ind
+),
+
+-- vstats: estadístics comarcals del vidre/hab per al z-score de la capa L3
+-- (índex de pressió turística). Mitjana i desviació sobre els 31 municipis.
+vstats as (
+    select
+        avg(vidre_hab)        as vidre_hab_avg,
+        stddev_pop(vidre_hab) as vidre_hab_sd
+    from ind
+),
+
+-- tur: capa L3 «pressió turística» (índex per ine5). z-score comarcal del
+-- vidre/hab portat a 0–100 (z clampat a [-2,2]; 50 = mitjana comarcal). Es calcula
+-- en una CTE pròpia (keyed per ine5, com ietr) i s'uneix per join — no per
+-- cross join a la SELECT final — per robustesa de l'optimitzador.
+tur as (
+    select ind.ine5,
+        round(
+            (least(greatest((ind.vidre_hab - vstats.vidre_hab_avg)
+                            / nullif(vstats.vidre_hab_sd, 0), -2), 2) + 2) / 4.0 * 100,
+            1) as index_turisme
+    from ind cross join vstats
 ),
 
 -- q: percentils p5/p95 per a la winsorització (sobre els 31 municipis).
@@ -141,61 +178,90 @@ select
     -- Pressió (residus, darrer any)
     ind.kg_hab_any,
 
+    -- Senyals físics per càpita (inputs de les 3 capes; exposats per traçabilitat)
+    ind.kwh_hab,                                                 -- elèctric domèstic kWh/hab (L1)
+    ind.vidre_hab,                                               -- vidre kg/hab/any (L3)
+
     -- ===================================================================
-    -- INDICADOR ESTRELLA: població real estimada vs padró (INFERÈNCIA, no cens).
-    -- Mètode de Talaia, docs/poblacio-real-metode.md (§2, §4, §7). Tot es
-    -- comunica com a RANG i amb caveat (semantic/metrics.yml). Lectura ECOLÒGICA.
+    -- INDICADOR ESTRELLA — MODEL DE 3 CAPES (INFERÈNCIA, no cens). Mètode de
+    -- Talaia, validat sobre dades. 3 senyals físics INDEPENDENTS, cadascun amb la
+    -- seva base residencial (viles IETR<5, pop-pond). Tot es comunica com a RANG +
+    -- caveat (semantic/metrics.yml). Lectura ECOLÒGICA (sobre el municipi).
     -- ===================================================================
-    -- Tall ABSOLUT (base residencial = var base_residencial = 410): capta el
-    -- sub-recompte comarcal. Indicador principal de presència real.
-    cast({{ poblacio_real('ind.poblacio', 'ind.kg_hab_any', var('base_residencial')) }} as integer)
-                                                                as poblacio_real_est,
-    -- Gap = presència estimada − padró (la població que el padró no veu).
-    cast({{ poblacio_real('ind.poblacio', 'ind.kg_hab_any', var('base_residencial')) }} - ind.poblacio as integer)
-                                                                as gap_abs,
+
+    -- L1 · POBLACIÓ PERNOCTA («població invisible»): qui DORM al territori sense
+    -- constar al padró. Senyal = elèctric domèstic / base_electric (1224 kWh/hab).
+    -- És la nova SIGNATURA de població real (substitueix l'antic residus→població).
+    cast({{ estimacio_presencia('ind.poblacio', 'ind.kwh_hab', var('base_electric')) }} as integer)
+                                                                as poblacio_pernocta_est,
+    cast({{ estimacio_presencia('ind.poblacio', 'ind.kwh_hab', var('base_electric')) }} - ind.poblacio as integer)
+                                                                as gap_pernocta,
     round(
-        ({{ poblacio_real('ind.poblacio', 'ind.kg_hab_any', var('base_residencial')) }} - ind.poblacio)
-        / nullif(ind.poblacio, 0), 3)                           as gap_pct,
-    -- Tall RELATIU (base comarcal = var base_comarcal = 452): vista espacial
-    -- "qui acull més DINS la comarca" (suma zero). Opcional.
-    cast({{ poblacio_real('ind.poblacio', 'ind.kg_hab_any', var('base_comarcal')) }} as integer)
-                                                                as poblacio_real_rel,
-    -- Bandera de CONFIANÇA (§6): honestedat abans que precisió falsa.
+        ({{ estimacio_presencia('ind.poblacio', 'ind.kwh_hab', var('base_electric')) }} - ind.poblacio)
+        / nullif(ind.poblacio, 0), 3)                           as gap_pernocta_pct,
+
+    -- L2 · CÀRREGA HUMANA TOTAL: pressió total inclosos els visitants de DIA
+    -- (excursionistes). Senyal = residus / base_residencial (410). NO és població:
+    -- els residus de les viles porten part de comerç. Era l'antic poblacio_real_est.
+    cast({{ estimacio_presencia('ind.poblacio', 'ind.kg_hab_any', var('base_residencial')) }} as integer)
+                                                                as carrega_total_est,
+
+    -- L3 · PRESSIÓ TURÍSTICA (hostaleria): intensitat d'activitat de visitants, via
+    -- vidre/hab (ampolles de bar/restaurant). z-score comarcal del vidre_hab portat
+    -- a 0–100 (50 = mitjana comarcal). NO és població. Calculat a la CTE `tur`.
+    tur.index_turisme,
+
+    -- Bandera de CONFIANÇA: honestedat abans que precisió falsa.
     --   baixa  = micro-muni (padró < poblacio_min_confianca, secret/soroll) O
-    --            els senyals DIVERGEIXEN (residus alt però corroboradors baixos,
-    --            o residus baix però corroboradors alts).
-    --   alta   = residus > mediana comarcal I almenys un corroborador (elèctric/
-    --            càpita de l'últim any de cobertura plena, O % no principal) també
-    --            > mediana, I padró >= poblacio_min_confianca.
+    --            els senyals DIVERGEIXEN (residus alt però els altres baixos, o a
+    --            l'inrevés) → l'estimació no és fiable.
+    --   alta   = residus > mediana comarcal I almenys un altre senyal (elèctric/
+    --            càpita O % no principal) també > mediana, I padró prou gran.
     --   mitjana= la resta.
     case
         when ind.poblacio < {{ var('poblacio_min_confianca') }} then 'baixa'
         when (ind.kg_hab_any > med.kg_hab_any_med
               and not (ind.pct_noprincipal > med.pct_noprincipal_med)
-              and not (ind.kwh_domestic_pc > med.kwh_domestic_pc_med))
+              and not (ind.kwh_hab > med.kwh_hab_med))
           or (not (ind.kg_hab_any > med.kg_hab_any_med)
               and ind.pct_noprincipal > med.pct_noprincipal_med
-              and ind.kwh_domestic_pc > med.kwh_domestic_pc_med)
+              and ind.kwh_hab > med.kwh_hab_med)
             then 'baixa'
         when ind.kg_hab_any > med.kg_hab_any_med
              and (ind.pct_noprincipal > med.pct_noprincipal_med
-                  or ind.kwh_domestic_pc > med.kwh_domestic_pc_med)
+                  or ind.kwh_hab > med.kwh_hab_med)
              and ind.poblacio >= {{ var('poblacio_min_confianca') }}
             then 'alta'
         else 'mitjana'
     end                                                         as confianca,
 
-    -- Energia (ICAEN) — connector pendent
+    -- --- COMPATIBILITAT (model anterior d'una capa) ---------------------------
+    -- Es CONSERVEN perquè cap consumidor del contracte quedi trencat. poblacio_real_est
+    -- és ARA un ÀLIES de carrega_total_est (mateixa fórmula residus/410); reenquadrat:
+    -- NO és «població» sinó càrrega total (vegeu L2). gap_abs/gap_pct deriven d'ell.
+    cast({{ estimacio_presencia('ind.poblacio', 'ind.kg_hab_any', var('base_residencial')) }} as integer)
+                                                                as poblacio_real_est,
+    cast({{ estimacio_presencia('ind.poblacio', 'ind.kg_hab_any', var('base_residencial')) }} - ind.poblacio as integer)
+                                                                as gap_abs,
+    round(
+        ({{ estimacio_presencia('ind.poblacio', 'ind.kg_hab_any', var('base_residencial')) }} - ind.poblacio)
+        / nullif(ind.poblacio, 0), 3)                           as gap_pct,
+    cast({{ estimacio_presencia('ind.poblacio', 'ind.kg_hab_any', var('base_comarcal')) }} as integer)
+                                                                as poblacio_real_rel,
+
+    -- Energia (ICAEN certificats) — connector pendent
     cast(null as double)                                        as pct_icaen_EFG,
 
     -- Índex IETR (metodologia Talaia, min-max winsoritzat p5/p95)
     round(ietr.IETR, 2)                                         as IETR,
     rank() over (order by ietr.IETR desc)                       as IETR_rank,
 
-    -- Traçabilitat del tall temporal
-    ind.kg_hab_any_year
+    -- Traçabilitat dels talls temporals
+    ind.kg_hab_any_year,
+    ind.vidre_any
 
 from ind
 join ietr on ind.ine5 = ietr.ine5
+join tur  on ind.ine5 = tur.ine5
 cross join med
 order by ind.ine5

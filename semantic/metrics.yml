@@ -33,11 +33,18 @@ sources:
     producte: Estadístiques de residus municipals
     dataset_id: 69zu-w48s
     llicencia: Dades Obertes de Catalunya
+    nota: "Inclou les fraccions de recollida selectiva (vidre, paper, FORM…). El VIDRE/hab és el senyal de la capa L3 (pressió turística/hostaleria)."
   icaen:
     organisme: ICAEN
     producte: Certificats d'eficiència energètica d'edificis
     dataset_id: j6ii-t3w2
     llicencia: Dades Obertes de Catalunya
+  icaen_consum:
+    organisme: Institut Català d'Energia (ICAEN)
+    producte: Consum d'energia elèctrica per municipis i sectors de Catalunya
+    dataset_id: 8idm-becu
+    llicencia: Dades Obertes de Catalunya
+    nota: "Sector USOS DOMÈSTICS, darrer any de cobertura plena (2024). kWh/hab és el senyal de la capa L1 (població pernocta)."
   electoral:
     organisme: Generalitat
     producte: Processos electorals - Vots
@@ -236,20 +243,177 @@ metrics:
     visibility: public
     synonyms: {ca: [residus, brossa, població fantasma], es: [residuos, basura, población fantasma]}
 
-  # --- Indicador estrella: població real estimada vs padró (DERIVED, inferència) ---
-  # Mètode validat per Talaia: docs/poblacio-real-metode.md. Tot el bloc és
-  # INFERÈNCIA (no cens): categoria derived, es comunica com a RANG + caveat.
-  poblacio_real_est:
-    label: {ca: Població real estimada, es: Población real estimada}
-    label_ca: Població real estimada
-    label_es: Población real estimada
+  # ==========================================================================
+  # INDICADOR ESTRELLA — MODEL DE 3 CAPES (DERIVED, inferència). Mètode de Talaia,
+  # validat sobre dades. 3 senyals físics INDEPENDENTS per municipi, cadascun amb
+  # la seva base residencial (viles de vall poc turístiques, IETR<5, pop-pond):
+  #   L1 població pernocta  ← elèctric domèstic / base_electric (1224)  → qui DORM
+  #   L2 càrrega humana total ← residus / base_residencial (410)        → inclou dia
+  #   L3 pressió turística  ← vidre/hab (z-score comarcal 0-100)        → hostaleria
+  # Tot és INFERÈNCIA (no cens): es comunica com a RANG + caveat. Lectura ECOLÒGICA.
+  # ==========================================================================
+
+  # --- Senyals físics per càpita (inputs de les capes) ---
+  kwh_hab:
+    label: {ca: Elèctric domèstic kWh/hab, es: Eléctrico doméstico kWh/hab}
     definicio:
-      ca: "Presència humana real estimada (residents + no registrats + 2a residència + estacionals) a partir de la generació de residus per habitant. Tall absolut (base residencial)."
-      es: "Presencia humana real estimada (residentes + no registrados + 2ª residencia + estacionales) a partir de la generación de residuos por habitante. Corte absoluto (base residencial)."
+      ca: "Consum elèctric domèstic per habitant empadronat, darrer any de cobertura plena (2024). Senyal de presència que pernocta (capa L1)."
+      es: "Consumo eléctrico doméstico por habitante empadronado, último año de cobertura plena (2024). Señal de presencia que pernocta (capa L1)."
+    dimension: pressio
+    unit: {ca: kWh/hab/any, es: kWh/hab/año}
+    formula: "consum_domestic_kwh / poblacio"
+    source: icaen_consum
+    date: "2024"
+    table: mart_municipi
+    column: kwh_hab
+    visibility: public
+    synonyms: {ca: [electricitat, consum elèctric, llum], es: [electricidad, consumo eléctrico, luz]}
+
+  vidre_hab:
+    label: {ca: Vidre kg/hab/any, es: Vidrio kg/hab/año}
+    definicio:
+      ca: "Generació de vidre per habitant empadronat (fracció de recollida selectiva). Proxy d'hostaleria (ampolles de bar/restaurant); senyal de la capa L3."
+      es: "Generación de vidrio por habitante empadronado (fracción de recogida selectiva). Proxy de hostelería (botellas de bar/restaurante); señal de la capa L3."
+    dimension: pressio
+    unit: {ca: kg/hab/any, es: kg/hab/año}
+    formula: "vidre_tones * 1000 / poblacio"
+    source: residus
+    date: "2024"
+    table: mart_municipi
+    column: vidre_hab
+    visibility: public
+    synonyms: {ca: [vidre, ampolles, hostaleria], es: [vidrio, botellas, hostelería]}
+
+  # --- L1 · POBLACIÓ REAL ESTIMADA (PERNOCTA) — la nova «població invisible» ---
+  poblacio_pernocta_est:
+    label: {ca: "Població real estimada (pernocta)", es: "Población real estimada (pernocta)"}
+    label_ca: "Població real estimada (pernocta)"
+    label_es: "Población real estimada (pernocta)"
+    definicio:
+      ca: "La població que DORM al territori sense constar al padró (residents no registrats, segona residència, estacionals que hi pernocten), estimada a partir del consum elèctric domèstic per habitant."
+      es: "La población que DUERME en el territorio sin constar en el padrón (residentes no registrados, segunda residencia, estacionales que pernoctan), estimada a partir del consumo eléctrico doméstico por habitante."
     dimension: pressio
     categoria: derived
     unit: {ca: habitants (est.), es: habitantes (est.)}
+    formula: "round(poblacio * kwh_hab / BASE_ELECTRIC)  · BASE_ELECTRIC=1224 kWh/hab (viles IETR<5, parametritzable per comarca)"
+    source: datapoble
+    origin_source: icaen_consum
+    font: "ICAEN (consum elèctric domèstic, 8idm-becu) + Idescat (padró)"
+    date: "2024/2025"
+    table: mart_municipi
+    column: poblacio_pernocta_est
+    visibility: public
+    caveat:
+      ca: "INFERÈNCIA, no cens. L'elèctric és un proxy de PERNOCTA, però el confonen la calefacció (a muntanya es crema llenya/gas → consum baix malgrat presència, p. ex. Castellar de n'Hug), la mida de la llar i l'eficiència → la xifra es llegeix com a RANG + confiança. NO inclou els excursionistes de dia (per a la pressió total, càrrega humana total). Lectura ECOLÒGICA (sobre el municipi, mai sobre individus)."
+      es: "INFERENCIA, no censo. El eléctrico es un proxy de PERNOCTA, pero lo confunden la calefacción (en montaña se quema leña/gas → consumo bajo pese a presencia, p. ej. Castellar de n'Hug), el tamaño del hogar y la eficiencia → la cifra se lee como RANGO + confianza. NO incluye los excursionistas de día (para la presión total, carga humana total). Lectura ECOLÓGICA (sobre el municipio, nunca sobre individuos)."
+    synonyms: {ca: [població real, presència real, població invisible, gent real, qui pernocta], es: [población real, presencia real, población invisible, gente real, quién pernocta]}
+
+  gap_pernocta:
+    label: {ca: "Gap pernocta (absolut)", es: "Gap pernocta (absoluto)"}
+    label_ca: "Gap pernocta (absolut)"
+    label_es: "Gap pernocta (absoluto)"
+    definicio:
+      ca: "Població invisible: població real estimada (pernocta) − padró. La 'gent dels rius de gent' que dorm al territori sense constar."
+      es: "Población invisible: población real estimada (pernocta) − padrón. La 'gente de los ríos de gente' que duerme en el territorio sin constar."
+    dimension: pressio
+    categoria: derived
+    unit: {ca: habitants, es: habitantes}
+    formula: "poblacio_pernocta_est - poblacio"
+    source: datapoble
+    origin_source: icaen_consum
+    font: "ICAEN (consum elèctric domèstic) + Idescat (padró)"
+    date: "2024/2025"
+    table: mart_municipi
+    column: gap_pernocta
+    visibility: public
+    caveat:
+      ca: "Derivat de poblacio_pernocta_est: hereta la seva incertesa (rang). Pot ser negatiu (calefacció no elèctrica, eficiència). Es concentra a les muntanyes turístiques, no a les viles. Lectura ecològica."
+      es: "Derivado de poblacio_pernocta_est: hereda su incertidumbre (rango). Puede ser negativo (calefacción no eléctrica, eficiencia). Se concentra en las montañas turísticas, no en las villas. Lectura ecológica."
+    synonyms: {ca: [gap pernocta, població invisible, diferència padró], es: [gap pernocta, población invisible, diferencia padrón]}
+
+  gap_pernocta_pct:
+    label: {ca: "Gap pernocta (%)", es: "Gap pernocta (%)"}
+    label_ca: "Gap pernocta (%)"
+    label_es: "Gap pernocta (%)"
+    definicio:
+      ca: "Gap de pernocta relatiu sobre el padró: quant per cent més de gent dorm al territori de la registrada."
+      es: "Gap de pernocta relativo sobre el padrón: cuánto por ciento más de gente duerme en el territorio de la registrada."
+    dimension: pressio
+    categoria: derived
+    unit: "%"
+    formula: "gap_pernocta / poblacio"
+    source: datapoble
+    origin_source: icaen_consum
+    font: "ICAEN (consum elèctric domèstic) + Idescat (padró)"
+    date: "2024/2025"
+    table: mart_municipi
+    column: gap_pernocta_pct
+    visibility: public
+    caveat:
+      ca: "Fracció (0,12 = +12%). Volàtil als micromunicipis (denominador petit) i sensible a la calefacció → mirar sempre la bandera confianca. Inferència, lectura ecològica."
+      es: "Fracción (0,12 = +12%). Volátil en micromunicipios (denominador pequeño) y sensible a la calefacción → mirar siempre la bandera confianza. Inferencia, lectura ecológica."
+    synonyms: {ca: [gap pernocta %, població invisible %], es: [gap pernocta %, población invisible %]}
+
+  # --- L2 · CÀRREGA HUMANA TOTAL (residus) — inclou visitants de dia ---
+  carrega_total_est:
+    label: {ca: "Càrrega humana total", es: "Carga humana total"}
+    label_ca: "Càrrega humana total"
+    label_es: "Carga humana total"
+    definicio:
+      ca: "Pressió humana total sobre el municipi inclosos els visitants de DIA (excursionistes), estimada a partir de la generació de residus per habitant. NO és població: és càrrega."
+      es: "Presión humana total sobre el municipio incluidos los visitantes de DÍA (excursionistas), estimada a partir de la generación de residuos por habitante. NO es población: es carga."
+    dimension: pressio
+    categoria: derived
+    unit: {ca: persones-equivalent (est.), es: personas-equivalente (est.)}
     formula: "round(poblacio * kg_hab_any / BASE)  · BASE=410 (base residencial, parametritzable per comarca)"
+    source: datapoble
+    origin_source: residus
+    font: "ARC (residus, kg/hab/any) + Idescat (padró)"
+    date: "2024/2025"
+    table: mart_municipi
+    column: carrega_total_est
+    visibility: public
+    caveat:
+      ca: "INFERÈNCIA, no cens, i NO és «població»: és càrrega total (residents + 2a residència + estacionals + EXCURSIONISTES de dia). Els residus de les viles porten part de COMERÇ (sostre de la base, terra de la càrrega). Sempre ≥ la població pernocta, perquè inclou el dia. Lectura ECOLÒGICA. Vegeu confianca."
+      es: "INFERENCIA, no censo, y NO es «población»: es carga total (residentes + 2ª residencia + estacionales + EXCURSIONISTAS de día). Los residuos de las villas llevan parte de COMERCIO (techo de la base, suelo de la carga). Siempre ≥ la población pernocta, porque incluye el día. Lectura ECOLÓGICA. Véase confianza."
+    synonyms: {ca: [càrrega humana, pressió total, càrrega real, excursionistes], es: [carga humana, presión total, carga real, excursionistas]}
+
+  # --- L3 · PRESSIÓ TURÍSTICA (hostaleria, via vidre) — NO és població ---
+  index_turisme:
+    label: {ca: "Pressió turística (hostaleria)", es: "Presión turística (hostelería)"}
+    label_ca: "Pressió turística (hostaleria)"
+    label_es: "Presión turística (hostelería)"
+    definicio:
+      ca: "Intensitat d'activitat de visitants (hostaleria), via vidre per habitant: z-score comarcal del vidre/hab portat a 0–100 (50 = mitjana comarcal). Proxy d'hostaleria, NO població."
+      es: "Intensidad de actividad de visitantes (hostelería), vía vidrio por habitante: z-score comarcal del vidrio/hab llevado a 0–100 (50 = media comarcal). Proxy de hostelería, NO población."
+    dimension: index
+    categoria: derived
+    unit: "0-100"
+    formula: "z-score comarcal de vidre_hab (clamp [-2,2]) reescalat a 0-100  · alternativa de referència: vidre_hab / BASE_VIDRE (26.5)"
+    source: datapoble
+    origin_source: residus
+    font: "ARC (fracció vidre, 69zu-w48s)"
+    date: "2024"
+    table: mart_municipi
+    column: index_turisme
+    visibility: public
+    caveat:
+      ca: "NO és població ni càrrega de persones: és INTENSITAT d'hostaleria (el vidre el genera el bar/restaurant que serveix el visitant). És RELATIU a la comarca (z-score): 50 = un municipi mitjà del Berguedà, no un valor absolut. Granularitat anual (no capta estacionalitat). Inferència, lectura ecològica."
+      es: "NO es población ni carga de personas: es INTENSIDAD de hostelería (el vidrio lo genera el bar/restaurante que sirve al visitante). Es RELATIVO a la comarca (z-score): 50 = un municipio medio del Berguedà, no un valor absoluto. Granularidad anual (no capta estacionalidad). Inferencia, lectura ecológica."
+    synonyms: {ca: [turisme, hostaleria, pressió turística, vidre], es: [turismo, hostelería, presión turística, vidrio]}
+
+  # --- COMPATIBILITAT (model anterior d'una capa) — claus conservades, reenquadrades ---
+  poblacio_real_est:
+    label: {ca: "Càrrega humana total (alies)", es: "Carga humana total (alias)"}
+    label_ca: "Càrrega humana total (alies)"
+    label_es: "Carga humana total (alias)"
+    definicio:
+      ca: "ÀLIES de carrega_total_est (mateixa fórmula residus/410). REENQUADRAT: NO és «població real» sinó CÀRREGA humana total (inclou excursionistes). Es conserva per no trencar consumidors; per la població real que pernocta, useu poblacio_pernocta_est."
+      es: "ALIAS de carrega_total_est (misma fórmula residuos/410). REENCUADRADO: NO es «población real» sino CARGA humana total (incluye excursionistas). Se conserva para no romper consumidores; para la población real que pernocta, usad poblacio_pernocta_est."
+    dimension: pressio
+    categoria: derived
+    unit: {ca: persones-equivalent (est.), es: personas-equivalente (est.)}
+    formula: "round(poblacio * kg_hab_any / BASE)  · BASE=410  (== carrega_total_est)"
     source: datapoble
     origin_source: residus
     font: "ARC (residus, kg/hab/any) + Idescat (padró)"
@@ -258,21 +422,21 @@ metrics:
     column: poblacio_real_est
     visibility: public
     caveat:
-      ca: "INFERÈNCIA, no cens. La generació de residus és un proxy de presència; la BASE (kg/hab d'un resident normal) té incertesa → la xifra es llegeix com a RANG (el Berguedà sosté com a mínim ~10%, plausiblement ~15-25%, més gent que la registrada). Els residus inclouen part de comerç a les viles (sostre de la base, terra del gap). Lectura ECOLÒGICA (sobre el municipi, mai sobre individus). Vegeu confianca."
-      es: "INFERENCIA, no censo. La generación de residuos es un proxy de presencia; la BASE (kg/hab de un residente normal) tiene incertidumbre → la cifra se lee como RANGO (el Berguedà sostiene como mínimo ~10%, plausiblemente ~15-25%, más gente que la registrada). Los residuos incluyen parte de comercio en las villas (techo de la base, suelo del gap). Lectura ECOLÓGICA (sobre el municipio, nunca sobre individuos). Véase confianza."
-    synonyms: {ca: [població real, presència real, població invisible, gent real], es: [población real, presencia real, población invisible, gente real]}
+      ca: "DEPRECAT com a «població»: és l'antic indicador d'una capa, ara reenquadrat com a càrrega humana total (== carrega_total_est). Migrar a poblacio_pernocta_est (L1, població que dorm) o carrega_total_est (L2, pressió total). Inferència, lectura ecològica."
+      es: "DEPRECADO como «población»: es el antiguo indicador de una capa, ahora reencuadrado como carga humana total (== carrega_total_est). Migrar a poblacio_pernocta_est (L1, población que duerme) o carrega_total_est (L2, presión total). Inferencia, lectura ecológica."
+    synonyms: {ca: [població real, càrrega humana], es: [población real, carga humana]}
 
   gap_abs:
-    label: {ca: "Gap població (absolut)", es: "Gap población (absoluto)"}
-    label_ca: "Gap població (absolut)"
-    label_es: "Gap población (absoluto)"
+    label: {ca: "Gap càrrega (absolut)", es: "Gap carga (absoluto)"}
+    label_ca: "Gap càrrega (absolut)"
+    label_es: "Gap carga (absoluto)"
     definicio:
-      ca: "Població que el padró no veu: població real estimada − padró. La 'gent dels rius de gent' que omple el territori sense constar."
-      es: "Población que el padrón no ve: población real estimada − padrón. La 'gente de los ríos de gente' que llena el territorio sin constar."
+      ca: "carrega_total_est − padró (gap de CÀRREGA, inclou visitants de dia). Es conserva per compatibilitat; per la població invisible que pernocta, useu gap_pernocta."
+      es: "carrega_total_est − padrón (gap de CARGA, incluye visitantes de día). Se conserva por compatibilidad; para la población invisible que pernocta, usad gap_pernocta."
     dimension: pressio
     categoria: derived
     unit: {ca: habitants, es: habitantes}
-    formula: "poblacio_real_est - poblacio"
+    formula: "poblacio_real_est - poblacio  (gap de càrrega total)"
     source: datapoble
     origin_source: residus
     font: "ARC (residus) + Idescat (padró)"
@@ -281,21 +445,21 @@ metrics:
     column: gap_abs
     visibility: public
     caveat:
-      ca: "Derivat de poblacio_real_est: hereta la seva incertesa (rang, no decimal exacte). Pot ser negatiu (genera menys residus que la base). Es concentra a les muntanyes turístiques, no a les viles. Lectura ecològica."
-      es: "Derivado de poblacio_real_est: hereda su incertidumbre (rango, no decimal exacto). Puede ser negativo (genera menos residuos que la base). Se concentra en las montañas turísticas, no en las villas. Lectura ecológica."
-    synonyms: {ca: [gap, població fantasma, diferència padró], es: [gap, población fantasma, diferencia padrón]}
+      ca: "Gap de CÀRREGA (no de pernocta): inclou els excursionistes de dia. Pot ser negatiu. Es concentra a les muntanyes turístiques. Per al gap de població que dorm, gap_pernocta. Lectura ecològica."
+      es: "Gap de CARGA (no de pernocta): incluye los excursionistas de día. Puede ser negativo. Se concentra en las montañas turísticas. Para el gap de población que duerme, gap_pernocta. Lectura ecológica."
+    synonyms: {ca: [gap, gap càrrega, diferència padró], es: [gap, gap carga, diferencia padrón]}
 
   gap_pct:
-    label: {ca: "Gap població (%)", es: "Gap población (%)"}
-    label_ca: "Gap població (%)"
-    label_es: "Gap población (%)"
+    label: {ca: "Gap càrrega (%)", es: "Gap carga (%)"}
+    label_ca: "Gap càrrega (%)"
+    label_es: "Gap carga (%)"
     definicio:
-      ca: "Gap relatiu sobre el padró: quant per cent més de gent hi ha de la registrada."
-      es: "Gap relativo sobre el padrón: cuánto por ciento más de gente hay de la registrada."
+      ca: "Gap de càrrega relatiu sobre el padró: quant per cent més de càrrega humana (inclòs el dia) hi ha de la registrada. Per al gap de pernocta, gap_pernocta_pct."
+      es: "Gap de carga relativo sobre el padrón: cuánto por ciento más de carga humana (incluido el día) hay de la registrada. Para el gap de pernocta, gap_pernocta_pct."
     dimension: pressio
     categoria: derived
     unit: "%"
-    formula: "gap_abs / poblacio"
+    formula: "gap_abs / poblacio  (gap de càrrega total)"
     source: datapoble
     origin_source: residus
     font: "ARC (residus) + Idescat (padró)"
@@ -304,8 +468,8 @@ metrics:
     column: gap_pct
     visibility: public
     caveat:
-      ca: "Fracció (0,12 = +12%). Volàtil als micromunicipis (denominador petit) → mirar sempre la bandera confianca. Inferència, lectura ecològica."
-      es: "Fracción (0,12 = +12%). Volátil en micromunicipios (denominador pequeño) → mirar siempre la bandera confianza. Inferencia, lectura ecológica."
+      ca: "Fracció (0,12 = +12%). Gap de CÀRREGA (inclou dia), no de pernocta. Volàtil als micromunicipis → mirar la bandera confianca. Inferència, lectura ecològica."
+      es: "Fracción (0,12 = +12%). Gap de CARGA (incluye día), no de pernocta. Volátil en micromunicipios → mirar la bandera confianza. Inferencia, lectura ecológica."
 
   poblacio_real_rel:
     label: {ca: Població real (tall relatiu), es: Población real (corte relativo)}
@@ -334,12 +498,12 @@ metrics:
     label_ca: Confiança de l'estimació
     label_es: Confianza de la estimación
     definicio:
-      ca: "Bandera de fiabilitat de la població real estimada: alta/mitjana/baixa segons la corroboració entre senyals (residus, elèctric domèstic/càpita, % habitatge no principal) i la mida del municipi."
-      es: "Bandera de fiabilidad de la población real estimada: alta/mitjana/baixa según la corroboración entre señales (residuos, eléctrico doméstico/cápita, % vivienda no principal) y el tamaño del municipio."
+      ca: "Bandera de fiabilitat de les estimacions de les 3 capes: alta/mitjana/baixa segons la corroboració entre els senyals físics (residus, elèctric domèstic/hab, % habitatge no principal) i la mida del municipi. Quan els 3 senyals coincideixen la confiança és alta; quan divergeixen, baixa."
+      es: "Bandera de fiabilidad de las estimaciones de las 3 capas: alta/mitjana/baixa según la corroboración entre las señales físicas (residuos, eléctrico doméstico/hab, % vivienda no principal) y el tamaño del municipio. Cuando las 3 señales coinciden la confianza es alta; cuando divergen, baja."
     dimension: pressio
     categoria: derived
     unit: {ca: "alta/mitjana/baixa", es: "alta/mitjana/baixa"}
-    formula: "baixa si poblacio<75 O senyals divergents; alta si residus>mediana I (elèctric/càpita O %no-principal)>mediana I poblacio>=75; mitjana la resta"
+    formula: "baixa si poblacio<75 O senyals divergents; alta si residus>mediana I (kwh_hab O %no-principal)>mediana I poblacio>=75; mitjana la resta"
     source: datapoble
     origin_source: residus
     font: "ARC (residus) + ICAEN (consum domèstic) + Idescat (habitatge/padró)"
