@@ -12,8 +12,9 @@ senyal), amb traçabilitat sempre i la frontera **dada/inferència** explícita.
 ## Scope
 
 La **taula `events`** (el contracte de la capa) + **dos rastres independents**:
-**contractació** (Socrata `ybgg-dgi6`) i **sequera** (Socrata `i5n8-43cw`, ACA).
-**No** el motor de convergència (PR següent).
+**contractació** (Socrata `ybgg-dgi6`) i **sequera** (Socrata `i5n8-43cw`, ACA) +
+el **motor de convergència** (turisme × sequera per municipi → `convergencia_bergueda.parquet`;
+intern, no es mostra al web).
 
 | peça | dataset | accés | loader | events |
 |---|---|---|---|---|
@@ -72,8 +73,13 @@ cd packages/signals
 python -m datapoble_signals contractacio   # descarrega + normalitza + escriu events
 python -m datapoble_signals sequera         # estat de sequera ACA → events
 python -m datapoble_signals all             # tots dos rastres
+python -m datapoble_signals convergencia    # motor de convergència (NO baixa res; llegeix parquets)
 pytest -q                                   # tests (offline; el parquet és opcional)
 ```
+
+`convergencia` queda **fora** d'`all` (que recull fonts): no descarrega res,
+llegeix els parquets ja materialitzats dels dos rastres + el mart de Sondeig
+(tots **read-only**) i escriu `data/events/convergencia_bergueda.parquet`.
 
 Requereix xarxa (API pública, sense autenticació). Idempotent: re-córrer
 sobreescriu el parquet i la raw; `event_id` és estable entre execucions.
@@ -85,6 +91,7 @@ data/raw/contractacio/  contractacio_raw.json + _provenance.json   (gitignored; 
 data/raw/sequera/        sequera_raw.json + _provenance.json        (gitignored; 1 fila = 1 canvi d'estat)
 data/events/             events_bergueda.parquet                    (versionat; contractació, 1 fila = 1 event)
 data/events/             events_sequera_bergueda.parquet            (versionat; sequera, 1 fila = 1 event)
+data/events/             convergencia_bergueda.parquet              (versionat; convergència, 1 fila = 1 municipi)
 ```
 
 Cada rastre escriu el seu **propi parquet** (mateix contracte `EVENT_COLUMNS`).
@@ -154,13 +161,46 @@ l'ACA pren la decisió i la propaga) es preserva a `raw_id` i dins `objecte`.
   (fases obertes) caiem a publicació/anunci i ho marquem a `data_tipus`. **2 de
   1.295** events (consultes pre-mercat) queden sense cap data.
 
+## El motor de convergència (turisme × sequera)
+
+Creua els **dos rastres del cabal** + el **mart de Sondeig** (pilar 1) per provar
+—graduant, no afirmant— la hipòtesi del nord de *riusdegent*: la **pressió
+turística/segona residència** (població invisible per damunt del padró) hauria de
+**co-ocórrer amb tensió hídrica**. Sortida: `convergencia_bergueda.parquet` (1
+fila per municipi, amb scores de turisme i de sequera, `convergencia_score`,
+`quadrant` i **flags honestos**). Mètrica:
+
+- **Exposició a la sequera** per municipi reconstruint **intervals** (un estat val
+  fins al canvi següent; `LEAD(data)` per `ine5`): severitat mitjana **ponderada
+  per dies** (la `confianca` ordinal), pic, i mesos en alerta+ (severitat ≥ 0.6).
+- **Pressió turística** en dos angles: **primari i robust** `index_turisme` del
+  mart (+ `gap_pernocta_pct`); **secundari i feble** la contractació
+  `turisme_cultura_events` (muda als micromunicipis que no contracten).
+- **Quadrant** amb llindars **ancorats a l'escala** (turisme ≥ 50/100; severitat
+  ≥ 0.45), no a la mediana (la sequera pren només 3 valors → mediana degenerada).
+
+**Frontera honesta (innegociable):** és **co-ocurrència, no causalitat**. La
+sequera és **per Unitat d'Explotació (zona) en origen** → **no discrimina entre
+municipis de la mateixa UE** (els 31 del Berguedà cauen en 3 UEs; dins de cada una
+la severitat és idèntica). Aporta el *denominador de tensió de la zona*; la
+variació fina ve del turisme. Cada fila ho marca (`flag_sequera_per_zona`,
+`sequera_unitat_explotacio`). Soroll als micromunicipis (`index_turisme` satura
+amb N petit) marcat amb `flag_turisme_poc_fiable`. **El resultat al Berguedà és un
+«no» honest:** la hipòtesi **no es confirma** (de fet s'inverteix lleugerament,
+Spearman ≈ −0,28) — el turisme es concentra a la capçalera (UE 06, la que va patir
+menys sequera: Gósol, Castellar de n'Hug, Saldes), mentre la sequera forta és al
+corredor poblat i poc turístic (UE 16, Berga/Gironella). Vegeu la bitàcola.
+
+**Intern:** aquest output **no es mostra al web** (decisió de Bea). Només
+`packages/signals` + `data/events`.
+
 ## Fora de scope (PRs següents)
 
-El **motor de convergència** (unir els dos rastres, repartir el senyal comarcal
-als micromunicipis, reconstruir intervals de sequera, creuar amb el turisme);
-l'extracció **LLM** (OpenRouter) per a fonts messy i per refinar `altres`;
+L'extracció **LLM** (OpenRouter) per a fonts messy i per refinar `altres`;
 l'**escala Catalunya** (atenció: el dataset de sequera és **només Conques
-Internes** — les conques de l'Ebre les gestiona la CHE, no l'ACA).
+Internes** — les conques de l'Ebre les gestiona la CHE, no l'ACA); i, per al motor
+de convergència, **repartir el senyal comarcal de contractació als
+micromunicipis** (avui el secundari de contractació és mut als pobles petits).
 
 ## Estructura
 
@@ -169,6 +209,7 @@ Internes** — les conques de l'Ebre les gestiona la CHE, no l'ACA).
 - `municipis.py` — INE5 del Berguedà + detecció d'òrgans supra (la lliçó).
 - `contractacio.py` — connector `ybgg-dgi6` → normalització a events.
 - `sequera.py` — connector `i5n8-43cw` (ACA) → events de sequera.
+- `convergencia.py` — motor de convergència (turisme × sequera) → `convergencia_bergueda.parquet`.
 - `events.py` — escriptura de la taula `events` a parquet via DuckDB.
 - `socrata.py` / `config.py` / `provenance.py` — client SODA, registre de fonts,
   sidecar de procedència (mateix patró que `packages/ingestion`).

@@ -2,7 +2,13 @@
 
     python -m datapoble_signals contractacio   # descarrega + escriu events
     python -m datapoble_signals sequera         # descarrega + escriu events de sequera (ACA)
-    python -m datapoble_signals all             # totes les fonts
+    python -m datapoble_signals all             # totes les fonts (rastres)
+    python -m datapoble_signals convergencia    # motor de convergència (turisme × sequera)
+
+``convergencia`` NO descarrega res: llegeix els parquets ja materialitzats dels
+dos rastres + el mart de Sondeig (tots read-only) i escriu
+``data/events/convergencia_bergueda.parquet``. Per això queda **fora** d'``all``
+(que recull fonts); cal córrer-lo després que els rastres existeixin.
 """
 from __future__ import annotations
 
@@ -10,11 +16,17 @@ import argparse
 import json
 import sys
 
-from . import contractacio, sequera
+from . import contractacio, convergencia, sequera
 
+# Fonts (descàrrega de rastres). ``all`` les recull totes.
 RUNNERS = {
     "contractacio": contractacio.run,
     "sequera": sequera.run,
+}
+
+# Derivats (operen sobre parquets ja materialitzats, sense xarxa). Fora d'``all``.
+DERIVED = {
+    "convergencia": convergencia.run,
 }
 
 
@@ -22,16 +34,17 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="datapoble_signals")
     parser.add_argument(
         "source",
-        choices=["all", *RUNNERS.keys()],
-        help="font de senyal a normalitzar (o 'all')",
+        choices=["all", *RUNNERS.keys(), *DERIVED.keys()],
+        help="font de senyal a normalitzar ('all' = tots els rastres), o un derivat ('convergencia')",
     )
     args = parser.parse_args(argv)
 
+    all_runners = {**RUNNERS, **DERIVED}
     sources = list(RUNNERS) if args.source == "all" else [args.source]
     results = []
     for name in sources:
         print(f"[signals] {name} …", file=sys.stderr)
-        results.append(RUNNERS[name]())
+        results.append(all_runners[name]())
 
     print(json.dumps(results, ensure_ascii=False, indent=2))
     return 0
