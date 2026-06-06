@@ -14,7 +14,7 @@
    CAMBIOS DA final ronda 2 (decisiones de Bea):
    (A) MARCA = OCRE #B5612A (= --dp-exposure-4), una sola tinta cálida. En oscuro el
        acento de marca es #E8B567 (= --dp-brand-dark). Se RETIRA el verde (forest/teal)
-       como color de marca; --dp-teal*/--dp-forest* quedan como LEGADO (no son marca).
+       como color de marca; --dp-teal-* y --dp-forest-* quedan como LEGADO (no son marca).
    (B) Nueva paleta diverging "gap" --dp-div2-0…6 (teal↔púrpura), neutro = div2-3. Es la
        del gap población (la púrpura liga con --dp-prov-derived = inferencia). Sustituye el
        uso de --dp-div-* en el render; --dp-div-* se conserva como legado.
@@ -53,7 +53,7 @@
 
   /* ---- color · support (verde) · LEGADO — YA NO ES MARCA ----
      El verde forest/teal se RETIRA como color de marca (decisión Bea, DA ronda 2).
-     Se conservan los NOMBRES --dp-teal*/--dp-forest* para no romper el contrato que aún
+     Se conservan los NOMBRES --dp-teal-* y --dp-forest-* para no romper el contrato que aún
      consumen sistema.css y Mirador, pero pasan a ser un verde de soporte heredado (estados
      puntuales, no identidad). La identidad usa --dp-brand. F2: ver tokens.json $meta.renaming. */
   --dp-teal:       #2F6B4F;
