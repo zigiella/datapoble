@@ -32,11 +32,18 @@ export const DEFAULT_CLASSES = 5;
 const QUANTILE_KEYS = new Set<MetricKey>(['IETR', 'IETR_rank']);
 
 /**
- * Mètriques que són una DESVIACIÓ respecte a un punt neutre (0): el gap població real↔padró.
- * gap=0 → no hi ha població invisible; >0 → exposició (càlid); <0 → menys gent que el padró (teal).
- * Es classifiquen amb rampa divergent centrada a 0 (no Jenks ni cuantils, que amagarien el signe).
+ * Mètriques que són una DESVIACIÓ respecte a un punt neutre (0): el gap de PERNOCTA (població
+ * invisible) i —per compatibilitat— el gap de càrrega antic.
+ * gap=0 → no hi ha població invisible; >0 → població que el padró no veu (porpra); <0 → menys
+ * gent que el padró (teal). Es classifiquen amb rampa divergent centrada a 0 (no Jenks ni
+ * cuantils, que amagarien el signe). L1 (`gap_pernocta_pct`) és el cas que es pinta per defecte.
  */
-const DIVERGING_KEYS = new Set<MetricKey>(['gap_pct', 'gap_abs']);
+const DIVERGING_KEYS = new Set<MetricKey>([
+	'gap_pernocta_pct',
+	'gap_pernocta',
+	'gap_pct',
+	'gap_abs'
+]);
 
 export function methodFor(key: MetricKey): ClassMethod {
 	if (DIVERGING_KEYS.has(key)) return 'diverging';
@@ -296,12 +303,13 @@ export function makeFormatter(format: MetricFormat, locale: string): (n: number)
 
 /**
  * Conjunt de claus el valor de les quals és una RÀTIO (escala 0-1) que s'ha de mostrar
- * com a percentatge amb SIGNE explícit. El gap es publica així al contracte
- * (`gap_pct = gap_abs / poblacio`, vegeu docs/poblacio-real-metode.md §7): a diferència de
- * `pct_noprincipal` (escala 0-100), aquí cal multiplicar per 100 i marcar el +/− perquè es
- * llegeixi com una desviació respecte al padró (+139 %, −21 %), no com "1,4 %".
+ * com a percentatge amb SIGNE explícit. Els gaps es publiquen així al contracte
+ * (`gap_pernocta_pct = gap_pernocta / poblacio`, anàleg per al gap de càrrega; vegeu
+ * docs/poblacio-real-metode.md): a diferència de `pct_noprincipal` (escala 0-100), aquí cal
+ * multiplicar per 100 i marcar el +/− perquè es llegeixi com una desviació respecte al padró
+ * (+87 %, −2 %), no com "0,9 %".
  */
-const SIGNED_RATIO_PCT_KEYS = new Set<MetricKey>(['gap_pct']);
+const SIGNED_RATIO_PCT_KEYS = new Set<MetricKey>(['gap_pernocta_pct', 'gap_pct']);
 
 /**
  * Formatador sensible a la CLAU de mètrica (no només al format). Igual que `makeFormatter`

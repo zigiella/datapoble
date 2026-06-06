@@ -43,12 +43,13 @@
 
 	// Etiqueta editorial de cada indicador del mapa (clau del contracte → text localitzat).
 	// Només per a les claus de MAP_INDICATORS; `labelFor` cau a l'etiqueta del contracte si cal.
+	// El model de 3 capes: L1 població invisible (pernocta), L2 càrrega total, L3 pressió turística.
 	const INDICATOR_LABEL: Partial<Record<MetricKey, () => string>> = {
-		gap_pct: () => m.map_ind_gap(),
-		poblacio_real_est: () => m.map_ind_real(),
+		gap_pernocta_pct: () => m.map_ind_pernocta(),
+		carrega_total_est: () => m.map_ind_carrega(),
+		index_turisme: () => m.map_ind_turisme(),
 		IETR: () => m.map_ind_ietr(),
 		pct_noprincipal: () => m.map_ind_nop(),
-		rtc_per_1000hab: () => m.map_ind_ratio(),
 		kg_hab_any: () => m.map_ind_res()
 	};
 	const labelFor = (key: MetricKey): string => INDICATOR_LABEL[key]?.() ?? key;
@@ -65,8 +66,25 @@
 	const method = $derived(methodFor(indicator));
 	const classification = $derived(classify(series, method));
 	const def = $derived(dataset.metrics[indicator]);
-	// «divMode» = l'indicador és una desviació amb signe (el gap) → rampa divergent.
+	// «divMode» = l'indicador és una desviació amb signe (el gap de pernocta) → rampa divergent.
 	const divMode = $derived(method === 'diverging');
+
+	// Les tres capes del model v2 són INFERÈNCIA (derived) → caveat d'honestedat propi.
+	// L1 (pernocta) ve de l'elèctric; L2 (càrrega) i L3 (pressió turística) tenen el seu matís.
+	// Per als indicadors oficials directes (% no principal, residus) o l'índex IETR no s'hi aplica.
+	const LAYER_KEYS = new Set<MetricKey>([
+		'gap_pernocta_pct',
+		'carrega_total_est',
+		'index_turisme'
+	]);
+	const isLayer = $derived(LAYER_KEYS.has(indicator));
+	// Text del caveat principal segons la capa activa (honestedat per indicador).
+	const layerCaveat = $derived.by(() => {
+		if (indicator === 'gap_pernocta_pct') return m.map_caveat_pernocta();
+		if (indicator === 'carrega_total_est') return m.map_caveat_carrega();
+		if (indicator === 'index_turisme') return m.map_caveat_turisme();
+		return '';
+	});
 
 	// Colors per classe de la rampa activa (els mateixos que pinta el canvas), per a la llegenda.
 	const legendColors = $derived(
@@ -84,17 +102,22 @@
 		method === 'quantiles' ? m.map_method_quantiles() : m.map_method_jenks()
 	);
 
-	// Corbes del hero amb VALORS DE GAP reals (talls de la classificació del gap, no inventats):
-	// el «full topogràfic» mostra les cotes del propi indicador estrella. Formatats amb signe.
+	// Corbes del hero amb VALORS reals del gap de PERNOCTA (talls de la classificació, no inventats):
+	// el «full topogràfic» mostra les cotes del propi indicador estrella (la població invisible).
+	// Formatats com a percentatge amb signe.
 	const gapClass = $derived(classify(
 		geojson.features.map((f: import('geojson').Feature) => {
 			const ine5 = (f.properties?.ine5 as string) ?? '';
-			return dataset.municipis[ine5]?.values?.gap_pct ?? null;
+			return dataset.municipis[ine5]?.values?.gap_pernocta_pct ?? null;
 		}),
 		'diverging'
 	));
 	const heroLabels = $derived.by(() => {
-		const fmt = makeMetricFormatter('gap_pct', dataset.metrics.gap_pct.format, locale);
+		const fmt = makeMetricFormatter(
+			'gap_pernocta_pct',
+			dataset.metrics.gap_pernocta_pct.format,
+			locale
+		);
 		// extrems + talls reals del gap, com a cotes; l'última és la paraula «gap» (rètol del full).
 		const vals = [gapClass.max, ...gapClass.breaks, gapClass.min]
 			.filter((v, i, a) => a.indexOf(v) === i)
@@ -142,7 +165,7 @@
 			</p>
 			<h1>{m.map_h1_a()} <span class="q">{m.map_h1_b()}</span>.</h1>
 			<p class="lede">
-				{m.map_lede_a()} <b class="warm">{m.map_lede_gap()}</b> {m.map_lede_mid()}
+				{m.map_lede_a()} <b class="warm">{m.map_lede_gap()}</b>{m.map_lede_mid()}
 				<b class="warm">{m.map_lede_warm()}</b> {m.map_lede_warm_tail()}
 				<b class="cool">{m.map_lede_cool()}</b> {m.map_lede_cool_tail()}
 			</p>
@@ -269,11 +292,13 @@
 			</div>
 
 			<div class="caveats" style="margin-top:20px">
-				<div class="alert"><span class="bar"></span><div>{m.map_caveat_1()}</div></div>
+				{#if isLayer}
+					<div class="alert"><span class="bar"></span><div>{layerCaveat}</div></div>
+				{/if}
 				<div class="alert warn"><span class="bar"></span><div>{m.map_caveat_2()}</div></div>
 			</div>
 
-			<p class="srcline">{m.map_srcline()}</p>
+			<p class="srcline">{def.source}{#if def.date} · {def.date}{/if} · {m.map_srcline_tail()}</p>
 		</section>
 	</div>
 </section>

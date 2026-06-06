@@ -38,11 +38,16 @@
 	});
 
 	/**
-	 * És una mètrica d'ESTIMACIÓ de població (gap / presència real)? En aquest cas el tooltip
-	 * recorda que és inferència i mostra la confiança del municipi. Es detecta per la clau de
-	 * la família població real.
+	 * És una mètrica d'ESTIMACIÓ de les 3 capes (inferència)? En aquest cas el tooltip recorda
+	 * que és inferència (no cens) i mostra la confiança del municipi. Inclou les tres capes del
+	 * model v2 (pernocta/càrrega/pressió turística) i els àlies de compatibilitat.
 	 */
 	const ESTIMATE_KEYS = new Set<MetricKey>([
+		'gap_pernocta_pct',
+		'gap_pernocta',
+		'poblacio_pernocta_est',
+		'carrega_total_est',
+		'index_turisme',
 		'gap_pct',
 		'gap_abs',
 		'poblacio_real_est',
