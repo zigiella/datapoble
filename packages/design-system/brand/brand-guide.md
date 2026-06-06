@@ -3,9 +3,15 @@
 **riusdegent · Dades per entendre com s'habita el territori**
 
 **Autora:** Llegenda (direcció d'art) · **Vot final de marca:** Bea · **Review:** Talaia
-**Data:** 2026-06-03 · **Estat:** **proposta de sortida per iterar** (segon encàrrec — primer PR d'identitat). El nom públic `riusdegent` **està tancat** (visió v3); el **dibuix** del logo, marca i favicon és proposta a refinar per un humà.
+**Data:** 2026-06-03 · **Actualitzat:** 2026-06-06 (DA final ronda 2 — color de marca tancat per Bea).
+**Estat:** **color de marca TANCAT** (ocre, decisió de Bea). El nom públic `riusdegent` **està tancat** (visió v3); el **dibuix** del logo, marca i favicon segueix sent proposta a refinar per un humà.
 
 > Aquesta guia **aplica** el sistema de tokens (`tokens/tokens.json` · `tokens/tokens.css`); **no el redefineix**. Tot color/tipografia referencia un token existent.
+
+> **CANVI clau (DA final ronda 2, aprovat per Bea):** la marca passa a **una sola tinta càlida OCRE**
+> (`--dp-brand #B5612A`; en fosc `--dp-brand-dark #E8B567`). **Es RETIREN els verds** (forest/teal) com a
+> color de marca. La metàfora hidrogràfica i el concepte (riu que creix i s'asseca + divisòria) **no canvien**:
+> el cabal ara es dibuixa en ocre i la divisòria en un to fosc de la mateixa família càlida (terracota/`--dp-exposure-5`).
 
 ---
 
@@ -19,10 +25,13 @@ La idea clau, i el que fa la marca única: **un riu creix i s'asseca**. La sobre
 
 ## 2. La marca / símbol
 
-Línies de **cabal** que travessen una **divisòria** vertical:
+Línies de **cabal** que travessen una **divisòria** vertical, **tot en una sola tinta càlida ocre**
+(`--dp-brand`; en fosc `--dp-brand-dark`):
 - **Vessant esquerre — el riu va ple:** traços continus i gruixuts (corrent, sobrepressió).
 - **Vessant dret — el mateix riu s'asseca:** els traços s'aprimen i es trenquen en un **llit puntejat** (despoblació, padró buit).
-- **La divisòria** (línia vertical terracota) és l'*aiguavés*: la línia que parteix les aigües i el patró "dos extrems" del territori (Castellar ↔ Berga).
+- **La divisòria** (línia vertical en un **to fosc de la mateixa família càlida**, `--dp-exposure-5 #7E3A1E`)
+  és l'*aiguavés*: la línia que parteix les aigües i el patró "dos extrems" del territori (Castellar ↔ Berga).
+  *(Abans terracota verda/freda; ara la marca és monocàlida.)*
 
 Llegeix com aigua/corba de nivell a mida gran i com un glif net a mida favicon. **Fitxers:**
 - `riusdegent-mark.svg` — marca sola, color, sobre clar.
@@ -37,9 +46,10 @@ Llegeix com aigua/corba de nivell a mida gran i com un glif net a mida favicon. 
 `riusdegent`, tot en minúscula, una sola paraula (és un domini i una veu de baix perfil, no un crit). Partició visual **`rius` | `degent`** per color, **sense espai**, perquè es llegeixi "rius de gent" sense trencar la paraula.
 
 - **Tipografia:** **Inter** (token `--dp-font-sans`), pes **600**, *tracking* lleugerament negatiu (token `--dp-ls-tight`, −0,01em). Inter perquè és la veu de dada/UI del sistema, té cifres tabulars i diacrítiques catalanes completes.
-- **Color clar:** `rius` en `--dp-neutral-900` (#1B212A) · `degent` en `--dp-teal-600` (#216262).
-- **Color fosc:** `rius` en `--dp-neutral-50` · `degent` en teal clar (germà clar del teal de carena).
-- **Tagline:** Inter 400, `--dp-neutral-600` (clar) / `--dp-neutral-300` (fosc).
+- **Color clar:** `rius` en `--dp-neutral-900` (#1B212A) · `degent` en **`--dp-brand` (ocre #B5612A)**.
+- **Color fosc:** `rius` en `--dp-neutral-50` · `degent` en **`--dp-brand-dark` (ocre clar #E8B567)**.
+- **Tagline:** Inter 400, `--dp-neutral-600` (clar) / `--dp-neutral-300` (fosc). *No menciona el Berguedà: el
+  producte escala a tot el territori (Berguedà és la comarca pilot).*
 
 **Versions entregades:**
 
@@ -55,15 +65,16 @@ Llegeix com aigua/corba de nivell a mida gran i com un glif net a mida favicon. 
 
 ## 4. Favicon
 
-`favicon.svg` (64×64, contenidor arrodonit slate `--dp-neutral-900`, marca en teal clar + divisòria terracota clara per contrastar sobre fosc en qualsevol tema de pestanya). Verificat que rasteritza net.
+`favicon.svg` (64×64, contenidor arrodonit slate `--dp-neutral-900`, marca en **ocre clar `--dp-brand-dark #E8B567`** + divisòria terracota clara, per contrastar sobre el contenidor fosc en qualsevol tema de pestanya). Verificat que rasteritza net (16/32/48).
 
-**Per a ICO** (indicació, no generat aquí — cal una eina de raster):
+**ICO:** `favicon.ico` **ja està generat i versionat** (3 frames 16/32/48, RGBA) a partir del
+`favicon.svg` ocre. Es va regenerar amb `sharp` (SVG→PNG 16/32/48) + Pillow (PNG→ICO):
 ```bash
-# amb ImageMagick o rsvg-convert + png2ico; mides recomanades 16/32/48:
+# equivalent amb eines de línia, si cal refer-lo:
 rsvg-convert -w 32 -h 32 favicon.svg -o favicon-32.png   # idem 16 i 48
 magick favicon-16.png favicon-32.png favicon-48.png favicon.ico
 ```
-Servir alhora: `<link rel="icon" type="image/svg+xml" href="favicon.svg">` + `favicon.ico` de *fallback*. **Pendent humà:** generar i versionar l'ICO.
+Servir alhora: `<link rel="icon" type="image/svg+xml" href="favicon.svg">` + `favicon.ico` de *fallback*.
 
 ---
 
@@ -73,12 +84,19 @@ Servir alhora: `<link rel="icon" type="image/svg+xml" href="favicon.svg">` + `fa
 |---|---|---|
 | Tinta principal / text | `--dp-neutral-900` | #1B212A |
 | Suport text/traç | `--dp-neutral-700` | #3C4756 |
-| **Aigua / cabal (marca)** | `--dp-teal` / `--dp-teal-600` | #2A7B7B / #216262 |
-| **Divisòria / detall humà** | `--dp-accent-500` | #C75D34 |
+| **Tinta de marca / cabal (clar)** | **`--dp-brand`** | **#B5612A** |
+| **Tinta de marca / cabal (fosc)** | **`--dp-brand-dark`** | **#E8B567** |
+| **Divisòria del motiu (to fosc càlid)** | `--dp-exposure-5` | #7E3A1E |
+| **Detall humà / accent editorial** | `--dp-accent-500` | #C75D34 |
 | Accent sobre fosc | `--dp-accent-300` | #E3A584 |
 | Fons fosc (hero) | `--dp-neutral-950` | #10141A |
 
-Les **paletes de dada** (seqüencial exposició, diverging, qualitativa) **no** són colors de marca: viuen a `cartography/palette.md` i només pinten mapes/charts. La marca no competeix amb el dada.
+**Verds (forest/teal): RETIRATS com a marca** (decisió Bea, DA ronda 2). `--dp-teal*`/`--dp-forest*`
+es conserven al contracte com a **verd de suport llegat** (estats de component puntuals), però **no són
+identitat**: la marca és ocre.
+
+Les **paletes de dada** (seqüencial exposició, divergent «gap», qualitativa) **no** són colors de marca:
+viuen a `cartography/palette.md` i només pinten mapes/charts. La marca no competeix amb el dada.
 
 ---
 
@@ -110,7 +128,7 @@ El paràgraf de Bea és el cor de la home:
 **Tractament proposat** (mockup: `hero-mockup.html`):
 - **Serif editorial** (`--dp-font-serif`), cos gran (`--dp-fs-3xl`), interlineat `--dp-lh-snug`, sobre fons fosc `--dp-neutral-950`. És un paràgraf per **llegir**, no un titular cridat.
 - **Ritme dels verbs:** els primers verbs de moviment — *arriben, marxen, tornen* — en **semibold terracota** (`--dp-accent-300`): són el pols del riu. La resta, en pes normal.
-- **El gir final** — *"desapareixen del padró real de la vida quotidiana"* — en **itàlica teal clar**: l'absència, el riu que s'asseca. Tanca el paràgraf amb el concepte de marca.
+- **El gir final** — *"desapareixen del padró real de la vida quotidiana"* — en **itàlica teal** (el to «absència» de la paleta divergent «gap», `--dp-div2-0`): el riu que s'asseca, la gent que el registre no veu. *(El teal ja no és marca; aquí parla com a dada: el costat fred del gap.)* A la pàgina real es resol amb la classe `.cool`; els verbs de moviment, amb `.warm` (`--dp-accent`).
 - Subratllat per un *eyebrow* curt ("Observatori del territori") i una frase de suport que diu la tesi en una línia.
 
 > El mockup és **referència visual**, no producte. **Mirador** l'implementa de veritat amb els tokens. El **vot sobre el tractament del hero és de Bea**.
@@ -119,9 +137,13 @@ El paràgraf de Bea és el cor de la home:
 
 ## 9. Què és tancat vs proposta
 
-- **Tancat:** el nom `riusdegent`, el tagline, el **concepte** hidrogràfic (riu que creix i s'asseca + divisòria), i que la marca **aplica** els tokens sense redefinir-los.
-- **Proposta a refinar per un humà:** el **dibuix** fi del traç (corbes/gruixos a ull), el lockup exacte i l'espaiat, la generació de **l'ICO**, i el tractament del hero (subjecte al vot de Bea). Sóc una agent de codi: entrego SVG net i una identitat de sortida **creïble per iterar**, no un logo final polit d'estudi.
+- **Tancat:** el nom `riusdegent`, el tagline, el **concepte** hidrogràfic (riu que creix i s'asseca + divisòria), el **color de marca** (ocre `--dp-brand`, decisió de Bea — DA ronda 2), l'**ICO** (generat i versionat), i que la marca **aplica** els tokens sense redefinir-los.
+- **Proposta a refinar per un humà:** el **dibuix** fi del traç (corbes/gruixos a ull), el lockup exacte i l'espaiat, i el tractament del hero (subjecte al vot de Bea). Sóc una agent de codi: entrego SVG net i una identitat de sortida **creïble per iterar**, no un logo final polit d'estudi.
+
+> **Target visual de l'aplicació:** `reference/da-final/` (HTML de les 2 pàgines reals + 7 captures + assets ocre).
+> És el *target* exacte que recrea Mirador amb el contracte `--dp-*`.
 
 ---
 
-*Pendent: vot de marca de Bea · review de Talaia · polit humà del traç + ICO · (F2) integració a Mirador amb els tokens.*
+*Fet: vot de marca de Bea (ocre, DA ronda 2) · ICO generat · assets ocre + referència per a Mirador.*
+*Pendent: review de Talaia · polit humà del traç (corbes/gruixos a ull) · integració a Mirador amb els tokens.*
