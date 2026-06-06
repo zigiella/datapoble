@@ -301,10 +301,13 @@
 	.map-canvaswrap {
 		position: relative;
 		overflow: visible;
-		display: flex;
+		/* block (no flex): el .map intern es block amb width:100% i ompli tot l'ample net del
+		   contenidor. Amb flex, el .map quedava al seu ample de contingut (canvas estret). */
+		display: block;
 		min-width: 0;
 	}
 	.map-canvaswrap :global(.map) {
+		display: block;
 		width: 100%;
 		min-height: 380px;
 	}
