@@ -163,43 +163,34 @@
 				</div>
 			</div>
 
-			<!-- Graella: mapa real (esquerra) + lectura del color i llegenda (dreta) -->
-			<div class="map-grid">
-				<div class="map-stage">
-					<ContourField
-						class="map-stage__contours"
-						viewBox="0 0 760 600"
-						summits={[
-							{ cx: 230, cy: 190, r0: 18, step: 26, rings: 9, sq: 0.95, seed: 0.6, lt: 0 },
-							{ cx: 560, cy: 420, r0: 16, step: 24, rings: 8, sq: 1.04, seed: 2.3, lt: 0 }
-						]}
-						divis={{ cx: 400, cy: 300, r: 170, sq: 1.15, seed: 1.4 }}
-						labels={[]}
-					/>
-					<div class="map-stage__live">
-						{#if browser}
-							<ChoroplethMap
-								{dataset}
-								{geojson}
-								{indicator}
-								{classification}
-								onhover={(p) => (hover = p)}
+			<!-- Graella: mapa real (esquerra) + lectura del color i llegenda (dreta).
+			     Presentacio simple (pre-Fase 2): SENSE marc de paper ni corbes; el MapLibre
+			     omple net el seu contenidor i .map-canvaswrap deixa overflow visible perque
+			     les targetes/tooltips de municipi no es retallin (decisio Bea). -->
+			<div class="map-wrap">
+				<div class="map-canvaswrap">
+					{#if browser}
+						<ChoroplethMap
+							{dataset}
+							{geojson}
+							{indicator}
+							{classification}
+							onhover={(p) => (hover = p)}
+						/>
+						{#if hover}
+							<MapTooltip
+								nom={hover.nom}
+								metricKey={indicator}
+								{def}
+								value={hover.value}
+								conf={hover.conf}
+								x={hover.x}
+								y={hover.y}
 							/>
-							{#if hover}
-								<MapTooltip
-									nom={hover.nom}
-									metricKey={indicator}
-									{def}
-									value={hover.value}
-									conf={hover.conf}
-									x={hover.x}
-									y={hover.y}
-								/>
-							{/if}
-						{:else}
-							<div class="map-stage__ssr" aria-hidden="true">{m.map_loading()}</div>
 						{/if}
-					</div>
+					{:else}
+						<div class="map-ssr" aria-hidden="true">{m.map_loading()}</div>
+					{/if}
 				</div>
 
 				<aside class="map-side">
@@ -277,115 +268,6 @@
 				</aside>
 			</div>
 
-			<!-- ============ PALETES PER VISUALITZACIÓ (especificació · §B.3) ============ -->
-			<section class="pal-spec">
-				<div class="ds-sec__hd" style="margin-top:8px">
-					<span class="ref">C</span><h2>{m.map_pal_title()}</h2>
-				</div>
-				<p class="lead">{m.map_pal_lede()}</p>
-
-				<div class="pal-grid">
-					<!-- DIVERGENT -->
-					<article class="pal" class:on={activePal === 'div'} data-pal="div">
-						<div class="pal__hd">
-							<p class="pal__t">{m.map_pal_div_t()}</p>
-							<span class="pal__active">{m.map_pal_active()}</span>
-						</div>
-						<div class="pal-ramp">
-							<span style="background:var(--dp-div2-0)"></span><span
-								style="background:var(--dp-div2-1)"
-							></span><span style="background:var(--dp-div2-2)"></span><span
-								style="background:var(--dp-div2-3)"
-							></span><span style="background:var(--dp-div2-4)"></span><span
-								style="background:var(--dp-div2-5)"
-							></span><span style="background:var(--dp-div2-6)"></span>
-						</div>
-						<p class="pal-tok mono">{m.map_pal_div_tok()}</p>
-						<p class="pal__use">{m.map_pal_div_use()}</p>
-						<p class="pal__cvd mono"><span class="okdot"></span><span>{m.map_pal_div_cvd()}</span></p>
-					</article>
-
-					<!-- SEQÜENCIAL -->
-					<article class="pal" class:on={activePal === 'seq'} data-pal="seq">
-						<div class="pal__hd">
-							<p class="pal__t">{m.map_pal_seq_t()}</p>
-							<span class="pal__active">{m.map_pal_active()}</span>
-						</div>
-						<div class="pal-ramp">
-							<span style="background:var(--dp-exposure-0)"></span><span
-								style="background:var(--dp-exposure-1)"
-							></span><span style="background:var(--dp-exposure-2)"></span><span
-								style="background:var(--dp-exposure-3)"
-							></span><span style="background:var(--dp-exposure-4)"></span><span
-								style="background:var(--dp-exposure-5)"
-							></span>
-						</div>
-						<p class="pal-tok mono">{m.map_pal_seq_tok()}</p>
-						<p class="pal__use">{m.map_pal_seq_use()}</p>
-						<p class="pal__cvd mono"><span class="okdot"></span><span>{m.map_pal_seq_cvd()}</span></p>
-					</article>
-
-					<!-- QUALITATIVA (mai activa per als indicadors actuals; documenta el contracte) -->
-					<article class="pal" data-pal="cat">
-						<div class="pal__hd">
-							<p class="pal__t">{m.map_pal_cat_t()}</p>
-						</div>
-						<div class="pal-ramp">
-							<span style="background:var(--dp-cat-1)"></span><span
-								style="background:var(--dp-cat-2)"
-							></span><span style="background:var(--dp-cat-3)"></span><span
-								style="background:var(--dp-cat-4)"
-							></span><span style="background:var(--dp-cat-5)"></span><span
-								style="background:var(--dp-cat-6)"
-							></span><span style="background:var(--dp-cat-7)"></span><span
-								style="background:var(--dp-cat-8)"
-							></span>
-						</div>
-						<p class="pal-tok mono">{m.map_pal_cat_tok()}</p>
-						<p class="pal__use">{m.map_pal_cat_use()}</p>
-						<p class="pal__cvd mono"><span class="okdot"></span><span>{m.map_pal_cat_cvd()}</span></p>
-					</article>
-				</div>
-
-				<div class="pal-map">
-					<p class="ds-block__lab">{m.map_pal_map_t()}</p>
-					<div class="pal-map__rows">
-						<div class="pmr">
-							<span class="nm">{m.map_ind_gap()}</span><span class="tag div"
-								><span>{m.map_pal_tag_div()}</span></span
-							>
-						</div>
-						<div class="pmr">
-							<span class="nm">{m.map_ind_real()}</span><span class="tag seq"
-								><span>{m.map_pal_tag_seq()}</span></span
-							>
-						</div>
-						<div class="pmr">
-							<span class="nm">{m.map_ind_ietr()}</span><span class="tag seq"
-								><span>{m.map_pal_tag_seq()}</span></span
-							>
-						</div>
-						<div class="pmr">
-							<span class="nm">{m.map_ind_nop()}</span><span class="tag seq"
-								><span>{m.map_pal_tag_seq()}</span></span
-							>
-						</div>
-						<div class="pmr">
-							<span class="nm">{m.map_ind_ratio()}</span><span class="tag seq"
-								><span>{m.map_pal_tag_seq()}</span></span
-							>
-						</div>
-						<div class="pmr">
-							<span class="nm">{m.map_ind_res()}</span><span class="tag seq"
-								><span>{m.map_pal_tag_seq()}</span></span
-							>
-						</div>
-					</div>
-				</div>
-
-				<p class="srcline">{m.map_pal_note()}</p>
-			</section>
-
 			<div class="caveats" style="margin-top:20px">
 				<div class="alert"><span class="bar"></span><div>{m.map_caveat_1()}</div></div>
 				<div class="alert warn"><span class="bar"></span><div>{m.map_caveat_2()}</div></div>
@@ -397,24 +279,45 @@
 </section>
 
 <style>
-	/* El gros del CSS ve del design-system (.ap-hero, .map-grid, .map-stage, .pal-spec…).
-	   Aquí només encaixem el component de mapa REAL dins del .map-stage: que ompli el marc
-	   (el .map-stage ja porta min-height i el padding del target). */
-	.map-stage__live {
-		position: relative;
-		z-index: 1;
-		width: 100%;
-		max-width: 620px;
-		align-self: stretch;
-		display: flex;
+	/* Presentacio simple del mapa (sense marc de paper ni corbes). El gros del chrome ve
+	   del design-system; aqui nomes el layout del bloc de mapa i que els tooltips de
+	   municipi no es retallin (overflow visible a tota la cadena de contenidors). */
+	.map-wrap {
+		display: grid;
+		grid-template-columns: 1fr 326px;
+		gap: 0;
+		align-items: stretch;
+		/* overflow VISIBLE: a diferencia del .map-grid del design-system, aqui el tooltip
+		   pot sobreeixir del marc sense quedar retallat. */
+		overflow: visible;
 	}
-	/* El ChoroplethMap arrela el seu propi .map (alçada pròpia); aquí l'estirem perquè
-	   ompli l'amplada del marc i tingui una alçada de lectura mínima generosa. */
-	.map-stage__live :global(.map) {
+	@media (max-width: 880px) {
+		.map-wrap { grid-template-columns: 1fr; }
+	}
+
+	/* Contenidor net del mapa en viu: SENSE fons de paper ni corbes. El ChoroplethMap
+	   arrela el seu propi .map (amb la seva vora/radi i el canvas); aqui nomes el situem
+	   i deixem overflow visible perque el tooltip (germa del mapa) pugui sortir per dalt. */
+	.map-canvaswrap {
+		position: relative;
+		overflow: visible;
+		display: flex;
+		min-width: 0;
+	}
+	.map-canvaswrap :global(.map) {
 		width: 100%;
 		min-height: 380px;
 	}
-	.map-stage__ssr {
+
+	/* Separador discret amb el panell lateral (abans el donava la vora del .map-grid). */
+	.map-wrap .map-side {
+		border-left: 1px solid var(--dp-border);
+	}
+	@media (max-width: 880px) {
+		.map-wrap .map-side { border-left: none; border-top: 1px solid var(--dp-border); }
+	}
+
+	.map-ssr {
 		width: 100%;
 		min-height: 380px;
 		display: flex;

@@ -118,6 +118,18 @@
 		max-width: 240px;
 		padding: 10px 12px;
 		box-shadow: var(--dp-shadow-md);
+		/* El tooltip ha de SEGUIR EL TEMA: clar en clar, fosc en fosc. `.tip` de sistema.css
+		   és un mock fosc fix (--dp-neutral-900); aquí restaurem els àlies de superfície perquè
+		   en [data-theme=light] surti clar. El selector scoped de Svelte hi guanya en especificitat. */
+		background: var(--dp-surface);
+		color: var(--dp-text);
+		border: 1px solid var(--dp-border);
+		border-radius: var(--dp-radius-md);
+	}
+	/* Neutralitza la fletxa ::after del `.tip` mock de sistema.css (heretava el fons fosc i
+	   quedava fora de lloc amb el nostre posicionament propi del tooltip). */
+	.tip::after {
+		display: none;
 	}
 	.tip__place {
 		font-family: var(--dp-font-display);

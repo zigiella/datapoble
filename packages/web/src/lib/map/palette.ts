@@ -3,8 +3,8 @@
  *
  * Per què existeix: dins del canvas WebGL de MapLibre els colors han de ser literals
  * (les CSS custom properties --dp-* no s'hi resolen). Aquí repliquem els hex de les rampes
- * de dada (seqüencial "exposició" --dp-exposure-0..5 i divergent --dp-div-0..6) i en mostregem
- * N colors. La llegenda (HTML) sí que pot usar les variables, però usem els mateixos hex perquè
+ * de dada (seqüencial "exposició" --dp-exposure-0..5 i divergent del gap --dp-div2-0..6, teal↔porpra)
+ * i en mostregem N colors. La llegenda (HTML) sí que pot usar les variables, però usem els mateixos hex perquè
  * mapa i llegenda coincideixin pixel a pixel.
  *
  * Rampa seqüencial = 6 stops com a RECURS de color; el render coroplètic per defecte usa
@@ -22,18 +22,21 @@ export const EXPOSURE_STOPS = [
 ] as const;
 
 /**
- * Stops de la rampa DIVERGENT (espill de --dp-div-0..6, família BrBG, CVD-safe).
- * Teal (negatiu: menys gent que el padró) → neutre (gap≈0) → càlid (positiu: població invisible).
- * L'índex 3 (#F5F5F0) és el neutre i s'alinea amb el `center` (0) de la classificació.
+ * Stops de la rampa DIVERGENT del GAP (espill de --dp-div2-0..6, família teal↔PORPRA, CVD-safe).
+ * DA final ronda 2 (Bea): la rampa del gap és teal↔porpra, NO teal↔marró. La porpra lliga amb
+ * --dp-prov-derived (#7A5BA6 = inferència): el costat «població que el padró no veu» és inferència.
+ * Teal (negatiu: menys gent que el padró) → neutre (gap≈0) → porpra (positiu: població invisible).
+ * L'índex 3 (#EFEEE8) és el neutre i s'alinea amb el `center` (0) de la classificació.
+ * (La família teal↔marró —--dp-div-*— queda com a llegat; ja no es fa servir al render del gap.)
  */
 export const DIVERGING_STOPS = [
-	'#01665E', // -3  teal fosc  (gap molt negatiu)
-	'#5AB4AC', // -2
-	'#C7EAE5', // -1  teal clar
-	'#F5F5F0', //  0  neutre
-	'#DFC27D', // +1  càlid clar
-	'#BF812D', // +2
-	'#8C510A' // +3  marró fosc (gap molt positiu: màxima població invisible)
+	'#0F6E66', // -3  teal fort  (gap molt negatiu: menys gent que el registre)
+	'#4FA8A0', // -2
+	'#B9DED9', // -1  teal clar
+	'#EFEEE8', //  0  neutre (≈ mitjana / gap 0)
+	'#CDB3DD', // +1  porpra clar
+	'#9466B6', // +2
+	'#5E3A86' // +3  porpra fort (gap molt positiu: màxima població invisible)
 ] as const;
 
 /** Índex del stop neutre dins DIVERGING_STOPS (gap=0). */

@@ -3,7 +3,11 @@
 <html lang="%paraglide.lang%">
 	<head>
 		<meta charset="utf-8" />
-		<link rel="icon" href="%sveltekit.assets%/favicon.svg" />
+		<!-- Favicon: SVG modern com a principal + ICO de reserva (navegadors sense suport SVG).
+		     L'ICO ve de design-system/brand (16/32/48). Així es veu a la pestanya arreu. -->
+		<link rel="icon" type="image/svg+xml" href="%sveltekit.assets%/favicon.svg" />
+		<link rel="alternate icon" type="image/x-icon" href="%sveltekit.assets%/favicon.ico" />
+		<link rel="shortcut icon" href="%sveltekit.assets%/favicon.ico" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="color-scheme" content="light dark" />
 		<!-- ⚠️ PRE-LLANÇAMENT: bloqueja la indexació fins que el lloc estigui llest.

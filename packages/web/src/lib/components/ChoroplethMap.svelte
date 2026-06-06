@@ -7,7 +7,7 @@
 	 *  - cap dependència de tile-server: estil autocontingut (fons + geometria local) →
 	 *    desplegable a Cloudflare Pages estàtic i funcional offline;
 	 *  - coroplètic amb la rampa "exposició" (--dp-exposure-*) o, per a desviacions amb signe
-	 *    (gap població real↔padró), la rampa DIVERGENT (--dp-div-*) ancorada a 0;
+	 *    (gap població real↔padró), la rampa DIVERGENT teal↔porpra (--dp-div2-*) ancorada a 0;
 	 *    5 classes per defecte (cuantils per IETR, Jenks per magnituds crues, divergent pel gap);
 	 *  - "sense dada" amb TRAMAT (hatch) sobre --dp-nodata, mai relleno pla (secret estadístic);
 	 *  - CONFIANÇA BAIXA de l'estimació: opacitat reduïda + tramat damunt del color (honestedat:
