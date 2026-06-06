@@ -17,6 +17,7 @@
 
 @import '../../design-system/tokens/tokens.css';
 @import '../../design-system/sistema/sistema.css';
+@import '../../design-system/aplicacio/aplicacio.css';
 
 :root {
 	/* Àlies d'APLICACIÓ (no són tokens de marca; són mides del layout de Mirador).

@@ -1,10 +1,13 @@
 <script lang="ts">
 	/**
-	 * Selector d'idioma. Manté la ruta actual i només canvia el prefix de locale:
+	 * Selector d'idioma (CA/ES). Manté la ruta actual i només canvia el prefix de locale:
 	 * fa servir `localizeHref` per generar la URL localitzada equivalent. La cookie
 	 * (estratègia configurada) recorda l'elecció en futures visites.
 	 *
-	 * Accessibilitat: és un grup de navegació amb aria-current a l'idioma actiu.
+	 * Estil: classe `.langer` del design-system (sistema.css + aplicacio.css), perquè
+	 * capçalera i peu comparteixin el mateix commutador (DA final, captures 01/07).
+	 * És navegació real (enllaços <a> amb reload), no botons: funciona sense JS i conserva
+	 * l'accessibilitat (aria-current a l'idioma actiu).
 	 */
 	import { page } from '$app/state';
 	import { SUPPORTED_LOCALES, LOCALE_LABEL, currentLocale, localizeHref } from '$lib/i18n';
@@ -21,12 +24,11 @@
 	}
 </script>
 
-<nav class="lang" aria-label={m.lang_switcher_label()}>
+<div class="langer" role="group" aria-label={m.lang_switcher_label()}>
 	{#each SUPPORTED_LOCALES as locale (locale)}
 		<a
 			href={hrefFor(locale)}
-			class="lang__item"
-			class:is-active={locale === active}
+			class:on={locale === active}
 			aria-current={locale === active ? 'true' : undefined}
 			hreflang={locale}
 			data-sveltekit-reload
@@ -34,28 +36,28 @@
 			{LOCALE_LABEL[locale]}
 		</a>
 	{/each}
-</nav>
+</div>
 
 <style>
-	.lang {
-		display: inline-flex;
-		gap: 2px;
-		border: 1px solid var(--dp-border);
-		border-radius: var(--dp-radius-sm);
-		overflow: hidden;
-	}
-
-	.lang__item {
-		padding: var(--dp-space-1) var(--dp-space-3);
-		font-size: 0.8rem;
-		font-weight: 600;
+	/* `.langer` (sistema/aplicacio) estilitza <button>; aquí en fem <a> per navegació
+	   real. Reproduïm el mateix encaix perquè coincideixi amb el target. */
+	.langer a {
+		font-family: var(--dp-font-mono);
+		font-size: 11px;
+		letter-spacing: 0.06em;
 		text-decoration: none;
-		color: var(--dp-text-muted);
-		background: var(--dp-surface);
+		color: var(--dp-text-subtle);
+		background: transparent;
+		padding: 6px 10px;
+		border-right: 1px solid var(--dp-border);
+		display: inline-flex;
+		align-items: center;
 	}
-
-	.lang__item.is-active {
-		background: var(--dp-forest);
-		color: #fff;
+	.langer a:last-child {
+		border-right: none;
+	}
+	.langer a.on {
+		background: var(--dp-text);
+		color: var(--dp-bg);
 	}
 </style>

@@ -25,7 +25,18 @@ const config = {
 		prerender: {
 			// El site és estàtic: cap dependència de servidor en runtime. Els enllaços
 			// interns es descobreixen tot sol des de l'entrada arrel.
-			handleHttpError: 'warn'
+			handleHttpError: 'warn',
+			// El chrome final (DA) només enllaça Resum i Mapa des de la capçalera/peu; la
+			// resta de rutes (stub: Índex, Excursionista, Política, Pregunta-li) queden
+			// inertes i ja no es descobreixen per crawling. Les declarem explícitament
+			// perquè es continuïn prerenderitzant (accessibles per URL directa).
+			entries: [
+				'*',
+				'/index/',
+				'/day-tripper/',
+				'/politica/',
+				'/preguntale/'
+			]
 		}
 	}
 };
