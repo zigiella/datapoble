@@ -1,105 +1,158 @@
 <script lang="ts">
 	/**
-	 * Layout arrel. Estructura comuna a totes les pantalles: enllaç "salta al contingut",
-	 * capçalera (marca + navegació + selector d'idioma) i peu amb la nota de procedència.
-	 * No defineix disseny propi més enllà de placeholders; els tokens són de Llegenda.
+	 * Layout arrel — chrome compartit segons la DA final (captures 01 i 07).
+	 *
+	 * Capçalera `.ds-top` (sticky): marca SVG (ocre) + wordmark rius·degent + sub-tagline
+	 * mono, navegació (Resum/Mapa actius; la resta inerts en aquesta fase) i, a la dreta,
+	 * commutador d'idioma (CA/ES) + de tema (sol/lluna).
+	 * Peu `.ap-foot` dissenyat: 4 columnes (marca+missió+segell · Explora · El projecte ·
+	 * controls idioma/tema) + barra inferior legal amb coordenades i data.
+	 *
+	 * Tot el CSS ve del design-system (app.css importa tokens + sistema + aplicacio); aquí
+	 * només hi ha estructura i el cablejat d'i18n (m.*) i de navegació localitzada.
 	 */
 	import '../app.css';
-	import Nav from '$lib/components/Nav.svelte';
 	import LangSwitcher from '$lib/components/LangSwitcher.svelte';
+	import ThemeSwitcher from '$lib/components/ThemeSwitcher.svelte';
+	import ContourField from '$lib/components/ContourField.svelte';
 	import { localizeHref } from '$lib/i18n';
+	import { base } from '$app/paths';
+	import { page } from '$app/state';
 	import { m } from '$lib/paraglide/messages';
 
 	let { children } = $props();
+
+	// Rutes canòniques (sense prefix de locale); reroute/localize fan la traducció.
+	const path = $derived(page.url.pathname);
+	function isActive(p: string): boolean {
+		return path === p || path.startsWith(p + '/');
+	}
+
+	// Corbes del peu (cims + divisòria + etiquetes de dada real), com al target.
+	const footSummits = [
+		{ cx: 250, cy: 120, r0: 16, step: 24, rings: 8, sq: 0.95, seed: 0.6, lt: 0.02 },
+		{ cx: 980, cy: 90, r0: 14, step: 22, rings: 8, sq: 1.05, seed: 2.3, lt: 0.04 }
+	];
+	const footDivis = { cx: 600, cy: 110, r: 150, sq: 1.0, seed: 1.4 };
+	const footLabels = ['1.245 m', '42°16′N', '31', '1°53′E', '593'];
 </script>
 
 <a class="skip-link" href="#main">{m.skip_to_content()}</a>
 
-<div class="shell">
-	<header class="shell__header">
-		<div class="shell__bar">
-			<a class="brand" href={localizeHref('/resum')}>
-				<span class="brand__name">{m.app_name()}</span>
-				<span class="brand__tag">{m.app_tagline()}</span>
-			</a>
-			<LangSwitcher />
+<!-- ============================ CAPÇALERA ============================ -->
+<header class="ds-top">
+	<a class="ds-top__brand" href={localizeHref('/resum')} aria-label={m.app_name()}>
+		<img src="{base}/brand/riusdegent-mark.svg" width="30" height="30" alt="" />
+		<span class="txt">
+			<span class="wm">rius<b>degent</b></span>
+			<span class="sub">{m.brand_sub()}</span>
+		</span>
+	</a>
+	<nav class="ds-nav" aria-label="Primary">
+		<a href={localizeHref('/resum')} class:on={isActive('/resum')} aria-current={isActive('/resum') ? 'page' : undefined}>
+			<span>{m.nav_resum()}</span>
+		</a>
+		<a href={localizeHref('/mapa')} class:on={isActive('/mapa')} aria-current={isActive('/mapa') ? 'page' : undefined}>
+			<span>{m.nav_mapa()}</span>
+		</a>
+		<span class="nav-inert" aria-disabled="true">{m.nav_index()}</span>
+		<span class="nav-inert" aria-disabled="true">{m.nav_daytripper()}</span>
+		<span class="nav-inert" aria-disabled="true">{m.nav_politica()}</span>
+		<span class="nav-inert" aria-disabled="true">{m.nav_preguntale()}</span>
+	</nav>
+	<div class="ds-top__right">
+		<LangSwitcher />
+		<ThemeSwitcher />
+	</div>
+</header>
+
+<main id="main" tabindex="-1">
+	{@render children?.()}
+</main>
+
+<!-- ============================ PEU ============================ -->
+<footer class="ap-foot">
+	<ContourField
+		class="ap-foot__field"
+		viewBox="0 0 1200 300"
+		summits={footSummits}
+		divis={footDivis}
+		labels={footLabels}
+	/>
+	<div class="ap-foot__in">
+		<div>
+			<div class="ap-foot__brand">
+				<img src="{base}/brand/riusdegent-mark.svg" width="30" height="30" alt="" />
+				<span class="wm">rius<b>degent</b></span>
+			</div>
+			<p class="ap-foot__mission">{m.foot_mission()}</p>
+			<span class="ap-foot__pledge"><span class="spot"></span><span>{m.foot_pledge()}</span></span>
 		</div>
-		<Nav />
-	</header>
-
-	<main id="main" class="shell__main" tabindex="-1">
-		{@render children?.()}
-	</main>
-
-	<footer class="shell__footer">
-		<p>{m.footer_note()}</p>
-		<p class="shell__footer-data">{m.footer_data_note()}</p>
-	</footer>
-</div>
+		<div>
+			<h4>{m.foot_explore()}</h4>
+			<ul>
+				<li><a href={localizeHref('/resum')}>{m.nav_resum()}</a></li>
+				<li><a href={localizeHref('/mapa')}>{m.nav_mapa()}</a></li>
+				<li><span class="foot-inert" aria-disabled="true">{m.foot_link_method()}</span></li>
+				<li><span class="foot-inert" aria-disabled="true">{m.foot_link_glossary()}</span></li>
+			</ul>
+		</div>
+		<div>
+			<h4>{m.foot_about()}</h4>
+			<ul>
+				<li><span class="foot-inert" aria-disabled="true">{m.foot_about_who()}</span></li>
+				<li><span class="foot-inert" aria-disabled="true">{m.foot_about_politica()}</span></li>
+				<li><span class="foot-inert" aria-disabled="true">{m.foot_link_contract()}</span></li>
+				<li><span class="foot-inert" aria-disabled="true">{m.foot_about_ask()}</span></li>
+			</ul>
+		</div>
+		<div class="ap-foot__ctl">
+			<div>
+				<h4>{m.foot_lang()}</h4>
+				<LangSwitcher />
+			</div>
+			<div>
+				<h4>{m.foot_theme()}</h4>
+				<ThemeSwitcher />
+			</div>
+		</div>
+	</div>
+	<div class="ap-foot__bottom">
+		<span>{m.foot_legal()}</span>
+		<span class="coord"><span>42°16′N · 1°53′E</span><span>{m.foot_update()}</span></span>
+	</div>
+</footer>
 
 <style>
-	.shell {
-		max-width: var(--dp-maxw);
-		margin: 0 auto;
-		padding: var(--dp-space-4);
-		min-height: 100vh;
-		display: flex;
-		flex-direction: column;
-		gap: var(--dp-space-5);
-	}
-
-	.shell__header {
-		display: flex;
-		flex-direction: column;
-		gap: var(--dp-space-4);
-		padding-bottom: var(--dp-space-4);
-		border-bottom: 1px solid var(--dp-border);
-	}
-
-	.shell__bar {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: var(--dp-space-4);
-		flex-wrap: wrap;
-	}
-
-	.brand {
-		text-decoration: none;
-		color: inherit;
-		display: flex;
-		flex-direction: column;
-	}
-
-	.brand__name {
-		font-size: 1.35rem;
-		font-weight: 800;
-		letter-spacing: -0.01em;
-		color: var(--dp-forest);
-	}
-
-	.brand__tag {
-		font-size: 0.8rem;
-		color: var(--dp-text-muted);
-	}
-
-	.shell__main {
-		flex: 1;
+	/* L'estructura i la pell vénen del design-system (.ds-top, .ap-foot, .ds-nav…).
+	   Aquí només forcem que <main> ocupi l'alçada disponible perquè el peu quedi avall. */
+	main {
+		display: block;
 		outline: none;
+		min-height: 60vh;
 	}
 
-	.shell__footer {
-		border-top: 1px solid var(--dp-border);
-		padding-top: var(--dp-space-4);
-		font-size: 0.78rem;
+	/* Ítems de nav inerts (pàgines no construïdes en aquesta fase): es renderitzen com a
+	   <span> (no són enllaços navegables → sense href), però amb el mateix encaix visual
+	   que .ds-nav a, atenuats. */
+	.nav-inert {
+		font-size: 0.9rem;
+		font-weight: 500;
 		color: var(--dp-text-muted);
+		padding: 8px 13px;
+		border-radius: var(--dp-radius-sm);
+		line-height: 1;
+		opacity: 0.5;
+		cursor: not-allowed;
+		user-select: none;
 	}
 
-	.shell__footer p {
-		margin: 0 0 var(--dp-space-1);
-	}
-
-	.shell__footer-data {
-		opacity: 0.85;
+	/* Enllaços inerts del peu: <span> atenuat amb la mateixa pell que .ap-foot ul a. */
+	.foot-inert {
+		font-size: 0.86rem;
+		color: var(--dp-text-muted);
+		opacity: 0.55;
+		cursor: not-allowed;
+		user-select: none;
 	}
 </style>
