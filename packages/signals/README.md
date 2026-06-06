@@ -9,17 +9,20 @@ senyal), amb traçabilitat sempre i la frontera **dada/inferència** explícita.
 > És el principi dels *kg de residus* (proxy de població fantasma) generalitzat a
 > qualsevol rastre.
 
-## Scope d'aquest PR (primer)
+## Scope
 
-La **taula `events`** (el contracte de la capa) + **UN rastre**: el connector de
-**contractació** (Socrata `ybgg-dgi6`). **No** el motor sencer.
+La **taula `events`** (el contracte de la capa) + **dos rastres independents**:
+**contractació** (Socrata `ybgg-dgi6`) i **sequera** (Socrata `i5n8-43cw`, ACA).
+**No** el motor de convergència (PR següent).
 
-| peça | dataset | accés | loader |
-|---|---|---|---|
-| **Contractació** (contractes menors) | Socrata `ybgg-dgi6` | analisi.transparenciacatalunya.cat | `requests` |
+| peça | dataset | accés | loader | events |
+|---|---|---|---|---|
+| **Contractació** (contractes menors) | Socrata `ybgg-dgi6` | analisi.transparenciacatalunya.cat | `requests` | 1.295 |
+| **Sequera** (estat de sequera ACA) | Socrata `i5n8-43cw` | analisi.transparenciacatalunya.cat | `requests` | 398 |
 
 **Pilot:** el Berguedà — Berga (`08022`), Castellar de n'Hug (`08052`) i el
-**Consell Comarcal del Berguedà** (l'òrgan supramunicipal). 1.295 events.
+**Consell Comarcal del Berguedà** (l'òrgan supramunicipal) per a la contractació;
+els **31 municipis** del Berguedà per a la sequera (la font baixa a municipi).
 
 ## El contracte: la taula `events`
 
@@ -67,7 +70,8 @@ pròpia**; viu al Consell (**695 contractes**). Marquem `ambit` perquè la
 ```bash
 cd packages/signals
 python -m datapoble_signals contractacio   # descarrega + normalitza + escriu events
-python -m datapoble_signals all             # (ara: només contractació)
+python -m datapoble_signals sequera         # estat de sequera ACA → events
+python -m datapoble_signals all             # tots dos rastres
 pytest -q                                   # tests (offline; el parquet és opcional)
 ```
 
@@ -78,8 +82,13 @@ sobreescriu el parquet i la raw; `event_id` és estable entre execucions.
 
 ```
 data/raw/contractacio/  contractacio_raw.json + _provenance.json   (gitignored; 1 fila = 1 contracte)
-data/events/            events_bergueda.parquet                    (versionat; 1 fila = 1 event)
+data/raw/sequera/        sequera_raw.json + _provenance.json        (gitignored; 1 fila = 1 canvi d'estat)
+data/events/             events_bergueda.parquet                    (versionat; contractació, 1 fila = 1 event)
+data/events/             events_sequera_bergueda.parquet            (versionat; sequera, 1 fila = 1 event)
 ```
+
+Cada rastre escriu el seu **propi parquet** (mateix contracte `EVENT_COLUMNS`).
+El motor de convergència (PR futur) els unirà (`UNION ALL`) en una taula única.
 
 El parquet es materialitza **via DuckDB** (`data` → DATE; `import`/`confianca` →
 DOUBLE) — el cast és explícit i reproduïble, com a la capa transform de Sondeig.
@@ -98,6 +107,31 @@ Senyal fort = **CPV** (codi oficial de l'objecte). Sense CPV → fallback per
 | `turisme_cultura_events` | `7995…`, `92…` |
 | `seguretat_socorrisme` | `7971…`, `7525…`, `7561…` |
 | `altres` | cap match |
+
+## El rastre de sequera (ACA, `i5n8-43cw`)
+
+Una **declaració/canvi d'estat de sequera** de l'Agència Catalana de l'Aigua per a
+un municipi en una data és un **rastre administratiu net**: l'ACA declara una
+restricció → senyal de **pressió hídrica** (que convergeix amb el turisme/segona
+residència). Font: «Estat de sequera per unitats d'explotació i municipis a les
+Conques Internes de Catalunya». **398 events** al Berguedà, **2021-01-01 →
+2025-05-16**, escala hidrològica completa (normalitat → prealerta → alerta →
+preemergència → excepcionalitat → emergència).
+
+Diferències de normalització respecte a la contractació:
+
+| camp | contractació | sequera |
+|---|---|---|
+| `ambit` | municipal **o** comarcal (la lliçó supra) | **sempre municipal** (la font baixa a municipi: 31/31 del Berguedà) |
+| `data_tipus` | `adjudicacio`/`publicacio`/`anunci` | `inici_vigencia` (la restricció entra en vigor) |
+| `fase` | `anticipacio` (un contracte precedeix el fet) | `realitzacio` (l'estat declarat és contemporani) |
+| `tipus_senyal` | heurística CPV+paraules | `aigua_sequera` (fix) |
+| `confianca` | força de l'evidència del tema (CPV vs paraula) | **força del senyal de pressió** segons severitat (normalitat 0.1 → emergència II 1.0) |
+| `import` | € sense IVA | NULL (una declaració no en té) |
+
+`categoria='fet'` igualment (la declaració EXISTEIX); el que *implica* (la pressió)
+és inferència, graduada per `confianca`. La **unitat d'explotació** (el nivell on
+l'ACA pren la decisió i la propaga) es preserva a `raw_id` i dins `objecte`.
 
 ## Honest boundaries (disciplina de Talaia, innegociable)
 
@@ -122,9 +156,11 @@ Senyal fort = **CPV** (codi oficial de l'objecte). Sense CPV → fallback per
 
 ## Fora de scope (PRs següents)
 
-El **motor de convergència** (repartir el senyal comarcal als micromunicipis); el
-connector de **sequera** (DOGC/ACA); l'extracció **LLM** (OpenRouter) per a fonts
-messy; l'**escala Catalunya**.
+El **motor de convergència** (unir els dos rastres, repartir el senyal comarcal
+als micromunicipis, reconstruir intervals de sequera, creuar amb el turisme);
+l'extracció **LLM** (OpenRouter) per a fonts messy i per refinar `altres`;
+l'**escala Catalunya** (atenció: el dataset de sequera és **només Conques
+Internes** — les conques de l'Ebre les gestiona la CHE, no l'ACA).
 
 ## Estructura
 
@@ -132,6 +168,7 @@ messy; l'**escala Catalunya**.
 - `taxonomy.py` — heurística CPV + paraules clau → `tipus_senyal` + `confianca`.
 - `municipis.py` — INE5 del Berguedà + detecció d'òrgans supra (la lliçó).
 - `contractacio.py` — connector `ybgg-dgi6` → normalització a events.
+- `sequera.py` — connector `i5n8-43cw` (ACA) → events de sequera.
 - `events.py` — escriptura de la taula `events` a parquet via DuckDB.
 - `socrata.py` / `config.py` / `provenance.py` — client SODA, registre de fonts,
   sidecar de procedència (mateix patró que `packages/ingestion`).

@@ -33,6 +33,18 @@ SOURCES: dict[str, dict] = {
         "kind": "socrata",
         "tipus_senyal_default": "contractacio",
     },
+    "sequera": {
+        "organisme": "Agència Catalana de l'Aigua (ACA)",
+        "producte": (
+            "Estat de sequera per unitats d'explotació i municipis a les "
+            "Conques Internes de Catalunya"
+        ),
+        "dataset_id": "i5n8-43cw",
+        "url": f"{SOCRATA_DOMAIN}/resource/i5n8-43cw.json",
+        "llicencia": "Dades Obertes de Catalunya",
+        "kind": "socrata",
+        "tipus_senyal_default": "aigua_sequera",
+    },
 }
 
 

@@ -30,9 +30,14 @@ FASES = ("anticipacio", "realitzacio", "reaccio")
 CATEGORIES = ("fet", "inferencia")
 
 # Tema del senyal (taxonomia verificada per Talaia, vegeu taxonomy.py).
+#   aigua_sequera — declaració/canvi d'estat de sequera de l'ACA per a un
+#     municipi/unitat d'explotació (rastre administratiu net, vegeu sequera.py).
+#     Distint d'``aigua`` (contractació de serveis d'aigua): aquí el senyal és la
+#     restricció declarada, no un contracte.
 TIPUS_SENYAL = (
     "neteja_residus",
     "aigua",
+    "aigua_sequera",
     "mobilitat_via",
     "turisme_cultura_events",
     "seguretat_socorrisme",
