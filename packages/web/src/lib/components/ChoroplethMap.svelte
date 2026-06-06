@@ -54,6 +54,16 @@
 	let map: MlMap | null = null;
 	let ready = $state(false);
 	let selected: string | null = $state(null);
+	/**
+	 * Observa la mida del contenidor. CRÍTIC: si MapLibre s'inicialitza quan el contenidor
+	 * encara té amplada/alçada 0 (hidratació de SvelteKit abans que el grid resolgui la mida,
+	 * o contenidor momentàniament colapsat), el canvas WebGL no completa la primera renderització
+	 * i l'esdeveniment `load` NO es dispara mai → `ready` es queda fals → la pàgina mostra
+	 * "Carregant el mapa…" per sempre. En cridar `map.resize()` quan el contenidor passa a tenir
+	 * mida > 0, MapLibre re-mesura, pinta i `load` arriba. També manté el canvas net en
+	 * redimensionaments de la finestra (responsivitat). Vegeu bitàcora F2 (bug del render).
+	 */
+	let resizeObs: ResizeObserver | null = null;
 
 	const SRC = 'bergueda';
 	const FILL = 'mun-fill';
@@ -198,6 +208,25 @@
 		map.scrollZoom.disable(); // evita segrestar l'scroll de la pàgina; zoom amb botons / +Ctrl
 		map.scrollZoom.enable({ around: 'center' });
 
+		// Desbloqueja el `load` si el mapa va néixer amb el contenidor a 0px (vegeu `resizeObs`):
+		// quan el contenidor adquireix mida real, re-mesurem el canvas. Mantenir-ho viu després
+		// del load també fa el mapa responsiu als canvis de mida de la finestra/columna.
+		if (typeof ResizeObserver !== 'undefined') {
+			let lastW = 0;
+			let lastH = 0;
+			resizeObs = new ResizeObserver((entries) => {
+				const box = entries[0]?.contentRect;
+				if (!map || !box) return;
+				// Només re-mesurem si la mida ha canviat de debò i és no-degenerada (>0).
+				if (box.width > 0 && box.height > 0 && (box.width !== lastW || box.height !== lastH)) {
+					lastW = box.width;
+					lastH = box.height;
+					map.resize();
+				}
+			});
+			resizeObs.observe(container);
+		}
+
 		map.on('load', () => {
 			if (!map) return;
 			const img = makeHatch();
@@ -275,6 +304,9 @@
 				}
 			});
 
+			// Salvaguarda: assegura que el canvas té la mida del contenidor abans d'enquadrar
+			// (per si el `load` ha arribat amb una mida intermèdia). Vegeu `resizeObs`.
+			map.resize();
 			// Enquadra a la geometria.
 			fitToData(maplibregl);
 			wireInteractions();
@@ -364,10 +396,14 @@
 	});
 
 	onMount(() => {
-		init();
+		// Si la inicialització de MapLibre falla, no deixem la UI penjada al teló de càrrega:
+		// l'error es propaga a la consola perquè es vegi a producció (en lloc d'un "Carregant…" mut).
+		init().catch((err) => console.error('[ChoroplethMap] init failed:', err));
 	});
 
 	onDestroy(() => {
+		resizeObs?.disconnect();
+		resizeObs = null;
 		map?.remove();
 		map = null;
 	});
