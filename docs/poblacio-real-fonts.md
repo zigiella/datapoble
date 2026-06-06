@@ -129,6 +129,166 @@ turística municipal (exclou Berga i Castellar), aigua-volum (només comarca), m
   numerador (presència) i el denominador (padró) tenen fonts i biaixos diferents.
 - La **reclamació final població-real és de Talaia**: aquest doc para deliberadament a l'inventari.
 
+---
+
+# Fonts per a turisme / excursionisme (afinament: pernocta vs dia)
+
+**Autora:** Sondeig · **Data:** 2026-06-06 · **Encàrrec:** Bea (direcció humana) vol
+distingir **població que pernocta** d'**excursionistes de dia**: en municipis molt turístics
+els residus i el consum no són «població empadronada». Aquesta secció és **investigació de
+disponibilitat** (no materialitza res; la síntesi de l'indicador és de Talaia) i respon a **3
+preguntes** verificades **en viu** (API SODA Socrata, API EMEX Idescat, Overpass/OSM, portals
+Idescat/INE) el **2026-06-06**. Pilot: Berguedà (31 munis).
+
+## T0. Resum executiu (les 3 respostes)
+
+| # | Pregunta | Disponible? | Font / dataset | Granularitat | Cobertura | Separa pernocta/dia? |
+|---|---|---|---|---|---|---|
+| 1 | **Fraccions de residus (VIDRE)** | ✅ **SÍ, ja la tenim** | ARC `69zu-w48s` (**el mateix que ja ingerim**) — columna `vidre` (+ `paper_i_cartr`, `envasos_lleugers`, `mat_ria_org_nica`, fracció resta) | **Municipal (`codi_municipi`=ine5)**, **anual** | **2000–2024**, 31/31 munis 2024, **zero NULL**, sobreviu al secret estadístic fins a Castellar (164 hab) | **Sí, indirectament.** Vidre/càpita = *proxy* d'hostaleria (ampolles de bar/restaurant) → marca segona residència + turisme de tornada-a-casa. |
+| 2 | **Establiments de restauració** | ⚠️ **SÍ amb matís** (cap font 100% neta + open) | (a) **Idescat "Empreses i establiments" `ee`** per CCAE-2009; (b) **OSM/Overpass** `amenity=restaurant\|bar\|cafe` (proxy obert, verificat); (c) EMEX `g170` (només grans sectors, NO aïlla hostaleria) | (a) Municipal × branca CCAE; (b) Punt geocodificat → agregable a munis; (c) Municipal però sector massa ampli | (a) act. 26/02/2026, sèrie llarga; (b) snapshot OSM (Berga=24 locals verificat); (c) ja al pipeline | **Sí (stock).** Densitat de restauració/hab = capacitat d'hostaleria → senyal de turisme de dia + pernocta, no flux. |
+| 3 | **Granularitat estacional/mensual** | ❌ **NO a nivell municipal** | ICAEN elèctric `8idm-becu` = **anual**; ARC residus = **anual**; demanda horària `hx6q-ykhb` = **Catalunya global** (sense municipi); EOH/turisme rural (INE/Idescat) = **mensual/trim. però per marca "Pirineus"**, no municipi | Cap sèrie **infra-anual × municipal** per al pilot | — | **Seria el senyal més net** (pics estiu/cap de setmana = 2a residència) **però NO existeix obert per municipi.** El «no» honest principal d'aquesta ronda. |
+
+## T1. Pregunta 1 — Fraccions de residus (VIDRE): ✅ ja disponible, infrautilitzada
+
+**Troballa clau: no cal connector nou.** El dataset ARC `69zu-w48s` que `residus.py` ja
+ingereix **conté totes les fraccions de recollida selectiva per municipi**, no només
+`kg_hab_any`. Columnes verificades en viu (esquema complet via `/api/views/69zu-w48s.json`):
+
+- **Selectiva per fracció (t/any):** `vidre`, `paper_i_cartr`, `envasos_lleugers`,
+  `mat_ria_org_nica` (FORM), `poda_i_jardineria`, `residus_voluminosos_fusta`, `raee`,
+  `ferralla`, `olis_vegetals`, `t_xtil`, `runes`, `res_especials_en_petites`, `piles`,
+  `medicaments`, `altres_recollides_selectives`, `total_recollida_selectiva`.
+- **Fracció resta (t/any):** `resta_a_dip_sit`, `resta_a_incineraci`,
+  `resta_a_tractament_mec_nic`, `resta_sense_desglossar`, `suma_fracci_resta`.
+- **Ràtios/percentatges:** `kg_hab_any_recollida_selectiva`, `r_s_r_m_total`, `f_r_r_m`,
+  `generaci_residus_municipal`, `kg_hab_any`, `kg_hab_dia`.
+- **Granularitat:** **municipal** (`codi_municipi` = INE5), **anual**, **2000–2024**.
+- **Cobertura del pilot (2024):** **31/31 municipis del Berguedà** amb `vidre` i `paper`
+  **no-null** (`count(vidre)=31`). El vidre **sobreviu al secret estadístic fins i tot a
+  Castellar de n'Hug (164 hab): 17,66 t** — a diferència dels sectors industrials de l'elèctric.
+
+**Per què el VIDRE és el millor proxy de turisme/hostaleria (verificat numèricament, 2024):**
+el vidre per càpita separa nítidament els micromunicipis turístics de la capital estable.
+
+| Municipi | Pob. | Vidre (t) | **kg vidre/hab/any** |
+|---|---:|---:|---:|
+| Gósol | 214 | 32,0 | **149,4** |
+| Gisclareny | 30 | 4,3 | **144,0** |
+| Sagàs | 154 | 20,4 | **132,5** |
+| Castellar de n'Hug | 164 | 17,7 | **107,7** |
+| la Nou de Berguedà | 163 | 14,8 | **90,8** |
+| **(mediana comarcal)** | — | — | **49,8** |
+| **Berga** (capital) | 17.195 | 475,3 | **27,6** |
+
+> Gósol genera **5,4×** més vidre per habitant que Berga. La signatura és inequívoca:
+> pobles petits de muntanya amb molta restauració + segona residència (caps de setmana,
+> estiu) generen molt vidre que el padró no «veu». El vidre és **més net que els residus
+> totals** perquè la fracció resta domèstica dels residents estables dilueix menys el senyal
+> turístic, i més net que `kg_hab_any` global perquè aïlla el consum de begudes (bar/restaurant).
+
+**Com ajuda a separar pernocta/dia:** vidre/càpita alt sense allotjament reglat (RTC baix) →
+apunta a **excursionisme de dia + segona residència no reglada**; vidre/càpita alt **amb** RTC
+alt → pernocta reglada. Combinat amb el ràtio vidre vs FORM (`mat_ria_org_nica`): l'orgànica
+escala més amb residents que pernocten i cuinen; el vidre escala amb consum de begudes puntual
+→ **vidre/FORM alt = més pes d'hostaleria de dia**. (Hipòtesi per a Talaia; aquí només
+constato que **les dues columnes existeixen i tenen cobertura 31/31**.)
+
+**Limitació honesta:** és **anual** (no capta estacionalitat, vegeu T3) i la recollida pot
+variar per *model de gestió* (porta a porta vs contenidor) entre munis — el nivell absolut no
+és perfectament comparable, però el **z-score comarcal** (com a la §4) ho neutralitza.
+
+## T2. Pregunta 2 — Establiments de restauració: ⚠️ viable amb matisos
+
+No hi ha **una** font que sigui alhora municipal, neta (només restauració) i 100% oberta sense
+fricció. Tres vies, de més «oficial» a més «proxy»:
+
+**(a) Idescat «Empreses i establiments» (`id=ee`) — la via oficial.** Verificat al portal
+Idescat: ofereix dades **a nivell de municipi individual** desagregables **per sector i branca
+d'activitat econòmica (CCAE-2009)**. La hostaleria és la **secció I** (divisió **55** serveis
+d'allotjament + **56** serveis de menjars i begudes). Act. **26/02/2026**, dades a 1 de gener,
+sèrie llarga. Descàrrega oberta (**CSV / JSON-stat**). **Matís:** als municipis molt petits
+Idescat pot aplicar **secret estadístic** a la branca (pendent de confirmar quants dels 31
+munis tenen el detall I/56 publicat); i no separa fàcilment bar vs restaurant. Accés: **no és
+Socrata** (l'EMEX a Socrata `6rmk-88zt` és «non-tabular», no s'hi pot fer SoQL); cal el portal
+JSON-stat d'Idescat o la descàrrega CSV de l'estadística `ee`.
+
+**(b) EMEX API (`api.idescat.cat/emex`) — NO serveix per a restauració.** Verificat en viu
+(Berga `081521`): el grup `g170` «Sectors econòmics» només dóna **grans sectors** (afiliacions
+SS i atur a *indústria / construcció / serveis*) i `t182` «Allotjaments turístics» (turisme
+rural + places). **«Serveis» engloba hostaleria però no l'aïlla** → no dóna nombre
+d'establiments de restauració. El connector `idescat_emex.py` actual (només `f321`, `f122`…) no
+porta res d'hostaleria; afegir-ho no resol la pregunta perquè la dada fina no és a l'EMEX.
+
+**(c) OpenStreetMap via Overpass — proxy obert, verificat que funciona.** Query
+`amenity=restaurant|bar|cafe|pub|fast_food`. **Verificat en viu (2026-06-06):** Berga (bbox
+ciutat) = **24 locals**. És geocodificat → agregable a municipi per punt-en-polígon amb el
+límit administratiu. **Cobertura:** depèn de la completesa d'OSM (a pobles petits pot
+infraestimar; a Berga sembla raonable). **Gotcha documentada:** el match d'àrea per
+`area["name"="Berguedà"]` **no resol** (accent/relació) → cal o bé **bbox**, o bé resoldre la
+relació administrativa per `admin_level` i iterar **municipi a municipi** (`admin_level=8`).
+Llicència **ODbL** (atribució + share-alike — a tenir en compte si es publica derivat).
+
+**Com ajuda a separar pernocta/dia:** densitat de restauració per habitant (locals/1000 hab)
+és **capacitat d'hostaleria** = *stock*, no flux. Alta densitat → municipi orientat a
+visitants (de dia o pernocta). **Encreuat amb el vidre** (T1): molts locals + molt vidre =
+hostaleria activa real; molts locals + poc vidre = capacitat infrautilitzada/estacional. **No
+dóna persones-dia** per si sol.
+
+**Recomanació P2:** per a una sèrie **homogènia i oficial**, **Idescat `ee` (CCAE 56)** és la
+millor; per a un *snapshot* ràpid i lliure de fricció d'accés, **OSM/Overpass** com a proxy de
+validació. Cap de les dues és flux; són *stock* de capacitat.
+
+## T3. Pregunta 3 — Granularitat estacional/mensual: ❌ el «no» honest
+
+**Cap font municipal oberta del pilot té sèrie infra-anual.** Verificat en viu:
+
+- **ICAEN consum elèctric `8idm-becu`:** esquema = `any, provincia, comarca, cdmun, municipi,
+  codi_sector, descripcio_sector, consum_kwh, observacions`. **Només `any`** → **anual**. No
+  hi ha mes ni trimestre. (És el que ja sabíem; ara confirmat contra l'esquema.)
+- **ARC residus `69zu-w48s`:** dimensió temporal = **`any`** únic → **anual**. No hi ha cap
+  dataset ARC de recollida mensual municipal al catàleg Socrata (cerca «residus mensual» = 0
+  resultats).
+- **Demanda elèctrica horària `hx6q-ykhb`:** **SÍ és infra-anual** (data + h01..h24) **però és
+  Catalunya global** (demanda en barres de central de la distribuïdora principal) — **cap
+  dimensió municipal**. Inservible per municipi.
+- **Gas natural `qvqg-zag8`** (trobat de passada): mateix patró que l'elèctric (municipi ×
+  sector) i **anual**. Proxy de calefacció residencial (interessant per a ocupació hivernal de
+  2a residència) però **no aporta estacionalitat**.
+- **Turisme (pernoctacions/ocupació):** EOH i **enquesta d'ocupació en allotjaments de turisme
+  rural** (INE, mensual → trimestral per a Catalunya) **SÍ tenen ritme mensual/trimestral**,
+  **però es publiquen per marca turística** — el Berguedà cau dins **«Pirineus»** (9 comarques:
+  Alt Urgell, Alta Ribagorça, Berguedà, Cerdanya, Garrotxa, Pallars Jussà, Pallars Sobirà,
+  Ripollès, Solsonès). **No baixa a municipi.** (Coherent amb la fila 6/7 de la taula general.)
+
+**Conclusió:** l'estacionalitat — que seria **el senyal més net** de segona residència i
+excursionisme (pics juliol-agost i caps de setmana vs vall de febrer) — **no és obtenible a
+nivell municipal** amb dades obertes per al pilot. Les úniques sèries infra-anuals són o bé
+**no municipals** (demanda horària, EOH-Pirineus) o bé **categòriques** (estat de sequera).
+
+**Vies fora d'abast (no obertes / no municipals), per si Talaia vol futur:**
+- Consum elèctric/gas **amb corba de càrrega mensual** existeix a les distribuïdores però **no
+  es publica obert per municipi** (caldria conveni).
+- **Wikipedia pageviews** (fila 12 de la taula general) dóna **forma de corba diària/mensual**
+  per article (p. ex. «Tren del Ciment», «Gósol») — proxy d'**interès/estacionalitat**, no de
+  persones; útil només per *donar forma* ancorada a un dur (visitants d'equipaments, fila 8).
+
+## T4. Recomanació d'aquesta ronda (per a la síntesi de Talaia)
+
+1. **Activar el VIDRE ja** (cost ~zero): la columna existeix a la raw que ja descarreguem.
+   N'hi ha prou d'**exposar `vidre` (i `mat_ria_org_nica`, `envasos_lleugers`, `paper_i_cartr`)
+   a la capa transform** i derivar **vidre/càpita** i **vidre/FORM** com a *features* del
+   *gap*. És el proxy d'hostaleria **més directe i amb millor cobertura** (31/31, fins a
+   micromunicipis). Stub de connector afegit (no cablejat) — vegeu sota.
+2. **Restauració:** si es vol *feature* de capacitat, **Idescat `ee` CCAE-56** (oficial,
+   municipal) o **OSM/Overpass** (proxy lliure). Tractar com a *stock*, encreuat amb vidre.
+3. **Estacionalitat:** **descartada** per al pilot a nivell municipal (vegeu T3). No invertir-hi
+   pipeline; com a molt, Wikipedia pageviews per *forma de corba* en pocs municipis ancorada.
+
+**Disseny suggerit:** el vidre/càpita encaixa exactament al marc de la §4 (z-score comarcal,
+normalitzat, capa 🟢 VISIBLE). Dóna a Talaia un **tercer proxy independent** (massa de residus →
+energia → **vidre = consum de begudes/hostaleria**) que triangula amb residus totals i elèctric
+domèstic, i és **el que més directament separa el component turístic** del residencial estable.
+
 ## Pendent
 - [x] **Fet (2026-06-05).** Connector `icaen_consum` (`8idm-becu`) cablejat a `all` →
       `data/raw/icaen_consum`; `stg_icaen_consum` + `mart_consum_electric` (sector 7
@@ -139,7 +299,15 @@ turística municipal (exclou Berga i Castellar), aigua-volum (només comarca), m
       encara (consum brut anual, fidel a la font).
 - [ ] Confirmar amb Talaia la normalització del numerador (per llar vs per habitatge vs absolut)
       i la fórmula del *gap*; llavors afegir la columna derivada a `mart_municipi`.
-- [ ] Explorar si l'ARC publica fracció **RESTA** estacional (no comprovat) — donaria senyal intra-anual que el total anual amaga.
+- [x] **Fet (2026-06-06).** Explorat si l'ARC publica sèrie **infra-anual** municipal: **no**
+      (residus = anual; cap dataset de recollida mensual al catàleg). La fracció **resta** sí que
+      existeix per municipi (`suma_fracci_resta`) però **anual**, no estacional. Vegeu §T3.
+- [x] **Fet (2026-06-06).** Investigació turisme/excursionisme (3 preguntes) → secció
+      «Fonts per a turisme / excursionisme». Troballa: **el VIDRE (i totes les fraccions) ja és a
+      `69zu-w48s`**, municipal 2000–2024, 31/31 cobertura. Stub `residus_fraccions.py` afegit
+      (no cablejat a `all`). Restauració = Idescat `ee` CCAE-56 / OSM. Estacionalitat municipal = **no**.
+- [ ] **Per a Talaia:** decidir si exposar `vidre`/`mat_ria_org_nica`/`envasos_lleugers` a
+      `mart_municipi` i amb quina normalització (vidre/càpita, vidre/FORM, z-score comarcal).
 
 ## Enllaços
 - `docs/data-sources.md` (Experiment 0 — registre general; aquest doc el reenfoca)
