@@ -46,8 +46,7 @@
 		'rtc_total',
 		'rtc_hut',
 		'rtc_per_1000hab',
-		'kg_hab_any',
-		'pct_indep'
+		'kg_hab_any'
 	];
 	const highlightRows = new Set<MetricKey>(['pct_noprincipal', 'rtc_per_1000hab']);
 
@@ -108,9 +107,8 @@
 	const ietrBerga = $derived(typeof berga.values.IETR === 'number' ? berga.values.IETR : 0);
 	const fmtIetr = (v: number) => formatDecimal(v, locale, 1);
 
-	// Caveats (note del contracte) de l'IETR i del vot, com al target.
+	// Caveat (note del contracte) de l'IETR, com al target.
 	const ietrNote = $derived(pick(dataset.metrics.IETR.note ?? { ca: '', es: '' }, locale));
-	const indepNote = $derived(pick(dataset.metrics.pct_indep.note ?? { ca: '', es: '' }, locale));
 
 	// Corbes del hero (cims + divisòria + etiquetes de dada real), valors del target.
 	const heroSummits = [
@@ -249,7 +247,6 @@
 
 			<div class="caveats">
 				<div class="alert"><span class="bar"></span><div>{ietrNote}</div></div>
-				<div class="alert warn"><span class="bar"></span><div>{indepNote}</div></div>
 			</div>
 
 			<p class="srcline">{m.resum_srcline()}</p>
