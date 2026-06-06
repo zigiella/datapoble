@@ -1,0 +1,8 @@
+# riusdegent · robots.txt
+# ⚠️ PRE-LLANÇAMENT — bloquegem tota indexació fins que el lloc estigui llest.
+# AL LLANÇAMENT: substituir aquest fitxer per:
+#   User-agent: *
+#   Allow: /
+#   Sitemap: https://riusdegent.cat/sitemap.xml
+User-agent: *
+Disallow: /

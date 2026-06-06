@@ -1,0 +1,5 @@
+# Capçaleres de Cloudflare Pages (s'apliquen a la sortida estàtica).
+# ⚠️ PRE-LLANÇAMENT: no indexar (reforç de la meta robots i el robots.txt).
+# AL LLANÇAMENT: treure el bloc X-Robots-Tag.
+/*
+  X-Robots-Tag: noindex, nofollow
