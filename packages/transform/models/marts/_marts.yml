@@ -77,24 +77,78 @@ models:
         data_tests:
           - between:
               arguments: { min_value: 0, max_value: 100000 }
-      # --- Indicador estrella: població real estimada vs padró (INFERÈNCIA) ---
+      # --- Senyals físics per càpita (inputs de les 3 capes) ---
+      - name: kwh_hab
+        description: >
+          Consum elèctric domèstic kWh/hab del darrer any ple (2024, sector USOS
+          DOMÈSTICS). Senyal de la capa L1 (pernocta).
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 0, max_value: 100000 }
+      - name: vidre_hab
+        description: >
+          Vidre kg/hab/any del darrer any (fracció ARC 69zu-w48s). Senyal de la
+          capa L3 (pressió turística/hostaleria). Cobertura 31/31.
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 0, max_value: 100000 }
+      # --- INDICADOR ESTRELLA: MODEL DE 3 CAPES (INFERÈNCIA, no cens) ---
+      # L1 · població pernocta (elèctric/base_electric) — la nova «població invisible».
+      - name: poblacio_pernocta_est
+        description: >
+          L1. Població que DORM al territori sense constar al padró:
+          round(poblacio * kwh_hab / base_electric), base_electric=1224. Senyal =
+          elèctric domèstic. Inferència; rang + caveat (semantic/metrics.yml).
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 0, max_value: 10000000 }
+      - name: gap_pernocta
+        description: "L1. poblacio_pernocta_est − poblacio. Pot ser negatiu."
+        data_tests:
+          - not_null
+      - name: gap_pernocta_pct
+        description: "L1. gap_pernocta / poblacio (fracció; 0,12 = +12%)."
+        data_tests:
+          - not_null
+      # L2 · càrrega humana total (residus/base_residencial) — inclou visitants de dia.
+      - name: carrega_total_est
+        description: >
+          L2. Càrrega humana total (residents + visitants de DIA):
+          round(poblacio * kg_hab_any / base_residencial), base=410. NO és població
+          (els residus de les viles porten part de comerç). Era poblacio_real_est.
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 0, max_value: 10000000 }
+      # L3 · pressió turística (vidre, z-score comarcal 0-100) — NO és població.
+      - name: index_turisme
+        description: >
+          L3. Pressió turística/hostaleria: z-score comarcal de vidre_hab portat a
+          0–100 (50 = mitjana comarcal). Proxy d'activitat de visitants, NO població.
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 0, max_value: 100 }
+      # --- Compatibilitat (model anterior d'una capa) ---
       - name: poblacio_real_est
         description: >
-          Presència humana real estimada (tall ABSOLUT, base residencial=410):
-          round(poblacio * kg_hab_any / base_residencial). Inferència, no cens;
-          es comunica com a rang + caveat (vegeu semantic/metrics.yml).
+          ÀLIES de carrega_total_est (mateixa fórmula residus/410). REENQUADRAT: és
+          càrrega humana total, NO «població». Es conserva per no trencar consumidors.
         data_tests:
           - not_null
           - between:
               arguments: { min_value: 0, max_value: 10000000 }
       - name: gap_abs
         description: >
-          Població que el padró no veu: poblacio_real_est − poblacio. Pot ser
-          negatiu (municipi que genera menys residus que la base residencial).
+          carrega_total_est − poblacio (gap de càrrega, no de pernocta). Pot ser
+          negatiu. Es conserva per compatibilitat; per la població invisible, gap_pernocta.
         data_tests:
           - not_null
       - name: gap_pct
-        description: "Gap relatiu: gap_abs / poblacio (fracció; 0,12 = +12%)."
+        description: "gap_abs / poblacio (fracció). Compat; vegeu gap_pernocta_pct per L1."
         data_tests:
           - not_null
       - name: poblacio_real_rel
@@ -135,6 +189,8 @@ models:
           - not_null
       - name: kg_hab_any_year
         description: Any del tall de residus (traçabilitat temporal).
+      - name: vidre_any
+        description: Any del tall de la fracció vidre (traçabilitat temporal).
 
   - name: mart_consum_electric
     description: >

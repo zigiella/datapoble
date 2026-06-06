@@ -7,7 +7,9 @@ models:
       - name: ine5
         data_tests: [not_null]
   - name: stg_residus
-    description: Residus municipals del Berguedà (1 fila/municipi×any).
+    description: >
+      Residus municipals del Berguedà (1 fila/municipi×any). Inclou kg_hab_any
+      (càrrega total) i vidre_tones (fracció vidre en tones/any, proxy hostaleria).
     columns:
       - name: ine5
         data_tests: [not_null]

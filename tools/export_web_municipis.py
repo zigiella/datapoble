@@ -59,8 +59,15 @@ METRIC_KEYS = [
     "pct_noprincipal", "hab_per_hab", "index_envelliment",
     "rtc_total", "rtc_hut", "rtc_per_1000hab", "rtc_per_100hab_viv",
     "kg_hab_any",
-    # Indicador estrella: població real estimada vs padró (derived, inferència).
-    "poblacio_real_est", "gap_abs", "gap_pct", "poblacio_real_rel", "confianca",
+    # Senyals físics per càpita (inputs de les 3 capes).
+    "kwh_hab", "vidre_hab",
+    # Indicador estrella: MODEL DE 3 CAPES (derived, inferència).
+    # L1 població pernocta (la nova «població invisible»):
+    "poblacio_pernocta_est", "gap_pernocta", "gap_pernocta_pct",
+    # L2 càrrega humana total · L3 pressió turística:
+    "carrega_total_est", "index_turisme", "confianca",
+    # Compatibilitat (model anterior d'una capa), reenquadrades:
+    "poblacio_real_est", "gap_abs", "gap_pct", "poblacio_real_rel",
     "pct_icaen_EFG", "IETR", "IETR_rank",
     "pct_indep", "pct_esquerra", "pct_extrema_dreta", "guanya",
 ]
@@ -73,8 +80,14 @@ FORMAT_BY_KEY = {
     "hab_per_hab": "ratio", "index_envelliment": "decimal",
     "rtc_total": "integer", "rtc_hut": "integer", "rtc_per_1000hab": "decimal",
     "rtc_per_100hab_viv": "decimal", "kg_hab_any": "decimal",
-    # Indicador estrella: comptes d'habitants → integer; gap_pct és fracció →
-    # percent; confianca és categòrica → text (alta/mitjana/baixa).
+    # Senyals per càpita.
+    "kwh_hab": "decimal", "vidre_hab": "decimal",
+    # 3 capes: comptes d'habitants → integer; *_pct són fracció → percent;
+    # index_turisme és 0-100 → decimal; confianca categòrica → text.
+    "poblacio_pernocta_est": "integer", "gap_pernocta": "integer",
+    "gap_pernocta_pct": "percent", "carrega_total_est": "integer",
+    "index_turisme": "decimal",
+    # Compatibilitat (model anterior).
     "poblacio_real_est": "integer", "gap_abs": "integer", "gap_pct": "percent",
     "poblacio_real_rel": "integer", "confianca": "text",
     "pct_icaen_EFG": "percent", "IETR": "decimal", "IETR_rank": "rank",
@@ -90,7 +103,13 @@ COL_MUNI = {
     "index_envelliment": "index_envelliment", "rtc_total": "rtc_total",
     "rtc_hut": "rtc_hut", "rtc_per_1000hab": "rtc_per_1000hab",
     "rtc_per_100hab_viv": "rtc_per_100hab_viv", "kg_hab_any": "kg_hab_any",
-    # Indicador estrella (població real vs padró).
+    # Senyals per càpita.
+    "kwh_hab": "kwh_hab", "vidre_hab": "vidre_hab",
+    # Indicador estrella: model de 3 capes.
+    "poblacio_pernocta_est": "poblacio_pernocta_est", "gap_pernocta": "gap_pernocta",
+    "gap_pernocta_pct": "gap_pernocta_pct", "carrega_total_est": "carrega_total_est",
+    "index_turisme": "index_turisme",
+    # Compatibilitat (model anterior d'una capa).
     "poblacio_real_est": "poblacio_real_est", "gap_abs": "gap_abs",
     "gap_pct": "gap_pct", "poblacio_real_rel": "poblacio_real_rel",
     "confianca": "confianca",
