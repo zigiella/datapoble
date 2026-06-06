@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="340" height="96" viewBox="0 0 340 96" fill="currentColor" role="img" aria-label="riusdegent — Dades per entendre com s&#39;habita el territori">
   <title>riusdegent — logotip monocrom</title>
-  <desc>Versió a una sola tinta. Tot hereta currentColor (per defecte neutral-900): posa color: #1B212A per a tinta fosca sobre clar, o color: #F6F7F9 per a tinta clara sobre fosc. La divisòria es manté com a línia continua; el contrast ple↔sec es conf a la opacitat i al puntejat. Per a 1-tinta de premsa, embossing o segell.</desc>
+  <desc>Versió a una sola tinta (currentColor). DA final ronda 2: la marca ja és monocàlida (ocre); aquesta versió la duu a qualsevol tinta heretant currentColor — color: #B5612A per a la tinta de marca, #1B212A per a fosca sobre clar, o #F6F7F9 per a clara sobre fosc. La divisòria es manté com a línia continua; el contrast ple↔sec es confia a l&#39;opacitat i al puntejat. Per a 1-tinta de premsa, embossing o segell.</desc>
 
   <g transform="translate(0,4)">
     <line x1="48" y1="14" x2="48" y2="74" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></line>

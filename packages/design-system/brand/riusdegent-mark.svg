@@ -1,27 +1,25 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" role="img" aria-label="riusdegent — marca">
   <title>riusdegent — marca (rius de gent)</title>
-  <desc>Símbol hidrogràfic: línies de cabal que travessen una divisòria vertical. A l&#39;esquerra el riu va ple (corrent gruixut); a la dreta s&#39;asseca (les línies s&#39;aprimen i es trenquen en un llit puntejat). El riu creix i s&#39;asseca alhora: sobrepressió i despoblació. Colors dels tokens datapoble (teal de carena + terracota).</desc>
+  <desc>Símbol hidrogràfic: línies de cabal que travessen una divisòria vertical. A l&#39;esquerra el riu va ple (corrent gruixut); a la dreta s&#39;asseca (les línies s&#39;aprimen i es trenquen en un llit puntejat). El riu creix i s&#39;asseca alhora: sobrepressió i despoblació. DA final ronda 2: una sola tinta càlida OCRE (--dp-brand #B5612A); la divisòria en to fosc de la mateixa família (--dp-exposure-5 #7E3A1E).</desc>
 
-  
+  <!-- divisòria · aiguavés (to fosc de la família càlida, no un segon color) -->
+  <line x1="48" y1="12" x2="48" y2="84" stroke="#7E3A1E" stroke-width="2.5" stroke-linecap="round"></line>
 
-  
-  <line x1="48" y1="12" x2="48" y2="84" stroke="#C75D34" stroke-width="2.5" stroke-linecap="round"></line>
-
-  
-  <g fill="none" stroke="#2F6B4F" stroke-linecap="round">
+  <!-- vessant esquerre · el riu va ple (traços continus, ocre) -->
+  <g fill="none" stroke="#B5612A" stroke-linecap="round">
     <path d="M10 30 C 22 24, 34 24, 46 30" stroke-width="4.5"></path>
     <path d="M8 42 C 22 35, 34 35, 46 41" stroke-width="6"></path>
     <path d="M8 54 C 22 47, 34 47, 46 53" stroke-width="6"></path>
     <path d="M10 66 C 22 60, 34 60, 46 66" stroke-width="4.5"></path>
   </g>
 
-  
-  <g fill="none" stroke="#2F6B4F" stroke-linecap="round">
+  <!-- vessant dret · el mateix riu s'aprima -->
+  <g fill="none" stroke="#B5612A" stroke-linecap="round">
     <path d="M50 30 C 60 24, 70 24, 78 28" stroke-width="3"></path>
     <path d="M50 41 C 62 35, 72 36, 84 33" stroke-width="3.5"></path>
   </g>
-  
-  <g fill="none" stroke="#2F6B4F" stroke-linecap="round" stroke-width="3" stroke-dasharray="0.1 8">
+  <!-- ...i es trenca en un llit puntejat (despoblació) -->
+  <g fill="none" stroke="#B5612A" stroke-linecap="round" stroke-width="3" stroke-dasharray="0.1 8">
     <path d="M50 53 C 62 47, 72 48, 86 45"></path>
     <path d="M50 66 C 60 61, 68 62, 80 60"></path>
   </g>
