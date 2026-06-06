@@ -1,12 +1,18 @@
 # Cartografia · Paleta coroplètica + classificació
 
 **Autora:** Llegenda (direcció d'art) · **Frontera dada↔disseny:** acordat amb Talaia
-**Data:** 2026-06-02 · **Actualitzat:** 2026-06-04 (decisions de classificació tancades per Talaia)
-**Estat:** classificació **acordada** · **pendent** validació CVD de la rampa seqüencial (§7)
+**Data:** 2026-06-02 · **Actualitzat:** 2026-06-06 (DA final ronda 2: divergent «gap» `--dp-div2`, aprovada per Bea)
+**Estat:** classificació **acordada** · **pendent** validació CVD de les rampes (§7)
 
 Aquest document és l'spec de **com es pinta el mapa** de l'observatori. Els hex viuen com a tokens
-a `tokens/tokens.json` → `color.scale.*` i a `tokens/tokens.css` (`--dp-exposure-*`, `--dp-div-*`).
-Aquí s'explica **quina paleta**, **per a quina mètrica**, i **amb quin mètode de classificació**.
+a `tokens/tokens.json` → `color.scale.*` i a `tokens/tokens.css` (`--dp-exposure-*`, `--dp-div2-*`,
+`--dp-cat-*`). Aquí s'explica **quina paleta**, **per a quina mètrica**, i **amb quin mètode de
+classificació**.
+
+> **Canvi DA final ronda 2 (Bea):** la divergent del **gap** és ara **`--dp-div2-0…6`** (teal↔**porpra**),
+> que substitueix l'ús de la BrBG `--dp-div-*` al render. La porpra lliga amb `--dp-prov-derived`
+> (inferència). Vegeu §3 i la **taula indicador→paleta** (§5 bis). El **color de marca** passa a ocre
+> (`--dp-brand`); les paletes de dada **no** són marca.
 
 ---
 
@@ -54,34 +60,79 @@ de grisos i en visió daltònica.
 
 ---
 
-## 3. Paleta DIVERGING — desviació respecte a la mitjana comarcal
+## 3. Paleta DIVERGING «gap» — desviació amb centre 0 (la del gap població)
 
-**Per a:** mètriques amb **punt neutre** significatiu: `hab_per_hab` centrat a la mitjana comarcal,
-residus centrats, o qualsevol "per sobre / per sota de la mitjana del Berguedà". El zero (mitjana)
-ha de ser visualment neutre.
+**Per a:** mètriques amb **punt neutre** significatiu: **`gap_pct`** (població real estimada vs padró)
+com a cas principal, i qualsevol saldo / "per sobre / per sota de la mitjana comarcal". El zero
+(gap 0 ≈ mitjana) ha de ser visualment neutre.
 
-**7 passos, neutre al centre (índex 3).** Teal ↔ marró (tipus *BrBG* de ColorBrewer), **diverging
-CVD-safe canònic**. El centre és gris-os, **mai verd brillant** (per no xocar amb vermell en CVD).
+**7 passos, neutre al centre (índex 3).** **Teal ↔ PORPRA** (DA final ronda 2, aprovada per Bea).
+El centre és os/neutre, **mai verd brillant** (per no xocar amb vermell en CVD). Els dos pols tenen
+**significat semàntic**:
+- **Teal** (`--dp-div2-0..2`) = **menys gent que el registre** (el padró sobreestima).
+- **Porpra** (`--dp-div2-4..6`) = **població que el padró no veu** → és **inferència**, i per això la
+  porpra **lliga amb `--dp-prov-derived`** (#7A5BA6): el color recorda que aquest costat és estimació.
 
 | Pas | Hex | Token | Significat |
 |---:|---|---|---|
-| 0 | `#01665E` | `--dp-div-0` | molt per sota de la mitjana |
-| 1 | `#5AB4AC` | `--dp-div-1` | |
-| 2 | `#C7EAE5` | `--dp-div-2` | |
-| 3 | `#F5F5F0` | `--dp-div-3` | **neutre (≈ mitjana)** |
-| 4 | `#DFC27D` | `--dp-div-4` | |
-| 5 | `#BF812D` | `--dp-div-5` | |
-| 6 | `#8C510A` | `--dp-div-6` | molt per sobre de la mitjana |
+| 0 | `#0F6E66` | `--dp-div2-0` | molt per sota (teal fort · menys gent que el registre) |
+| 1 | `#4FA8A0` | `--dp-div2-1` | |
+| 2 | `#B9DED9` | `--dp-div2-2` | |
+| 3 | `#EFEEE8` | `--dp-div2-3` | **neutre (≈ mitjana · gap 0)** |
+| 4 | `#CDB3DD` | `--dp-div2-4` | |
+| 5 | `#9466B6` | `--dp-div2-5` | |
+| 6 | `#5E3A86` | `--dp-div2-6` | molt per sobre (porpra fort · població que el padró no veu) |
 
-- Usar diverging **només** quan el punt mitjà tingui sentit. Per a magnituds pures (IETR), seqüencial.
+- Usar diverging **només** quan el punt mitjà tingui sentit. Per a magnituds pures (IETR, % no
+  principal, est/1000, residus), **seqüencial** (§2).
+- **Classificació:** **talls simètrics al voltant de 0** (no cuantils), perquè el neutre coincideixi
+  amb el zero. Per defecte **5 classes** (vegeu §5). El render del gap mostra els talls reals (p. ex.
+  −21 %…+176 % al pilot).
+
+### 3 bis. Diverging BrBG — LLEGAT (`--dp-div-*`)
+La divergent anterior teal↔marró (tipus *BrBG* de ColorBrewer) **es conserva al contracte** com a
+llegat (`--dp-div-0..6`, neutre=3) per a mètriques amb neutre que encara la facin servir, però el
+**render del gap usa `--dp-div2-*`**. Hex: `#01665E #5AB4AC #C7EAE5 #F5F5F0 #DFC27D #BF812D #8C510A`.
 
 ---
 
-## 4. Sense dada / secret estadístic
+## 4. Estats d'honestedat: «sense dada» i «confiança baixa»
 
-- Token `--dp-nodata` = `#E3E3DE`, **renderitzat amb tramat diagonal (hatch)**, no com a farciment pla.
-- S'aplica a municipis amb secret estadístic (Castellar en encreuaments fins) o sense valor per a la
-  mètrica. La llegenda inclou sempre l'entrada "sense dada / no disponible".
+Dos estats diferents, **diferenciats per textura (no només color)** — CVD-safe — i sempre a la llegenda:
+
+- **Sense dada / secret estadístic** → token `--dp-nodata` `#E3E3DE`, **renderitzat amb tramat diagonal
+  (hatch)**, **mai farciment pla**. S'aplica a municipis amb secret estadístic (Castellar en
+  encreuaments fins, Gisclareny) o sense valor per a la mètrica. La llegenda inclou sempre l'entrada
+  "sense dada / no disponible".
+- **Confiança baixa (estimació feble)** → **es manté el color de la rampa** (el valor existeix), però
+  **velat amb un puntejat** (radial dots) i un contorn discontinu: el «**llit sec**» de la marca.
+  S'aplica a municipis amb estimació inestable (N petit, denominador diminut): el color es llegeix,
+  però la textura avisa que la xifra és tova. *Mai* s'amaga el valor; es **qualifica**.
+
+> **Regla d'una línia (per a la llegenda i per a Mirador):**
+> **sense dada = tramat gris (mai farciment pla); confiança baixa = color de la rampa velat amb puntejat.**
+
+---
+
+## 5 bis. Taula **indicador → paleta** (lliurable clau de la DA final)
+
+Cada visualització fa servir **una** paleta; **mai es barreja magnitud amb desviació**. La paleta
+comunica el mètode. Aquesta és la correspondència canònica (espill del selector de `/mapa`):
+
+| Indicador | Tipus de dada | Paleta | Tokens | Classificació |
+|---|---|---|---|---|
+| **Gap població (%)** (`gap_pct`) | desviació · centre 0 | **Divergent «gap»** | `--dp-div2-0…6` (neutre=div2-3) | simètrica al voltant de 0 · 5 classes |
+| Població real estimada | magnitud | Seqüencial «terra» | `--dp-exposure-0…5` | Jenks · 5 classes |
+| IETR (0–100) | índex normalitzat | Seqüencial «terra» | `--dp-exposure-0…5` | cuantils · 5 classes |
+| % habitatge no principal | magnitud | Seqüencial «terra» | `--dp-exposure-0…5` | Jenks · 5 classes |
+| Establiments / 1000 hab | magnitud (ràtio) | Seqüencial «terra» | `--dp-exposure-0…5` | Jenks · 5 classes |
+| Residus kg/hab/any | magnitud | Seqüencial «terra» | `--dp-exposure-0…5` | Jenks · 5 classes |
+| *(categòric, p. ex. candidatura)* | categoria sense ordre | Qualitativa | `--dp-cat-1…8` (Okabe-Ito) | — *(no sense acord amb Bea)* |
+
+- **Divergent** ⇒ només quan hi ha un **centre 0** amb sentit (gap, saldo, vs comarca). Porpra =
+  inferència (lliga amb `--dp-prov-derived`).
+- **Seqüencial** ⇒ magnitud ordenada (clar→fosc = baix→alt).
+- **Qualitativa** ⇒ categories sense ordre; **mai** color polític partidista sense acord (tema sensible).
 
 ---
 
@@ -123,6 +174,17 @@ basada en com són les dades reals del pilot (`docs/data-sources.md`):
   Catalunya, ~947, recalcularà *breaks* → documentar-ho).
 - **Coherència temporal:** si es comparen dos anys, **fixar els talls** del primer perquè el color
   sigui comparable entre mapes (si no, el mateix color voldria dir coses diferents).
+
+### Decisió C de Bea (DA final ronda 2) — reconciliació
+Bea va aprovar com a **per defecte**: **«Jenks 5 (gap) / seqüencial la resta»**. Es concreta així,
+coherent amb §3 i la taula §5 bis:
+- **Gap (`gap_pct`)** → paleta **divergent `--dp-div2`** amb **5 classes**. El càlcul de talls és
+  **simètric al voltant de 0** (no Jenks pur ni cuantils): el neutre ha de coincidir amb el zero. La
+  llegenda del prototip ho mostra com «divergent (centrat en 0) · 5 classes» amb els talls reals.
+  *(L'etiqueta «Jenks 5» de Bea és la consigna de 5 classes; el mètode honest per a una divergent amb
+  centre 0 és el tall simètric.)*
+- **La resta** → **seqüencial `--dp-exposure`**, **5 classes**: **Jenks** per a magnituds crues,
+  **cuantils** per a índexs normalitzats (IETR). Tot 5 classes per defecte.
 
 ---
 

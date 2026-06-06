@@ -1,15 +1,24 @@
 /* ============================================================================
-   datapoble · design tokens → CSS custom properties
+   datapoble / riusdegent · design tokens → CSS custom properties
    Contrato visual que consume Mirador (frontend). Espejo de tokens.json.
-   Autora: Llegenda · v0.1.0 · 2026-06-02 · propuesta (revisión Talaia + voto Bea).
+   Autora: Llegenda · v0.2.0 · 2026-06-06 · DA final ronda 2 (aprovada por Bea).
 
    En F1 estas variables están escritas a mano (espejo del JSON) para desbloquear
    a Mirador sin build. En F2 se regenerarán con Style Dictionary desde tokens.json
    (misma nomenclatura --dp-*), así el contrato no cambia al automatizar.
 
    Convención de nombres:  --dp-<grupo>-<elemento>
-   Las paletas de DATOS:    --dp-exposure-N (secuencial), --dp-div-N (diverging),
+   Las paletas de DATOS:    --dp-exposure-N (secuencial), --dp-div2-N (diverging "gap"),
                             --dp-cat-N (cualitativa). Ver cartography/palette.md.
+
+   CAMBIOS DA final ronda 2 (decisiones de Bea):
+   (A) MARCA = OCRE #B5612A (= --dp-exposure-4), una sola tinta cálida. En oscuro el
+       acento de marca es #E8B567 (= --dp-brand-dark). Se RETIRA el verde (forest/teal)
+       como color de marca; --dp-teal-* y --dp-forest-* quedan como LEGADO (no son marca).
+   (B) Nueva paleta diverging "gap" --dp-div2-0…6 (teal↔púrpura), neutro = div2-3. Es la
+       del gap población (la púrpura liga con --dp-prov-derived = inferencia). Sustituye el
+       uso de --dp-div-* en el render; --dp-div-* se conserva como legado.
+   (C) Clasificación: Jenks 5 (gap) / secuencial el resto (ver cartography/palette.md).
    ============================================================================ */
 
 :root {
@@ -35,11 +44,18 @@
   --dp-accent-600: #AC4B27;
   --dp-accent-700: #8A3C20;
 
-  /* ---- color · support (verde bosque) ----
-     Dirección de arte (handoff): el verde de soporte de marca pasa de TEAL a FOREST.
-     Mantenemos el NOMBRE --dp-teal* para no romper el contrato que ya consume el sistema/Mirador,
-     pero el VALOR es forest (#2F6B4F). teal == forest == support (un único verde).
-     F2 (Style Dictionary): renombrar --dp-teal* → --dp-support-* (ver tokens.json $meta.renaming). */
+  /* ---- color · MARCA (decisión final Bea, DA ronda 2) ----
+     Una sola tinta cálida: OCRE #B5612A (= exposure-4). En oscuro: #E8B567.
+     Los componentes de marca (wordmark `degent`, eyebrow, acentos de identidad)
+     deben referenciar --dp-brand / --dp-brand-dark, NO el verde. */
+  --dp-brand:      #B5612A; /* ocre · tema claro  (== --dp-exposure-4) */
+  --dp-brand-dark: #E8B567; /* ocre claro · tema oscuro */
+
+  /* ---- color · support (verde) · LEGADO — YA NO ES MARCA ----
+     El verde forest/teal se RETIRA como color de marca (decisión Bea, DA ronda 2).
+     Se conservan los NOMBRES --dp-teal-* y --dp-forest-* para no romper el contrato que aún
+     consumen sistema.css y Mirador, pero pasan a ser un verde de soporte heredado (estados
+     puntuales, no identidad). La identidad usa --dp-brand. F2: ver tokens.json $meta.renaming. */
   --dp-teal:       #2F6B4F;
   --dp-teal-600:   #255741;
   --dp-forest:     #2F6B4F;
@@ -69,7 +85,21 @@
   --dp-exposure-4: #B5612A;
   --dp-exposure-5: #7E3A1E;
 
-  /* Diverging (desviación vs media comarcal) — teal↔marrón tipo BrBG, neutro=3. */
+  /* Diverging "gap" (DA final ronda 2, aprobada por Bea) — teal↔PÚRPURA, neutro=div2-3.
+     Es la paleta del GAP población (real estimada vs padrón) y de toda desviación con
+     centro 0 (saldo, vs comarca). La púrpura liga con --dp-prov-derived (#7A5BA6 = inferencia):
+     el lado "población que el padrón no ve" es inferencia. Sustituye el uso de --dp-div-* en el
+     render coroplético. Clasificación: simétrica alrededor de 0 (ver cartography/palette.md). */
+  --dp-div2-0: #0F6E66; /* teal fuerte · muy por debajo (menos gente que el registro) */
+  --dp-div2-1: #4FA8A0;
+  --dp-div2-2: #B9DED9;
+  --dp-div2-3: #EFEEE8; /* neutro · ≈ media / gap 0 */
+  --dp-div2-4: #CDB3DD;
+  --dp-div2-5: #9466B6;
+  --dp-div2-6: #5E3A86; /* púrpura fuerte · muy por encima (población que el padrón no ve) */
+
+  /* Diverging — LEGADO (teal↔marrón tipo BrBG, neutro=3). Sustituido por --dp-div2-* en el
+     render del gap; se conserva por contrato y para métricas con neutro que aún lo usen. */
   --dp-div-0: #01665E;
   --dp-div-1: #5AB4AC;
   --dp-div-2: #C7EAE5;
@@ -187,6 +217,7 @@
   --dp-text-on-accent:var(--dp-neutral-0);    /* AA sobre accent-600/700 */
   --dp-link:          var(--dp-accent-600);
   --dp-focus-ring:    var(--dp-shadow-focus);
+  --dp-brand-ink:     var(--dp-brand);        /* tinta de marca activa (claro) — wordmark `degent`, eyebrow */
 }
 
 /* ---- Tema oscuro (opt-in con [data-theme="dark"] o preferencia del sistema) ---- */
@@ -202,6 +233,7 @@
     --dp-text-muted:    var(--dp-neutral-300);
     --dp-text-subtle:   var(--dp-neutral-400);
     --dp-link:          var(--dp-accent-300);
+    --dp-brand-ink:     var(--dp-brand-dark);
   }
 }
 [data-theme="dark"] {
@@ -215,6 +247,7 @@
   --dp-text-muted:    var(--dp-neutral-300);
   --dp-text-subtle:   var(--dp-neutral-400);
   --dp-link:          var(--dp-accent-300);
+  --dp-brand-ink:     var(--dp-brand-dark);
 }
 
 /* ---- Utilidad: cifras tabulares para superficies con dato ---- */
