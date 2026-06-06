@@ -10,10 +10,19 @@ dependencies = [
     "requests>=2.30",
     "pandas>=2.0",
     "pyarrow>=14",
+    # duckdb amb l'extensió `spatial`: assignació de POIs OSM al municipi per
+    # punt-en-polígon amb la geometria real (connector restauracio_osm).
+    "duckdb>=1.0",
 ]
+
+[project.optional-dependencies]
+test = ["pytest>=8.0"]
 
 [project.scripts]
 datapoble-ingest = "datapoble_ingestion.__main__:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 
 [build-system]
 requires = ["setuptools>=68"]

@@ -51,6 +51,12 @@ sources:
     dataset_id: ntc4-rnwr
     llicencia: Dades Obertes de Catalunya
     nota: "Lectura ECOLÒGICA (no individual). Volàtil en micromunicipis."
+  osm_overpass:
+    organisme: OpenStreetMap (col·laboradors) — via Overpass API
+    producte: Punts d'interès de restauració (amenity=restaurant/cafe/bar/fast_food/pub/biergarten/ice_cream)
+    acces: "https://overpass-api.de/api/interpreter (POST Overpass QL; sense auth)"
+    llicencia: "ODbL (OpenStreetMap) — atribució + compartir-igual"
+    nota: "2n proxy d'hostaleria de la capa L3 (complement del vidre). POIs assignats al municipi per PUNT-EN-POLÍGON amb la geometria real (ine5). OSM INFRA-MAPEJA el rural → el compte és un MÍNIM observat, NO un cens. Idescat (ee, CCAE-56) oficial NO és municipal per API oberta (secret estadístic; l'EMEX només dóna 'serveis' agregat)."
   datapoble:
     organisme: datapoble (calculat)
     producte: Indicadors derivats i índex IETR
@@ -283,6 +289,47 @@ metrics:
     column: vidre_hab
     visibility: public
     synonyms: {ca: [vidre, ampolles, hostaleria], es: [vidrio, botellas, hostelería]}
+
+  # --- 2n PROXY D'HOSTALERIA de la capa L3 (restauració, OSM) — complement del vidre ---
+  # El vidre mesura ACTIVITAT (ampolles consumides); la restauració, CAPACITAT instal·lada
+  # (stock de locals). Dos senyals INDEPENDENTS que apunten al mateix fenomen. És una
+  # MESURA (no inferència), però OSM infra-mapeja el rural → MÍNIM observat, no cens.
+  restauracio_estab:
+    label: {ca: Establiments de restauració, es: Establecimientos de restauración}
+    definicio:
+      ca: "Nombre de locals de restauració (restaurants, bars, cafeteries, menjars ràpids, pubs; CCAE-56) mapejats a OpenStreetMap dins el municipi. 2n proxy d'hostaleria (capacitat), complement del vidre."
+      es: "Número de locales de restauración (restaurantes, bares, cafeterías, comidas rápidas, pubs; CCAE-56) mapeados en OpenStreetMap dentro del municipio. 2º proxy de hostelería (capacidad), complemento del vidrio."
+    dimension: turisme
+    unit: {ca: establiments, es: establecimientos}
+    formula: "compte de POIs amenity in (restaurant,cafe,bar,fast_food,pub,biergarten,ice_cream) assignats per punt-en-polígon a la geometria municipal real"
+    source: osm_overpass
+    date: "2026"
+    table: mart_municipi
+    column: restauracio_estab
+    visibility: public
+    note:
+      ca: "MÍNIM observat, NO un cens: OSM INFRA-MAPEJA les zones rurals (la completesa del mapejat varia entre municipis), per això 6 micromunicipis surten amb 0 tot i tenir senyal de vidre. És una MESURA (no inferència); la lectura de «pressió turística» que se'n fa SÍ és inferència. El contrast oficial Idescat (ee, CCAE-56) no és municipal per API oberta (secret estadístic). Llicència ODbL (atribució + compartir-igual)."
+      es: "MÍNIMO observado, NO un censo: OSM INFRAMAPEA las zonas rurales (la completitud del mapeo varía entre municipios), por eso 6 micromunicipios salen con 0 pese a tener señal de vidrio. Es una MEDIDA (no inferencia); la lectura de «presión turística» que se hace SÍ es inferencia. El contraste oficial Idescat (ee, CCAE-56) no es municipal por API abierta (secreto estadístico). Licencia ODbL (atribución + compartir-igual)."
+    synonyms: {ca: [restauració, bars, restaurants, hostaleria, locals], es: [restauración, bares, restaurantes, hostelería, locales]}
+
+  restauracio_per_1000hab:
+    label: {ca: Restauració / 1000 hab, es: Restauración / 1000 hab}
+    definicio:
+      ca: "Densitat d'establiments de restauració per cada 1000 habitants empadronats. Intensitat d'hostaleria per càpita (stock), 2n senyal de la capa L3."
+      es: "Densidad de establecimientos de restauración por cada 1000 habitantes empadronados. Intensidad de hostelería per cápita (stock), 2ª señal de la capa L3."
+    dimension: turisme
+    unit: {ca: per mil, es: por mil}
+    formula: "restauracio_estab / poblacio * 1000"
+    source: datapoble
+    origin_source: osm_overpass
+    date: "2026"
+    table: mart_municipi
+    column: restauracio_per_1000hab
+    visibility: public
+    note:
+      ca: "Densitat per càpita: aïlla l'orientació a visitants de la mida del municipi (Berga té el màxim absolut d'establiments però queda baixa per càpita; els pobles de muntanya turístics queden alts). Hereta el caveat de completesa d'OSM (MÍNIM, no cens): als micromunicipis no mapejats subestima. Validat com a 2n proxy independent del vidre (Spearman ≈ 0,54 amb vidre_hab i amb index_turisme, N=31, p<0,01)."
+      es: "Densidad per cápita: aísla la orientación a visitantes del tamaño del municipio (Berga tiene el máximo absoluto de establecimientos pero queda baja per cápita; los pueblos de montaña turísticos quedan altos). Hereda el caveat de completitud de OSM (MÍNIMO, no censo): en los micromunicipios no mapeados subestima. Validado como 2º proxy independiente del vidrio (Spearman ≈ 0,54 con vidre_hab y con index_turisme, N=31, p<0,01)."
+    synonyms: {ca: [densitat restauració, restaurants per habitant, hostaleria per càpita], es: [densidad restauración, restaurantes por habitante, hostelería per cápita]}
 
   # --- L1 · POBLACIÓ REAL ESTIMADA (PERNOCTA) — la nova «població invisible» ---
   poblacio_pernocta_est:

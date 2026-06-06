@@ -94,6 +94,27 @@ models:
           - not_null
           - between:
               arguments: { min_value: 0, max_value: 100000 }
+      # --- 2n proxy d'hostaleria de la capa L3 (restauració, OSM) ---
+      - name: restauracio_estab
+        description: >
+          Nombre de locals de restauració (CCAE-56) mapejats a OSM, assignats al
+          municipi per punt-en-polígon (geometria real). 2n proxy d'hostaleria
+          (capacitat), complement del vidre. MÍNIM observat, no cens: OSM
+          infra-mapeja el rural (alguns micromunicipis surten 0). Absència → 0.
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 0, max_value: 100000 }
+      - name: restauracio_per_1000hab
+        description: >
+          Densitat d'establiments de restauració per 1000 hab (restauracio_estab /
+          poblacio * 1000). Validat com a 2n proxy independent del vidre
+          (Spearman ≈ 0,54 amb vidre_hab i index_turisme, N=31). Hereta el caveat
+          de completesa d'OSM.
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 0, max_value: 100000 }
       # --- INDICADOR ESTRELLA: MODEL DE 3 CAPES (INFERÈNCIA, no cens) ---
       # L1 · població pernocta (elèctric/base_electric) — la nova «població invisible».
       - name: poblacio_pernocta_est
