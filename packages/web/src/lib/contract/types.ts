@@ -48,7 +48,19 @@ export type MetricKey =
 	| 'rtc_per_100hab_viv'
 	// Pressió / càrrega real
 	| 'kg_hab_any'
-	// Població real estimada vs padró (indicador estrella; mètode a docs/poblacio-real-metode.md)
+	// Senyals físics per càpita (inputs de les 3 capes)
+	| 'kwh_hab'
+	| 'vidre_hab'
+	// Indicador estrella — MODEL DE 3 CAPES (mètode v2 a docs/poblacio-real-metode.md):
+	//  L1 població que PERNOCTA (via elèctric) → la «població invisible»
+	| 'poblacio_pernocta_est'
+	| 'gap_pernocta'
+	| 'gap_pernocta_pct'
+	//  L2 CÀRREGA humana total (via residus, inclou excursionistes de dia)
+	| 'carrega_total_est'
+	//  L3 PRESSIÓ turística (via vidre/hostaleria, 0-100)
+	| 'index_turisme'
+	// Compatibilitat (model d'una sola capa, reenquadrat com a càrrega) + confiança
 	| 'poblacio_real_est'
 	| 'poblacio_real_rel'
 	| 'gap_abs'

@@ -43,8 +43,13 @@
 				: m.map_method_jenks()
 	);
 
-	/** Família d'estimació de població (gap / presència real) → mostra el caveat d'inferència. */
+	/** Capes d'estimació (model v2 de 3 capes + àlies) → mostren el caveat d'inferència. */
 	const ESTIMATE_KEYS = new Set<MetricKey>([
+		'gap_pernocta_pct',
+		'gap_pernocta',
+		'poblacio_pernocta_est',
+		'carrega_total_est',
+		'index_turisme',
 		'gap_pct',
 		'gap_abs',
 		'poblacio_real_est',
