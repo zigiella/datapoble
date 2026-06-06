@@ -1,0 +1,36 @@
+# Render Blueprint — API de riusdegent (Brúixola: text→SQL traçable + control de cost).
+# Desplegament "infra-as-code", a l'estil del deploy-web a Cloudflare Pages: versionat
+# i a punt, però DORMENT fins que IT connecti Render.
+#
+# COM ACTIVAR-HO (IT):
+#   1. Render → New → Blueprint → connectar el repo zigiella/datapoble → Render llegeix
+#      aquest fitxer i crea el servei.
+#   2. Posar el secret OPENROUTER_API_KEY a l'entorn del servei (Dashboard → Environment).
+#      Sense la key, l'API arrenca en mode OFFLINE (determinista) → un primer deploy ja és vàlid.
+#   3. (Quan es publiciti) pujar el pla de free a always-on (~7€/mes) perquè no s'adormi.
+#
+# El frontend (Pregunta-li) cridarà aquesta API; el control de cost (rate-limit, caché,
+# tope de despesa) ja és al codi (packages/ai/costcontrol.py), key-independent.
+
+services:
+  - type: web
+    name: riusdegent-api
+    runtime: docker
+    repo: https://github.com/zigiella/datapoble
+    branch: main
+    region: frankfurt            # EU (latència + tractament a la UE; sense PII igualment)
+    plan: free                   # → always-on quan es publiciti
+    dockerfilePath: ./packages/ai/Dockerfile
+    dockerContext: .             # context = arrel del repo (l'agent llegeix semantic/ + data/marts/)
+    healthCheckPath: /health
+    autoDeploy: true             # redesplega a cada push a main
+    envVars:
+      - key: OPENROUTER_API_KEY
+        sync: false              # SECRET — es posa al Dashboard de Render, MAI al repo
+      # --- Topalls de despesa (guardrails durs; ajustables al Dashboard) ---
+      - key: AI_DAILY_USD
+        value: "1"               # sostre diari conservador
+      - key: AI_MONTHLY_USD
+        value: "10"              # sostre mensual conservador
+      # La resta de paràmetres de control de cost (AI_RATE_CAPACITY, AI_RATE_REFILL_PER_SEC,
+      # AI_CACHE_MAXSIZE, OPENROUTER_MODEL) usen els defaults segurs del codi si no es fixen.
