@@ -1,7 +1,8 @@
 """CLI de la capa de senyals.
 
     python -m datapoble_signals contractacio   # descarrega + escriu events
-    python -m datapoble_signals all             # totes les fonts (ara: contractació)
+    python -m datapoble_signals sequera         # descarrega + escriu events de sequera (ACA)
+    python -m datapoble_signals all             # totes les fonts
 """
 from __future__ import annotations
 
@@ -9,10 +10,11 @@ import argparse
 import json
 import sys
 
-from . import contractacio
+from . import contractacio, sequera
 
 RUNNERS = {
     "contractacio": contractacio.run,
+    "sequera": sequera.run,
 }
 
 
