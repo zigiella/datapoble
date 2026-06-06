@@ -1,91 +1,75 @@
-# Mètode — Població real estimada vs padró
+# Mètode — Població, càrrega i turisme (model de 3 capes)
 
-*L'indicador estrella de riusdegent: fer visible la **població invisible** (qui omple el territori sense constar al padró). Mètode redactat per Talaia. Pilot: Berguedà (31 municipis). Tot el que diu aquí és **inferència**, no cens — i es comunica així.*
+*L'indicador estrella de riusdegent: fer visible **com s'habita el territori** més enllà del padró. Redactat per Talaia. Pilot: Berguedà (31 municipis). **Tot el que diu aquí és inferència, no cens** — i es comunica així. Aquesta pàgina és la base de la **metodologia pública**.*
 
-**Estat:** mètode validat sobre dades reals · materialització pendent (spec a §7) · 2026-06-05
+**Estat:** **v2 — model de 3 capes**, dissenyat, materialitzat a `mart_municipi` i validat sobre dades reals · 2026-06-06. Supera el v1 (una sola capa basada en residus).
 
 ---
 
-## 1. Objectiu
-Estimar la **presència humana real** d'un municipi (la gent que de debò l'habita i el carrega: residents registrats + no registrats + segones residències + estacionals) i comparar-la amb el **padró oficial**. La diferència és el **gap**: la població que el padró no veu.
+## 1. El problema (i la volta de rosca que el resol)
+El padró oficial **no veu** qui omple un municipi sense constar-hi. Però «qui l'omple» **no és una sola cosa**. En un poble molt turístic, l'augment de residus **no és població**: pot ser **excursionistes que vénen a passar el dia**. Anomenar-ho «població» seria fals.
 
-## 2. El principi
-La **generació de residus per habitant** és un termòmetre directe de presència: la gent genera escombraries de manera força uniforme pels dies que hi és. Si un municipi de 166 empadronats genera residus com si en tingués el doble, és que **n'hi ha el doble de presents**. Fórmula base:
+Per això **no estimem un sol número, sinó tres capes** que separen fenòmens diferents: qui hi **dorm**, la **càrrega total**, i l'**activitat turística**.
 
+## 2. Tres senyals físics independents
+La idea de fons (el *cabal*): rastres administratius involuntaris revelen presència que cap cens captura. Triem tres que capten coses diferents:
+
+| Senyal | Font | Què capta |
+|---|---|---|
+| **Residus** kg/hab/any | ARC | càrrega **TOTAL** (residents + 2a residència + qui pernocta + **excursionistes** + part de comerç) |
+| **Elèctric domèstic** kWh/hab | ICAEN | qui hi **DORM** (l'excursionista de dia no fa servir l'electricitat de casa) |
+| **Vidre** kg/hab/any | ARC (fracció) | activitat d'**hostaleria** (ampolles de bar/restaurant = visitants) |
+
+## 3. Les tres capes
+La **base** = generació/consum d'un resident "normal", calculada de les **viles de vall poc turístiques** (IETR < 5, ponderada per població):
+`BASE_residus = 410 kg/hab` · `BASE_elèctric = 1.224 kWh/hab` · `BASE_vidre = 26,5 kg/hab`.
+
+### L1 · Població real estimada (qui pernocta) — *la signatura «població invisible»*
 ```
-presència_estimada = padró × (kg_residus_per_hab / BASE)
+poblacio_pernocta_est = round(padró × kWh_hab / 1224)
+gap_pernocta = poblacio_pernocta_est − padró
 ```
+El **gap** és la gent que **dorm** al territori sense constar al padró: residents no registrats, **segones residències**, turisme que pernocta. **Això sí que és «població».**
 
-on `BASE` = generació per càpita d'un resident "normal". L'elecció de `BASE` és la decisió clau (§4).
+### L2 · Càrrega humana total
+```
+carrega_total_est = round(padró × kg_residus_hab / 410)
+```
+La pressió humana **total** que suporta el territori, **inclosos els excursionistes de dia** i part del comerç. **NO en diem «població» — en diem «càrrega».**
 
-## 3. Triangulació — la prova honesta (i una troballa)
-Per no dependre d'un sol senyal, vam creuar **residus** amb **consum elèctric domèstic** (ICAEN, real, 2024, 31 munis). Resultat de correlació per càpita:
+### L3 · Pressió turística (hostaleria)
+```
+index_turisme = z-score comarcal de (vidre_hab) → escala 0–100
+```
+Intensitat d'**activitat de visitants** (bars, restaurants, begudes). **No és població; és pressió turística.**
 
-| Parell | Pearson |
-|---|--:|
-| residus/hab ↔ elèctric/hab | **0,43** |
-| IETR ↔ elèctric/hab | 0,49 |
-| % 2a residència ↔ elèctric/hab | 0,34 |
+## 4. Validació — i un *catch* de rigor
+Sobre dades reals 2024:
 
-**Només coincideixen moderadament.** Un mètode ingenu que en fes la mitjana seria **erroni**. El perquè és real i interessant:
-- **L'elèctric està confós per la calefacció:** a la muntanya es crema **llenya/gas** (no electricitat) → consum elèctric *baix* malgrat molta presència (p. ex. Castellar de n'Hug: residus altíssims, elèctric mitjà).
-- **Soroll de denominador petit:** amb 44 empadronats (la Quar), un sol gran consumidor dispara el per càpita.
+| Municipi | Padró | L1 pernocta | L2 càrrega | L3 turisme | Lectura |
+|---|--:|--:|--:|--:|---|
+| **Gósol** | 207 | **+87 %** | 535 | **100** | hi dorm molta gent (2a res.) **i** màxima hostaleria → poble turístic ple |
+| **Castellar de n'Hug** | 166 | +31 % | 397 | 84 | vidre alt però menys pernocta → **el poble d'excursió de dia** |
+| **Saldes** | 301 | +86 % | 681 | 71 | segona residència + hostaleria |
+| **Berga** | 17.539 | ≈ 0 % | 19.626 | ~27 | capital: població de residents |
 
-**Conclusió metodològica:**
-- **Residus = senyal PRIMARI** (net, directe; ja validat r=0,87 amb l'IETR).
-- **Elèctric = corroborador SECUNDARI**, amb *caveats*. El seu valor real: (a) **sobreviu al secret estadístic** fins i tot a Castellar (166 hab), i (b) quan **coincideix** amb els residus, apuja la **confiança**. No es pondera igual.
+**El *catch*:** vam provar de fer la capa turística com a simple **resta** (càrrega − pernocta), però als extrems donava disbarats — a Berga sortia +2.454 (és **residu COMERCIAL** de botigues, no excursionistes) i a les viles de vall sortia negatiu (artefacte de bases). Per això la capa turística surt del **vidre** (senyal net d'hostaleria), **no de la resta**. *La rigor abans que la xifra bonica.*
 
-## 4. El càlcul i la base (dos talls)
-Calculem `total_residus = 18.785.228 kg/any`, `padró_total = 41.523`.
+## 5. Honestedat (innegociable)
+- Tot és **inferència, no cens** → categoria `derived`, procedència **morada**, es comunica com a **rang**.
+- **Lectura ecològica**: parla del municipi, mai de persones concretes.
+- **Bandera de confiança** (`alta`/`mitjana`/`baixa`): **baixa** als micromunicipis (< 75 hab, soroll de denominador) i on els senyals **divergeixen**.
+- *Caveats* per capa: l'**elèctric** està confós per la calefacció de llenya (muntanya); els **residus** de les viles porten comerç; el **vidre** és un *proxy* d'hostaleria.
+- **Secret estadístic** als micromunicipis; tot i això, el vidre i l'elèctric hi sobreviuen.
 
-**Tall A — relatiu (base comarcal, pop-ponderada = 452 kg/hab).** Mostra **qui acull més *dins* la comarca**. És robust però **suma zero** (el total es conserva = padró): redistribució espacial, no sub-recompte global.
+## 6. Materialitzat (font de veritat)
+A `mart_municipi`, declarat a `semantic/metrics.yml` i exposat al JSON web (PR #34):
+`poblacio_pernocta_est`, `gap_pernocta`, `gap_pernocta_pct`, `carrega_total_est`, `index_turisme`, `vidre_hab`, `kwh_hab`, `confianca`. Bases parametritzables (vars dbt) → a escala Catalunya, **una base per comarca**.
 
-**Tall B — absolut (base residencial).** Pren com a `BASE` la generació de les **viles de vall amb poc turisme** (IETR<5: Avià, Berga, Gironella, Puig-reig) = **410 kg/hab** (molt estable: amb IETR<12 surt 409). Això capta el **sub-recompte comarcal**:
-
-| BASE (kg/hab) | Presència comarcal | vs padró |
-|--:|--:|--:|
-| 330 (residencial pur) | ~56.900 | **+37 %** |
-| 360 | ~52.200 | +26 % |
-| **410 (viles de vall, observat)** | ~45.800 | **~+10–13 %** |
-| 452 (mitjana comarcal) | 41.560 | +0 % (degenerat) |
-
-> **Lectura honesta:** la base 410 inclou Berga (capital comercial, els seus residus porten comerç) → és un **sostre de la base** i per tant un **terra del gap**. Conclusió defensable: el Berguedà sosté **com a mínim ~10 %, plausiblement ~15–25 %**, més gent de la que registra. La xifra exacta depèn de la base → es comunica com a **rang**, no com a decimal fals.
-
-## 5. On viu el gap (pilot Berguedà)
-No està repartit: es concentra a les **muntanyes turístiques**. Exemples (tall relatiu):
-
-| Municipi | Padró | Presència est. | Gap |
-|---|--:|--:|--:|
-| Saldes | 301 | ~617 | +316 |
-| Gósol | 207 | ~485 | +278 |
-| Castellar de n'Hug | 166 | ~360 | +194 |
-| Berga (vila) | 17.539 | ~17.500 | ~0 |
-
-Exactament la tesi de *riusdegent*: el cabal humà s'acumula on el padró menys ho diu.
-
-## 6. Honestedat (els guardrails, no negociables)
-- És una **estimació/índex, no un cens**. Es marca com a **inferència** (procedència morada) i s'expressa com a **rang**.
-- **Lectura ecològica:** mai sobre individus, sempre sobre el municipi.
-- **Secret estadístic** als micro-munis; tot i així l'elèctric hi sobreviu i permet un senyal amb banda ampla.
-- **Caveats explícits:** els residus inclouen part de comerç a les viles; un turista pot generar diferent que un resident; la base té incertesa. Tot va al peu de l'indicador.
-- **Bandera de confiança:** alta quan residus + (elèctric o 2a residència) coincideixen; baixa quan divergeixen o el denominador és minúscul.
-
-## 7. Materialització (spec per a Sondeig)
-Afegir a `mart_municipi` (i declarar al `semantic/metrics.yml`, **visibilitat pública, categoria DERIVED**):
-
-| Columna | Definició |
-|---|---|
-| `poblacio_real_est` | `round(poblacio * kg_hab_any / 410)` — tall absolut (base residencial) |
-| `gap_abs` | `poblacio_real_est - poblacio` |
-| `gap_pct` | `gap_abs / poblacio` |
-| `poblacio_real_rel` | `round(poblacio * kg_hab_any / 452)` — tall relatiu comarcal (opcional, vista espacial) |
-| `confianca` | `alta`/`mitjana`/`baixa` segons corroboració (regla a §6) |
-
-Mètriques al contracte amb `label_ca/label_es`, `formula`, `font` (ARC residus + Idescat padró), `categoria: derived`, i un camp `caveat` amb el text d'incertesa. La `BASE=410` queda **documentada i parametritzable** (recalcular quan escalem a Catalunya, on cada comarca tindrà la seva base residencial).
-
-## 8. Pendents
-- **Calibratge** contra un senyal conegut (algun municipi amb estudi de població estacional real) per fixar la base amb evidència externa.
-- A **escala Catalunya**: base residencial **per comarca** (no una de sola).
-- Si apareix **elèctric mensual**, explotar l'estacionalitat (les 2es residències piquen a l'estiu) com a senyal de presència molt més net.
+## 7. Pendents honestos
+- **Calibratge** amb un senyal extern conegut (algun estudi de població estacional real).
+- **Restauració** (Idescat CCAE-56 oficial / OpenStreetMap *proxy*) com a 2n senyal d'hostaleria, encreuat amb el vidre.
+- **Estacionalitat**: cap font ho dóna mensual × municipal ara (elèctric i residus són anuals) — pendent.
+- **Escala Catalunya**: base residencial per comarca.
 
 — Talaia 🌊
