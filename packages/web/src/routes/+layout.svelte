@@ -55,6 +55,9 @@
 		<a href={localizeHref('/mapa')} class:on={isActive('/mapa')} aria-current={isActive('/mapa') ? 'page' : undefined}>
 			<span>{m.nav_mapa()}</span>
 		</a>
+		<a href={localizeHref('/metodologia')} class:on={isActive('/metodologia')} aria-current={isActive('/metodologia') ? 'page' : undefined}>
+			<span>{m.nav_metodologia()}</span>
+		</a>
 		<span class="nav-inert" aria-disabled="true">{m.nav_index()}</span>
 		<span class="nav-inert" aria-disabled="true">{m.nav_daytripper()}</span>
 		<span class="nav-inert" aria-disabled="true">{m.nav_politica()}</span>
@@ -93,7 +96,7 @@
 			<ul>
 				<li><a href={localizeHref('/resum')}>{m.nav_resum()}</a></li>
 				<li><a href={localizeHref('/mapa')}>{m.nav_mapa()}</a></li>
-				<li><span class="foot-inert" aria-disabled="true">{m.foot_link_method()}</span></li>
+				<li><a href={localizeHref('/metodologia')}>{m.foot_link_method_to()}</a></li>
 				<li><span class="foot-inert" aria-disabled="true">{m.foot_link_glossary()}</span></li>
 			</ul>
 		</div>
