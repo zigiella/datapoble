@@ -3,6 +3,13 @@
    Consumeix els tokens reals (../tokens/tokens.css). No els redefineix:
    afegeix la capa de SISTEMA (chrome, especimens, components) sobre els --dp-*.
    Veu Quota: full topogràfic · corbes de nivell · cotes · tipus de mapa.
+
+   DA final ronda 2 (Bea): la MARCA passa a OCRE (--dp-brand / --dp-brand-dark).
+   Ancorat aquí: wordmark `.ds-top__brand .wm b`, `.ds-eyebrow` i el motiu
+   `.rd-divide` (càlid). Els usos restants de --dp-teal-600 (.switch:checked,
+   .seg button.on, .kpi-card .d.down, .ds-hero p em) són ESTATS de component /
+   editorial genèric: verd de suport LLEGAT, no identitat. La pàgina real
+   (aplicacio.css) resol l'editorial del hero amb .warm (accent) i .cool (--dp-div2-0).
    ============================================================================ */
 
 :root{
@@ -40,8 +47,9 @@ a{ color:var(--dp-link); }
 .ds-top__brand{ display:flex; align-items:center; gap:11px; text-decoration:none; }
 .ds-top__brand svg{ display:block; }
 .ds-top__brand .wm{ font-weight:600; font-size:1.05rem; letter-spacing:-0.01em; color:var(--dp-text); }
-.ds-top__brand .wm b{ color:var(--dp-teal-600); font-weight:600; }
-[data-theme="dark"] .ds-top__brand .wm b{ color:#6FB395; }
+/* DA final ronda 2: el wordmark `degent` és OCRE (marca), no verd. */
+.ds-top__brand .wm b{ color:var(--dp-brand); font-weight:600; }
+[data-theme="dark"] .ds-top__brand .wm b{ color:var(--dp-brand-dark); }
 .ds-tag{ font-family:var(--dp-font-mono); font-size:.62rem; letter-spacing:.12em; text-transform:uppercase;
          color:var(--dp-text-subtle); border:1px solid var(--dp-border); padding:3px 7px; border-radius:var(--dp-radius-full); }
 .ds-nav{ display:flex; gap:4px; margin-left:8px; }
@@ -65,8 +73,8 @@ a{ color:var(--dp-link); }
 .ds-hero__field{ position:absolute; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; }
 .ds-hero__in{ position:relative; z-index:2; max-width:var(--maxw); margin:0 auto; padding:58px 24px 50px; }
 .ds-eyebrow{ font-family:var(--dp-font-mono); font-size:.66rem; letter-spacing:.2em; text-transform:uppercase;
-             color:var(--dp-teal-600); margin:0 0 18px; display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
-[data-theme="dark"] .ds-eyebrow{ color:#6FB395; }
+             color:var(--dp-brand); margin:0 0 18px; display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+[data-theme="dark"] .ds-eyebrow{ color:var(--dp-brand-dark); }
 .ds-eyebrow b{ color:var(--dp-text-muted); font-weight:500; }
 .ds-hero h1{
   font-family:'Archivo',var(--dp-font-sans); font-weight:800; font-size:clamp(2.2rem,5vw,3.4rem);
@@ -94,9 +102,10 @@ a{ color:var(--dp-link); }
                 display:flex; justify-content:space-between; gap:12px; }
 .ds-block__lab .hint{ text-transform:none; letter-spacing:0; color:var(--dp-text-subtle); font-size:.62rem; }
 
-/* desiccating divider: línia que s'eixuga (motiu de marca) reutilitzable */
+/* desiccating divider: línia que s'eixuga (motiu de marca) reutilitzable.
+   DA final ronda 2: el motiu de marca és càlid → terracota (accent), no verd. */
 .rd-divide{ height:2px; border:none; margin:0;
-  background:linear-gradient(90deg,var(--dp-teal-600) 0 38%, color-mix(in srgb,var(--dp-teal-600) 50%, transparent) 52%, transparent 70%);
+  background:linear-gradient(90deg,var(--dp-accent-500) 0 38%, color-mix(in srgb,var(--dp-accent-500) 50%, transparent) 52%, transparent 70%);
   -webkit-mask:linear-gradient(90deg,#000 0 40%, transparent 40%), repeating-linear-gradient(90deg,#000 0 1.5px, transparent 1.5px 8px);
   -webkit-mask-composite:source-over; mask:linear-gradient(90deg,#000 0 40%, transparent 40%), repeating-linear-gradient(90deg,#000 0 1.5px, transparent 1.5px 8px); }
 
