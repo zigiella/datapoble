@@ -94,3 +94,40 @@ canviar la convenció a 0–1 i adaptar `formatPercent` + totes les percent).
 - `packages/design-system/aplicacio/aplicacio.css` (regla `.ex__grp`)
 - `packages/web/messages/{ca,es}.json` (`resum_grp_fisics`, `resum_grp_capes`)
 - Font de dades: `data/web/municipis.bergueda.json` (Sondeig)
+
+---
+
+## Actualització 2026-06-07 (Mirador) — el «0,3 %» del gap, RESOLT al frontend (rectifica la incidència §67)
+
+**Rectificació.** La «Incidencia detectada» (§67–77) concloïa que el «0,3 %» era un problema **aigua
+amunt** (data/contracte) i que NO tocava arreglar-lo a Mirador. **Era una conclusió equivocada.** El
+gap **es publica a posta com a ràtio amb signe 0–1** (`gap_pernocta_pct = gap_pernocta / poblacio`):
+Castellar 0,313, Berga −0,021. No és un bug de dades. El **mapa ja ho mostra bé** («+31 %», «−2 %»)
+perquè usa el formatador compartit **`makeMetricFormatter(key, format, locale)`** de
+`$lib/map/classify.ts`, que per a les claus del set **`SIGNED_RATIO_PCT_KEYS = {gap_pernocta_pct,
+gap_pct}`** fa `×100` + `signDisplay:'exceptZero'` + 0 decimals + « %». El Resum, en canvi, anava pel
+`formatMetric/formatDecimal` genèric (escala 0–100) → «0,3 %». El bug era **només** del Resum, no de
+les dades. **El fix és de Mirador, i és aquí.**
+
+**Què he fet (spec tancat, sense ×100 ad-hoc ni duplicar la font de claus):**
+1. `packages/web/src/lib/map/classify.ts`: **`export`** de `SIGNED_RATIO_PCT_KEYS` (abans era privat).
+   És ara l'única font compartida de «quines claus són ràtio amb signe» — mapa i Resum la importen.
+2. `resum/+page.svelte`: importa `SIGNED_RATIO_PCT_KEYS` de `$lib/map/classify`. A `fmt(row, key)`,
+   **abans** del camí genèric: si `SIGNED_RATIO_PCT_KEYS.has(key)` i el valor és numèric, retorna
+   `Intl.NumberFormat(loc, {signDisplay:'exceptZero', maximumFractionDigits:0}).format(v*100)` —
+   **sense** el «%»: el markup ja l'afegeix com a unitat petita `.u` (perquè `def.format==='percent'`
+   → `isPct`), igual que la resta de percentatges. Mateix conveni numèric que el mapa; cap `×100`
+   duplicat enlloc. `loc` = `es`→'es-ES', altrament 'ca-ES'.
+3. `carrega_total_est` (integer) i `index_turisme` (decimal, label «Pressió turística (hostaleria)») **no**
+   són ràtio amb signe i **no** es toquen: surten «397» i «83,5», sense «%». Cap regressió.
+
+**Contracte i dades intactes.** No s'ha tocat `semantic/metrics.yml` ni el dataset: el gap segueix sent
+ràtio amb signe 0–1 a posta. El que mancava era que el Resum reutilitzés el formatador del mapa.
+
+**Verificació (vite preview del worktree, port 5174):** `npm run check` → 0 errors/0 warnings;
+`npm run build` → prerender net. DOM `/resum/`: Castellar **«+31 %»** (ressaltat), Berga **«−2 %»**
+(ressaltat); el «%» surt una sola vegada (unitat `.u`), sense doblar signe. Mapa `/mapa/` sense
+regressió: el formatador compartit segueix donant «+31 %»/«−2 %» i les cotes del hero surten amb signe
+(`+189 %`, `−5 %`, `+31 %`, …). Tanca el punt «Dades/Sondeig» del Pendiente: **no calia tocar dades.**
+
+**Enllaços afegits:** `packages/web/src/lib/map/classify.ts` (`export SIGNED_RATIO_PCT_KEYS`).

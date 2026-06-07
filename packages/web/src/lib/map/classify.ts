@@ -309,7 +309,7 @@ export function makeFormatter(format: MetricFormat, locale: string): (n: number)
  * multiplicar per 100 i marcar el +/− perquè es llegeixi com una desviació respecte al padró
  * (+87 %, −2 %), no com "0,9 %".
  */
-const SIGNED_RATIO_PCT_KEYS = new Set<MetricKey>(['gap_pernocta_pct', 'gap_pct']);
+export const SIGNED_RATIO_PCT_KEYS = new Set<MetricKey>(['gap_pernocta_pct', 'gap_pct']);
 
 /**
  * Formatador sensible a la CLAU de mètrica (no només al format). Igual que `makeFormatter`
