@@ -26,7 +26,7 @@
 	import ContourField from '$lib/components/ContourField.svelte';
 	import ChoroplethMap from '$lib/components/ChoroplethMap.svelte';
 	import MapTooltip from '$lib/components/MapTooltip.svelte';
-	import { MAP_INDICATORS, DEFAULT_INDICATOR } from '$lib/map/indicators';
+	import { MAP_INDICATORS, DEFAULT_INDICATOR, mapValue } from '$lib/map/indicators';
 	import { classify, methodFor, classRangeLabels, makeMetricFormatter } from '$lib/map/classify';
 	import { divergingColors, rampColors } from '$lib/map/palette';
 	import { currentLocale } from '$lib/i18n';
@@ -48,6 +48,7 @@
 		gap_pernocta_pct: () => m.map_ind_pernocta(),
 		carrega_total_est: () => m.map_ind_carrega(),
 		index_turisme: () => m.map_ind_turisme(),
+		restauracio_per_1000hab: () => m.map_ind_restauracio(),
 		IETR: () => m.map_ind_ietr(),
 		pct_noprincipal: () => m.map_ind_nop(),
 		kg_hab_any: () => m.map_ind_res()
@@ -56,10 +57,12 @@
 
 	// Sèrie de valors de l'indicador actiu sobre TOTS els municipis de la geometria
 	// (no només els del mock amb dada): la classificació és sobre el conjunt real.
+	// Passem pel `mapValue` perquè el 0 d'OSM de la restauració (buit de mapejat, no «sense
+	// hostaleria») es degradi a null i NO ancori el mínim de Jenks ni entri a cap classe.
 	const series = $derived(
 		geojson.features.map((f: import('geojson').Feature) => {
 			const ine5 = (f.properties?.ine5 as string) ?? '';
-			return dataset.municipis[ine5]?.values?.[indicator] ?? null;
+			return mapValue(indicator, dataset.municipis[ine5]?.values?.[indicator]);
 		})
 	);
 
@@ -71,11 +74,14 @@
 
 	// Les tres capes del model v2 són INFERÈNCIA (derived) → caveat d'honestedat propi.
 	// L1 (pernocta) ve de l'elèctric; L2 (càrrega) i L3 (pressió turística) tenen el seu matís.
-	// Per als indicadors oficials directes (% no principal, residus) o l'índex IETR no s'hi aplica.
+	// La restauració (2n proxy de L3) també porta caveat propi: és recompte d'OSM (mínim, no cens)
+	// i VALIDA la pressió del vidre. Per als indicadors oficials directes (% no principal, residus)
+	// o l'índex IETR no s'hi aplica.
 	const LAYER_KEYS = new Set<MetricKey>([
 		'gap_pernocta_pct',
 		'carrega_total_est',
-		'index_turisme'
+		'index_turisme',
+		'restauracio_per_1000hab'
 	]);
 	const isLayer = $derived(LAYER_KEYS.has(indicator));
 	// Text del caveat principal segons la capa activa (honestedat per indicador).
@@ -83,6 +89,7 @@
 		if (indicator === 'gap_pernocta_pct') return m.map_caveat_pernocta();
 		if (indicator === 'carrega_total_est') return m.map_caveat_carrega();
 		if (indicator === 'index_turisme') return m.map_caveat_turisme();
+		if (indicator === 'restauracio_per_1000hab') return m.map_caveat_restauracio();
 		return '';
 	});
 
