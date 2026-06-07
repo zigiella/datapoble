@@ -159,7 +159,7 @@
   "glo_fmt_rank": "ranking",
   "glo_fmt_text": "categórico",
   "glo_planned": "Definido · aún no calculado",
-  "glo_count": "{n} indicadores públicos · {dims} dimensiones",
+  "glo_count": "{n} indicadores · {dims} dimensiones",
   "glo_srcline": "El catálogo completo sale del contrato semántico de riusdegent (la misma fuente que el resto de la web): label, unidad, fuente, fecha y procedencia de cada indicador. Ningún término ni ninguna cifra codificados a mano. Método completo en la metodología.",
 
   "met_title": "Metodología",

@@ -159,7 +159,7 @@
   "glo_fmt_rank": "rànquing",
   "glo_fmt_text": "categòric",
   "glo_planned": "Definit · encara no calculat",
-  "glo_count": "{n} indicadors públics · {dims} dimensions",
+  "glo_count": "{n} indicadors · {dims} dimensions",
   "glo_srcline": "El catàleg complet surt del contracte semàntic de riusdegent (mateixa font que la resta del web): label, unitat, font, data i procedència de cada indicador. Cap terme ni cap xifra codificats a mà. Mètode complet a la metodologia.",
 
   "met_title": "Metodologia",
