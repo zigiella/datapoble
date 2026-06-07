@@ -37,6 +37,8 @@
 		gap_pernocta_pct: () => m.met_pernocta_what(),
 		carrega_total_est: () => m.met_carrega_what(),
 		index_turisme: () => m.met_turisme_what(),
+		restauracio_per_1000hab: () => m.met_restauracio_what(),
+		restauracio_estab: () => m.met_restauracio_what(),
 		confianca: () => m.met_confianca_what(),
 		IETR: () => m.met_ietr_what(),
 		pct_icaen_EFG: () => m.met_efg_what(),
@@ -57,6 +59,8 @@
 		gap_pernocta_pct: () => m.met_pernocta_how(),
 		carrega_total_est: () => m.met_carrega_how(),
 		index_turisme: () => m.met_turisme_how(),
+		restauracio_per_1000hab: () => m.met_restauracio_how(),
+		restauracio_estab: () => m.met_restauracio_how(),
 		confianca: () => m.met_confianca_how(),
 		IETR: () => m.met_ietr_how(),
 		pct_icaen_EFG: () => m.met_efg_how(),
@@ -86,7 +90,7 @@
 			ref: 'C',
 			title: () => m.met_block_capes(),
 			intro: () => m.met_capes_intro(),
-			keys: ['kwh_hab', 'gap_pernocta_pct', 'kg_hab_any', 'carrega_total_est', 'vidre_hab', 'index_turisme', 'confianca']
+			keys: ['kwh_hab', 'gap_pernocta_pct', 'kg_hab_any', 'carrega_total_est', 'vidre_hab', 'index_turisme', 'restauracio_per_1000hab', 'restauracio_estab', 'confianca']
 		},
 		{
 			ref: 'D',

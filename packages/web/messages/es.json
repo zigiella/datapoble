@@ -211,6 +211,8 @@
   "met_vidre_how": "toneladas de vidrio × 1.000 / población (ARC).",
   "met_turisme_what": "CAPA L3 · presión turística (hostelería). Intensidad de actividad de visitantes. NO es población ni carga de personas: es intensidad de hostelería. Probamos hacerla como resta (carga − pernocta) pero en los extremos daba disparates (en Berga, residuo comercial; en los valles, negativo): el rigor antes que la cifra bonita, así que sale del vidrio.",
   "met_turisme_how": "z-score comarcal del vidrio/hab (acotado) reescalado a 0–100 (50 = municipio medio del Berguedà).",
+  "met_restauracio_what": "SEÑAL L3 (2.º proxy de hostelería) — locales de restauración por municipio: restaurantes, bares, cafeterías, comida rápida, pubs… Es el complemento del vidrio para leer la presión turística: donde hay visitantes, hay hostelería que los atiende.",
+  "met_restauracio_how": "Recuento de puntos de interés de OpenStreetMap (amenity=restaurant/bar/cafe/fast_food/pub…) asignados al municipio por geometría real; densidad = locales / 1.000 hab. VALIDA la capa L3: correlaciona con el vidrio/hab (Spearman ≈ 0,54) → dos señales INDEPENDIENTES (residuos de vidrio y locales mapeados) confirman la misma presión turística. Límite honesto: OSM es un MÍNIMO observado, no un censo — infra-mapea el mundo rural, así que los municipios con recuento 0 son vacío de mapeo, no ausencia real de hostelería.",
   "met_confianca_what": "Bandera de fiabilidad de las 3 capas (alta/media/baja). Un vacío honesto vale más que un falso preciso: marca los micromunicipios (ruido de denominador, secreto estadístico) y los casos donde las señales divergen.",
   "met_confianca_how": "baja si población < 75 o señales divergentes; alta si las señales se corroboran y población ≥ 75; media el resto.",
 
