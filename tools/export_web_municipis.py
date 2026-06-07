@@ -177,6 +177,12 @@ def build_metrics(contract: dict) -> dict[str, dict]:
         }
         if spec.get("date"):
             m["date"] = str(spec["date"])
+        # definicio: text canònic del «diccionari» que pinta el glossari
+        # (definicio.ca/.es del contracte). S'emet només si hi és; si falta, el
+        # web recau en `note` (MetricDef.definicio? és opcional).
+        definicio = _localized(spec.get("definicio"))
+        if definicio:
+            m["definicio"] = definicio
         note = _localized(spec.get("nota"))
         if note:
             m["note"] = note

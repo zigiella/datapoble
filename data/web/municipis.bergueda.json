@@ -16,6 +16,10 @@
       "format": "integer",
       "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
       "date": "2025",
+      "definicio": {
+        "ca": "Població empadronada.",
+        "es": "Población empadronada."
+      },
       "status": "public"
     },
     "hab_total": {
@@ -32,6 +36,10 @@
       "format": "integer",
       "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
       "date": "2021",
+      "definicio": {
+        "ca": "Parc total d'habitatges (Cens 2021).",
+        "es": "Parque total de viviendas (Censo 2021)."
+      },
       "status": "public"
     },
     "hab_principal": {
@@ -48,6 +56,10 @@
       "format": "integer",
       "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
       "date": "2021",
+      "definicio": {
+        "ca": "Habitatges de residència habitual.",
+        "es": "Viviendas de residencia habitual."
+      },
       "status": "public"
     },
     "hab_noprincipal": {
@@ -64,6 +76,10 @@
       "format": "integer",
       "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
       "date": "2021",
+      "definicio": {
+        "ca": "Secundàries + buides (no residència habitual). Senyal estructural de segona residència.",
+        "es": "Secundarias + vacías (no residencia habitual). Señal estructural de segunda residencia."
+      },
       "status": "public"
     },
     "pct_noprincipal": {
@@ -80,6 +96,10 @@
       "format": "percent",
       "source": "datapoble (calculat) — Indicadors derivats i índex IETR · Idescat",
       "date": "2021",
+      "definicio": {
+        "ca": "Pes de l'habitatge no principal sobre el total.",
+        "es": "Peso de la vivienda no principal sobre el total."
+      },
       "status": "public"
     },
     "hab_per_hab": {
@@ -96,6 +116,10 @@
       "format": "ratio",
       "source": "datapoble (calculat) — Indicadors derivats i índex IETR",
       "date": "2021/2025",
+      "definicio": {
+        "ca": "Sobredimensió del parc respecte a la població resident.",
+        "es": "Sobredimensión del parque respecto a la población residente."
+      },
       "status": "public"
     },
     "index_envelliment": {
@@ -112,6 +136,10 @@
       "format": "decimal",
       "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
       "date": "2025",
+      "definicio": {
+        "ca": "Població 65+ per cada 100 de 0-14. Eix demogràfic per a l'anàlisi extrema dreta × edat.",
+        "es": "Población 65+ por cada 100 de 0-14. Eje demográfico para el análisis extrema derecha × edad."
+      },
       "status": "planned"
     },
     "rtc_total": {
@@ -128,6 +156,10 @@
       "format": "integer",
       "source": "Generalitat — Registre de Turisme de Catalunya — Establiments d'allotjament turístic",
       "date": "2026",
+      "definicio": {
+        "ca": "Allotjaments turístics reglats (HUT, hotel, rural, càmping).",
+        "es": "Alojamientos turísticos reglados (HUT, hotel, rural, camping)."
+      },
       "status": "public"
     },
     "rtc_hut": {
@@ -144,6 +176,10 @@
       "format": "integer",
       "source": "Generalitat — Registre de Turisme de Catalunya — Establiments d'allotjament turístic",
       "date": "2026",
+      "definicio": {
+        "ca": "Subconjunt d'habitatges d'ús turístic.",
+        "es": "Subconjunto de viviendas de uso turístico."
+      },
       "status": "public"
     },
     "rtc_per_1000hab": {
@@ -159,6 +195,10 @@
       "dimension": "turisme",
       "format": "decimal",
       "source": "datapoble (calculat) — Indicadors derivats i índex IETR",
+      "definicio": {
+        "ca": "Intensitat turística reglada per càpita.",
+        "es": "Intensidad turística reglada per cápita."
+      },
       "status": "public"
     },
     "rtc_per_100hab_viv": {
@@ -174,6 +214,10 @@
       "dimension": "turisme",
       "format": "decimal",
       "source": "datapoble (calculat) — Indicadors derivats i índex IETR",
+      "definicio": {
+        "ca": "Penetració del turisme reglat en el parc.",
+        "es": "Penetración del turismo reglado en el parque."
+      },
       "status": "public"
     },
     "kg_hab_any": {
@@ -190,6 +234,10 @@
       "format": "decimal",
       "source": "Agència de Residus de Catalunya (ARC) — Estadístiques de residus municipals",
       "date": "2024",
+      "definicio": {
+        "ca": "Generació de residus per habitant empadronat. Proxy de càrrega real (població fantasma).",
+        "es": "Generación de residuos por habitante empadronado. Proxy de carga real (población fantasma)."
+      },
       "status": "public"
     },
     "kwh_hab": {
@@ -206,6 +254,10 @@
       "format": "decimal",
       "source": "Institut Català d'Energia (ICAEN) — Consum d'energia elèctrica per municipis i sectors de Catalunya",
       "date": "2024",
+      "definicio": {
+        "ca": "Consum elèctric domèstic per habitant empadronat, darrer any de cobertura plena (2024). Senyal de presència que pernocta (capa L1).",
+        "es": "Consumo eléctrico doméstico por habitante empadronado, último año de cobertura plena (2024). Señal de presencia que pernocta (capa L1)."
+      },
       "status": "public"
     },
     "vidre_hab": {
@@ -222,6 +274,10 @@
       "format": "decimal",
       "source": "Agència de Residus de Catalunya (ARC) — Estadístiques de residus municipals",
       "date": "2024",
+      "definicio": {
+        "ca": "Generació de vidre per habitant empadronat (fracció de recollida selectiva). Proxy d'hostaleria (ampolles de bar/restaurant); senyal de la capa L3.",
+        "es": "Generación de vidrio por habitante empadronado (fracción de recogida selectiva). Proxy de hostelería (botellas de bar/restaurante); señal de la capa L3."
+      },
       "status": "public"
     },
     "restauracio_estab": {
@@ -238,6 +294,10 @@
       "format": "integer",
       "source": "OpenStreetMap (col·laboradors) — via Overpass API — Punts d'interès de restauració (amenity=restaurant/cafe/bar/fast_food/pub/biergarten/ice_cream)",
       "date": "2026",
+      "definicio": {
+        "ca": "Nombre de locals de restauració (restaurants, bars, cafeteries, menjars ràpids, pubs; CCAE-56) mapejats a OpenStreetMap dins el municipi. 2n proxy d'hostaleria (capacitat), complement del vidre.",
+        "es": "Número de locales de restauración (restaurantes, bares, cafeterías, comidas rápidas, pubs; CCAE-56) mapeados en OpenStreetMap dentro del municipio. 2º proxy de hostelería (capacidad), complemento del vidrio."
+      },
       "status": "public"
     },
     "restauracio_per_1000hab": {
@@ -254,6 +314,10 @@
       "format": "decimal",
       "source": "datapoble (calculat) — Indicadors derivats i índex IETR · OpenStreetMap (col·laboradors) — via Overpass API",
       "date": "2026",
+      "definicio": {
+        "ca": "Densitat d'establiments de restauració per cada 1000 habitants empadronats. Intensitat d'hostaleria per càpita (stock), 2n senyal de la capa L3.",
+        "es": "Densidad de establecimientos de restauración por cada 1000 habitantes empadronados. Intensidad de hostelería per cápita (stock), 2ª señal de la capa L3."
+      },
       "status": "public"
     },
     "poblacio_pernocta_est": {
@@ -270,6 +334,10 @@
       "format": "integer",
       "source": "datapoble (calculat) — Indicadors derivats i índex IETR · Institut Català d'Energia (ICAEN)",
       "date": "2024/2025",
+      "definicio": {
+        "ca": "La població que DORM al territori sense constar al padró (residents no registrats, segona residència, estacionals que hi pernocten), estimada a partir del consum elèctric domèstic per habitant.",
+        "es": "La población que DUERME en el territorio sin constar en el padrón (residentes no registrados, segunda residencia, estacionales que pernoctan), estimada a partir del consumo eléctrico doméstico por habitante."
+      },
       "status": "public"
     },
     "gap_pernocta": {
@@ -286,6 +354,10 @@
       "format": "integer",
       "source": "datapoble (calculat) — Indicadors derivats i índex IETR · Institut Català d'Energia (ICAEN)",
       "date": "2024/2025",
+      "definicio": {
+        "ca": "Població invisible: població real estimada (pernocta) − padró. La 'gent dels rius de gent' que dorm al territori sense constar.",
+        "es": "Población invisible: población real estimada (pernocta) − padrón. La 'gente de los ríos de gente' que duerme en el territorio sin constar."
+      },
       "status": "public"
     },
     "gap_pernocta_pct": {
@@ -302,6 +374,10 @@
       "format": "percent",
       "source": "datapoble (calculat) — Indicadors derivats i índex IETR · Institut Català d'Energia (ICAEN)",
       "date": "2024/2025",
+      "definicio": {
+        "ca": "Gap de pernocta relatiu sobre el padró: quant per cent més de gent dorm al territori de la registrada.",
+        "es": "Gap de pernocta relativo sobre el padrón: cuánto por ciento más de gente duerme en el territorio de la registrada."
+      },
       "status": "public"
     },
     "carrega_total_est": {
@@ -318,6 +394,10 @@
       "format": "integer",
       "source": "datapoble (calculat) — Indicadors derivats i índex IETR · Agència de Residus de Catalunya (ARC)",
       "date": "2024/2025",
+      "definicio": {
+        "ca": "Pressió humana total sobre el municipi inclosos els visitants de DIA (excursionistes), estimada a partir de la generació de residus per habitant. NO és població: és càrrega.",
+        "es": "Presión humana total sobre el municipio incluidos los visitantes de DÍA (excursionistas), estimada a partir de la generación de residuos por habitante. NO es población: es carga."
+      },
       "status": "public"
     },
     "index_turisme": {
@@ -334,6 +414,10 @@
       "format": "decimal",
       "source": "datapoble (calculat) — Indicadors derivats i índex IETR · Agència de Residus de Catalunya (ARC)",
       "date": "2024",
+      "definicio": {
+        "ca": "Intensitat d'activitat de visitants (hostaleria), via vidre per habitant: z-score comarcal del vidre/hab portat a 0–100 (50 = mitjana comarcal). Proxy d'hostaleria, NO població.",
+        "es": "Intensidad de actividad de visitantes (hostelería), vía vidrio por habitante: z-score comarcal del vidrio/hab llevado a 0–100 (50 = media comarcal). Proxy de hostelería, NO población."
+      },
       "status": "public"
     },
     "confianca": {
@@ -350,6 +434,10 @@
       "format": "text",
       "source": "datapoble (calculat) — Indicadors derivats i índex IETR · Agència de Residus de Catalunya (ARC)",
       "date": "2024/2025",
+      "definicio": {
+        "ca": "Bandera de fiabilitat de les estimacions de les 3 capes: alta/mitjana/baixa segons la corroboració entre els senyals físics (residus, elèctric domèstic/hab, % habitatge no principal) i la mida del municipi. Quan els 3 senyals coincideixen la confiança és alta; quan divergeixen, baixa.",
+        "es": "Bandera de fiabilidad de las estimaciones de las 3 capas: alta/mitjana/baixa según la corroboración entre las señales físicas (residuos, eléctrico doméstico/hab, % vivienda no principal) y el tamaño del municipio. Cuando las 3 señales coinciden la confianza es alta; cuando divergen, baja."
+      },
       "status": "public"
     },
     "poblacio_real_est": {
@@ -366,6 +454,10 @@
       "format": "integer",
       "source": "datapoble (calculat) — Indicadors derivats i índex IETR · Agència de Residus de Catalunya (ARC)",
       "date": "2024/2025",
+      "definicio": {
+        "ca": "ÀLIES de carrega_total_est (mateixa fórmula residus/410). REENQUADRAT: NO és «població real» sinó CÀRREGA humana total (inclou excursionistes). Es conserva per no trencar consumidors; per la població real que pernocta, useu poblacio_pernocta_est.",
+        "es": "ALIAS de carrega_total_est (misma fórmula residuos/410). REENCUADRADO: NO es «población real» sino CARGA humana total (incluye excursionistas). Se conserva para no romper consumidores; para la población real que pernocta, usad poblacio_pernocta_est."
+      },
       "status": "public"
     },
     "gap_abs": {
@@ -382,6 +474,10 @@
       "format": "integer",
       "source": "datapoble (calculat) — Indicadors derivats i índex IETR · Agència de Residus de Catalunya (ARC)",
       "date": "2024/2025",
+      "definicio": {
+        "ca": "carrega_total_est − padró (gap de CÀRREGA, inclou visitants de dia). Es conserva per compatibilitat; per la població invisible que pernocta, useu gap_pernocta.",
+        "es": "carrega_total_est − padrón (gap de CARGA, incluye visitantes de día). Se conserva por compatibilidad; para la población invisible que pernocta, usad gap_pernocta."
+      },
       "status": "public"
     },
     "gap_pct": {
@@ -398,6 +494,10 @@
       "format": "percent",
       "source": "datapoble (calculat) — Indicadors derivats i índex IETR · Agència de Residus de Catalunya (ARC)",
       "date": "2024/2025",
+      "definicio": {
+        "ca": "Gap de càrrega relatiu sobre el padró: quant per cent més de càrrega humana (inclòs el dia) hi ha de la registrada. Per al gap de pernocta, gap_pernocta_pct.",
+        "es": "Gap de carga relativo sobre el padrón: cuánto por ciento más de carga humana (incluido el día) hay de la registrada. Para el gap de pernocta, gap_pernocta_pct."
+      },
       "status": "public"
     },
     "poblacio_real_rel": {
@@ -414,6 +514,10 @@
       "format": "integer",
       "source": "datapoble (calculat) — Indicadors derivats i índex IETR · Agència de Residus de Catalunya (ARC)",
       "date": "2024/2025",
+      "definicio": {
+        "ca": "Presència estimada amb base comarcal (mitjana pop-ponderada). Vista espacial: qui acull més DINS la comarca (≈ suma zero, redistribució).",
+        "es": "Presencia estimada con base comarcal (media pop-ponderada). Vista espacial: quién acoge más DENTRO de la comarca (≈ suma cero, redistribución)."
+      },
       "status": "public"
     },
     "pct_icaen_EFG": {
@@ -429,6 +533,10 @@
       "dimension": "energia",
       "format": "percent",
       "source": "datapoble (calculat) — Indicadors derivats i índex IETR · ICAEN",
+      "definicio": {
+        "ca": "Pes de qualificacions baixes (E,F,G). Proxy de potencial de rehabilitació.",
+        "es": "Peso de calificaciones bajas (E,F,G). Proxy de potencial de rehabilitación."
+      },
       "status": "public"
     },
     "IETR": {
@@ -444,6 +552,10 @@
       "dimension": "index",
       "format": "decimal",
       "source": "datapoble (calculat) — Indicadors derivats i índex IETR",
+      "definicio": {
+        "ca": "Exposició estructural a la pressió turística-residencial, relativa a la distribució (0=mín, 100=màx). Validat externament amb residus (r=0,87).",
+        "es": "Exposición estructural a la presión turística-residencial, relativa a la distribución (0=mín, 100=máx). Validado externamente con residuos (r=0,87)."
+      },
       "note": {
         "ca": "És exposició estructural (stock), no pressió realitzada. Robust a normalització (Spearman>0,97) i a pesos.",
         "es": "Es exposición estructural (stock), no presión realizada. Robusto a normalización (Spearman>0,97) y a pesos."
@@ -463,6 +575,10 @@
       "dimension": "index",
       "format": "rank",
       "source": "datapoble (calculat) — Indicadors derivats i índex IETR",
+      "definicio": {
+        "ca": "Posició del municipi dins la distribució (1 = major exposició).",
+        "es": "Posición del municipio dentro de la distribución (1 = mayor exposición)."
+      },
       "status": "public"
     },
     "pct_indep": {
@@ -479,6 +595,10 @@
       "format": "percent",
       "source": "Generalitat — Processos electorals - Vots",
       "date": "2024",
+      "definicio": {
+        "ca": "Quota del bloc independentista (ERC, Junts, CUP, Aliança.cat, Alhora…) sobre vot vàlid.",
+        "es": "Cuota del bloque independentista (ERC, Junts, CUP, Aliança.cat, Alhora…) sobre voto válido."
+      },
       "note": {
         "ca": "Lectura ECOLÒGICA (no individual; falàcia ecològica). Volàtil en micromunicipis (N petit).",
         "es": "Lectura ECOLÓGICA (no individual; falacia ecológica). Volátil en micromunicipios (N pequeño)."
@@ -499,6 +619,10 @@
       "format": "percent",
       "source": "Generalitat — Processos electorals - Vots",
       "date": "2024",
+      "definicio": {
+        "ca": "Quota del bloc d'esquerra (PSC, ERC, CUP, Comuns…) sobre vot vàlid.",
+        "es": "Cuota del bloque de izquierda (PSC, ERC, CUP, Comuns…) sobre voto válido."
+      },
       "status": "public"
     },
     "pct_extrema_dreta": {
@@ -515,6 +639,10 @@
       "format": "percent",
       "source": "Generalitat — Processos electorals - Vots",
       "date": "2017-2024",
+      "definicio": {
+        "ca": "Quota de l'extrema dreta (Vox + Aliança Catalana + PxC històric) sobre vot vàlid. Sèrie temporal per captar la irrupció.",
+        "es": "Cuota de la extrema derecha (Vox + Aliança Catalana + PxC histórico) sobre voto válido. Serie temporal para captar la irrupción."
+      },
       "note": {
         "ca": "Lectura ecològica. Aliança Catalana és el focus (extrema dreta independentista, emergent i rural).",
         "es": "Lectura ecológica. Aliança Catalana es el foco (extrema derecha independentista, emergente y rural)."
@@ -535,6 +663,10 @@
       "format": "text",
       "source": "Generalitat — Processos electorals - Vots",
       "date": "2024",
+      "definicio": {
+        "ca": "Candidatura més votada al municipi.",
+        "es": "Candidatura más votada en el municipio."
+      },
       "status": "public"
     }
   },
