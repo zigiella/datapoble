@@ -51,6 +51,9 @@ export type MetricKey =
 	// Senyals físics per càpita (inputs de les 3 capes)
 	| 'kwh_hab'
 	| 'vidre_hab'
+	// 2n proxy d'hostaleria de la capa L3 (restauració OSM, complement del vidre)
+	| 'restauracio_estab'
+	| 'restauracio_per_1000hab'
 	// Indicador estrella — MODEL DE 3 CAPES (mètode v2 a docs/poblacio-real-metode.md):
 	//  L1 població que PERNOCTA (via elèctric) → la «població invisible»
 	| 'poblacio_pernocta_est'

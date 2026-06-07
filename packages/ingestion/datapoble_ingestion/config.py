@@ -27,6 +27,15 @@ SOCRATA_DOMAIN = "https://analisi.transparenciacatalunya.cat"
 # Endpoint base Idescat EMEX.
 IDESCAT_EMEX_BASE = "https://api.idescat.cat/emex/v1/dades.json"
 
+# Overpass API (OpenStreetMap) — POIs d'amenity per a la densitat de restauració
+# (2n proxy d'hostaleria, complement del vidre). Sense auth. Llista de miralls per
+# robustesa (el primari respon 406 sense User-Agent → cal capçalera; vegeu connector).
+OVERPASS_ENDPOINTS = (
+    "https://overpass-api.de/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter",
+    "https://overpass.private.coffee/api/interpreter",
+)
+
 # Registre de fonts (procedència). url_template documenta l'accés canònic.
 SOURCES: dict[str, dict] = {
     "rtc": {
@@ -78,6 +87,23 @@ SOURCES: dict[str, dict] = {
         "url": f"{SOCRATA_DOMAIN}/resource/ntc4-rnwr.json",
         "llicencia": "Dades Obertes de Catalunya",
         "kind": "socrata",
+    },
+    # Restauració (CCAE-56: bars, restaurants, cafeteries, menjars ràpids) com a
+    # 2n proxy d'hostaleria de la capa L3 (complement del vidre). PRIMARI = OSM via
+    # Overpass (granular, obert, sense auth): es compten els POIs amb amenity in
+    # (restaurant, cafe, bar, fast_food, pub, biergarten, ice_cream) i s'assignen al
+    # municipi per punt-en-polígon amb la geometria REAL dels 31 munis
+    # (packages/web/static/geo/bergueda-municipis.geojson).
+    # FRONTERA HONESTA: OSM INFRA-MAPEJA les zones rurals → el compte és un MÍNIM, no
+    # un cens. El contrast oficial Idescat (ee, CCAE-56) NO és municipal per API oberta
+    # (l'EMEX només dóna "serveis" agregat; el detall municipal té secret estadístic).
+    "restauracio_osm": {
+        "organisme": "OpenStreetMap (col·laboradors) — via Overpass API",
+        "producte": "Punts d'interès de restauració (amenity=restaurant/cafe/bar/…)",
+        "dataset_id": None,
+        "url": OVERPASS_ENDPOINTS[0],
+        "llicencia": "ODbL (OpenStreetMap) — atribució + compartir-igual",
+        "kind": "overpass",
     },
 }
 

@@ -8,6 +8,11 @@ Scope d'aquest PR: Berguedà (31 municipis). Fonts actives:
   - icaen_consum (consum elèctric municipal) · Socrata 8idm-becu
     proxy de presència per a "població real vs padró"; sector USOS
     DOMÈSTICS (vegeu docs/poblacio-real-fonts.md). Cablejat a `all`.
+  - restauracio_osm (establiments de restauració)  · OpenStreetMap/Overpass
+    2n proxy d'hostaleria (capa L3), complement del vidre. POIs amenity
+    (restaurant/cafe/bar/…) assignats per punt-en-polígon a la geometria
+    real dels 31 munis. OSM infra-mapeja el rural → compte = MÍNIM, no cens.
+    Llicència ODbL. Cablejat a `all`.
 
 Cada connector deixa les dades crues a ``data/raw/<source>/`` i un sidecar
 ``_provenance.json`` (source, url, dataset_id, fetched_at, llicència, files).

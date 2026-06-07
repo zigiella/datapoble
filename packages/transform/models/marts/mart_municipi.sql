@@ -51,6 +51,14 @@ vidre as (
     select * from {{ ref('int_residus_fraccions') }}
 ),
 
+-- 2n proxy d'hostaleria de la capa L3 (complement del vidre): nombre d'establiments
+-- de restauració per municipi (OSM via Overpass, assignats per punt-en-polígon a la
+-- geometria real). El vidre mesura ACTIVITAT (ampolles); la restauració, CAPACITAT
+-- instal·lada (stock). OSM infra-mapeja el rural → compte = MÍNIM observat, no cens.
+restauracio as (
+    select * from {{ ref('stg_restauracio_osm') }}
+),
+
 noms as (
     -- nom oficial: residus té els 31 amb nom net
     select distinct ine5, municipi from {{ ref('stg_residus') }}
@@ -83,13 +91,17 @@ ind as (
         elec_pc.kwh_domestic_pc                                     as kwh_hab,
         -- Senyal L3 (turisme): vidre kg/hab/any. NULL→0 no s'aplica (cobertura 31/31).
         vidre.vidre_hab                                             as vidre_hab,
-        vidre.vidre_any                                             as vidre_any
+        vidre.vidre_any                                             as vidre_any,
+        -- 2n proxy L3 (restauració OSM): compte d'establiments. Absència real → 0,
+        -- no NULL (coherent amb rtc_total; un municipi sense locals mapejats és 0).
+        coalesce(restauracio.restauracio_estab, 0)                  as restauracio_estab
     from emex
-    left join rtc      on emex.ine5 = rtc.ine5
-    left join residus  on emex.ine5 = residus.ine5
-    left join elec_pc  on emex.ine5 = elec_pc.ine5
-    left join vidre    on emex.ine5 = vidre.ine5
-    left join noms     on emex.ine5 = noms.ine5
+    left join rtc         on emex.ine5 = rtc.ine5
+    left join residus     on emex.ine5 = residus.ine5
+    left join elec_pc     on emex.ine5 = elec_pc.ine5
+    left join vidre       on emex.ine5 = vidre.ine5
+    left join restauracio on emex.ine5 = restauracio.ine5
+    left join noms        on emex.ine5 = noms.ine5
 ),
 
 -- med: medianes comarcals dels senyals de presència (per a la bandera de
@@ -181,6 +193,14 @@ select
     -- Senyals físics per càpita (inputs de les 3 capes; exposats per traçabilitat)
     ind.kwh_hab,                                                 -- elèctric domèstic kWh/hab (L1)
     ind.vidre_hab,                                               -- vidre kg/hab/any (L3)
+
+    -- 2n proxy d'hostaleria de la capa L3 (CAPACITAT instal·lada, complement del
+    -- vidre que mesura ACTIVITAT). Compte d'establiments de restauració (OSM) i la
+    -- seva densitat per 1000 hab (numerador OSM / padró Idescat, com rtc_per_1000hab).
+    -- És una MESURA (no inferència); OSM infra-mapeja el rural → MÍNIM, no cens.
+    ind.restauracio_estab,                                       -- establiments (OSM, mínim)
+    round(ind.restauracio_estab / nullif(ind.poblacio, 0) * 1000, 2)
+                                                                as restauracio_per_1000hab,
 
     -- ===================================================================
     -- INDICADOR ESTRELLA — MODEL DE 3 CAPES (INFERÈNCIA, no cens). Mètode de

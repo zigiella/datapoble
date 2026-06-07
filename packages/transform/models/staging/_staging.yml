@@ -39,3 +39,17 @@ models:
         data_tests: [not_null]
       - name: any_consum
         data_tests: [not_null]
+  - name: stg_restauracio_osm
+    description: >
+      Establiments de restauració per municipi (Berguedà), 1 fila/municipi. Ve JA
+      agregat del connector restauracio_osm (POIs OSM amenity=restaurant/cafe/bar/…
+      assignats per punt-en-polígon a la geometria real). 2n proxy d'hostaleria de
+      la capa L3 (capacitat), complement del vidre. MÍNIM observat, no cens (OSM
+      infra-mapeja el rural). 31 esperats.
+    columns:
+      - name: ine5
+        data_tests:
+          - not_null
+          - unique
+      - name: restauracio_estab
+        data_tests: [not_null]
