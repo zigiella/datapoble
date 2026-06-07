@@ -220,9 +220,30 @@ All knobs are env vars (safe defaults; an unconfigured prod deploy fails
 | `AI_MONTHLY_USD` | `20.0` | monthly spend ceiling; `0` = unbounded |
 | `AI_USD_PER_CALL` | `0.01` | conservative per-call estimate (fallback) |
 | `OPENROUTER_MODEL` | `anthropic/claude-3.5-sonnet` | model id |
+| `AI_CORS_ORIGINS` | *(web + local dev)* | comma-separated allowed browser origins (see CORS below) |
+| `AI_CORS_ORIGIN_REGEX` | `https://.*\.pages\.dev` | regex for dynamic origins (CF Pages previews); `""` disables |
 
 `GET /health` reports the live cost-control state (cache hits/size, spend
 to-date vs caps, rate-limit config).
+
+### CORS (the browser calls us cross-origin)
+
+The public **Mirador** front ("Pregunta-li") is an `adapter-static` build served
+from a *different* origin (`riusdegent.cat` / Cloudflare Pages), and it calls
+`/ask`, `/metrics`, `/health` straight from the browser. So the API ships a CORS
+policy (`src/datapoble_ai/api.py`) with **explicit, safe defaults — never `*`**:
+
+- Default allowed origins: `https://riusdegent.cat`, `https://riusdegent.pages.dev`,
+  and local Vite `http://localhost:5173` / `:4173` / `http://127.0.0.1:5173`.
+- Cloudflare Pages preview deploys (`https://<hash>.riusdegent.pages.dev`) are
+  allowed by a default regex (`https://.*\.pages\.dev`).
+- Methods `GET/POST/OPTIONS`; headers `Content-Type`, `X-Datapoble-User`;
+  **credentials off** (no cookies).
+
+**On Render:** set `AI_CORS_ORIGINS` to the comma-separated list of the web's
+domains (it *replaces* the defaults), e.g.
+`AI_CORS_ORIGINS=https://riusdegent.cat,https://riusdegent.pages.dev`. Tune or
+disable the preview regex via `AI_CORS_ORIGIN_REGEX` (`""` turns it off).
 
 ### The container
 
@@ -244,9 +265,10 @@ docker run --rm -p 8000:8000 \
 
 **On Render:** create a *Web Service* from this repo, Docker runtime, Dockerfile
 path `packages/ai/Dockerfile`, region EU. Set `OPENROUTER_API_KEY` as a secret
-and any caps above as plain env vars. Health check path `/health`. Without the
-key the service still runs in **offline** mode (deterministic), which is a fine
-first deploy.
+and any caps above as plain env vars. **Set `AI_CORS_ORIGINS` to the web's
+domains** so the browser-side Mirador front can call the API (see *CORS* above).
+Health check path `/health`. Without the key the service still runs in
+**offline** mode (deterministic), which is a fine first deploy.
 
 ---
 
