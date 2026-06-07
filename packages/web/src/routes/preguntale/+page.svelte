@@ -547,7 +547,7 @@
 		color: var(--dp-accent-600);
 		font-weight: 600;
 	}
-	[data-theme='dark'] .pl-tag {
+	:global([data-theme='dark']) .pl-tag {
 		color: var(--dp-accent-300);
 	}
 	.pl-backend {
