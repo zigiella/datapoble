@@ -302,32 +302,33 @@ export function makeFormatter(format: MetricFormat, locale: string): (n: number)
 }
 
 /**
- * Conjunt de claus el valor de les quals és una RÀTIO (escala 0-1) que s'ha de mostrar
- * com a percentatge amb SIGNE explícit. Els gaps es publiquen així al contracte
- * (`gap_pernocta_pct = gap_pernocta / poblacio`, anàleg per al gap de càrrega; vegeu
- * docs/poblacio-real-metode.md): a diferència de `pct_noprincipal` (escala 0-100), aquí cal
- * multiplicar per 100 i marcar el +/− perquè es llegeixi com una desviació respecte al padró
- * (+87 %, −2 %), no com "0,9 %".
+ * Conjunt de claus que són una DESVIACIÓ amb signe sobre el padró (els gaps de població) i
+ * s'han de mostrar amb el +/− explícit. El valor ja ve en escala 0-100 del contracte
+ * (`gap_pernocta_pct = gap_pernocta / poblacio * 100`, igual que `pct_noprincipal`); aquí
+ * NOMÉS hi afegim el signe perquè es llegeixi com una desviació respecte al padró (+31 %,
+ * −2 %), no com un percentatge net. El ×100 ja NO viu al frontend: cap component cuina
+ * l'escala (la convenció única és del contracte; vegeu docs/poblacio-real-metode.md).
  */
-export const SIGNED_RATIO_PCT_KEYS = new Set<MetricKey>(['gap_pernocta_pct', 'gap_pct']);
+export const SIGNED_PCT_KEYS = new Set<MetricKey>(['gap_pernocta_pct', 'gap_pct']);
 
 /**
  * Formatador sensible a la CLAU de mètrica (no només al format). Igual que `makeFormatter`
- * tret de les mètriques de ràtio amb signe (gap), on converteix la ràtio 0-1 a percentatge
- * amb signe explícit. La resta de claus deleguen al formatador per format.
+ * tret de les mètriques de desviació amb signe (els gaps): hi afegeix el +/− explícit. El
+ * valor ja és 0-100 (com la resta de `percent`), així que NO el reescala. La resta de claus
+ * deleguen al formatador per format.
  */
 export function makeMetricFormatter(
 	key: MetricKey | undefined,
 	format: MetricFormat,
 	locale: string
 ): (n: number) => string {
-	if (key && SIGNED_RATIO_PCT_KEYS.has(key)) {
+	if (key && SIGNED_PCT_KEYS.has(key)) {
 		const loc = locale === 'es' ? 'es-ES' : 'ca-ES';
 		return (n) =>
 			new Intl.NumberFormat(loc, {
 				maximumFractionDigits: 0,
 				signDisplay: 'exceptZero'
-			}).format(n * 100) + ' %';
+			}).format(n) + ' %';
 	}
 	return makeFormatter(format, locale);
 }
