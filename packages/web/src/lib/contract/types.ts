@@ -94,6 +94,13 @@ export interface MetricDef {
 	key: MetricKey;
 	/** label.ca / label.es del contracte. La UI MAI no codifica això. */
 	label: Localized;
+	/**
+	 * Definició canònica del contracte (definicio.ca/.es de metrics.yml) — el text del
+	 * «diccionari» que pinta el glossari. Opcional perquè l'export actual del dataset
+	 * (`tools/export_web_municipis.py`) encara NO l'emet (handoff a Sondeig); el glossari
+	 * la llegeix si hi és i, si no, recau en `note`. Mai es codifica a la UI.
+	 */
+	definicio?: Localized;
 	/** Unitat de mesura (unit del contracte). "%" és comú a ambdós locales. */
 	unit: Localized;
 	dimension: 'demografia' | 'vivenda' | 'turisme' | 'pressio' | 'energia' | 'index' | 'politica';
