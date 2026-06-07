@@ -61,6 +61,12 @@ jobs:
 
       - if: steps.gate.outputs.skip != 'true'
         name: Build (estàtic; el prebuild copia data/web → static/)
+        env:
+          # URL pública de l'API (Render) perquè el «Pregunta-li» la cridi des del navegador.
+          # Buida fins que IT defineixi la VARIABLE de repo PUBLIC_API_BASE (Settings → Secrets
+          # and variables → Actions → Variables). Sense valor, el front mostra l'estat «en
+          # standby» (no trenca res); amb valor, el següent deploy l'enllaça sol.
+          PUBLIC_API_BASE: ${{ vars.PUBLIC_API_BASE }}
         run: npm --prefix packages/web run build
 
       - if: steps.gate.outputs.skip != 'true'
