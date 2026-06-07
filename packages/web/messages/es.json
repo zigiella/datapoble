@@ -35,6 +35,8 @@
   "resum_rank_of": "de 31",
   "resum_ietr_scale": "IETR · 0–100",
   "resum_srcline": "Ninguna cifra sin procedencia. Lectura a escala comarcal. Datos reales de los 31 municipios del Berguedà, con la forma del contrato semántico (fuente: marts de riusdegent).",
+  "resum_grp_fisics": "Señales físicas · per cápita",
+  "resum_grp_capes": "Las 3 capas · inferencia",
   "prov_key_measured": "dato oficial directo",
   "prov_key_derived": "inferencia / índice (datapoble)",
   "card_rank_label": "Ranking IETR comarcal",

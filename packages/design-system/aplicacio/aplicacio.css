@@ -135,6 +135,9 @@
   font-variant-numeric:tabular-nums; white-space:nowrap; }
 .ex__row .val .u{ font-size:.62rem; font-weight:500; color:var(--dp-text-subtle); margin-left:3px; }
 .ex__row.hl{ background:var(--dp-bg-subtle); margin:0 -20px; padding-left:20px; padding-right:20px; }
+/* rètol mono de subgrup dins la fitxa (mesura → inferència), pell coherent amb .ex__rank/.ex__meta */
+.ex__grp{ font-family:var(--dp-font-mono); font-size:.58rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--dp-text-subtle); padding:14px 0 5px; margin-top:6px; border-top:1px solid var(--dp-border); }
 
 .caveats{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:18px; }
 @media (max-width:760px){ .caveats{ grid-template-columns:1fr; } }
