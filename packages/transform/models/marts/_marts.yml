@@ -131,7 +131,7 @@ models:
         data_tests:
           - not_null
       - name: gap_pernocta_pct
-        description: "L1. gap_pernocta / poblacio (fracció; 0,12 = +12%)."
+        description: "L1. gap_pernocta / poblacio * 100 (percentatge 0-100; +12 = +12%)."
         data_tests:
           - not_null
       # L2 · càrrega humana total (residus/base_residencial) — inclou visitants de dia.
@@ -169,7 +169,7 @@ models:
         data_tests:
           - not_null
       - name: gap_pct
-        description: "gap_abs / poblacio (fracció). Compat; vegeu gap_pernocta_pct per L1."
+        description: "gap_abs / poblacio * 100 (percentatge 0-100). Compat; vegeu gap_pernocta_pct per L1."
         data_tests:
           - not_null
       - name: poblacio_real_rel
