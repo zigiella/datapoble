@@ -61,10 +61,12 @@
 		<a href={localizeHref('/glossari')} class:on={isActive('/glossari')} aria-current={isActive('/glossari') ? 'page' : undefined}>
 			<span>{m.nav_glossari()}</span>
 		</a>
+		<a href={localizeHref('/preguntale')} class:on={isActive('/preguntale')} aria-current={isActive('/preguntale') ? 'page' : undefined}>
+			<span>{m.nav_preguntale()}</span>
+		</a>
 		<span class="nav-inert" aria-disabled="true">{m.nav_index()}</span>
 		<span class="nav-inert" aria-disabled="true">{m.nav_daytripper()}</span>
 		<span class="nav-inert" aria-disabled="true">{m.nav_politica()}</span>
-		<span class="nav-inert" aria-disabled="true">{m.nav_preguntale()}</span>
 	</nav>
 	<div class="ds-top__right">
 		<LangSwitcher />
@@ -109,7 +111,7 @@
 				<li><span class="foot-inert" aria-disabled="true">{m.foot_about_who()}</span></li>
 				<li><span class="foot-inert" aria-disabled="true">{m.foot_about_politica()}</span></li>
 				<li><span class="foot-inert" aria-disabled="true">{m.foot_link_contract()}</span></li>
-				<li><span class="foot-inert" aria-disabled="true">{m.foot_about_ask()}</span></li>
+				<li><a href={localizeHref('/preguntale')}>{m.foot_about_ask()}</a></li>
 			</ul>
 		</div>
 		<div class="ap-foot__ctl">

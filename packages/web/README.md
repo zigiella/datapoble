@@ -75,6 +75,22 @@ packages/web/
 - **Selector d'idioma:** `LangSwitcher.svelte` (conserva la ruta, canvia el prefix; la cookie recorda l'elecció).
 - **Xifres:** `src/lib/format.ts` fa servir `Intl.NumberFormat` segons el locale (separadors, %, decimals).
 
+### API de «Pregunta-li» (`PUBLIC_API_BASE`)
+
+La pàgina **`/preguntale`** (la cara pública de la IA de Brúixola) consulta l'API **des del navegador** (el web és estàtic, `adapter-static`: no hi ha servidor que faci de proxy). La base de l'API es configura amb una variable d'entorn **pública** de SvelteKit:
+
+```bash
+# .env (local) o variable d'entorn del build a Cloudflare Pages
+PUBLIC_API_BASE="https://datapoble-api.onrender.com"   # sense barra final
+```
+
+- Es llegeix amb `$env/dynamic/public` (a `src/lib/ask/api.ts`), de manera que **si no es defineix, el build no peta**: la pàgina mostra l'estat amable «el servei encara no està actiu».
+- En **desenvolupament** (`vite dev`), si no es defineix, s'usa `http://localhost:8000` per defecte.
+- En **producció estàtica** sense la variable, queda buida → la pàgina degrada amablement (mai una pantalla trencada). El build i el prerender funcionen **sense API viva**.
+- Contracte consumit (NO inventat): `POST {API_BASE}/ask` amb `{ question, locale }` → `{ kind, text, backend, data, provenance, refusal_reason, metric_key }`; HTTP **429** → refús `rate_limited` (capçalera `Retry-After`).
+
+> `.env*` està a `.gitignore`: la variable no es versiona; es defineix a l'entorn de build (Cloudflare Pages) o en un `.env` local.
+
 ### Contracte i dades
 
 - Les **etiquetes dels indicadors NO es codifiquen** a la UI ni als catàlegs i18n: vénen del **contracte** (`semantic/metrics.yml`, camps `label.ca`/`label.es`), reflectit a `src/lib/contract/types.ts` i poblat a `src/lib/mock/municipis.ts`.
