@@ -6,7 +6,7 @@
 
 ---
 
-## 0. Resum executiu
+## 0. El projecte: resum, missió i ambició
 
 **riusdegent** és un observatori obert de **com s'habita el territori**. El seu nord és el desajust entre el **padró oficial** i la **habitança real**: fer visible la població que no consta però omple un municipi (segona residència, estacionals, excursionistes) i la que consta però ha marxat.
 
@@ -14,6 +14,10 @@ Es construeix sobre **dos pilars**:
 
 1. **Capes d'habitança** — marts estructurats (vivenda, turisme, energia, l'indicador estrella de població real, índex IETR, política), tot ancorat a fonts oficials obertes.
 2. **El cabal** — intel·ligència territorial a partir de **rastres administratius** (contractació pública, declaracions de sequera…): quan un fenomen no té dataset net, el seu *rastre* sí que existeix.
+
+**La missió.** riusdegent vol fer comprensible un fenomen que les xifres oficials amaguen: **com s'habita realment el territori** — la despoblació que el padró encara no registra, la segona residència que infla un poble els caps de setmana, la turistificació que pressiona pobles de 200 habitants, i la **geografia social i electoral** que hi ha al darrere. És un **bé públic**: dades obertes, reproduïbles i honestes, al servei del debat ciutadà i de qui decideix sobre el territori. La premissa és que **es decideix millor sobre allò que es veu bé** — i avui, bona part de la habitança real és invisible a les estadístiques.
+
+**L'ambició.** El **Berguedà (31 municipis) és el pilot** —la prova que el mètode funciona—, però el disseny apunta des del primer dia a **tota Catalunya (~947 municipis)**: les fonts (ARC, ICAEN, Idescat, ACA, contractació pública, dades electorals) són **catalanes i municipals**, i els dos pilars estan pensats per **generalitzar** (bases residencials **per comarca**, rastres del cabal a escala país). L'horitzó és un **observatori territorial reutilitzable** — un mètode i una infraestructura oberta que altres territoris puguin adoptar, no un quadre de comandament tancat per a un sol cas.
 
 **Principi rector innegociable:** *cap xifra sense procedència, cap inferència disfressada de mesura.* Tot indicador porta fórmula, font, data i la frontera **dada/inferència** explícita. On no tenim dada fiable, ho diem (un buit honest val més que un fals precís).
 
