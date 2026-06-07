@@ -4,6 +4,8 @@
 *.key
 *_secret*
 .openrouter
+# Excepció: defaults PÚBLICS del build del front (no és secret; vegeu packages/web/.env)
+!packages/web/.env
 
 # --- Python ---
 __pycache__/
