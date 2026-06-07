@@ -22,6 +22,7 @@
 	import type { FeatureCollection } from 'geojson';
 	import type { MunicipisDataset, MetricKey } from '$lib/contract/types';
 	import { type Classification } from '$lib/map/classify';
+	import { mapValue } from '$lib/map/indicators';
 	import { rampColors, divergingColors, NODATA, MAP } from '$lib/map/palette';
 
 	/** Nivell de confiança de l'estimació que rep tractament d'honestedat (no es pinta sòlid). */
@@ -158,7 +159,10 @@
 			features: fc.features.map((f) => {
 				const ine5 = (f.properties?.ine5 as string) ?? '';
 				const row = dataset.municipis[ine5];
-				const raw = row?.values?.[key];
+				// `mapValue` degrada a null el 0 d'OSM de la restauració (buit de mapejat): així
+				// __hasval és fals i el municipi cau a la capa de tramat «sense dada», no al color
+				// de classe baixa (honestedat: 0 d'OSM ≠ 0 real d'hostaleria).
+				const raw = mapValue(key, row?.values?.[key]);
 				const hasVal = typeof raw === 'number' && Number.isFinite(raw);
 				const conf = (row?.values?.confianca as string | undefined) ?? null;
 				return {
@@ -350,7 +354,9 @@
 				map.getCanvas().style.cursor = 'pointer';
 
 				const row = dataset.municipis[ine5];
-				const value = (row?.values?.[indicator] ?? null) as number | string | null;
+				// Mateix tractament que el pintat: el 0 d'OSM de la restauració es mostra «sense
+				// dada» al tooltip, no «0,0 per mil» (és buit de mapejat, no absència real).
+				const value = mapValue(indicator, row?.values?.[indicator]);
 				onhover?.({
 					ine5,
 					nom: (feat.properties?.nom as string) ?? row?.nom ?? ine5,
