@@ -35,6 +35,8 @@
   "resum_rank_of": "de 31",
   "resum_ietr_scale": "IETR · 0–100",
   "resum_srcline": "Cap xifra sense procedència. Lectura a escala comarcal. Dades reals dels 31 municipis del Berguedà, amb la forma del contracte semàntic (font: marts de riusdegent).",
+  "resum_grp_fisics": "Senyals físics · per càpita",
+  "resum_grp_capes": "Les 3 capes · inferència",
   "prov_key_measured": "dada oficial directa",
   "prov_key_derived": "inferència / índex (datapoble)",
   "card_rank_label": "Rànquing IETR comarcal",

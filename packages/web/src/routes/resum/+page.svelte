@@ -37,6 +37,7 @@
 	];
 
 	// Indicadors de cada fitxa de municipi (ordre del target). hl = files ressaltades.
+	// Bloc 1: senyals MESURATS (es queden tal qual, els de sempre).
 	const fichaKeys: MetricKey[] = [
 		'poblacio',
 		'hab_total',
@@ -48,7 +49,29 @@
 		'rtc_per_1000hab',
 		'kg_hab_any'
 	];
-	const highlightRows = new Set<MetricKey>(['pct_noprincipal', 'rtc_per_1000hab']);
+
+	// Subgrups afegits sota els mesurats, separats pedagògicament (mesura → inferència).
+	// El punt de procedència NO es força: el determina el contracte via `provenanceOf`
+	// (els inputs físics surten slate si la seva font és oficial; les 3 capes, porpra,
+	// perquè la seva font és "datapoble (calculat)"). `restauracio_per_1000hab` és un
+	// derivat OSM, així que el seu punt seguirà igualment el contracte.
+	type FichaGroup = { label: () => string; keys: MetricKey[] };
+	const fichaGroups: FichaGroup[] = [
+		{ label: m.resum_grp_fisics, keys: ['kwh_hab', 'vidre_hab', 'restauracio_per_1000hab'] },
+		{ label: m.resum_grp_capes, keys: ['gap_pernocta_pct', 'carrega_total_est', 'index_turisme'] }
+	];
+
+	// Files ressaltades: els proxies de pernocta/no-principal i la mètrica estrella del
+	// bloc inferit, `gap_pernocta_pct` (la població invisible).
+	const highlightRows = new Set<MetricKey>([
+		'pct_noprincipal',
+		'rtc_per_1000hab',
+		'gap_pernocta_pct'
+	]);
+
+	// Mètriques on un 0 NO és una dada sinó absència de mapeig (recompte mínim d'OSM,
+	// no cens): es mostren com a «sense dada», no com a «0,0». Honestedat de procedència.
+	const ZERO_IS_ABSENT = new Set<MetricKey>(['restauracio_per_1000hab']);
 
 	// Unitats curtes que mostra el target a la línia de cada xifra (compactes, no del contracte:
 	// el contracte dona la unitat llarga; aquí en triem la forma curta editorial que es veu a la
@@ -72,14 +95,24 @@
 		return formatMetric(value, def, locale) ?? m.value_not_available();
 	}
 
-	// Valor d'una mètrica per a un municipi, ja formatat al locale (sense unitat).
-	function fmt(row: MunicipiRow, key: MetricKey): string {
-		return fmtValue(row.values[key], dataset.metrics[key]);
+	// Valor efectiu d'una mètrica per a un municipi, aplicant la regla d'honestedat:
+	// per a les claus de ZERO_IS_ABSENT un 0 és buit de mapeig (OSM), no una dada, i es
+	// tracta com a absent (null). Centralitzat perquè `fmt` i `prov` siguin coherents.
+	function effectiveValue(row: MunicipiRow, key: MetricKey): MetricValue | undefined {
+		const v = row.values[key];
+		if (ZERO_IS_ABSENT.has(key) && v === 0) return null;
+		return v;
 	}
 
-	// Procedència d'una mètrica per a un municipi (per pintar el punt).
+	// Valor d'una mètrica per a un municipi, ja formatat al locale (sense unitat).
+	function fmt(row: MunicipiRow, key: MetricKey): string {
+		return fmtValue(effectiveValue(row, key), dataset.metrics[key]);
+	}
+
+	// Procedència d'una mètrica per a un municipi (per pintar el punt). Si el valor
+	// efectiu és absent (incl. el 0-com-a-buit d'OSM), surt com a «sense dada».
 	function prov(row: MunicipiRow, key: MetricKey) {
-		const v = row.values[key];
+		const v = effectiveValue(row, key);
 		return provenanceOf(dataset.metrics[key], v !== null && v !== undefined);
 	}
 
@@ -118,6 +151,25 @@
 	const heroDivis = { cx: 770, cy: 230, r: 150, sq: 1.18, seed: 1.4 };
 	const heroLabels = ['41.523', '33,8 %', '14,3 ‰', '452,4', '166', '593', '1.245 m'];
 </script>
+
+<!-- Una fila d'indicador d'una fitxa (clau + valor amb unitat curta i punt de
+     procedència). Reutilitzada pels mesurats i pels dos subgrups inferits perquè
+     comparteixin exactament la pell de `.ex__row`. -->
+{#snippet fichaRow(row: MunicipiRow, key: MetricKey)}
+	{@const def = dataset.metrics[key]}
+	{@const isPct = def.format === 'percent'}
+	{@const unit = SHORT_UNIT[key]}
+	<div class="ex__row" class:hl={highlightRows.has(key)}>
+		<span class="k"
+			><span class="pd {provDotClass(prov(row, key))}"></span><span>{pick(def.label, locale)}</span
+			></span
+		>
+		<span class="val"
+			>{fmt(row, key)}{#if isPct}<span class="u">%</span>{:else if unit}<span class="u">{unit}</span
+				>{/if}</span
+		>
+	</div>
+{/snippet}
 
 <svelte:head>
 	<title>{m.resum_title()} · {m.app_name()}</title>
@@ -224,21 +276,16 @@
 						</div>
 						<div class="ex__rows tnum">
 							{#each fichaKeys as key (key)}
-								{@const def = dataset.metrics[key]}
-								{@const isPct = def.format === 'percent'}
-								{@const unit = SHORT_UNIT[key]}
-								<div class="ex__row" class:hl={highlightRows.has(key)}>
-									<span class="k"
-										><span class="pd {provDotClass(prov(ex.row, key))}"></span><span
-											>{pick(def.label, locale)}</span
-										></span
-									>
-									<span class="val"
-										>{fmt(ex.row, key)}{#if isPct}<span class="u">%</span>{:else if unit}<span
-												class="u">{unit}</span
-											>{/if}</span
-									>
-								</div>
+								{@render fichaRow(ex.row, key)}
+							{/each}
+							<!-- Senyals inferits: 2 subgrups amb rètol mono, separats dels mesurats.
+							     Mostra què és senyal físic (punt slate via contracte) i què és
+							     inferència / les 3 capes (punt porpra). -->
+							{#each fichaGroups as group (group.label)}
+								<div class="ex__grp">{group.label()}</div>
+								{#each group.keys as key (key)}
+									{@render fichaRow(ex.row, key)}
+								{/each}
 							{/each}
 						</div>
 					</article>
