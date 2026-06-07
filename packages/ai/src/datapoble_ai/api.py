@@ -26,6 +26,19 @@ Endpoints:
 - ``GET  /health``   -> liveness + active backend + cost-control stats.
 - ``GET  /metrics``  -> the available metrics (catalog introspection).
 - ``POST /ask``      -> {question, locale} -> answer + provenance.
+
+**CORS.** Mirador (the public "Pregunta-li" front, an `adapter-static` build) calls
+this API **from the browser**, cross-origin, so the response must carry
+``Access-Control-Allow-Origin``. The allowed origins are read once at startup from
+the environment (see :func:`cors_config_from_env`), with safe **explicit** defaults
+— never ``["*"]``. Override on Render with:
+
+- ``AI_CORS_ORIGINS``      — comma-separated exact origins (replaces the defaults).
+- ``AI_CORS_ORIGIN_REGEX`` — optional regex for dynamic origins (e.g. Cloudflare
+  Pages preview deploys ``https://<hash>.riusdegent.pages.dev``). Defaults to a
+  pattern matching ``*.pages.dev`` so preview builds work out of the box.
+
+Credentials are **off** (no cookies); methods are limited to GET/POST/OPTIONS.
 """
 
 from __future__ import annotations
@@ -34,6 +47,7 @@ import os
 from functools import lru_cache
 
 from fastapi import FastAPI, Request, Response
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from .agent import Agent
@@ -42,11 +56,79 @@ from .costcontrol import CostControl
 from .router import Router
 from .types import RefusalReason
 
+# Safe explicit defaults: the production web (riusdegent.cat), the Cloudflare
+# Pages project, and the local Vite dev/preview ports. Deliberately NOT ``["*"]``
+# — an unconfigured deploy is permissive enough for the real front and nothing
+# else. Override entirely via ``AI_CORS_ORIGINS`` (see ``cors_config_from_env``).
+DEFAULT_CORS_ORIGINS: tuple[str, ...] = (
+    "https://riusdegent.cat",
+    "https://riusdegent.pages.dev",
+    "http://localhost:5173",   # Vite dev
+    "http://localhost:4173",   # Vite preview
+    "http://127.0.0.1:5173",
+)
+
+# Cloudflare Pages gives every preview deploy a unique ``<hash>.<project>.pages.dev``
+# host. Matching them by exact origin is impossible, so we allow them by regex by
+# default. Override/disable via ``AI_CORS_ORIGIN_REGEX`` ("" turns it off).
+DEFAULT_CORS_ORIGIN_REGEX: str = r"https://.*\.pages\.dev"
+
+# Request headers Mirador may send: JSON body (Content-Type) and the optional
+# rate-limit identity hint the API reads in ``_client_identity``.
+CORS_ALLOW_HEADERS: tuple[str, ...] = ("Content-Type", "X-Datapoble-User")
+CORS_ALLOW_METHODS: tuple[str, ...] = ("GET", "POST", "OPTIONS")
+
+
+def cors_config_from_env(env: dict[str, str] | None = None) -> dict:
+    """Build the ``CORSMiddleware`` kwargs from the environment (read once).
+
+    Mirrors the env-reading discipline of ``CostControl.from_env``: every knob is
+    optional with a safe default, so deployment tuning is an env var on Render and
+    never a code change.
+
+    - ``AI_CORS_ORIGINS`` — comma-separated list of exact allowed origins. When
+      set (non-empty), it **replaces** :data:`DEFAULT_CORS_ORIGINS`; entries are
+      trimmed and blanks dropped. Unset → the explicit defaults (the real web +
+      local dev). Never defaults to ``"*"``.
+    - ``AI_CORS_ORIGIN_REGEX`` — optional regex for dynamic origins (Cloudflare
+      Pages previews). Unset → :data:`DEFAULT_CORS_ORIGIN_REGEX`; an explicit
+      empty string disables the regex entirely.
+
+    ``allow_credentials`` is always ``False`` (the API uses no cookies), which is
+    also what makes the explicit-origin allowlist meaningful.
+    """
+    src = os.environ if env is None else env
+
+    raw_origins = src.get("AI_CORS_ORIGINS")
+    if raw_origins is not None and raw_origins.strip():
+        origins = [o.strip() for o in raw_origins.split(",") if o.strip()]
+    else:
+        origins = list(DEFAULT_CORS_ORIGINS)
+
+    raw_regex = src.get("AI_CORS_ORIGIN_REGEX")
+    # Unset -> default regex; explicit "" -> no regex (None disables it).
+    origin_regex = DEFAULT_CORS_ORIGIN_REGEX if raw_regex is None else raw_regex
+    origin_regex = origin_regex or None
+
+    return {
+        "allow_origins": origins,
+        "allow_origin_regex": origin_regex,
+        "allow_methods": list(CORS_ALLOW_METHODS),
+        "allow_headers": list(CORS_ALLOW_HEADERS),
+        "allow_credentials": False,
+    }
+
+
 app = FastAPI(
     title="datapoble · Brúixola",
     description="Traceable text-to-SQL over the semantic contract. Provenance always.",
     version="0.1.0",
 )
+
+# CORS so the browser-side Mirador front can call us cross-origin. Configured
+# from env at import (read once), with explicit, safe defaults — see
+# ``cors_config_from_env`` and the module docstring.
+app.add_middleware(CORSMiddleware, **cors_config_from_env())
 
 
 @lru_cache(maxsize=1)
