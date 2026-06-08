@@ -71,6 +71,8 @@ METRIC_KEYS = [
     # Compatibilitat (model anterior d'una capa), reenquadrades:
     "poblacio_real_est", "gap_abs", "gap_pct", "poblacio_real_rel",
     "pct_icaen_EFG", "IETR", "IETR_rank",
+    # FASE 1 · 3 derivats nous (endurir el model): IETR dual + tipologia + score.
+    "IETR_stock", "IETR_impact", "tipologia", "confianca_score",
     "pct_indep", "pct_esquerra", "pct_extrema_dreta", "guanya",
 ]
 
@@ -95,6 +97,9 @@ FORMAT_BY_KEY = {
     "poblacio_real_est": "integer", "gap_abs": "integer", "gap_pct": "percent",
     "poblacio_real_rel": "integer", "confianca": "text",
     "pct_icaen_EFG": "percent", "IETR": "decimal", "IETR_rank": "rank",
+    # FASE 1: IETR dual 0-100 → decimal; tipologia categòrica → text; score 0-100 → decimal.
+    "IETR_stock": "decimal", "IETR_impact": "decimal",
+    "tipologia": "text", "confianca_score": "decimal",
     "pct_indep": "percent", "pct_esquerra": "percent",
     "pct_extrema_dreta": "percent", "guanya": "text",
 }
@@ -121,10 +126,13 @@ COL_MUNI = {
     "gap_pct": "gap_pct", "poblacio_real_rel": "poblacio_real_rel",
     "confianca": "confianca",
     "pct_icaen_EFG": "pct_icaen_EFG", "IETR": "IETR", "IETR_rank": "IETR_rank",
+    # FASE 1 · 3 derivats nous.
+    "IETR_stock": "IETR_stock", "IETR_impact": "IETR_impact",
+    "tipologia": "tipologia", "confianca_score": "confianca_score",
 }
 
 # Columnes de mart_municipi que són TEXT (no numèriques) → no passen per _num().
-TEXT_COLS_MUNI = {"confianca"}
+TEXT_COLS_MUNI = {"confianca", "tipologia"}
 COL_ELEC = {
     "pct_indep": f"pct_indep_{ELEC}",
     "pct_esquerra": f"pct_esq_{ELEC}",

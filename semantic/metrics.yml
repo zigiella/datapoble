@@ -609,6 +609,101 @@ metrics:
     column: IETR_rank
     visibility: public
 
+  # --- FASE 1 · endurir el model SENSE fonts noves (3 derivats sobre dades existents) ---
+  # IETR DUAL: l'IETR (= 0.5*A_resid + 0.5*B_turis) barreja stock estructural i
+  # impacte realitzat; els exposem per separat. Tots dos ja són 0-100 (winsoritzats).
+  IETR_stock:
+    label: {ca: "IETR · component estructural (stock)", es: "IETR · componente estructural (stock)"}
+    label_ca: "IETR · component estructural (stock)"
+    label_es: "IETR · componente estructural (stock)"
+    definicio:
+      ca: "Costat ESTRUCTURAL/resident de l'IETR (eix A reescalat 0-100): exposició LATENT inscrita al parc d'habitatge (habitatge no principal + habitatges per habitant). Quant de territori està preparat per a la pressió turística-residencial, hi hagi o no activitat ara mateix."
+      es: "Lado ESTRUCTURAL/residente del IETR (eje A reescalado 0-100): exposición LATENTE inscrita en el parque de vivienda (vivienda no principal + viviendas por habitante). Cuánto territorio está preparado para la presión turística-residencial, haya o no actividad ahora mismo."
+    dimension: index
+    categoria: derived
+    unit: "0-100"
+    formula: "A_resid reescalat 0-100 (mitjana de pct_noprincipal i hab_per_hab, min-max winsoritzat p5/p95). És el component estructural de l'IETR: IETR = 0.5*IETR_stock + 0.5*IETR_impact"
+    source: datapoble
+    origin_source: idescat_emex
+    font: "Idescat (Cens d'habitatge 2021 + padró)"
+    date: "2021/2025"
+    table: mart_municipi
+    column: IETR_stock
+    visibility: public
+    nota:
+      ca: "Desglossament de l'IETR (no una mesura nova): exposició STOCK, no pressió realitzada. Alt a municipis amb molt habitatge secundari/buit encara que el turisme reglat sigui baix (Gósol, Castellar). Relatiu a la comarca (winsoritzat). Inferència."
+      es: "Desglose del IETR (no una medida nueva): exposición STOCK, no presión realizada. Alto en municipios con mucha vivienda secundaria/vacía aunque el turismo reglado sea bajo (Gósol, Castellar). Relativo a la comarca (winsorizado). Inferencia."
+    synonyms: {ca: [ietr estructural, stock, exposició latent, habitatge buit], es: [ietr estructural, stock, exposición latente, vivienda vacía]}
+
+  IETR_impact:
+    label: {ca: "IETR · component de pressió (impacte)", es: "IETR · componente de presión (impacto)"}
+    label_ca: "IETR · component de pressió (impacte)"
+    label_es: "IETR · componente de presión (impacto)"
+    definicio:
+      ca: "Costat de PRESSIÓ realitzada de l'IETR (eix B reescalat 0-100): activitat turística viva inscrita als establiments reglats (RTC per 1000 hab + per 100 habitatges). Quanta pressió turística s'està exercint realment, ara."
+      es: "Lado de PRESIÓN realizada del IETR (eje B reescalado 0-100): actividad turística viva inscrita en los establecimientos reglados (RTC por 1000 hab + por 100 viviendas). Cuánta presión turística se está ejerciendo realmente, ahora."
+    dimension: index
+    categoria: derived
+    unit: "0-100"
+    formula: "B_turis reescalat 0-100 (mitjana de rtc_per_1000hab i rtc_per_100hab_viv, min-max winsoritzat p5/p95). És el component de pressió de l'IETR: IETR = 0.5*IETR_stock + 0.5*IETR_impact"
+    source: datapoble
+    origin_source: rtc
+    font: "Registre de Turisme de Catalunya (RTC) + Idescat (padró/habitatge)"
+    date: "2024/2025"
+    table: mart_municipi
+    column: IETR_impact
+    visibility: public
+    nota:
+      ca: "Desglossament de l'IETR (no una mesura nova): pressió REALITZADA, no stock. Pot ser alt amb poc habitatge buit si hi ha molta oferta reglada activa (Capolat, Sagàs). Relatiu a la comarca (winsoritzat). Inferència."
+      es: "Desglose del IETR (no una medida nueva): presión REALIZADA, no stock. Puede ser alto con poca vivienda vacía si hay mucha oferta reglada activa (Capolat, Sagàs). Relativo a la comarca (winsorizado). Inferencia."
+    synonyms: {ca: [ietr impacte, pressió viva, oferta reglada, rtc], es: [ietr impacto, presión viva, oferta reglada, rtc]}
+
+  tipologia:
+    label: {ca: "Tipologia d'habitança", es: "Tipología de habitación del territorio"}
+    label_ca: "Tipologia d'habitança"
+    label_es: "Tipología de habitación del territorio"
+    definicio:
+      ca: "Classificació amb NOM de com s'habita el municipi, llegida dels senyals físics (no «més/menys»): dormitori_invisible, excursio, segona_residencia, capital_serveis, buit_administratiu o indeterminat. Classificador basat en regles sobre z-scores comarcals (vegeu docs/tipologia-municipal.md)."
+      es: "Clasificación con NOMBRE de cómo se habita el municipio, leída de las señales físicas (no «más/menos»): dormitori_invisible, excursio, segona_residencia, capital_serveis, buit_administratiu o indeterminat. Clasificador basado en reglas sobre z-scores comarcales (véase docs/tipologia-municipal.md)."
+    dimension: index
+    categoria: derived
+    unit: {ca: "categoria", es: "categoría"}
+    formula: "Classificador de regles sobre z-scores comarcals de gap_pernocta_pct, index_turisme, pct_noprincipal, poblacio, carrega_total_est i l'activitat (residus/vidre/restauració). Primera regla que encaixa; 'indeterminat' si cap. Vegeu docs/tipologia-municipal.md per als llindars."
+    source: datapoble
+    origin_source: residus
+    font: "Síntesi de senyals ja al mart (ARC residus/vidre · ICAEN elèctric · RTC · OSM · Idescat)"
+    date: "2024/2025"
+    table: mart_municipi
+    column: tipologia
+    visibility: public
+    caveat:
+      ca: "És una LECTURA, no un cens ni una etiqueta oficial: assigna l'arquetip que millor encaixa amb els senyals físics inferits del municipi (lectura ECOLÒGICA, sobre l'agregat). On els senyals són ambigus o contradictoris → 'indeterminat' (honestedat: no es força una etiqueta). Els llindars són comarcals (z-scores sobre el Berguedà); a escala Catalunya seran per comarca. Volàtil en micromunicipis: creuar SEMPRE amb confianca / confianca_score."
+      es: "Es una LECTURA, no un censo ni una etiqueta oficial: asigna el arquetipo que mejor encaja con las señales físicas inferidas del municipio (lectura ECOLÓGICA, sobre el agregado). Donde las señales son ambiguas o contradictorias → 'indeterminat' (honestidad: no se fuerza una etiqueta). Los umbrales son comarcales (z-scores sobre el Berguedà); a escala Cataluña serán por comarca. Volátil en micromunicipios: cruzar SIEMPRE con confianza / confianca_score."
+    synonyms: {ca: [tipologia, tipus de municipi, arquetip, dormitori, excursió, segona residència, capital de serveis], es: [tipología, tipo de municipio, arquetipo, dormitorio, excursión, segunda residencia, capital de servicios]}
+
+  confianca_score:
+    label: {ca: "Confiança de l'estimació (0-100)", es: "Confianza de la estimación (0-100)"}
+    label_ca: "Confiança de l'estimació (0-100)"
+    label_es: "Confianza de la estimación (0-100)"
+    definicio:
+      ca: "Puntuació auditable 0-100 de la fiabilitat de les estimacions del municipi, que COMPLEMENTA (no substitueix) la bandera `confianca`. Suma quatre components: mida del denominador (padró), concordança dels senyals físics de presència, cobertura dels senyals i penalització d'outlier. Com més alt, més fiable. L'etiqueta es deriva amb talls documentats (<45 baixa · 45–65 mitjana · ≥65 alta)."
+      es: "Puntuación auditable 0-100 de la fiabilidad de las estimaciones del municipio, que COMPLEMENTA (no sustituye) la bandera `confianza`. Suma cuatro componentes: tamaño del denominador (padrón), concordancia de las señales físicas de presencia, cobertura de las señales y penalización de outlier. Cuanto más alto, más fiable. La etiqueta se deriva con cortes documentados (<45 baja · 45–65 media · ≥65 alta)."
+    dimension: pressio
+    categoria: derived
+    unit: "0-100"
+    formula: "40*mida_denominador(ln-escalat padró 75→410) + 35*concordança(1 − dispersió_z dels 3 senyals de presència/3) + 15*cobertura(senyals no nuls/5) − 10*outlier(|z|>2 d'algun senyal). Talls de l'etiqueta: <45 baixa · 45–65 mitjana · ≥65 alta. Vegeu docs/tipologia-municipal.md."
+    source: datapoble
+    origin_source: residus
+    font: "ARC (residus/vidre) + ICAEN (consum domèstic) + Idescat (habitatge/padró)"
+    date: "2024/2025"
+    table: mart_municipi
+    column: confianca_score
+    visibility: public
+    caveat:
+      ca: "Auditable per construcció: cada punt ve d'un component explícit (mida, concordança, cobertura, outlier). POT divergir de la bandera `confianca` —i és intencionat— precisament on la concordança o el denominador desmenteixen un 'alta' binari: p. ex. Castellar de n'Hug surt baix perquè els senyals divergeixen (calefacció de llenya → residus alts però elèctric baix). El score és el costat HONEST d'aquesta tensió. Relatiu a la comarca (z-scores)."
+      es: "Auditable por construcción: cada punto viene de un componente explícito (tamaño, concordancia, cobertura, outlier). PUEDE divergir de la bandera `confianza` —y es intencionado— precisamente donde la concordancia o el denominador desmienten un 'alta' binario: p. ej. Castellar de n'Hug sale bajo porque las señales divergen (calefacción de leña → residuos altos pero eléctrico bajo). El score es el lado HONESTO de esa tensión. Relativo a la comarca (z-scores)."
+    synonyms: {ca: [confiança score, fiabilitat, puntuació de confiança, qualitat de l'estimació], es: [confianza score, fiabilidad, puntuación de confianza, calidad de la estimación]}
+
   # --- Política (visible, lectura ecològica) ---
   pct_indep:
     label: {ca: "% vot independentista", es: "% voto independentista"}

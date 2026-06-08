@@ -25,6 +25,16 @@
 --   la seva distribució comarcal; IETR = 0.5*A + 0.5*B. Ancoratges verificats del
 --   prototip: Castellar (08052) ≈ 89,4 (#1); Berga (08022) ≈ 0,3 (#31). Validació
 --   externa: Spearman(IETR, kg_hab_any) = 0,87 (vegeu verify_marts.py).
+--
+-- FASE 1 (endurir el model SENSE fonts noves) — 3 derivats sobre dades que JA hi són
+--   (CTEs sstats/zsig/zsig2/tipo/conf + columnes al final). Documentat a
+--   docs/tipologia-municipal.md. Tot INFERÈNCIA; la tipologia és una LECTURA:
+--     · IETR_stock / IETR_impact — desglossament de l'IETR (A_resid / B_turis, 0-100).
+--     · tipologia — classificador de regles amb NOM (z-scores comarcals); 'indeterminat'
+--       si ambigu. Verificat: Berga=capital_serveis · Castellar=excursio · Gósol=segona_residencia.
+--     · confianca_score — 0-100 auditable que COMPLEMENTA la bandera confianca.
+--   Sense raw (data/raw és .gitignore), el parquet es regenera amb la MATEIXA SQL via
+--   packages/transform/derive_fase1.py (prova la identitat IETR=0.5*stock+0.5*impact).
 
 with emex as (
     select * from {{ ref('stg_idescat_emex') }}
@@ -156,10 +166,128 @@ norm as (
 ),
 
 -- ietr: eix A (residencial) i B (turístic) a pesos iguals; IETR = 0.5*A + 0.5*B.
+--   A_resid i B_turis ja són 0-100 per construcció (mitjana de dos indicadors
+--   winsoritzats 0-100). Els exposem PER SEPARAT com IETR_stock / IETR_impact
+--   (Fase 1): l'IETR barreja stock estructural i impacte realitzat; el desglossem.
 ietr as (
     select ine5, (n_np+n_hh)/2.0 as A_resid, (n_r1+n_r2)/2.0 as B_turis,
            0.5*((n_np+n_hh)/2.0)+0.5*((n_r1+n_r2)/2.0) as IETR
     from norm
+),
+
+-- ========================================================================
+-- FASE 1 (endurir el model SENSE fonts noves) · 3 derivats sobre dades que
+-- JA hi són. Tot és INFERÈNCIA; la tipologia és una LECTURA (vegeu caveats al
+-- contracte). Els z-scores són COMARCALS (sobre els 31 municipis del pilot);
+-- a escala Catalunya seran per comarca, com les bases del model de 3 capes.
+-- ========================================================================
+
+-- sstats: mitjana i desviació poblacional (stddev_pop, ddof=0) dels senyals que
+-- alimenten la tipologia i el confianca_score. 1 sola fila (cross join).
+sstats as (
+    select
+        avg(gap_pernocta_pct)        as gap_avg,  stddev_pop(gap_pernocta_pct)        as gap_sd,
+        avg(index_turisme)           as tur_avg,  stddev_pop(index_turisme)           as tur_sd,
+        avg(pct_noprincipal)         as np_avg,   stddev_pop(pct_noprincipal)         as np_sd,
+        avg(kg_hab_any)              as kg_avg,   stddev_pop(kg_hab_any)              as kg_sd,
+        avg(kwh_hab)                 as kwh_avg,  stddev_pop(kwh_hab)                 as kwh_sd,
+        avg(vidre_hab)               as vid_avg,  stddev_pop(vidre_hab)               as vid_sd,
+        avg(restauracio_per_1000hab) as rest_avg, stddev_pop(restauracio_per_1000hab) as rest_sd,
+        avg(ln(poblacio))            as lpop_avg, stddev_pop(ln(poblacio))            as lpop_sd,
+        avg(ln(carrega_total_est))   as lcar_avg, stddev_pop(ln(carrega_total_est))   as lcar_sd
+    from ind
+    join tur using (ine5)
+),
+
+-- zsig: z-scores comarcals per municipi. La població i la càrrega usen ln()
+-- (distribució molt asimètrica: Berga 17.539 vs Sant Jaume 25). z_act = mitjana
+-- dels 3 senyals d'ACTIVITAT de dia (residus, vidre, restauració): l'empremta
+-- de l'excursionista. z_kg/z_kwh/z_np = els 3 senyals de PRESÈNCIA que han de
+-- concordar per a una estimació fiable (entren al confianca_score).
+zsig as (
+    select i.ine5,
+        (i.gap_pernocta_pct - s.gap_avg) / nullif(s.gap_sd,0)        as z_gap,
+        (t.index_turisme    - s.tur_avg) / nullif(s.tur_sd,0)        as z_tur,
+        (i.pct_noprincipal  - s.np_avg)  / nullif(s.np_sd,0)         as z_np,
+        (i.kg_hab_any       - s.kg_avg)  / nullif(s.kg_sd,0)         as z_kg,
+        (i.kwh_hab          - s.kwh_avg) / nullif(s.kwh_sd,0)        as z_kwh,
+        (i.vidre_hab        - s.vid_avg) / nullif(s.vid_sd,0)        as z_vid,
+        (i.restauracio_per_1000hab - s.rest_avg) / nullif(s.rest_sd,0) as z_rest,
+        (ln(i.poblacio)          - s.lpop_avg) / nullif(s.lpop_sd,0) as z_pop,
+        (ln(i.carrega_total_est) - s.lcar_avg) / nullif(s.lcar_sd,0) as z_carr
+    from ind i
+    join tur t using (ine5)
+    cross join sstats s
+),
+
+-- zsig2: deriva el senyal compost d'activitat (mitjana de residus/vidre/restauració).
+zsig2 as (
+    select *, (z_kg + z_vid + z_rest) / 3.0 as z_act from zsig
+),
+
+-- tipologia: classificador BASAT EN REGLES sobre z-scores comarcals (primera
+-- regla que encaixa guanya). Documentat a docs/tipologia-municipal.md. Casos
+-- coneguts verificats: Berga=capital_serveis · Castellar=excursio · Gósol/Saldes=
+-- segona_residencia. On cap regla encaixa amb prou claredat → 'indeterminat'
+-- (honestedat: no es força). NO és un judici de valor: és una LECTURA dels senyals.
+tipo as (
+    select ine5,
+        case
+            -- capital_serveis: població gran + càrrega total gran, turisme per
+            -- sota de la mitjana comarcal (Berga, i les viles grans de vall).
+            when z_pop >= 0.8 and z_carr >= 0.8 and z_tur <= 0.0 then 'capital_serveis'
+            -- buit_administratiu: micromunicipi tranquil a tots els eixos (poc
+            -- turisme, poca activitat, gap no alt) → padró estable, sense pressió.
+            when z_pop <= -0.5 and z_tur <= -0.3 and z_act <= -0.2 and z_gap <= 0.2 then 'buit_administratiu'
+            -- excursio: turisme alt + activitat de DIA alta (residus/vidre/
+            -- restauració) però gap de pernocta NO alt → ve de dia, dorm menys
+            -- (Castellar de n'Hug: residus/vidre alts, pernocta baixa).
+            when z_tur >= 0.6 and z_act >= 0.4 and z_gap <= 0.4 then 'excursio'
+            -- segona_residencia: gap de pernocta alt + (habitatge no principal alt
+            -- O turisme alt) → s'omplen els llits buits (Gósol, Saldes).
+            when z_gap >= 0.5 and (z_np >= 0.5 or z_tur >= 0.7) then 'segona_residencia'
+            -- dormitori_invisible: gap de pernocta alt però turisme per sota de la
+            -- mitjana → hi dormen sense constar, amb poca hostaleria.
+            when z_gap >= 0.4 and z_tur <= 0.0 then 'dormitori_invisible'
+            else 'indeterminat'
+        end as tipologia
+    from zsig2
+),
+
+-- conf: confianca_score 0-100 AUDITABLE (complementa, no substitueix, la bandera
+-- `confianca`). Documentat a docs/tipologia-municipal.md. Quatre components:
+--   (a) MIDA del denominador (40): ln-escalat entre 75 (micro) i 410 (vila plena).
+--   (b) CONCORDANÇA dels 3 senyals de presència (35): com menys es dispersen els
+--       z-scores de residus/elèctric/%no-principal, més fiable. spread>=3sd → 0.
+--   (c) COBERTURA (15): fracció de senyals presents (no NULL).
+--   (d) OUTLIER (−10): penalitza si algun senyal de presència té |z|>2 (soroll de
+--       denominador / glitch). max(|z|)>=3sd → −10 ple.
+-- La concordança és la que fa el score MÉS honest que la bandera binària: marca
+-- els casos de senyals divergents (p. ex. Castellar, calefacció de llenya → residus
+-- alts però elèctric baix) que un 'alta' binari amagaria.
+conf as (
+    select z.ine5,
+        least(100.0, greatest(0.0,
+            -- (a) mida del denominador
+            40.0 * least(1.0, greatest(0.0,
+                (ln(i.poblacio) - ln({{ var('poblacio_min_confianca') }}))
+                / (ln({{ var('base_residencial') }}) - ln({{ var('poblacio_min_confianca') }}))))
+            -- (b) concordança dels 3 senyals de presència (z_kg, z_kwh, z_np)
+            + 35.0 * greatest(0.0, 1.0 -
+                (greatest(z.z_kg, z.z_kwh, z.z_np) - least(z.z_kg, z.z_kwh, z.z_np)) / 3.0)
+            -- (c) cobertura dels senyals
+            + 15.0 * (
+                (case when i.kg_hab_any is not null then 1 else 0 end
+               + case when i.kwh_hab    is not null then 1 else 0 end
+               + case when i.vidre_hab  is not null then 1 else 0 end
+               + case when i.pct_noprincipal is not null then 1 else 0 end
+               + case when i.poblacio   is not null then 1 else 0 end) / 5.0)
+            -- (d) penalització d'outlier
+            - 10.0 * least(1.0, greatest(0.0,
+                (greatest(abs(z.z_kg), abs(z.z_kwh), abs(z.z_np)) - 2.0) / 1.0))
+        )) as confianca_score
+    from zsig2 z
+    join ind i using (ine5)
 )
 
 select
@@ -279,6 +407,31 @@ select
     round(ietr.IETR, 2)                                         as IETR,
     rank() over (order by ietr.IETR desc)                       as IETR_rank,
 
+    -- ===================================================================
+    -- FASE 1 · 3 derivats nous (endurir el model SENSE fonts noves).
+    -- ===================================================================
+
+    -- IETR DUAL: l'IETR és 0.5*A_resid + 0.5*B_turis (barreja stock + impacte).
+    -- L'exposem desglossat. Tots dos ja són 0-100 per construcció (winsoritzats).
+    --   IETR_stock  = component ESTRUCTURAL/resident (A_resid): habitatge no
+    --                 principal + habitatges per habitant. "Exposició latent".
+    --   IETR_impact = component de PRESSIÓ realitzada (B_turis): establiments
+    --                 turístics per 1000 hab + per 100 habitatges. "Pressió viva".
+    -- Identitat: round(0.5*IETR_stock + 0.5*IETR_impact, 2) == IETR.
+    round(ietr.A_resid, 2)                                      as IETR_stock,
+    round(ietr.B_turis, 2)                                      as IETR_impact,
+
+    -- TIPOLOGIA: classificació amb NOM (lectura narrativa, no «més/menys»).
+    -- Regles sobre z-scores comarcals (CTE tipo); 'indeterminat' on és ambigu.
+    -- Verificat: Berga=capital_serveis · Castellar=excursio · Gósol=segona_residencia.
+    tipo.tipologia,
+
+    -- CONFIANCA_SCORE 0-100 auditable (CTE conf): complementa la bandera
+    -- `confianca`. Components: mida del denominador + concordança dels senyals
+    -- físics + cobertura − outlier. Label derivable amb talls documentats
+    -- (<45 baixa · 45–65 mitjana · ≥65 alta) al contracte.
+    round(conf.confianca_score, 1)                              as confianca_score,
+
     -- Traçabilitat dels talls temporals
     ind.kg_hab_any_year,
     ind.vidre_any
@@ -286,5 +439,7 @@ select
 from ind
 join ietr on ind.ine5 = ietr.ine5
 join tur  on ind.ine5 = tur.ine5
+join tipo on ind.ine5 = tipo.ine5
+join conf on ind.ine5 = conf.ine5
 cross join med
 order by ind.ine5
