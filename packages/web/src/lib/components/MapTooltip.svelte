@@ -29,8 +29,11 @@
 		/** Posició en píxels dins del contenidor del mapa. */
 		x: number;
 		y: number;
+		/** Pista d'acció opcional (p. ex. «Clica per obrir la fitxa»). Buida = no es mostra. */
+		hint?: string | null;
 	}
-	let { nom, metricKey, def, value, conf = null, confScore = null, x, y }: Props = $props();
+	let { nom, metricKey, def, value, conf = null, confScore = null, x, y, hint = null }: Props =
+		$props();
 
 	const locale = $derived(currentLocale());
 	// La tipologia és CATEGÒRICA: el valor és una cadena d'arquetip → es mostra l'etiqueta HUMANA
@@ -143,6 +146,11 @@
 		<p class="tip__caveat">{m.map_tipologia_tooltip_caveat()}</p>
 	{:else if isEstimate && hasVal}
 		<p class="tip__caveat">{m.map_gap_tooltip_caveat()}</p>
+	{/if}
+
+	{#if hint}
+		<!-- Pista d'acció: el municipi és clicable i obre la seva fitxa completa. -->
+		<p class="tip__hint">{hint}</p>
 	{/if}
 </div>
 
@@ -261,5 +269,17 @@
 		line-height: 1.4;
 		color: var(--dp-text-subtle);
 		max-width: 220px;
+	}
+	/* Pista d'acció (clicable): to de marca, discreta, sota tot. */
+	.tip__hint {
+		margin: 7px 0 0;
+		padding-top: 6px;
+		border-top: 1px solid var(--dp-border);
+		font-family: var(--dp-font-mono);
+		font-size: 0.58rem;
+		letter-spacing: 0.03em;
+		line-height: 1.35;
+		color: var(--dp-brand, #b5612a);
+		font-weight: 600;
 	}
 </style>

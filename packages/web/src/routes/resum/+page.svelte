@@ -15,7 +15,7 @@
 	 * design-system (aplicacio.css): classes .ap-hero, .kpi-grid, .axis, .extremes.
 	 */
 	import ContourField from '$lib/components/ContourField.svelte';
-	import { currentLocale, pick } from '$lib/i18n';
+	import { currentLocale, pick, localizeHref } from '$lib/i18n';
 	import { formatMetric, formatDecimal } from '$lib/format';
 	import { SIGNED_PCT_KEYS } from '$lib/map/classify';
 	import { provenanceOf } from '$lib/map/provenance';
@@ -302,11 +302,18 @@
 							<div class="ex__ietr">
 								<span class="v tnum">{fmtIetr(ietr)}</span><span class="u">{m.resum_ietr_scale()}</span>
 							</div>
-							<h3 class="ex__name">{ex.row.nom}</h3>
+							<h3 class="ex__name">
+								<a href={localizeHref(`/municipi/${ex.row.ine5}`)} class="ex__name-link"
+									>{ex.row.nom}</a
+								>
+							</h3>
 							<p class="ex__meta">
 								<span>INE {ex.row.ine5}</span><span
 									>{formatMetric(ex.row.values.poblacio, dataset.metrics.poblacio, locale)} hab.</span
-								>{#if elev}<span>{elev}</span>{/if}
+								>{#if elev}<span>{elev}</span>{/if}<a
+									class="ex__fitxa"
+									href={localizeHref(`/municipi/${ex.row.ine5}`)}>{m.resum_open_fitxa()}</a
+								>
 							</p>
 
 							<!-- Tipologia (Fase 1): la LECTURA narrativa destacada — quin TIPUS de pressió.
@@ -435,5 +442,31 @@
 	.ex__conf-scale {
 		font-weight: 500;
 		color: var(--dp-text-subtle);
+	}
+
+	/* La fitxa dels extrems enllaça ara a la fitxa COMPLETA del municipi (`/municipi/[ine5]`).
+	   El nom és el destí principal; la meta hi afegeix un enllaç curt i explícit. */
+	.ex__name-link {
+		color: inherit;
+		text-decoration: none;
+	}
+	.ex__name-link:hover {
+		text-decoration: underline;
+		text-decoration-thickness: 1px;
+		text-underline-offset: 3px;
+	}
+	.ex__fitxa {
+		font-family: var(--dp-font-mono);
+		font-size: 0.6rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: var(--dp-brand, #b5612a);
+		text-decoration: none;
+		font-weight: 700;
+		border-bottom: 1px solid color-mix(in srgb, var(--dp-brand, #b5612a) 45%, transparent);
+		padding-bottom: 1px;
+	}
+	.ex__fitxa:hover {
+		border-bottom-color: var(--dp-brand, #b5612a);
 	}
 </style>
