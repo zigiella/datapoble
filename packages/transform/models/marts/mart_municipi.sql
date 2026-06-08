@@ -216,9 +216,12 @@ select
                                                                 as poblacio_pernocta_est,
     cast({{ estimacio_presencia('ind.poblacio', 'ind.kwh_hab', var('base_electric')) }} - ind.poblacio as integer)
                                                                 as gap_pernocta,
+    -- gap_pernocta_pct en % 0-100 (× 100, igual que pct_noprincipal): convenció ÚNICA
+    -- del contracte per a totes les mètriques `percent`. El frontend NO ho re-escala
+    -- (cap component cuina l'escala): només hi marca el +/− de la desviació.
     round(
         ({{ estimacio_presencia('ind.poblacio', 'ind.kwh_hab', var('base_electric')) }} - ind.poblacio)
-        / nullif(ind.poblacio, 0), 3)                           as gap_pernocta_pct,
+        / nullif(ind.poblacio, 0) * 100, 1)                     as gap_pernocta_pct,
 
     -- L2 · CÀRREGA HUMANA TOTAL: pressió total inclosos els visitants de DIA
     -- (excursionistes). Senyal = residus / base_residencial (410). NO és població:
@@ -265,7 +268,7 @@ select
                                                                 as gap_abs,
     round(
         ({{ estimacio_presencia('ind.poblacio', 'ind.kg_hab_any', var('base_residencial')) }} - ind.poblacio)
-        / nullif(ind.poblacio, 0), 3)                           as gap_pct,
+        / nullif(ind.poblacio, 0) * 100, 1)                     as gap_pct,  -- % 0-100 (com gap_pernocta_pct)
     cast({{ estimacio_presencia('ind.poblacio', 'ind.kg_hab_any', var('base_comarcal')) }} as integer)
                                                                 as poblacio_real_rel,
 

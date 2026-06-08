@@ -388,7 +388,7 @@ metrics:
     dimension: pressio
     categoria: derived
     unit: "%"
-    formula: "gap_pernocta / poblacio"
+    formula: "gap_pernocta / poblacio * 100"
     source: datapoble
     origin_source: icaen_consum
     font: "ICAEN (consum elèctric domèstic) + Idescat (padró)"
@@ -397,8 +397,8 @@ metrics:
     column: gap_pernocta_pct
     visibility: public
     caveat:
-      ca: "Fracció (0,12 = +12%). Volàtil als micromunicipis (denominador petit) i sensible a la calefacció → mirar sempre la bandera confianca. Inferència, lectura ecològica."
-      es: "Fracción (0,12 = +12%). Volátil en micromunicipios (denominador pequeño) y sensible a la calefacción → mirar siempre la bandera confianza. Inferencia, lectura ecológica."
+      ca: "Percentatge sobre el padró (+12 = +12% més gent que dorm al territori). Volàtil als micromunicipis (denominador petit) i sensible a la calefacció → mirar sempre la bandera confianca. Inferència, lectura ecològica."
+      es: "Porcentaje sobre el padrón (+12 = +12% más gente que duerme en el territorio). Volátil en micromunicipios (denominador pequeño) y sensible a la calefacción → mirar siempre la bandera confianza. Inferencia, lectura ecológica."
     synonyms: {ca: [gap pernocta %, població invisible %], es: [gap pernocta %, población invisible %]}
 
   # --- L2 · CÀRREGA HUMANA TOTAL (residus) — inclou visitants de dia ---
@@ -506,7 +506,7 @@ metrics:
     dimension: pressio
     categoria: derived
     unit: "%"
-    formula: "gap_abs / poblacio  (gap de càrrega total)"
+    formula: "gap_abs / poblacio * 100  (gap de càrrega total)"
     source: datapoble
     origin_source: residus
     font: "ARC (residus) + Idescat (padró)"
@@ -515,8 +515,8 @@ metrics:
     column: gap_pct
     visibility: public
     caveat:
-      ca: "Fracció (0,12 = +12%). Gap de CÀRREGA (inclou dia), no de pernocta. Volàtil als micromunicipis → mirar la bandera confianca. Inferència, lectura ecològica."
-      es: "Fracción (0,12 = +12%). Gap de CARGA (incluye día), no de pernocta. Volátil en micromunicipios → mirar la bandera confianza. Inferencia, lectura ecológica."
+      ca: "Percentatge sobre el padró (+12 = +12%). Gap de CÀRREGA (inclou dia), no de pernocta. Volàtil als micromunicipis → mirar la bandera confianca. Inferència, lectura ecològica."
+      es: "Porcentaje sobre el padrón (+12 = +12%). Gap de CARGA (incluye día), no de pernocta. Volátil en micromunicipios → mirar la bandera confianza. Inferencia, lectura ecológica."
 
   poblacio_real_rel:
     label: {ca: Població real (tall relatiu), es: Población real (corte relativo)}

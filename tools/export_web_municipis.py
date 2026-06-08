@@ -86,8 +86,8 @@ FORMAT_BY_KEY = {
     "kwh_hab": "decimal", "vidre_hab": "decimal",
     # Restauració (2n proxy hostaleria L3): compte enter + densitat decimal.
     "restauracio_estab": "integer", "restauracio_per_1000hab": "decimal",
-    # 3 capes: comptes d'habitants → integer; *_pct són fracció → percent;
-    # index_turisme és 0-100 → decimal; confianca categòrica → text.
+    # 3 capes: comptes d'habitants → integer; *_pct ja en 0-100 → percent (mateixa
+    # convenció que pct_noprincipal); index_turisme és 0-100 → decimal; confianca → text.
     "poblacio_pernocta_est": "integer", "gap_pernocta": "integer",
     "gap_pernocta_pct": "percent", "carrega_total_est": "integer",
     "index_turisme": "decimal",

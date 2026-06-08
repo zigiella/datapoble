@@ -17,7 +17,7 @@
 	import ContourField from '$lib/components/ContourField.svelte';
 	import { currentLocale, pick } from '$lib/i18n';
 	import { formatMetric, formatDecimal } from '$lib/format';
-	import { SIGNED_RATIO_PCT_KEYS } from '$lib/map/classify';
+	import { SIGNED_PCT_KEYS } from '$lib/map/classify';
 	import { provenanceOf } from '$lib/map/provenance';
 	import { m } from '$lib/paraglide/messages';
 	import type { MetricDef, MetricKey, MetricValue, MunicipiRow } from '$lib/contract/types';
@@ -106,19 +106,19 @@
 	}
 
 	// Valor d'una mètrica per a un municipi, ja formatat al locale (sense unitat).
-	// Cas especial: les mètriques de ràtio amb signe (el gap de pernocta) es publiquen al
-	// contracte com a ràtio 0-1 (Castellar 0,313 → +31 %); cal multiplicar-les per 100 i
-	// marcar el +/− abans del camí genèric. El «%» NO va aquí: el posa el markup com a unitat
-	// petita `.u` (def.format === 'percent' → isPct), igual que la resta de percentatges. Mateix
-	// conveni que el mapa (makeMetricFormatter de $lib/map/classify), sense duplicar el ×100.
+	// Cas especial: les mètriques de desviació amb signe (el gap de pernocta) es mostren amb
+	// el +/− explícit (Castellar +31 %, Berga −2 %). El valor ja ve en escala 0-100 del
+	// contracte (com la resta de percentatges), així que NO el reescalem aquí. El «%» NO va
+	// aquí: el posa el markup com a unitat petita `.u` (def.format === 'percent' → isPct).
+	// Mateix conveni que el mapa (makeMetricFormatter de $lib/map/classify).
 	function fmt(row: MunicipiRow, key: MetricKey): string {
 		const value = effectiveValue(row, key);
-		if (SIGNED_RATIO_PCT_KEYS.has(key) && typeof value === 'number') {
+		if (SIGNED_PCT_KEYS.has(key) && typeof value === 'number') {
 			const loc = locale === 'es' ? 'es-ES' : 'ca-ES';
 			return new Intl.NumberFormat(loc, {
 				signDisplay: 'exceptZero',
 				maximumFractionDigits: 0
-			}).format(value * 100);
+			}).format(value);
 		}
 		return fmtValue(value, dataset.metrics[key]);
 	}
