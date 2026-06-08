@@ -169,7 +169,7 @@ La **base** és la generació/consum d'un resident «normal», calculada de les 
 
 ### 5.3 Les tres capes
 - **L1 · Població real estimada (qui pernocta)** — *la signatura «població invisible»*
-  `poblacio_pernocta_est = round(padró × kWh_hab / 1224)` ; `gap_pernocta = poblacio_pernocta_est − padró` ; `gap_pernocta_pct = gap_pernocta / padró`.
+  `poblacio_pernocta_est = round(padró × kWh_hab / 1224)` ; `gap_pernocta = poblacio_pernocta_est − padró` ; `gap_pernocta_pct = gap_pernocta / padró × 100` (percentatge amb signe).
   El *gap* és la gent que **dorm** al territori sense constar: residents no registrats, segones residències, turisme que pernocta. **Això sí que és «població».**
 - **L2 · Càrrega humana total**
   `carrega_total_est = round(padró × kg_residus_hab / 410)`.
@@ -249,7 +249,7 @@ L'enginy és **reutilitzable** (es reaprofita canviant els parquets d'entrada); 
 - **Secret estadístic:** als micromunicipis molts datasets amaguen valors; el consum elèctric domèstic és notable perquè **hi sobreviu** fins a Castellar (166 hab), a diferència d'altres sectors.
 - **Bandera de confiança:** baixa als micromunicipis i on els senyals divergeixen.
 - **Infra-mapeig d'OSM:** el recompte de restauració és un **mínim observat**, no un cens.
-- **Gaps com a ràtio amb signe:** `gap_pernocta_pct`/`gap_pct` són **fraccions 0–1 amb signe** (Castellar +0,31 = +31 %; Berga pot ser negatiu), no escala 0–100 — es formaten amb signe explícit (`+31 %`, `−2 %`).
+- **Gaps com a percentatge amb signe:** `gap_pernocta_pct`/`gap_pct` són **desviacions sobre el padró en escala 0–100**, com la resta de percentatges del contracte (Castellar **+31 %**; pot ser negatiu — Berga **−2 %**). El **signe explícit** (`+`/`−`) és l'única particularitat de presentació; l'escala 0–100 és la convenció única i cap component la re-escala (la materialitza el mart).
 - **Estacionalitat:** **no existeix** sèrie infra-anual × municipal oberta per al pilot (residus i elèctric són anuals; les pernoctacions només per marca «Pirineus»). És el «no» honest principal de l'eix presència.
 - **Mètriques de compatibilitat:** les claus del model anterior d'una sola capa (`poblacio_real_est`, `gap_abs`, `gap_pct`, `poblacio_real_rel`) es conserven **reenquadrades** (ara són càrrega, no població) per no trencar consumidors; estan marcades com a tals.
 
