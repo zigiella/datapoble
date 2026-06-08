@@ -65,7 +65,7 @@ packages/web/
       +layout.svelte             # capçalera (marca + nav + selector idioma) + peu
       +page.ts                   # / → redirigeix a /resum (localitzat)
       resum/                     # ← l'ÚNICA pantalla implementada
-      mapa | index | day-tripper | politica | preguntale/   # stubs navegables
+      mapa | index | day-tripper | politica | pregunta-li/   # stubs navegables
 ```
 
 ### i18n (Paraglide / inlang)
@@ -77,7 +77,7 @@ packages/web/
 
 ### API de «Pregunta-li» (`PUBLIC_API_BASE`)
 
-La pàgina **`/preguntale`** (la cara pública de la IA de Brúixola) consulta l'API **des del navegador** (el web és estàtic, `adapter-static`: no hi ha servidor que faci de proxy). La base de l'API es configura amb una variable d'entorn **pública** de SvelteKit:
+La pàgina **`/pregunta-li`** (la cara pública de la IA de Brúixola) consulta l'API **des del navegador** (el web és estàtic, `adapter-static`: no hi ha servidor que faci de proxy). La base de l'API es configura amb una variable d'entorn **pública** de SvelteKit:
 
 ```bash
 # .env (local) o variable d'entorn del build a Cloudflare Pages

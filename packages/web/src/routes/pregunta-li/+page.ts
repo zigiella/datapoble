@@ -1,5 +1,5 @@
 /**
- * Càrrega de la pàgina «Pregunta-li» (`/preguntale` · `/es/preguntale`).
+ * Càrrega de la pàgina «Pregunta-li» (`/pregunta-li` · `/es/pregunta-li`).
  *
  * Tira del dataset real (contracte semàntic, font: Sondeig) NOMÉS per construir els
  * xips d'exemple amb etiquetes d'indicador reals (mateixa idea que el `/metrics` de

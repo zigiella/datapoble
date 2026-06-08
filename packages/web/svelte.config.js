@@ -35,7 +35,7 @@ const config = {
 				'/index/',
 				'/day-tripper/',
 				'/politica/',
-				'/preguntale/'
+				'/pregunta-li/'
 			]
 		}
 	}

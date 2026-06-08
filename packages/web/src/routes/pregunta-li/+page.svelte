@@ -1,6 +1,6 @@
 <script lang="ts">
 	/**
-	 * «Pregunta-li» (`/preguntale` · `/es/preguntale`) — LA CARA PÚBLICA DE LA IA.
+	 * «Pregunta-li» (`/pregunta-li` · `/es/pregunta-li`) — LA CARA PÚBLICA DE LA IA.
 	 *
 	 * Canvi de pilar respecte de la resta del web: aquí no pintem marts precalculats sinó
 	 * que consultem la Brúixola (IA de riusdegent) EN VIU: text en llenguatge natural → SQL
@@ -162,7 +162,7 @@
 	<meta name="description" content={m.pl_meta_desc()} />
 </svelte:head>
 
-<section data-view="preguntale" class="on">
+<section data-view="pregunta-li" class="on">
 	<div class="ap-hero">
 		<ContourField
 			class="ap-hero__field"
