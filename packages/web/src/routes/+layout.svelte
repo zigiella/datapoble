@@ -55,12 +55,7 @@
 		<a href={localizeHref('/mapa')} class:on={isActive('/mapa')} aria-current={isActive('/mapa') ? 'page' : undefined}>
 			<span>{m.nav_mapa()}</span>
 		</a>
-		<a href={localizeHref('/metodologia')} class:on={isActive('/metodologia')} aria-current={isActive('/metodologia') ? 'page' : undefined}>
-			<span>{m.nav_metodologia()}</span>
-		</a>
-		<a href={localizeHref('/glossari')} class:on={isActive('/glossari')} aria-current={isActive('/glossari') ? 'page' : undefined}>
-			<span>{m.nav_glossari()}</span>
-		</a>
+		<!-- Metodologia i Glossari NO van a la capçalera (decisió de Bea): viuen al peu (secció Explora). -->
 		<a href={localizeHref('/preguntale')} class:on={isActive('/preguntale')} aria-current={isActive('/preguntale') ? 'page' : undefined}>
 			<span>{m.nav_preguntale()}</span>
 		</a>

@@ -14,7 +14,7 @@
  * d'un conjunt tancat.
  */
 
-import { env } from '$env/dynamic/public';
+import { PUBLIC_API_BASE } from '$env/static/public';
 import type { Locale } from '$lib/contract/types';
 
 /** Resultat de la consulta: resposta humana o refús honest. */
@@ -81,14 +81,15 @@ export type AskOutcome =
 
 /**
  * Base de l'API, configurable via env pública de SvelteKit (`PUBLIC_API_BASE`).
- * Es llegeix amb `$env/dynamic/public` perquè una variable absent no trenqui el build
- * estàtic (a diferència de `$env/static/public`, que exigiria que existís). Default
- * raonable en dev (`http://localhost:8000`); en producció, l'injecta l'entorn de build
- * de Cloudflare Pages. Buida o no definida → sense API: la pàgina ho tracta com a
- * `unreachable` i mostra l'avís amable.
+ * Es llegeix amb `$env/static/public` (s'INCRUSTA al build), perquè el web és estàtic
+ * (adapter-static, sense servidor) i `$env/dynamic/public` quedaria BUIT al navegador.
+ * El default que evita trencar el build quan la variable no hi és viu a
+ * `packages/web/.env` (`PUBLIC_API_BASE=""`); el deploy l'injecta amb la URL real.
+ * Default de dev a `http://localhost:8000`. Buida o no definida → sense API: la
+ * pàgina ho tracta com a `unreachable` i mostra l'avís amable.
  */
 export function apiBase(): string {
-	const raw = (env.PUBLIC_API_BASE ?? '').trim();
+	const raw = (PUBLIC_API_BASE ?? '').trim();
 	if (raw) return raw.replace(/\/+$/, ''); // sense barra final
 	// Default només útil en desenvolupament local; en estàtic pur queda buit.
 	if (import.meta.env.DEV) return 'http://localhost:8000';
