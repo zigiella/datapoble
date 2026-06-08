@@ -50,7 +50,6 @@ assignació espacial (l'snapshot d'OSM pot variar amb el temps).
 from __future__ import annotations
 
 import time
-from pathlib import Path
 
 import duckdb
 import pandas as pd
