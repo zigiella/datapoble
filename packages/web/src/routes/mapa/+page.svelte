@@ -37,6 +37,7 @@
 	let { data }: { data: PageData } = $props();
 	const dataset = $derived(data.dataset);
 	const geojson = $derived(data.geojson);
+	const comarques = $derived(data.comarques);
 	const locale = $derived(currentLocale());
 
 	let indicator = $state<MetricKey>(DEFAULT_INDICATOR);
@@ -55,8 +56,9 @@
 	};
 	const labelFor = (key: MetricKey): string => INDICATOR_LABEL[key]?.() ?? key;
 
-	// Sèrie de valors de l'indicador actiu sobre TOTS els municipis de la geometria
-	// (no només els del mock amb dada): la classificació és sobre el conjunt real.
+	// Sèrie de valors de l'indicador actiu. La geometria ara és tot Catalunya (947 munis), però
+	// només els 31 del Berguedà tenen dada: la resta retornen null i `classify` els ignora, així
+	// que els talls són EXACTAMENT els del Berguedà (la classificació és sobre el conjunt amb dada).
 	// Passem pel `mapValue` perquè el 0 d'OSM de la restauració (buit de mapejat, no «sense
 	// hostaleria») es degradi a null i NO ancori el mínim de Jenks ni entri a cap classe.
 	const series = $derived(
@@ -144,6 +146,8 @@
 		nom: string;
 		value: number | string | null;
 		conf: string | null;
+		/** True si el municipi és del Berguedà (té dades); fals → «sense dades encara». */
+		inBergueda: boolean;
 		x: number;
 		y: number;
 	}
@@ -203,20 +207,37 @@
 						<ChoroplethMap
 							{dataset}
 							{geojson}
+							{comarques}
 							{indicator}
 							{classification}
 							onhover={(p) => (hover = p)}
 						/>
 						{#if hover}
-							<MapTooltip
-								nom={hover.nom}
-								metricKey={indicator}
-								{def}
-								value={hover.value}
-								conf={hover.conf}
-								x={hover.x}
-								y={hover.y}
-							/>
+							{#if hover.inBergueda}
+								<MapTooltip
+									nom={hover.nom}
+									metricKey={indicator}
+									{def}
+									value={hover.value}
+									conf={hover.conf}
+									x={hover.x}
+									y={hover.y}
+								/>
+							{:else}
+								<!-- Municipi de FORA del Berguedà: estat amable «sense dades encara»
+								     (NO un tooltip de dada buida; honestedat: no fingim dada). -->
+								<div
+									class="tip card tip--outside"
+									style="left:{hover.x}px; top:{hover.y}px"
+									role="tooltip"
+									aria-live="polite"
+								>
+									<div class="tip__place">{hover.nom}</div>
+									<div class="tip__out">{m.map_outside_title()}</div>
+									<p class="tip__out-sub">{m.map_outside_sub()}</p>
+									<p class="tip__out-scope">{m.map_outside_scope()}</p>
+								</div>
+							{/if}
 						{/if}
 					{:else}
 						<div class="map-ssr" aria-hidden="true">{m.map_loading()}</div>
@@ -294,6 +315,12 @@
 								style="width:26px;height:14px;border-radius:2px;display:inline-block;background:#E3E3DE;background-image:repeating-linear-gradient(45deg,#94A0AF 0 1.5px,transparent 1.5px 5px);border:1px solid var(--dp-border-strong)"
 							></span><span>{m.map_legend_nodata()}</span>
 						</div>
+						<!-- Catalunya de context: municipis atenuats fora del Berguedà («sense dades encara»). -->
+						<div class="legend__nodata" style="margin-top:8px">
+							<span
+								style="width:26px;height:14px;border-radius:2px;display:inline-block;background:var(--dp-map-land,#F2F1EC);opacity:0.7;border:1px solid var(--dp-border)"
+							></span><span>{m.map_legend_dimmed()}</span>
+						</div>
 					</div>
 				</aside>
 			</div>
@@ -361,5 +388,58 @@
 		color: var(--dp-text-subtle);
 		font-family: var(--dp-font-mono);
 		font-size: 0.8rem;
+	}
+
+	/* Tooltip «sense dades encara» per als municipis de FORA del Berguedà (Catalunya de context).
+	   Reusa l'embolcall `.tip` però en to APAGAT/amable: cap xifra, cap procedència — només l'estat.
+	   Igual que MapTooltip, restaura els àlies de superfície (el `.tip` de sistema.css és fosc fix)
+	   i neutralitza la fletxa ::after. */
+	.tip--outside {
+		position: absolute;
+		z-index: 20;
+		pointer-events: none;
+		transform: translate(-50%, calc(-100% - 14px));
+		min-width: 150px;
+		max-width: 230px;
+		padding: 10px 12px;
+		box-shadow: var(--dp-shadow-md);
+		background: var(--dp-surface);
+		color: var(--dp-text);
+		border: 1px solid var(--dp-border);
+		border-radius: var(--dp-radius-md);
+	}
+	.tip--outside::after {
+		display: none;
+	}
+	.tip--outside .tip__place {
+		font-family: var(--dp-font-display);
+		font-weight: 700;
+		font-size: 0.95rem;
+		color: var(--dp-text);
+		line-height: 1.15;
+	}
+	.tip__out {
+		font-family: var(--dp-font-mono);
+		font-size: 0.62rem;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--dp-text-muted);
+		margin-top: 4px;
+	}
+	.tip__out-sub {
+		margin: 6px 0 0;
+		font-family: var(--dp-font-sans);
+		font-size: 0.78rem;
+		line-height: 1.35;
+		color: var(--dp-text-subtle);
+	}
+	.tip__out-scope {
+		margin: 6px 0 0;
+		padding-top: 6px;
+		border-top: 1px solid var(--dp-border);
+		font-family: var(--dp-font-mono);
+		font-size: 0.56rem;
+		line-height: 1.4;
+		color: var(--dp-text-subtle);
 	}
 </style>

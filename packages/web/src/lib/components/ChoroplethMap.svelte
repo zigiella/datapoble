@@ -1,21 +1,31 @@
 <script lang="ts">
 	/**
-	 * Mapa coroplètic del Berguedà (MapLibre GL · F2, Mirador).
+	 * Mapa de Catalunya amb el Berguedà ACTIU (MapLibre GL · Fase 0 de l'escala Catalunya, Mirador).
 	 *
-	 * Disseny segons design-system:
+	 * Disseny segons design-system + decisions de Bea (honestedat visual):
 	 *  - basemap APAGAT amb tokens --dp-map-* (el dada resalta, el mapa s'apaga);
 	 *  - cap dependència de tile-server: estil autocontingut (fons + geometria local) →
 	 *    desplegable a Cloudflare Pages estàtic i funcional offline;
-	 *  - coroplètic amb la rampa "exposició" (--dp-exposure-*) o, per a desviacions amb signe
-	 *    (gap població real↔padró), la rampa DIVERGENT teal↔porpra (--dp-div2-*) ancorada a 0;
-	 *    5 classes per defecte (cuantils per IETR, Jenks per magnituds crues, divergent pel gap);
-	 *  - "sense dada" amb TRAMAT (hatch) sobre --dp-nodata, mai relleno pla (secret estadístic);
-	 *  - CONFIANÇA BAIXA de l'estimació: opacitat reduïda + tramat damunt del color (honestedat:
-	 *    el mapa no afirma un gap sòlid on l'estimació és feble);
-	 *  - hover (contorn --dp-map-label) i selecció (--dp-map-highlight).
+	 *  - TOT CATALUNYA visible (els 947 municipis): els que NO són del Berguedà van ATENUATS
+	 *    (fill neutre clar, «sense dades encara»), MAI acolorits per l'indicador — no fingim dada
+	 *    on no n'hi ha. Capa base d'atenuat (filtre `!__inberg`) per sota de tot;
+	 *  - BERGUEDÀ actiu: els seus 31 municipis acolorits pel coroplètic (rampa "exposició"
+	 *    --dp-exposure-*, o per a desviacions amb signe —gap població real↔padró— la rampa
+	 *    DIVERGENT teal↔porpra --dp-div2-* ancorada a 0). 5 classes per defecte;
+	 *  - dins del Berguedà, «sense dada» de l'indicador → TRAMAT (hatch), mai relleno pla
+	 *    (secret estadístic); CONFIANÇA BAIXA → opacitat reduïda + tramat damunt (honestedat);
+	 *  - LÍMITS DE COMARCA suaus a sobre (de catalunya-comarques.geojson) per orientar;
+	 *  - els 31 del Berguedà amb contorn una mica més marcat per distingir-los del context atenuat;
+	 *  - hover/selecció a tot el país: dins del Berguedà → dada + procedència; fora → estat amable
+	 *    «sense dades encara» (el component emet `inBergueda` perquè la pàgina triï el tooltip);
+	 *  - ENQUADRAMENT inicial a la bbox dels 31 municipis del Berguedà (Catalunya queda de context
+	 *    al voltant; el zoom-out revela tot el país atenuat).
+	 *
+	 * Rendiment: una sola source de municipis (947 polígons simplificats, ~1 MB) i una de comarques;
+	 * el color es resol per EXPRESSIÓ data-driven (step sobre `__val`) i pels filtres `__inberg`/
+	 * `__hasval`, sense duplicar geometria ni re-crear capes en canviar d'indicador.
 	 *
 	 * Només client: MapLibre toca `window`; el mòdul es carrega a onMount (import dinàmic).
-	 * El component emet `hover` i `select` perquè la pàgina pinti el tooltip amb procedència.
 	 */
 	import { onMount, onDestroy } from 'svelte';
 	import type { Map as MlMap, GeoJSONSource, MapGeoJSONFeature } from 'maplibre-gl';
@@ -34,14 +44,18 @@
 		value: number | string | null;
 		/** Confiança de l'estimació (clau `confianca` del contracte); null si no n'hi ha. */
 		conf: string | null;
+		/** True si el municipi és del Berguedà (té dades); fals → «sense dades encara» (atenuat). */
+		inBergueda: boolean;
 		x: number;
 		y: number;
 	}
 
 	interface Props {
 		dataset: MunicipisDataset;
-		/** GeoJSON dels municipis (properties.ine5 = join key). */
+		/** GeoJSON de TOTS els municipis de Catalunya (947; properties.ine5 = join key). */
 		geojson: FeatureCollection;
+		/** GeoJSON de les 43 comarques (límits suaus d'orientació). */
+		comarques: FeatureCollection;
 		indicator: MetricKey;
 		/** Classificació calculada a fora (la pàgina), per compartir-la amb la llegenda. */
 		classification: Classification;
@@ -49,7 +63,8 @@
 		onselect?: (ine5: string | null) => void;
 	}
 
-	let { dataset, geojson, indicator, classification, onhover, onselect }: Props = $props();
+	let { dataset, geojson, comarques, indicator, classification, onhover, onselect }: Props =
+		$props();
 
 	let container: HTMLDivElement;
 	let map: MlMap | null = null;
@@ -66,13 +81,24 @@
 	 */
 	let resizeObs: ResizeObserver | null = null;
 
-	const SRC = 'bergueda';
-	const FILL = 'mun-fill';
-	const HATCH = 'mun-hatch';
-	const LOWCONF = 'mun-lowconf';
-	const LINE = 'mun-line';
+	const SRC = 'municipis'; // tots els municipis de Catalunya (947)
+	const SRC_COM = 'comarques'; // límits comarcals
+	const BASE = 'mun-base'; // atenuat: municipis sense dades (no Berguedà)
+	const BASELINE = 'mun-baseline'; // contorn tènue de tot Catalunya
+	const FILL = 'mun-fill'; // coroplètic: Berguedà amb dada
+	const HATCH = 'mun-hatch'; // Berguedà sense dada de l'indicador
+	const LOWCONF = 'mun-lowconf'; // Berguedà confiança baixa
+	const LINE = 'mun-line'; // contorn marcat dels 31 del Berguedà
+	const COMLINE = 'com-line'; // límits de comarca (suaus)
 	const HOVER = 'mun-hover';
 	const SELECT = 'mun-select';
+
+	/**
+	 * Conjunt de codis INE5 amb dades = els municipis del Berguedà (les claus del dataset són
+	 * exactament els 31). Es deriva del dataset perquè la frontera «té dades / no en té» segueixi
+	 * la font de dades, no una llista codificada. El dia que entrin més comarques, s'amplia sol.
+	 */
+	const bergSet = $derived(new Set(Object.keys(dataset.municipis)));
 
 	/** Patró de tramat diagonal per a "sense dada" (canvas → addImage). */
 	function makeHatch(): ImageData {
@@ -149,20 +175,22 @@
 	}
 
 	/**
-	 * Injecta a cada feature el valor de l'indicador actiu (__val/__hasval) i la confiança de
-	 * l'estimació (__conf/__lowconf). La confiança ve del contracte (clau `confianca`) i serveix
-	 * per al tractament d'honestedat: els municipis de confiança baixa no es pinten sòlids.
+	 * Injecta a cada feature: si és del Berguedà (__inberg), el valor de l'indicador actiu
+	 * (__val/__hasval) i la confiança (__conf/__lowconf). Els municipis de FORA del Berguedà
+	 * no porten valor (van a la capa base atenuada): __inberg=false i prou.
 	 */
 	function joinValues(fc: FeatureCollection, key: MetricKey): FeatureCollection {
+		const berg = bergSet;
 		return {
 			...fc,
 			features: fc.features.map((f) => {
 				const ine5 = (f.properties?.ine5 as string) ?? '';
-				const row = dataset.municipis[ine5];
+				const inBerg = berg.has(ine5);
+				const row = inBerg ? dataset.municipis[ine5] : undefined;
 				// `mapValue` degrada a null el 0 d'OSM de la restauració (buit de mapejat): així
-				// __hasval és fals i el municipi cau a la capa de tramat «sense dada», no al color
-				// de classe baixa (honestedat: 0 d'OSM ≠ 0 real d'hostaleria).
-				const raw = mapValue(key, row?.values?.[key]);
+				// __hasval és fals i el municipi del Berguedà cau a la capa de tramat «sense dada»,
+				// no al color de classe baixa (honestedat: 0 d'OSM ≠ 0 real d'hostaleria).
+				const raw = inBerg ? mapValue(key, row?.values?.[key]) : null;
 				const hasVal = typeof raw === 'number' && Number.isFinite(raw);
 				const conf = (row?.values?.confianca as string | undefined) ?? null;
 				return {
@@ -170,6 +198,7 @@
 					id: ine5, // feature-state per hover/select
 					properties: {
 						...f.properties,
+						__inberg: inBerg,
 						__val: hasVal ? (raw as number) : null,
 						__hasval: hasVal,
 						__conf: conf,
@@ -199,9 +228,9 @@
 				sources: {},
 				layers: [{ id: 'bg', type: 'background', paint: { 'background-color': MAP.water } }]
 			},
-			center: [1.85, 42.15], // Berguedà aprox.
+			center: [1.85, 42.15], // Berguedà aprox. (es reenquadra a fitToBergueda al load)
 			zoom: 9.2,
-			minZoom: 7,
+			minZoom: 6, // permet allunyar-se per veure tot Catalunya atenuat
 			maxZoom: 13,
 			attributionControl: { compact: true },
 			dragRotate: false,
@@ -245,23 +274,42 @@
 			}
 
 			map.addSource(SRC, { type: 'geojson', data: buildData(indicator), promoteId: 'ine5' });
+			map.addSource(SRC_COM, { type: 'geojson', data: comarques });
 
-			// Capa "sense dada": tramat sota el color (només es veu on __hasval=false).
+			// Capa BASE atenuada: tots els municipis SENSE dades (no Berguedà) amb fill neutre clar.
+			// «Sense dades encara»: visible però apagat, mai acolorit per l'indicador.
+			map.addLayer({
+				id: BASE,
+				type: 'fill',
+				source: SRC,
+				filter: ['!', ['get', '__inberg']],
+				paint: { 'fill-color': MAP.land, 'fill-opacity': 0.55 }
+			});
+
+			// Contorn tènue de TOTS els municipis (estructura de fons, molt suau).
+			map.addLayer({
+				id: BASELINE,
+				type: 'line',
+				source: SRC,
+				paint: { 'line-color': MAP.boundary, 'line-width': 0.4, 'line-opacity': 0.5 }
+			});
+
+			// Capa "sense dada" del Berguedà: tramat sota el color (Berguedà + __hasval=false).
 			map.addLayer({
 				id: HATCH,
 				type: 'fill',
 				source: SRC,
-				filter: ['!', ['get', '__hasval']],
+				filter: ['all', ['get', '__inberg'], ['!', ['get', '__hasval']]],
 				paint: { 'fill-pattern': 'hatch' }
 			});
 
-			// Capa coroplètica: només municipis amb dada. La confiança baixa es pinta amb
-			// opacitat reduïda (honestedat: l'estimació és menys ferma) + tramat a sobre (LOWCONF).
+			// Capa coroplètica: només municipis del Berguedà amb dada. La confiança baixa es pinta
+			// amb opacitat reduïda (honestedat: l'estimació és menys ferma) + tramat a sobre (LOWCONF).
 			map.addLayer({
 				id: FILL,
 				type: 'fill',
 				source: SRC,
-				filter: ['get', '__hasval'],
+				filter: ['all', ['get', '__inberg'], ['get', '__hasval']],
 				paint: {
 					'fill-color': fillColorExpression(classification) as never,
 					'fill-opacity': ['case', ['boolean', ['get', '__lowconf'], false], 0.55, 0.92]
@@ -274,16 +322,25 @@
 				id: LOWCONF,
 				type: 'fill',
 				source: SRC,
-				filter: ['boolean', ['get', '__lowconf'], false],
+				filter: ['all', ['get', '__inberg'], ['boolean', ['get', '__lowconf'], false]],
 				paint: { 'fill-pattern': 'hatch-lowconf' }
 			});
 
-			// Contorns de municipi (basemap apagat).
+			// Contorn marcat dels 31 municipis del Berguedà (els distingeix del context atenuat).
 			map.addLayer({
 				id: LINE,
 				type: 'line',
 				source: SRC,
+				filter: ['get', '__inberg'],
 				paint: { 'line-color': MAP.boundary, 'line-width': 0.8 }
+			});
+
+			// Límits de COMARCA (línia suau) per orientar dins de Catalunya.
+			map.addLayer({
+				id: COMLINE,
+				type: 'line',
+				source: SRC_COM,
+				paint: { 'line-color': MAP.label, 'line-width': 0.7, 'line-opacity': 0.35 }
 			});
 
 			// Hover: contorn més marcat (feature-state).
@@ -311,17 +368,25 @@
 			// Salvaguarda: assegura que el canvas té la mida del contenidor abans d'enquadrar
 			// (per si el `load` ha arribat amb una mida intermèdia). Vegeu `resizeObs`.
 			map.resize();
-			// Enquadra a la geometria.
-			fitToData(maplibregl);
+			// Enquadra a la bbox del BERGUEDÀ (no a tot Catalunya): el país queda de context.
+			fitToBergueda(maplibregl);
 			wireInteractions();
 			ready = true;
 		});
 	}
 
-	function fitToData(maplibregl: typeof import('maplibre-gl')) {
+	/**
+	 * Enquadra a la bbox dels municipis del BERGUEDÀ (els que tenen dades), no a tot Catalunya:
+	 * el zoom inicial mostra el Berguedà acolorit amb el país atenuat al voltant; el zoom-out
+	 * revela la resta de Catalunya.
+	 */
+	function fitToBergueda(maplibregl: typeof import('maplibre-gl')) {
 		if (!map) return;
+		const berg = bergSet;
 		const b = new maplibregl.LngLatBounds();
 		for (const f of geojson.features) {
+			const ine5 = (f.properties?.ine5 as string) ?? '';
+			if (!berg.has(ine5)) continue;
 			const g = f.geometry;
 			const eat = (coords: number[]) => b.extend(coords as [number, number]);
 			const walk = (arr: unknown): void => {
@@ -330,15 +395,16 @@
 			};
 			if (g && 'coordinates' in g) walk(g.coordinates);
 		}
-		if (!b.isEmpty()) map.fitBounds(b, { padding: 24, duration: 0 });
+		if (!b.isEmpty()) map.fitBounds(b, { padding: 36, duration: 0 });
 	}
 
 	let hoverId: string | null = null;
 
 	function wireInteractions() {
 		if (!map) return;
-		// LOWCONF s'apila sobre FILL: cal que també capti el hover dels munis de confiança baixa.
-		const interactive = [FILL, LOWCONF, HATCH];
+		// Capes interactives: el coroplètic i el tramat del Berguedà + la base atenuada de fora
+		// (LOWCONF s'apila sobre FILL → també ha de captar el hover dels munis de confiança baixa).
+		const interactive = [FILL, LOWCONF, HATCH, BASE];
 
 		for (const layer of interactive) {
 			map.on('mousemove', layer, (e) => {
@@ -353,15 +419,17 @@
 				map.setFeatureState({ source: SRC, id: ine5 }, { hover: true });
 				map.getCanvas().style.cursor = 'pointer';
 
-				const row = dataset.municipis[ine5];
+				const inBerg = bergSet.has(ine5);
+				const row = inBerg ? dataset.municipis[ine5] : undefined;
 				// Mateix tractament que el pintat: el 0 d'OSM de la restauració es mostra «sense
 				// dada» al tooltip, no «0,0 per mil» (és buit de mapejat, no absència real).
-				const value = mapValue(indicator, row?.values?.[indicator]);
+				const value = inBerg ? mapValue(indicator, row?.values?.[indicator]) : null;
 				onhover?.({
 					ine5,
 					nom: (feat.properties?.nom as string) ?? row?.nom ?? ine5,
 					value,
 					conf: (row?.values?.confianca as string | undefined) ?? null,
+					inBergueda: inBerg,
 					x: e.point.x,
 					y: e.point.y
 				});
@@ -415,7 +483,12 @@
 	});
 </script>
 
-<div class="map" bind:this={container} role="application" aria-label="Mapa coroplètic del Berguedà">
+<div
+	class="map"
+	bind:this={container}
+	role="application"
+	aria-label="Mapa de Catalunya amb el Berguedà actiu"
+>
 	{#if !ready}
 		<div class="map__loading" aria-hidden="true"></div>
 	{/if}
