@@ -209,6 +209,16 @@ class OpenRouterBackend(LLMBackend):
         loc = self.catalog.resolve_locale(locale)
         self.last_call_used_llm = False
 
+        # --- (0) political gate: resolve unlock once, strip the secret word ----
+        # Mirrors Router.ask: the gate keys off the resolved metric, but the
+        # *unlock* decision needs the raw question (before the word is removed).
+        # We decide it here and strip the word so it never reaches the router's
+        # keyword matching nor the LLM prompt; the decision is threaded into the
+        # shared executor below.
+        unlocked = self.router.politics_gate.is_unlocked(question)
+        if unlocked:
+            question = self.router.politics_gate.strip_unlock(question)
+
         # --- (1) deterministic-first: keep free LLM-free answers free ---------
         # The keyword router resolves most real questions (lookup / ranking /
         # correlation) and emits *precise* refusals (planned metric, unknown
@@ -222,7 +232,8 @@ class OpenRouterBackend(LLMBackend):
                 # else: fall through to the LLM (genuinely unmatched text)
             else:
                 # A confident structured interpretation — execute it offline.
-                return self.router.execute_intent(question, loc, parsed, self.name)
+                return self.router.execute_intent(
+                    question, loc, parsed, self.name, unlocked=unlocked)
 
         # --- (2) hard spend cap: stop before the network if over the ceiling --
         if self.spend_guard is not None and not self.spend_guard.can_spend(
@@ -251,7 +262,7 @@ class OpenRouterBackend(LLMBackend):
         )
         self.last_call_used_llm = True  # pragma: no cover - needs key
         self._record_spend(resp)  # pragma: no cover - needs key
-        return self._dispatch(question, loc, resp)  # pragma: no cover - needs key
+        return self._dispatch(question, loc, resp, unlocked)  # pragma: no cover - needs key
 
     def _record_spend(self, resp) -> None:  # pragma: no cover - needs key
         """Account the call's cost against the spend guard (actual if known)."""
@@ -268,8 +279,14 @@ class OpenRouterBackend(LLMBackend):
                     cost = actual
         self.spend_guard.record(cost)
 
-    def _dispatch(self, question: str, locale: str, resp) -> Answer:  # pragma: no cover - needs key
-        """Turn the model's tool call into a guarded Router execution."""
+    def _dispatch(self, question: str, locale: str, resp,
+                  unlocked: bool = False) -> Answer:  # pragma: no cover - needs key
+        """Turn the model's tool call into a guarded Router execution.
+
+        ``unlocked`` carries the political-gate decision made on the raw question
+        in :meth:`ask` (before the secret word was stripped), so the LLM path
+        honours the same gate as the offline path.
+        """
         choice = resp.choices[0].message
         tool_calls = getattr(choice, "tool_calls", None) or []
         if not tool_calls:
@@ -301,4 +318,5 @@ class OpenRouterBackend(LLMBackend):
             descending=args.get("descending", True),
             want_list=args.get("want_list", False),
         )
-        return self.router.execute_intent(question, locale, intent, self.name)
+        return self.router.execute_intent(
+            question, locale, intent, self.name, unlocked=unlocked)

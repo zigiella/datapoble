@@ -30,6 +30,7 @@ from dataclasses import dataclass
 
 from .catalog import Catalog, Metric, normalize
 from .i18n import format_number, t
+from .politics import PoliticsGate, is_political_metric
 from .types import (
     Answer,
     AnswerKind,
@@ -74,9 +75,14 @@ class Intent:
 class Router:
     """The deterministic agent backend."""
 
-    def __init__(self, catalog: Catalog, warehouse: Warehouse):
+    def __init__(self, catalog: Catalog, warehouse: Warehouse,
+                 politics_gate: PoliticsGate | None = None):
         self.catalog = catalog
         self.warehouse = warehouse
+        # The political gate (see politics.py). Read from the env by default so
+        # the secret is runtime-only; a gate with no word configured stays sealed
+        # for every vote question (fail-safe). Injectable for deterministic tests.
+        self.politics_gate = politics_gate or PoliticsGate.from_env()
         # Precompute the municipality directory from the mart so we can resolve
         # toponyms. Falls back gracefully if a mart lacks `municipi`.
         self._muni_index = self._build_muni_index()
@@ -268,21 +274,43 @@ class Router:
         executor.
         """
         loc = self.catalog.resolve_locale(locale)
+        # Political gate (resolution layer): if the secret word is present we
+        # open the gate AND strip the word *before* routing, so it can never
+        # pollute keyword matching nor echo back. The cleaned question is what we
+        # parse, display and pass downstream.
+        unlocked = self.politics_gate.is_unlocked(question)
+        if unlocked:
+            question = self.politics_gate.strip_unlock(question)
         parsed = self.parse(question, loc)
         if isinstance(parsed, RefusalReason):
             return self._refuse(question, loc, parsed, backend)
-        return self.execute_intent(question, loc, parsed, backend)
+        return self.execute_intent(question, loc, parsed, backend, unlocked=unlocked)
 
     def execute_intent(self, question: str, locale: str, intent: Intent,
-                       backend: str) -> Answer:
+                       backend: str, unlocked: bool | None = None) -> Answer:
         """Execute a (trusted, already-validated) intent under the guardrails.
 
         Shared by the offline router and the OpenRouter backend. Re-checks
-        metric availability defensively, then runs the parametrized read-only
-        SQL. Any guardrail violation surfaces as a reasoned refusal, never an
-        exception to the caller.
+        metric availability defensively, applies the political gate, then runs
+        the parametrized read-only SQL. Any guardrail violation surfaces as a
+        reasoned refusal, never an exception to the caller.
+
+        ``unlocked`` carries the political-gate decision from the entrypoint
+        (which saw the raw question before the secret word was stripped). When
+        ``None`` (a direct caller that did not pre-compute it) we evaluate it
+        from ``question`` here, so the gate holds for every path into the
+        executor — including the OpenRouter backend.
         """
         loc = self.catalog.resolve_locale(locale)
+        if unlocked is None:
+            unlocked = self.politics_gate.is_unlocked(question)
+        # Political gate: a resolved vote-orientation metric (dimension: politica)
+        # is refused, neutrally and discreetly, unless the gate was unlocked.
+        if not unlocked:
+            for m in (intent.metric, intent.metric_b):
+                if is_political_metric(m):
+                    return self._refuse(
+                        question, loc, RefusalReason.POLITICAL_GATED, backend)
         # Defensive availability re-check (the LLM path could pass anything).
         for m in (intent.metric, intent.metric_b):
             if m is not None and not m.is_available():
@@ -488,6 +516,9 @@ class Router:
             text = t(locale, "refusal_budget_exceeded")
         elif reason == RefusalReason.RATE_LIMITED:
             text = t(locale, "refusal_rate_limited")
+        elif reason == RefusalReason.POLITICAL_GATED:
+            # Deliberately neutral and discreet — no hint that an unlock exists.
+            text = t(locale, "refusal_political_gated")
         else:  # UNSUPPORTED_QUESTION
             m = self.match_metric(normalize(question), locale)
             text = t(locale, "refusal_unsupported",

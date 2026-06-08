@@ -53,6 +53,7 @@ from pydantic import BaseModel, Field
 from .agent import Agent
 from .catalog import SUPPORTED_LOCALES
 from .costcontrol import CostControl
+from .politics import is_political_metric
 from .router import Router
 from .types import RefusalReason
 
@@ -197,6 +198,10 @@ def health() -> dict:
 def metrics(locale: str = "ca") -> dict:
     agent = get_agent()
     loc = agent.catalog.resolve_locale(locale)
+    # Vote-orientation metrics (dimension: politica) are gated off in answers and
+    # are deliberately NOT advertised here either — the public catalog must not
+    # announce what the "Pregunta-li" will refuse to answer. They stay in the
+    # contract; they just don't surface on the public introspection endpoint.
     return {
         "locale": loc,
         "metrics": [
@@ -210,6 +215,7 @@ def metrics(locale: str = "ca") -> dict:
                 "formula": m.formula,
             }
             for m in agent.catalog.available_metrics()
+            if not is_political_metric(m)
         ],
     }
 

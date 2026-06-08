@@ -78,6 +78,11 @@ PHRASES: dict[str, dict[str, str]] = {
             "Has fet moltes consultes seguides. Espera uns segons i torna-ho a "
             "provar, si us plau. Gràcies!"
         ),
+        # Deliberately neutral and discreet: it must NOT reveal that any unlock
+        # word exists. Just a plain statement of policy.
+        "refusal_political_gated": (
+            "Aquest observatori no respon preguntes sobre orientació de vot."
+        ),
         "note_prefix": "Nota: ",
         "provenance_line": (
             "Font: {source} ({date}). Fórmula: {formula}."
@@ -126,6 +131,11 @@ PHRASES: dict[str, dict[str, str]] = {
         "refusal_rate_limited": (
             "Has hecho muchas consultas seguidas. Espera unos segundos y "
             "vuelve a intentarlo, por favor. ¡Gracias!"
+        ),
+        # Neutral y discreto: NO debe revelar que existe ninguna palabra de
+        # desbloqueo. Solo una declaración llana de la política.
+        "refusal_political_gated": (
+            "Este observatorio no responde preguntas sobre orientación de voto."
         ),
         "note_prefix": "Nota: ",
         "provenance_line": (

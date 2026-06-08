@@ -30,6 +30,7 @@ class RefusalReason(str, Enum):
     GUARDRAIL_VIOLATION = "guardrail_violation"    # write/raw/illegal SQL attempt
     BUDGET_EXCEEDED = "budget_exceeded"            # AI spend ceiling reached; LLM paused
     RATE_LIMITED = "rate_limited"                  # too many requests (per IP/user)
+    POLITICAL_GATED = "political_gated"            # vote-orientation metric, gated off
 
 
 @dataclass
