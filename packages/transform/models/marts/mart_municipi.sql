@@ -255,10 +255,14 @@ tipo as (
         case
             -- capital_serveis = CENTRE DE SERVEIS REAL (no «muni gran»): dotació de
             -- comerç i serveis essencials per sobre de la comarca (z_serv) + càrrega
-            -- humana real que els sosté (z_carr) + turisme NO dominant (z_tur). El
-            -- senyal DEFINIDOR és z_serv: un poble és capçalera per TENIR serveis que
-            -- serveixen els veïns, no per ser gran. Vegeu docs/tipologia-municipal.md.
-            when z_serv >= 0.8 and z_carr >= 0.5 and z_tur <= 0.3 then 'capital_serveis'
+            -- humana real que els sosté (z_carr) + turisme NO dominant (z_tur), amb un
+            -- SÒL DE POBLACIÓ de 2000 hab. El senyal DEFINIDOR és z_serv (capçalera per
+            -- TENIR serveis que serveixen els veïns, no per ser gran); el sòl evita que
+            -- un micromuni de vall amb dotació alta i aïllada (p.ex. la Pobla de Lillet,
+            -- 1106 hab) compti com a capçalera comarcal. A escala Catalunya el sòl i el
+            -- z_serv es calibren PER COMARCA. Vegeu docs/tipologia-municipal.md.
+            when poblacio >= 2000 and z_serv >= 0.8 and z_carr >= 0.5 and z_tur <= 0.3
+                then 'capital_serveis'
             -- buit_administratiu: micromunicipi tranquil a tots els eixos (poc
             -- turisme, poca activitat, gap no alt) → padró estable, sense pressió.
             when z_pop <= -0.5 and z_tur <= -0.3 and z_act <= -0.2 and z_gap <= 0.2 then 'buit_administratiu'
@@ -274,7 +278,7 @@ tipo as (
             when z_gap >= 0.4 and z_tur <= 0.0 then 'dormitori_invisible'
             else 'indeterminat'
         end as tipologia
-    from zsig2
+    from zsig2 join ind using (ine5)
 ),
 
 -- conf: confianca_score 0-100 AUDITABLE (complementa, no substitueix, la bandera

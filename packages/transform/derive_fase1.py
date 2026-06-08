@@ -112,15 +112,17 @@ tipo as (
         case
             -- capital_serveis = CENTRE de serveis real (no «muni gran»): dotació de
             -- comerç/serveis per sobre de la comarca (z_serv) + càrrega humana real
-            -- (z_carr; serveix gent) + turisme NO dominant. Vegeu docs/tipologia-municipal.md.
-            when z_serv >= 0.8 and z_carr >= 0.5 and z_tur <= 0.3 then 'capital_serveis'
+            -- (z_carr) + turisme NO dominant + SÒL de 2000 hab (capçalera = massa
+            -- crítica; sota el sòl, dotació alta = cas aïllat de vall, p.ex. la Pobla
+            -- de Lillet → es calibra per comarca a Catalunya). Definidor: z_serv.
+            when m.poblacio >= 2000 and z_serv >= 0.8 and z_carr >= 0.5 and z_tur <= 0.3 then 'capital_serveis'
             when z_pop <= -0.5 and z_tur <= -0.3 and z_act <= -0.2 and z_gap <= 0.2 then 'buit_administratiu'
             when z_tur >= 0.6 and z_act >= 0.4 and z_gap <= 0.4 then 'excursio'
             when z_gap >= 0.5 and (z_np >= 0.5 or z_tur >= 0.7) then 'segona_residencia'
             when z_gap >= 0.4 and z_tur <= 0.0 then 'dormitori_invisible'
             else 'indeterminat'
         end as tipologia
-    from zsig2
+    from zsig2 join m using (ine5)
 ),
 conf as (
     select z.ine5,
