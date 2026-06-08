@@ -17,7 +17,7 @@
 		{ path: '/index', label: m.nav_index },
 		{ path: '/day-tripper', label: m.nav_daytripper },
 		{ path: '/politica', label: m.nav_politica },
-		{ path: '/preguntale', label: m.nav_preguntale }
+		{ path: '/pregunta-li', label: m.nav_preguntale }
 	];
 
 	const currentPath = $derived(page.url.pathname);

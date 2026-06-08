@@ -60,7 +60,7 @@
 			<span>{m.nav_mapa()}</span>
 		</a>
 		<!-- Metodologia i Glossari NO van a la capçalera (decisió de Bea): viuen al peu (secció Explora). -->
-		<a href={localizeHref('/preguntale')} class:on={isActive('/preguntale')} aria-current={isActive('/preguntale') ? 'page' : undefined}>
+		<a href={localizeHref('/pregunta-li')} class:on={isActive('/pregunta-li')} aria-current={isActive('/pregunta-li') ? 'page' : undefined}>
 			<span>{m.nav_preguntale()}</span>
 		</a>
 		<span class="nav-inert" aria-disabled="true">{m.nav_index()}</span>
@@ -110,7 +110,7 @@
 				<li><span class="foot-inert" aria-disabled="true">{m.foot_about_who()}</span></li>
 				<li><span class="foot-inert" aria-disabled="true">{m.foot_about_politica()}</span></li>
 				<li><span class="foot-inert" aria-disabled="true">{m.foot_link_contract()}</span></li>
-				<li><a href={localizeHref('/preguntale')}>{m.foot_about_ask()}</a></li>
+				<li><a href={localizeHref('/pregunta-li')}>{m.foot_about_ask()}</a></li>
 			</ul>
 		</div>
 		<div class="ap-foot__ctl">
