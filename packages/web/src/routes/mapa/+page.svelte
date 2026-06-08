@@ -23,6 +23,7 @@
 	 * .map-read, .map-legend, .map-cls, .pal-spec…). Aquí només estructura + dades + wiring.
 	 */
 	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
 	import ContourField from '$lib/components/ContourField.svelte';
 	import ChoroplethMap from '$lib/components/ChoroplethMap.svelte';
 	import MapTooltip from '$lib/components/MapTooltip.svelte';
@@ -30,7 +31,7 @@
 	import { classify, methodFor, classRangeLabels, makeMetricFormatter } from '$lib/map/classify';
 	import { divergingColors, rampColors } from '$lib/map/palette';
 	import { TIPOLOGIA_ORDER, isCategorical } from '$lib/map/tipologia';
-	import { currentLocale } from '$lib/i18n';
+	import { currentLocale, localizeHref } from '$lib/i18n';
 	import type { MetricKey } from '$lib/contract/types';
 	import { m } from '$lib/paraglide/messages';
 	import type { PageData } from './$types';
@@ -162,6 +163,15 @@
 	}
 	let hover = $state<Hover | null>(null);
 
+	// Clic a un municipi → navega a la seva FITXA completa (`/municipi/[ine5]`). Només per als del
+	// Berguedà (els que tenen dades): per als de fora, el clic no navega (la fitxa diria «sense
+	// dades» i el hover ja ho comunica al mapa). El conjunt amb dades són les claus del dataset.
+	function onMuniSelect(ine5: string | null) {
+		if (!ine5) return;
+		if (!dataset.municipis[ine5]) return;
+		goto(localizeHref(`/municipi/${ine5}`));
+	}
+
 	// Paletes de l'especificació: quina queda destacada (.on) segons l'indicador actiu.
 	const activePal = $derived(divMode ? 'div' : 'seq');
 </script>
@@ -220,6 +230,7 @@
 							{indicator}
 							{classification}
 							onhover={(p) => (hover = p)}
+							onselect={onMuniSelect}
 						/>
 						{#if hover}
 							{#if hover.inBergueda}
@@ -232,6 +243,7 @@
 									confScore={hover.confScore}
 									x={hover.x}
 									y={hover.y}
+									hint={m.map_open_fitxa()}
 								/>
 							{:else}
 								<!-- Municipi de FORA del Berguedà: estat amable «sense dades encara»
