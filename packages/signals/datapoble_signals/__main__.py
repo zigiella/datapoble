@@ -4,11 +4,14 @@
     python -m datapoble_signals sequera         # descarrega + escriu events de sequera (ACA)
     python -m datapoble_signals all             # totes les fonts (rastres)
     python -m datapoble_signals convergencia    # motor de convergència (turisme × sequera)
+    python -m datapoble_signals licitacions     # capa d'intel·ligència institucional (taxonomia + repartiment + indicador)
 
-``convergencia`` NO descarrega res: llegeix els parquets ja materialitzats dels
-dos rastres + el mart de Sondeig (tots read-only) i escriu
-``data/events/convergencia_bergueda.parquet``. Per això queda **fora** d'``all``
-(que recull fonts); cal córrer-lo després que els rastres existeixin.
+``convergencia`` i ``licitacions`` NO descarreguen res: llegeixen els parquets ja
+materialitzats (read-only) i escriuen sortides derivades a ``data/events/``. Per
+això queden **fora** d'``all`` (que recull fonts); cal córrer-los després que els
+rastres existeixin. ``licitacions`` enriqueix la contractació amb la taxonomia
+territorial, reparteix els events comarcals als municipis i calcula l'indicador
+``dependencia_supramunicipal``.
 """
 from __future__ import annotations
 
@@ -16,7 +19,7 @@ import argparse
 import json
 import sys
 
-from . import contractacio, convergencia, sequera
+from . import contractacio, convergencia, licitacions, sequera
 
 # Fonts (descàrrega de rastres). ``all`` les recull totes.
 RUNNERS = {
@@ -27,6 +30,7 @@ RUNNERS = {
 # Derivats (operen sobre parquets ja materialitzats, sense xarxa). Fora d'``all``.
 DERIVED = {
     "convergencia": convergencia.run,
+    "licitacions": licitacions.run,
 }
 
 
