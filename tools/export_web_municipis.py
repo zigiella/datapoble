@@ -63,6 +63,8 @@ METRIC_KEYS = [
     "kwh_hab", "vidre_hab",
     # 2n proxy d'hostaleria de la capa L3 (restauració OSM, complement del vidre).
     "restauracio_estab", "restauracio_per_1000hab",
+    # Senyal de CENTRALITAT funcional (comerç i serveis OSM) — redefineix capital_serveis.
+    "serveis_estab", "serveis_per_1000hab",
     # Indicador estrella: MODEL DE 3 CAPES (derived, inferència).
     # L1 població pernocta (la nova «població invisible»):
     "poblacio_pernocta_est", "gap_pernocta", "gap_pernocta_pct",
@@ -88,6 +90,8 @@ FORMAT_BY_KEY = {
     "kwh_hab": "decimal", "vidre_hab": "decimal",
     # Restauració (2n proxy hostaleria L3): compte enter + densitat decimal.
     "restauracio_estab": "integer", "restauracio_per_1000hab": "decimal",
+    # Centralitat (comerç i serveis OSM): compte enter + densitat decimal.
+    "serveis_estab": "integer", "serveis_per_1000hab": "decimal",
     # 3 capes: comptes d'habitants → integer; *_pct ja en 0-100 → percent (mateixa
     # convenció que pct_noprincipal); index_turisme és 0-100 → decimal; confianca → text.
     "poblacio_pernocta_est": "integer", "gap_pernocta": "integer",
@@ -117,6 +121,9 @@ COL_MUNI = {
     # Restauració (2n proxy hostaleria L3).
     "restauracio_estab": "restauracio_estab",
     "restauracio_per_1000hab": "restauracio_per_1000hab",
+    # Centralitat (comerç i serveis OSM).
+    "serveis_estab": "serveis_estab",
+    "serveis_per_1000hab": "serveis_per_1000hab",
     # Indicador estrella: model de 3 capes.
     "poblacio_pernocta_est": "poblacio_pernocta_est", "gap_pernocta": "gap_pernocta",
     "gap_pernocta_pct": "gap_pernocta_pct", "carrega_total_est": "carrega_total_est",

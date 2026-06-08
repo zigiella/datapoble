@@ -69,6 +69,16 @@ restauracio as (
     select * from {{ ref('stg_restauracio_osm') }}
 ),
 
+-- Senyal de CENTRALITAT FUNCIONAL (centre de serveis real): nombre d'establiments de
+-- comerç quotidià (supermercat/forn/carnisseria/ferreteria…) i serveis essencials
+-- (banc/farmàcia/correus/ajuntament…) per municipi (OSM via Overpass, assignats per
+-- punt-en-polígon a la geometria real). És el senyal que redefineix capital_serveis:
+-- un poble és capçalera per TENIR serveis (compte ABSOLUT), no per ser gran. OSM
+-- infra-mapeja el rural → compte = MÍNIM observat, no cens.
+serveis as (
+    select * from {{ ref('stg_serveis_osm') }}
+),
+
 noms as (
     -- nom oficial: residus té els 31 amb nom net
     select distinct ine5, municipi from {{ ref('stg_residus') }}
@@ -104,13 +114,17 @@ ind as (
         vidre.vidre_any                                             as vidre_any,
         -- 2n proxy L3 (restauració OSM): compte d'establiments. Absència real → 0,
         -- no NULL (coherent amb rtc_total; un municipi sense locals mapejats és 0).
-        coalesce(restauracio.restauracio_estab, 0)                  as restauracio_estab
+        coalesce(restauracio.restauracio_estab, 0)                  as restauracio_estab,
+        -- Senyal de CENTRALITAT (serveis OSM): compte d'establiments de comerç i
+        -- serveis essencials. Absència real → 0, no NULL (com restauracio_estab).
+        coalesce(serveis.serveis_estab, 0)                          as serveis_estab
     from emex
     left join rtc         on emex.ine5 = rtc.ine5
     left join residus     on emex.ine5 = residus.ine5
     left join elec_pc     on emex.ine5 = elec_pc.ine5
     left join vidre       on emex.ine5 = vidre.ine5
     left join restauracio on emex.ine5 = restauracio.ine5
+    left join serveis     on emex.ine5 = serveis.ine5
     left join noms        on emex.ine5 = noms.ine5
 ),
 
@@ -193,6 +207,9 @@ sstats as (
         avg(kwh_hab)                 as kwh_avg,  stddev_pop(kwh_hab)                 as kwh_sd,
         avg(vidre_hab)               as vid_avg,  stddev_pop(vidre_hab)               as vid_sd,
         avg(restauracio_per_1000hab) as rest_avg, stddev_pop(restauracio_per_1000hab) as rest_sd,
+        -- Centralitat de serveis: ln(serveis_estab+1) (compte ABSOLUT, distribució
+        -- asimètrica com la població). El +1 evita ln(0) (cap muni té 0, però robust).
+        avg(ln(serveis_estab + 1))   as lserv_avg, stddev_pop(ln(serveis_estab + 1))  as lserv_sd,
         avg(ln(poblacio))            as lpop_avg, stddev_pop(ln(poblacio))            as lpop_sd,
         avg(ln(carrega_total_est))   as lcar_avg, stddev_pop(ln(carrega_total_est))   as lcar_sd
     from ind
@@ -213,6 +230,9 @@ zsig as (
         (i.kwh_hab          - s.kwh_avg) / nullif(s.kwh_sd,0)        as z_kwh,
         (i.vidre_hab        - s.vid_avg) / nullif(s.vid_sd,0)        as z_vid,
         (i.restauracio_per_1000hab - s.rest_avg) / nullif(s.rest_sd,0) as z_rest,
+        -- z_serv: centralitat de serveis (ln del compte absolut). Senyal nou que
+        -- redefineix capital_serveis com a CENTRE de serveis real (no «muni gran»).
+        (ln(i.serveis_estab + 1) - s.lserv_avg) / nullif(s.lserv_sd,0) as z_serv,
         (ln(i.poblacio)          - s.lpop_avg) / nullif(s.lpop_sd,0) as z_pop,
         (ln(i.carrega_total_est) - s.lcar_avg) / nullif(s.lcar_sd,0) as z_carr
     from ind i
@@ -233,9 +253,12 @@ zsig2 as (
 tipo as (
     select ine5,
         case
-            -- capital_serveis: població gran + càrrega total gran, turisme per
-            -- sota de la mitjana comarcal (Berga, i les viles grans de vall).
-            when z_pop >= 0.8 and z_carr >= 0.8 and z_tur <= 0.0 then 'capital_serveis'
+            -- capital_serveis = CENTRE DE SERVEIS REAL (no «muni gran»): dotació de
+            -- comerç i serveis essencials per sobre de la comarca (z_serv) + càrrega
+            -- humana real que els sosté (z_carr) + turisme NO dominant (z_tur). El
+            -- senyal DEFINIDOR és z_serv: un poble és capçalera per TENIR serveis que
+            -- serveixen els veïns, no per ser gran. Vegeu docs/tipologia-municipal.md.
+            when z_serv >= 0.8 and z_carr >= 0.5 and z_tur <= 0.3 then 'capital_serveis'
             -- buit_administratiu: micromunicipi tranquil a tots els eixos (poc
             -- turisme, poca activitat, gap no alt) → padró estable, sense pressió.
             when z_pop <= -0.5 and z_tur <= -0.3 and z_act <= -0.2 and z_gap <= 0.2 then 'buit_administratiu'
@@ -329,6 +352,15 @@ select
     ind.restauracio_estab,                                       -- establiments (OSM, mínim)
     round(ind.restauracio_estab / nullif(ind.poblacio, 0) * 1000, 2)
                                                                 as restauracio_per_1000hab,
+
+    -- Senyal de CENTRALITAT FUNCIONAL (centre de serveis real): compte d'establiments
+    -- de comerç i serveis essencials (OSM) i la seva densitat per 1000 hab. El COMPTE
+    -- ABSOLUT és el senyal de capçalera (entra a la regla capital_serveis via z-score
+    -- comarcal); la densitat és context. És una MESURA; OSM infra-mapeja el rural →
+    -- MÍNIM, no cens (a escala Catalunya, calibrar per comarca).
+    ind.serveis_estab,                                           -- establiments comerç+serveis (OSM, mínim)
+    round(ind.serveis_estab / nullif(ind.poblacio, 0) * 1000, 2)
+                                                                as serveis_per_1000hab,
 
     -- ===================================================================
     -- INDICADOR ESTRELLA — MODEL DE 3 CAPES (INFERÈNCIA, no cens). Mètode de

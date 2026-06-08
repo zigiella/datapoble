@@ -31,6 +31,11 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
 MART = REPO / "data" / "marts" / "mart_municipi.parquet"
+# Raw del senyal de centralitat (serveis OSM). data/raw/ és gitignored: pot NO existir
+# en un checkout net. Si hi és (després de la ingesta), s'usa per BATEJAR el parquet amb
+# serveis_estab/serveis_per_1000hab; si no, s'espera que el parquet ja les tingui (cas
+# normal un cop materialitzades, perquè el parquet és l'artefacte versionat).
+SERVEIS_RAW = REPO / "data" / "raw" / "serveis_osm" / "serveis_osm.parquet"
 
 # Vars del model (dbt_project.yml). Han de coincidir amb les del pipeline.
 POBLACIO_MIN_CONFIANCA = 75
@@ -39,10 +44,17 @@ BASE_RESIDENCIAL = 410
 # Columnes noves de la Fase 1 (ordre d'inserció just després de IETR_rank).
 NEW_COLS = ["IETR_stock", "IETR_impact", "tipologia", "confianca_score"]
 
+# Columnes base del senyal de centralitat (serveis OSM). Es materialitzen al mart just
+# després de restauracio_per_1000hab (vegeu mart_municipi.sql · CTE `serveis` + SELECT).
+SERVEIS_COLS = ["serveis_estab", "serveis_per_1000hab"]
+
 # Expressions SQL — MIRALL EXACTE de les CTEs de mart_municipi.sql. Es construeixen
-# sobre `m` (= mart_municipi ja materialitzat) + `nrm` (A_resid/B_turis re-derivats).
+# sobre `m` (= mart_municipi ja materialitzat, AUGMENTAT amb serveis_estab/
+# serveis_per_1000hab per _load_base) + `nrm` (A_resid/B_turis re-derivats). `m` ve
+# d'una relació registrada (m_base), no de read_parquet directe, perquè el senyal de
+# centralitat es bateja en pandas abans (vegeu _load_base).
 SQL = f"""
-with m as (select * from read_parquet('{MART.as_posix()}')),
+with m as (select * from m_base),
 
 -- Re-derivació de l'IETR (winsorització p5/p95 → A_resid/B_turis), idèntica al
 -- CTE `norm`+`ietr` del model. quantile_cont = interpolació lineal (= pandas linear).
@@ -75,6 +87,7 @@ sstats as (
         avg(kwh_hab) kwh_avg, stddev_pop(kwh_hab) kwh_sd,
         avg(vidre_hab) vid_avg, stddev_pop(vidre_hab) vid_sd,
         avg(restauracio_per_1000hab) rest_avg, stddev_pop(restauracio_per_1000hab) rest_sd,
+        avg(ln(serveis_estab + 1)) lserv_avg, stddev_pop(ln(serveis_estab + 1)) lserv_sd,
         avg(ln(poblacio)) lpop_avg, stddev_pop(ln(poblacio)) lpop_sd,
         avg(ln(carrega_total_est)) lcar_avg, stddev_pop(ln(carrega_total_est)) lcar_sd
     from m
@@ -88,6 +101,7 @@ zsig as (
         (m.kwh_hab - s.kwh_avg)/nullif(s.kwh_sd,0) z_kwh,
         (m.vidre_hab - s.vid_avg)/nullif(s.vid_sd,0) z_vid,
         (m.restauracio_per_1000hab - s.rest_avg)/nullif(s.rest_sd,0) z_rest,
+        (ln(m.serveis_estab + 1) - s.lserv_avg)/nullif(s.lserv_sd,0) z_serv,
         (ln(m.poblacio) - s.lpop_avg)/nullif(s.lpop_sd,0) z_pop,
         (ln(m.carrega_total_est) - s.lcar_avg)/nullif(s.lcar_sd,0) z_carr
     from m cross join sstats s
@@ -96,7 +110,10 @@ zsig2 as (select *, (z_kg+z_vid+z_rest)/3.0 as z_act from zsig),
 tipo as (
     select ine5,
         case
-            when z_pop >= 0.8 and z_carr >= 0.8 and z_tur <= 0.0 then 'capital_serveis'
+            -- capital_serveis = CENTRE de serveis real (no «muni gran»): dotació de
+            -- comerç/serveis per sobre de la comarca (z_serv) + càrrega humana real
+            -- (z_carr; serveix gent) + turisme NO dominant. Vegeu docs/tipologia-municipal.md.
+            when z_serv >= 0.8 and z_carr >= 0.5 and z_tur <= 0.3 then 'capital_serveis'
             when z_pop <= -0.5 and z_tur <= -0.3 and z_act <= -0.2 and z_gap <= 0.2 then 'buit_administratiu'
             when z_tur >= 0.6 and z_act >= 0.4 and z_gap <= 0.4 then 'excursio'
             when z_gap >= 0.5 and (z_np >= 0.5 or z_tur >= 0.7) then 'segona_residencia'
@@ -138,8 +155,58 @@ order by m.ine5
 """
 
 
+def _load_base() -> pd.DataFrame:
+    """Carrega el mart i el BATEJA amb el senyal de centralitat (serveis OSM).
+
+    Garanteix que ``m`` (la base del mirall SQL) tingui ``serveis_estab`` i
+    ``serveis_per_1000hab``, materialitzades just després de ``restauracio_per_1000hab``
+    (mateixa posició que mart_municipi.sql). Dos camins, idempotents:
+      · si el parquet JA les té (cas normal: són l'artefacte versionat) → no toca res;
+      · si no (1a materialització, o re-ingesta amb raw fresc) → les calcula del raw de
+        serveis_osm (compte absolut → serveis_estab; / poblacio * 1000 → densitat) i les
+        insereix. Absència real d'un municipi al raw → 0 (com restauracio_estab).
+    Si falten al parquet I no hi ha raw, FALLA amb instrucció (cal ingerir serveis_osm).
+    """
+    m = pd.read_parquet(MART)
+    if all(c in m.columns for c in SERVEIS_COLS):
+        return m
+
+    if not SERVEIS_RAW.exists():
+        raise SystemExit(
+            f"FALLA: el mart no té {SERVEIS_COLS} i no existeix el raw {SERVEIS_RAW}. "
+            "Executa la ingesta: python -m packages.ingestion.datapoble_ingestion serveis_osm"
+        )
+
+    raw = pd.read_parquet(SERVEIS_RAW)[["ine5", "serveis_estab"]].copy()
+    raw["ine5"] = raw["ine5"].astype(str).str.zfill(5)
+    m = m.merge(raw, on="ine5", how="left")
+    m["serveis_estab"] = m["serveis_estab"].fillna(0).astype(int)
+    m["serveis_per_1000hab"] = (
+        (m["serveis_estab"] / m["poblacio"].where(m["poblacio"] != 0) * 1000)
+        .round(2)
+    )
+    # Posiciona les dues columnes just després de restauracio_per_1000hab (diff net,
+    # coherent amb l'ordre del SELECT del mart).
+    cols = [c for c in m.columns if c not in SERVEIS_COLS]
+    anchor = cols.index("restauracio_per_1000hab") + 1
+    cols = cols[:anchor] + SERVEIS_COLS + cols[anchor:]
+    return m[cols]
+
+
 def build() -> pd.DataFrame:
+    m_base = _load_base()
+    # Idempotència: si el parquet JA porta els derivats Fase 1 (cas normal — són
+    # l'artefacte versionat que aquest mateix script va escriure), treu-los abans de
+    # re-derivar. Altrament `select m.*, … tipo.tipologia` xocaria amb la columna
+    # homònima de m.* i DuckDB la duplicaria (tipologia_1, IETR_stock_1…), deixant el
+    # parquet amb la regla VELLA passada de llarg i la nova al sufix _1. Es re-deriven
+    # nets tot seguit; sense raw fresc el resultat és idèntic (mateixos inputs).
+    dropped = [c for c in m_base.columns
+               if any(c == nc or c.startswith(nc + "_") for nc in NEW_COLS)]
+    if dropped:
+        m_base = m_base.drop(columns=dropped)
     con = duckdb.connect()
+    con.register("m_base", m_base)
     df = con.execute(SQL).fetchdf()
     con.close()
     # Fidelitat: l'IETR re-compost dels components ha de coincidir amb la columna
@@ -168,17 +235,20 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.check:
         cur = pd.read_parquet(MART)
-        missing = [c for c in NEW_COLS if c not in cur.columns]
+        # El senyal de centralitat (serveis) i els derivats Fase 1 han de ser-hi i al dia.
+        check_cols = [*SERVEIS_COLS, *NEW_COLS]
+        missing = [c for c in check_cols if c not in cur.columns]
         if missing:
             print(f"FALLA (--check): falten columnes {missing} (re-executa sense --check)", file=sys.stderr)
             return 1
-        # Compara els derivats (la resta de columnes no canvia).
-        a = cur[["ine5", *NEW_COLS]].sort_values("ine5").reset_index(drop=True)
-        b = new[["ine5", *NEW_COLS]].sort_values("ine5").reset_index(drop=True)
+        # Compara senyal de centralitat + derivats (la resta de columnes no canvia).
+        a = cur[["ine5", *check_cols]].sort_values("ine5").reset_index(drop=True)
+        b = new[["ine5", *check_cols]].sort_values("ine5").reset_index(drop=True)
         if not a.equals(b):
-            print(f"FALLA (--check): {MART} té derivats desactualitzats (re-executa sense --check)", file=sys.stderr)
+            print(f"FALLA (--check): {MART} té columnes desactualitzades (re-executa sense --check)", file=sys.stderr)
             return 1
-        print(f"OK (--check): {MART.name} al dia · {len(new)} municipis · {len(NEW_COLS)} derivats.")
+        print(f"OK (--check): {MART.name} al dia · {len(new)} municipis · "
+              f"{len(SERVEIS_COLS)} senyal centralitat + {len(NEW_COLS)} derivats.")
         return 0
 
     # Reordena: insereix els nous just després de IETR_rank (estètica/diff net).
