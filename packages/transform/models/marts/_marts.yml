@@ -208,6 +208,52 @@ models:
         data_tests:
           - unique
           - not_null
+      # --- FASE 1 · 3 derivats nous (endurir el model SENSE fonts noves) ---
+      - name: IETR_stock
+        description: >
+          IETR dual · component ESTRUCTURAL/resident (A_resid reescalat 0-100):
+          habitatge no principal + habitatges per habitant. Exposició latent. 0-100.
+          Identitat: round(0.5*IETR_stock + 0.5*IETR_impact, 2) == IETR.
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 0, max_value: 100 }
+      - name: IETR_impact
+        description: >
+          IETR dual · component de PRESSIÓ realitzada (B_turis reescalat 0-100):
+          RTC per 1000 hab + per 100 habitatges. Pressió viva. 0-100.
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 0, max_value: 100 }
+      - name: tipologia
+        description: >
+          Classificació amb NOM de com s'habita el municipi (LECTURA, no cens),
+          per regles sobre z-scores comarcals: dormitori_invisible · excursio ·
+          segona_residencia · capital_serveis · buit_administratiu · indeterminat
+          (on és ambigu). Verificat: Berga=capital_serveis, Castellar=excursio,
+          Gósol/Saldes=segona_residencia. Vegeu docs/tipologia-municipal.md.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - dormitori_invisible
+                  - excursio
+                  - segona_residencia
+                  - capital_serveis
+                  - buit_administratiu
+                  - indeterminat
+      - name: confianca_score
+        description: >
+          Puntuació auditable 0-100 de fiabilitat (complementa la bandera
+          `confianca`): mida del denominador + concordança dels senyals físics +
+          cobertura − outlier. Etiqueta derivable (<45 baixa · 45–65 mitjana ·
+          ≥65 alta). Vegeu docs/tipologia-municipal.md.
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 0, max_value: 100 }
       - name: kg_hab_any_year
         description: Any del tall de residus (traçabilitat temporal).
       - name: vidre_any
