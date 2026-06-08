@@ -69,11 +69,19 @@ export type MetricKey =
 	| 'gap_abs'
 	| 'gap_pct'
 	| 'confianca'
+	// Fase 1 — endurir el model (derivats sobre senyals existents, docs/tipologia-municipal.md):
+	//  · tipologia: CATEGÒRICA — quin TIPUS de pressió (no «més/menys»); la joia narrativa.
+	//  · confianca_score: 0-100 auditable, complementa la bandera `confianca` (alta/mitjana/baixa).
+	//  · IETR dual: els dos costats de l'IETR (estructural/stock + pressió realitzada/impacte).
+	| 'tipologia'
+	| 'confianca_score'
 	// Energia / rehabilitació
 	| 'pct_icaen_EFG'
 	// Índex IETR
 	| 'IETR'
 	| 'IETR_rank'
+	| 'IETR_stock'
+	| 'IETR_impact'
 	// Política (lectura ecològica)
 	| 'pct_indep'
 	| 'pct_esquerra'

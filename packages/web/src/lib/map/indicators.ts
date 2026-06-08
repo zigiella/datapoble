@@ -31,6 +31,10 @@ import type { MetricKey } from '$lib/contract/types';
  * turística) i la lectura territorial estructural.
  */
 export const MAP_INDICATORS: MetricKey[] = [
+	// Encapçala la TIPOLOGIA (Fase 1): la joia narrativa — diu QUIN TIPUS de pressió hi ha
+	// (capital de serveis, segona residència, excursió, dormitori invisible, buit administratiu,
+	// indeterminat), no «més/menys». Coloració CATEGÒRICA (un color per tipus), no rampa.
+	'tipologia',
 	'gap_pernocta_pct',
 	'carrega_total_est',
 	'index_turisme',

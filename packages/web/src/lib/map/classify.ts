@@ -18,7 +18,7 @@
 
 import type { MetricFormat, MetricKey } from '$lib/contract/types';
 
-export type ClassMethod = 'quantiles' | 'jenks' | 'diverging';
+export type ClassMethod = 'quantiles' | 'jenks' | 'diverging' | 'categorical';
 
 /** Nombre de classes per defecte del sistema (decisió de Talaia, 2026-06-04). */
 export const DEFAULT_CLASSES = 5;
@@ -30,6 +30,13 @@ export const DEFAULT_CLASSES = 5;
  * `guanya` és categòrica (text) i no entra al coroplètic seqüencial.
  */
 const QUANTILE_KEYS = new Set<MetricKey>(['IETR', 'IETR_rank']);
+
+/**
+ * Mètriques CATEGÒRIQUES (text amb un conjunt tancat d'arquetips): la `tipologia` d'habitança.
+ * No es classifiquen amb talls numèrics — cada valor té el seu color propi (un per tipus, no rampa)
+ * i una llegenda categòrica. El color comunica IDENTITAT (quin tipus), no ordre/magnitud.
+ */
+const CATEGORICAL_KEYS = new Set<MetricKey>(['tipologia']);
 
 /**
  * Mètriques que són una DESVIACIÓ respecte a un punt neutre (0): el gap de PERNOCTA (població
@@ -46,6 +53,7 @@ const DIVERGING_KEYS = new Set<MetricKey>([
 ]);
 
 export function methodFor(key: MetricKey): ClassMethod {
+	if (CATEGORICAL_KEYS.has(key)) return 'categorical';
 	if (DIVERGING_KEYS.has(key)) return 'diverging';
 	return QUANTILE_KEYS.has(key) ? 'quantiles' : 'jenks';
 }
@@ -209,6 +217,15 @@ export function classify(
 	method: ClassMethod,
 	classes: number = DEFAULT_CLASSES
 ): Classification {
+	// CATEGÒRIC: no hi ha talls numèrics. Els valors són cadenes (arquetips de tipologia) i el
+	// color el resol el diccionari de tipologia, no una rampa. Retornem una classificació
+	// degenerada (sense breaks, n = nombre de municipis amb categoria) perquè la pàgina/llegenda
+	// puguin diferenciar el mode i comptar quants en tenen, sense intentar números sobre text.
+	if (method === 'categorical') {
+		const n = values.filter((v) => typeof v === 'string' && v !== '').length;
+		return { method, classes: 0, breaks: [], min: 0, max: 0, domain: [], n };
+	}
+
 	const nums = values
 		.map((v) => (typeof v === 'number' ? v : NaN))
 		.filter((v) => Number.isFinite(v)) as number[];

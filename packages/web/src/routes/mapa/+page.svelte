@@ -29,6 +29,7 @@
 	import { MAP_INDICATORS, DEFAULT_INDICATOR, mapValue } from '$lib/map/indicators';
 	import { classify, methodFor, classRangeLabels, makeMetricFormatter } from '$lib/map/classify';
 	import { divergingColors, rampColors } from '$lib/map/palette';
+	import { TIPOLOGIA_ORDER, isCategorical } from '$lib/map/tipologia';
 	import { currentLocale } from '$lib/i18n';
 	import type { MetricKey } from '$lib/contract/types';
 	import { m } from '$lib/paraglide/messages';
@@ -46,6 +47,7 @@
 	// Només per a les claus de MAP_INDICATORS; `labelFor` cau a l'etiqueta del contracte si cal.
 	// El model de 3 capes: L1 població invisible (pernocta), L2 càrrega total, L3 pressió turística.
 	const INDICATOR_LABEL: Partial<Record<MetricKey, () => string>> = {
+		tipologia: () => m.map_ind_tipologia(),
 		gap_pernocta_pct: () => m.map_ind_pernocta(),
 		carrega_total_est: () => m.map_ind_carrega(),
 		index_turisme: () => m.map_ind_turisme(),
@@ -73,6 +75,9 @@
 	const def = $derived(dataset.metrics[indicator]);
 	// «divMode» = l'indicador és una desviació amb signe (el gap de pernocta) → rampa divergent.
 	const divMode = $derived(method === 'diverging');
+	// «catMode» = l'indicador és categòric (la tipologia) → coloració per tipus + llegenda categòrica
+	// (un color per arquetip, NO rampa). El color comunica QUIN TIPUS de pressió, no «més/menys».
+	const catMode = $derived(method === 'categorical');
 
 	// Les tres capes del model v2 són INFERÈNCIA (derived) → caveat d'honestedat propi.
 	// L1 (pernocta) ve de l'elèctric; L2 (càrrega) i L3 (pressió turística) tenen el seu matís.
@@ -80,6 +85,7 @@
 	// i VALIDA la pressió del vidre. Per als indicadors oficials directes (% no principal, residus)
 	// o l'índex IETR no s'hi aplica.
 	const LAYER_KEYS = new Set<MetricKey>([
+		'tipologia',
 		'gap_pernocta_pct',
 		'carrega_total_est',
 		'index_turisme',
@@ -88,6 +94,7 @@
 	const isLayer = $derived(LAYER_KEYS.has(indicator));
 	// Text del caveat principal segons la capa activa (honestedat per indicador).
 	const layerCaveat = $derived.by(() => {
+		if (indicator === 'tipologia') return m.map_caveat_tipologia();
 		if (indicator === 'gap_pernocta_pct') return m.map_caveat_pernocta();
 		if (indicator === 'carrega_total_est') return m.map_caveat_carrega();
 		if (indicator === 'index_turisme') return m.map_caveat_turisme();
@@ -146,6 +153,8 @@
 		nom: string;
 		value: number | string | null;
 		conf: string | null;
+		/** Confiança auditable 0-100 (`confianca_score`); complementa la bandera. */
+		confScore: number | null;
 		/** True si el municipi és del Berguedà (té dades); fals → «sense dades encara». */
 		inBergueda: boolean;
 		x: number;
@@ -220,6 +229,7 @@
 									{def}
 									value={hover.value}
 									conf={hover.conf}
+									confScore={hover.confScore}
 									x={hover.x}
 									y={hover.y}
 								/>
@@ -248,11 +258,29 @@
 					<div class="map-read">
 						<p class="map-read__h">{m.map_read_h()}</p>
 						<p class="read">
-							{#if divMode}{m.map_read_gap()}{:else}{m.map_read_seq()}{/if}
+							{#if catMode}{m.map_read_cat()}{:else if divMode}{m.map_read_gap()}{:else}{m.map_read_seq()}{/if}
 						</p>
 					</div>
 					<div class="map-legend">
-						{#if divMode}
+						{#if catMode}
+							<!-- llegenda CATEGÒRICA (tipologia): un color per arquetip + etiqueta + frase curta.
+							     NO és una rampa: el color comunica QUIN TIPUS de pressió, no «més/menys». -->
+							<div>
+								<p class="legend__hd"><span>{labelFor(indicator)}</span></p>
+								<p class="ds-block__lab" style="border:none;margin:0 0 10px;padding:0">
+									{m.map_leg_cat_sub({ n: String(TIPOLOGIA_ORDER.length) })}
+								</p>
+								<div class="map-cls map-cls--cat">
+									{#each TIPOLOGIA_ORDER as t (t.value)}
+										<div class="r r--cat" class:r--neutral={t.value === 'indeterminat'}>
+											<i style="background:{t.color}"></i>
+											<span class="cat-lab">{t.label()}</span>
+											<span class="cat-blurb">{t.blurb()}</span>
+										</div>
+									{/each}
+								</div>
+							</div>
+						{:else if divMode}
 							<!-- llegenda DIVERGENT (gap) amb talls reals -->
 							<div>
 								<p class="legend__hd"><span>{labelFor(indicator)}</span></p>
@@ -353,6 +381,47 @@
 	@media (max-width: 880px) {
 		.map-wrap { grid-template-columns: 1fr; }
 	}
+
+	/* Llegenda CATEGÒRICA (tipologia): files amb swatch + etiqueta humana + frase curta.
+	   Reutilitza .map-cls/.r del design-system (swatch quadrat 26×14) però apila etiqueta i
+	   frase en una graella de dues files perquè la frase curta càpiga sense atapeir. */
+	.map-cls--cat .r--cat {
+		display: grid;
+		grid-template-columns: 26px 1fr;
+		grid-template-rows: auto auto;
+		column-gap: 10px;
+		row-gap: 1px;
+		align-items: start;
+		padding: 7px 0;
+		border-bottom: 1px solid var(--dp-border);
+	}
+	.map-cls--cat .r--cat:last-child { border-bottom: none; }
+	.map-cls--cat .r--cat > i {
+		grid-row: 1 / span 2;
+		width: 26px;
+		height: 14px;
+		border-radius: 2px;
+		margin-top: 2px;
+		/* contorn discret perquè el gris neutre de l'`indeterminat` no es perdi sobre el fons. */
+		box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+	}
+	.map-cls--cat .cat-lab {
+		font-family: var(--dp-font-sans);
+		font-weight: 600;
+		font-size: 0.78rem;
+		color: var(--dp-text);
+		line-height: 1.2;
+	}
+	.map-cls--cat .cat-blurb {
+		grid-column: 2;
+		font-family: var(--dp-font-sans);
+		font-size: 0.68rem;
+		line-height: 1.32;
+		color: var(--dp-text-subtle);
+	}
+	/* `indeterminat` és un estat HONEST (territori mixt), no un buit: l'etiqueta va en to apagat
+	   perquè es llegeixi com a «el model no força una narració», no com a error. */
+	.map-cls--cat .r--neutral .cat-lab { color: var(--dp-text-muted); font-style: italic; }
 
 	/* Contenidor net del mapa en viu: SENSE fons de paper ni corbes. El ChoroplethMap
 	   arrela el seu propi .map (amb la seva vora/radi i el canvas); aqui nomes el situem

@@ -19,6 +19,7 @@
 	import { formatMetric, formatDecimal } from '$lib/format';
 	import { SIGNED_PCT_KEYS } from '$lib/map/classify';
 	import { provenanceOf } from '$lib/map/provenance';
+	import { tipologiaMeta } from '$lib/map/tipologia';
 	import { m } from '$lib/paraglide/messages';
 	import type { MetricDef, MetricKey, MetricValue, MunicipiRow } from '$lib/contract/types';
 	import type { PageData } from './$types';
@@ -147,6 +148,23 @@
 	const castellar = $derived(featured.castellar);
 	const berga = $derived(featured.berga);
 
+	// Tipologia (categòrica) d'un municipi: metadades de presentació (etiqueta humana + color + frase).
+	// És la LECTURA narrativa de la Fase 1 — quin TIPUS de pressió, no «més/menys». undefined si manca.
+	const tipoOf = (row: MunicipiRow) => tipologiaMeta(row.values.tipologia);
+	// confianca_score (0-100) d'un municipi: complementa la bandera `confianca` (poden divergir).
+	const scoreOf = (row: MunicipiRow): number | null => {
+		const s = row.values.confianca_score;
+		return typeof s === 'number' && Number.isFinite(s) ? s : null;
+	};
+	// Etiqueta humana de la bandera de confiança (alta/mitjana/baixa) d'un municipi.
+	const confLabelOf = (row: MunicipiRow): string | null => {
+		const c = row.values.confianca;
+		if (c === 'alta') return m.map_confidence_high();
+		if (c === 'mitjana') return m.map_confidence_mid();
+		if (c === 'baixa') return m.map_confidence_low();
+		return null;
+	};
+
 	// IETR formatat per a l'eix i el rètol gran (1 decimal, localitzat).
 	const ietrCastellar = $derived(
 		typeof castellar.values.IETR === 'number' ? castellar.values.IETR : 0
@@ -273,6 +291,9 @@
 					{@const ietr = typeof ex.row.values.IETR === 'number' ? ex.row.values.IETR : 0}
 					{@const rank = ex.row.values.IETR_rank}
 					{@const elev = ex.row.ine5 === '08052' ? '1.245 m' : ex.row.ine5 === '08022' ? '704 m' : ''}
+					{@const tipo = tipoOf(ex.row)}
+					{@const conf = confLabelOf(ex.row)}
+					{@const score = scoreOf(ex.row)}
 					<article class="ex ex--{ex.variant}">
 						<div class="ex__hd">
 							<span class="ex__rank"
@@ -287,6 +308,34 @@
 									>{formatMetric(ex.row.values.poblacio, dataset.metrics.poblacio, locale)} hab.</span
 								>{#if elev}<span>{elev}</span>{/if}
 							</p>
+
+							<!-- Tipologia (Fase 1): la LECTURA narrativa destacada — quin TIPUS de pressió.
+							     Pastilla amb el color categòric de l'arquetip + etiqueta humana + frase curta. -->
+							{#if tipo}
+								<div class="ex__tipo">
+									<span class="ex__tipo-badge" style="--tipo-c:{tipo.color}">
+										<span class="dot"></span>{tipo.label()}
+									</span>
+									<p class="ex__tipo-blurb">{tipo.blurb()}</p>
+								</div>
+							{/if}
+
+							<!-- Confiança: bandera (alta/mitjana/baixa) + score auditable 0-100. Es mostren
+							     TOTS DOS perquè poden divergir (Castellar: bandera «alta» però score ≈ 33,
+							     senyals que es contradiuen). El score és el costat fi i honest de la tensió. -->
+							{#if conf || score !== null}
+								<div class="ex__conf">
+									<span class="ex__conf-lbl">{m.map_confidence_label()}</span>
+									{#if conf}<span class="ex__conf-flag ex__conf-flag--{ex.row.values.confianca}"
+											>{conf}</span
+										>{/if}
+									{#if score !== null}
+										<span class="ex__conf-score" title={m.map_confidence_score_label()}
+											>{formatDecimal(score, locale, 0)}<span class="ex__conf-scale">/100</span></span
+										>
+									{/if}
+								</div>
+							{/if}
 						</div>
 						<div class="ex__rows tnum">
 							{#each fichaKeys as key (key)}
@@ -314,3 +363,77 @@
 		</section>
 	</div>
 </section>
+
+<style>
+	/* Tipologia destacada + confiança (Fase 1) a la capçalera de cada fitxa de municipi.
+	   Va sota .ex__meta, dins de .ex__hd (que ja és position:relative). El gros del chrome de la
+	   fitxa ve del design-system; aquí només la pastilla de tipologia i la línia de confiança. */
+	.ex__tipo {
+		margin: 12px 0 0;
+	}
+	.ex__tipo-badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 7px;
+		padding: 4px 11px 4px 9px;
+		border-radius: 999px;
+		/* tint suau del color de l'arquetip; el text es manté llegible (no pinta sobre el color ple). */
+		background: color-mix(in srgb, var(--tipo-c) 14%, var(--dp-surface));
+		border: 1px solid color-mix(in srgb, var(--tipo-c) 40%, var(--dp-border));
+		font-family: 'Archivo', var(--dp-font-sans);
+		font-weight: 700;
+		font-size: 0.92rem;
+		letter-spacing: -0.01em;
+		color: var(--dp-text);
+		line-height: 1.15;
+	}
+	.ex__tipo-badge .dot {
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		background: var(--tipo-c);
+		flex: none;
+		box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+	}
+	.ex__tipo-blurb {
+		margin: 7px 0 0;
+		font-family: var(--dp-font-sans);
+		font-size: 0.82rem;
+		line-height: 1.4;
+		color: var(--dp-text-muted);
+		max-width: 42ch;
+	}
+	.ex__conf {
+		display: flex;
+		align-items: baseline;
+		gap: 8px;
+		margin: 12px 0 0;
+		font-family: var(--dp-font-mono);
+		font-size: 0.66rem;
+	}
+	.ex__conf-lbl {
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--dp-text-subtle);
+	}
+	.ex__conf-flag {
+		font-weight: 700;
+		color: var(--dp-text);
+	}
+	/* La bandera de confiança té el to semàntic dels estats (mateix gest que el tooltip del mapa). */
+	.ex__conf-flag--alta {
+		color: var(--dp-success, #2f6b4f);
+	}
+	.ex__conf-flag--baixa {
+		color: var(--dp-warning, #b5612a);
+	}
+	.ex__conf-score {
+		font-weight: 700;
+		color: var(--dp-text);
+		font-feature-settings: 'tnum' 1;
+	}
+	.ex__conf-scale {
+		font-weight: 500;
+		color: var(--dp-text-subtle);
+	}
+</style>

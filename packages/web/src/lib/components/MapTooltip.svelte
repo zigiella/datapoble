@@ -11,6 +11,8 @@
 	import type { MetricDef, MetricKey } from '$lib/contract/types';
 	import { makeMetricFormatter } from '$lib/map/classify';
 	import { provenanceOf } from '$lib/map/provenance';
+	import { isCategorical, tipologiaLabel, tipologiaBlurb } from '$lib/map/tipologia';
+	import { formatDecimal } from '$lib/format';
 	import { pick, currentLocale } from '$lib/i18n';
 	import { m } from '$lib/paraglide/messages';
 
@@ -22,20 +24,30 @@
 		value: number | string | null;
 		/** Confiança de l'estimació (clau `confianca`); només es mostra per a estimacions. */
 		conf?: string | null;
+		/** Confiança auditable 0-100 (`confianca_score`); complementa la bandera. */
+		confScore?: number | null;
 		/** Posició en píxels dins del contenidor del mapa. */
 		x: number;
 		y: number;
 	}
-	let { nom, metricKey, def, value, conf = null, x, y }: Props = $props();
+	let { nom, metricKey, def, value, conf = null, confScore = null, x, y }: Props = $props();
 
 	const locale = $derived(currentLocale());
-	const hasVal = $derived(typeof value === 'number' && Number.isFinite(value));
+	// La tipologia és CATEGÒRICA: el valor és una cadena d'arquetip → es mostra l'etiqueta HUMANA
+	// (no el snake_case) i una frase curta del que vol dir. La resta de mètriques, format numèric.
+	const isTipologia = $derived(isCategorical(metricKey));
+	const hasVal = $derived(
+		isTipologia ? typeof value === 'string' && value !== '' : typeof value === 'number' && Number.isFinite(value)
+	);
 	const prov = $derived(provenanceOf(def, hasVal));
 	const formatted = $derived.by(() => {
+		if (isTipologia) return typeof value === 'string' ? tipologiaLabel(value) : m.value_not_available();
 		if (typeof value === 'number') return makeMetricFormatter(metricKey, def.format, locale)(value);
 		if (typeof value === 'string') return value;
 		return m.value_not_available();
 	});
+	/** Frase curta de l'arquetip de tipologia (només en mode tipologia). */
+	const tipoBlurb = $derived(isTipologia && typeof value === 'string' ? tipologiaBlurb(value) : '');
 
 	/**
 	 * És una mètrica d'ESTIMACIÓ de les 3 capes (inferència)? En aquest cas el tooltip recorda
@@ -43,6 +55,7 @@
 	 * model v2 (pernocta/càrrega/pressió turística) i els àlies de compatibilitat.
 	 */
 	const ESTIMATE_KEYS = new Set<MetricKey>([
+		'tipologia',
 		'gap_pernocta_pct',
 		'gap_pernocta',
 		'poblacio_pernocta_est',
@@ -54,6 +67,8 @@
 		'poblacio_real_rel'
 	]);
 	const isEstimate = $derived(ESTIMATE_KEYS.has(metricKey));
+	/** Hi ha score auditable 0-100 a mostrar? Es complementa amb la bandera (no la substitueix). */
+	const hasScore = $derived(typeof confScore === 'number' && Number.isFinite(confScore));
 	/** Etiqueta localitzada del nivell de confiança (alta/mitjana/baixa). */
 	const confLabel = $derived.by(() => {
 		if (conf === 'alta') return m.map_confidence_high();
@@ -90,17 +105,33 @@
 	<div class="tip__place">{nom}</div>
 	<div class="tip__metric">{pick(def.label, locale)}</div>
 	{#if hasVal}
-		<div class="tip__val tnum">
+		<div class="tip__val tnum" class:tip__val--cat={isTipologia}>
 			{formatted}{#if showUnit}<span class="tip__unit"> {unit}</span>{/if}
 		</div>
+		{#if isTipologia && tipoBlurb}
+			<!-- Frase curta del que vol dir l'arquetip (la tipologia diu QUIN TIPUS de pressió). -->
+			<p class="tip__blurb">{tipoBlurb}</p>
+		{/if}
 	{:else}
 		<div class="tip__val tip__val--nodata">{m.map_tooltip_nodata()}</div>
 	{/if}
 
-	{#if isEstimate && hasVal && confLabel}
+	{#if isEstimate && hasVal && (confLabel || hasScore)}
+		<!-- Confiança: la BANDERA (alta/mitjana/baixa) i el SCORE auditable 0-100 es mostren TOTS
+		     DOS — poden divergir (Castellar: bandera «alta» però score ≈ 33 per senyals que es
+		     contradiuen). Veure els dos és l'honestedat: el score és el costat fi de la tensió. -->
 		<div class="tip__conf tip__conf--{conf}">
-			<span class="tip__conf-lbl">{m.map_confidence_label()}:</span>
-			<span class="tip__conf-val">{confLabel}</span>
+			{#if confLabel}
+				<span class="tip__conf-lbl">{m.map_confidence_label()}:</span>
+				<span class="tip__conf-val">{confLabel}</span>
+			{/if}
+			{#if hasScore}
+				<span class="tip__conf-score" title={m.map_confidence_score_label()}
+					>· {formatDecimal(confScore as number, locale, 0)}<span class="tip__conf-score-scale"
+						>/100</span
+					></span
+				>
+			{/if}
 		</div>
 	{/if}
 
@@ -108,7 +139,9 @@
 		<span class="dot"></span>{provLabel}
 	</div>
 
-	{#if isEstimate && hasVal}
+	{#if hasVal && isTipologia}
+		<p class="tip__caveat">{m.map_tipologia_tooltip_caveat()}</p>
+	{:else if isEstimate && hasVal}
 		<p class="tip__caveat">{m.map_gap_tooltip_caveat()}</p>
 	{/if}
 </div>
@@ -170,6 +203,30 @@
 		font-size: 0.85rem;
 		font-weight: 600;
 		color: var(--dp-text-muted);
+	}
+	/* Tipologia: el «valor» és una etiqueta humana (text), no un número gran. Mida menor i
+	   interlletratge normal perquè un nom llarg («Poble de segona residència») respiri. */
+	.tip__val--cat {
+		font-family: var(--dp-font-display);
+		font-size: 1.06rem;
+		line-height: 1.18;
+		margin-bottom: 3px;
+	}
+	.tip__blurb {
+		margin: 0 0 7px;
+		font-family: var(--dp-font-sans);
+		font-size: 0.72rem;
+		line-height: 1.35;
+		color: var(--dp-text-muted);
+	}
+	/* Score auditable 0-100 al costat de la bandera de confiança. */
+	.tip__conf-score {
+		font-weight: 700;
+		color: var(--dp-text);
+	}
+	.tip__conf-score-scale {
+		font-weight: 500;
+		color: var(--dp-text-subtle);
 	}
 	.tip__conf {
 		display: flex;
