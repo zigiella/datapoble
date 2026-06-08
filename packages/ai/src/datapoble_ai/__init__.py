@@ -21,6 +21,7 @@ from .costcontrol import (
     normalize_question,
 )
 from .llm import LLMBackend, OfflineBackend, OpenRouterBackend
+from .politics import PoliticsGate, is_political_metric
 from .types import Answer, AnswerKind, Provenance, RefusalReason
 from .warehouse import Warehouse, WarehouseError
 
@@ -46,4 +47,6 @@ __all__ = [
     "RateLimiter",
     "SpendGuard",
     "normalize_question",
+    "PoliticsGate",
+    "is_political_metric",
 ]

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datapoble_ai import Agent
 from datapoble_ai.types import AnswerKind
 
 
@@ -67,8 +68,15 @@ def test_derived_metric_cites_origin_source(agent):
     assert "datapoble" in (ans.provenance.source or "").lower()  # via the derived layer
 
 
-def test_note_caveat_surfaced_for_political_metric(agent):
+def test_note_caveat_surfaced_for_political_metric(monkeypatch):
     # pct_indep carries an "ecological reading" caveat note in the contract.
-    ans = agent.ask("Quin municipi té més % vot independentista?", locale="ca")
+    # Vote metrics are gated off by default (see test_politics.py), so to reach
+    # the answer (and its note) we must unlock the gate with the secret word.
+    monkeypatch.setenv("AI_POLITICS_UNLOCK", "obretesim")
+    with Agent(mode="offline", use_fixtures=True) as a:
+        ans = a.ask("obretesim Quin municipi té més % vot independentista?", locale="ca")
     assert ans.kind == AnswerKind.ANSWER
     assert "ecol" in ans.text.lower() or "ECOL" in ans.text   # nota present
+    # The secret word must never echo back in the answer or the question.
+    assert "obretesim" not in ans.text.lower()
+    assert "obretesim" not in ans.question.lower()

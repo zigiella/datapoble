@@ -222,6 +222,7 @@ All knobs are env vars (safe defaults; an unconfigured prod deploy fails
 | `OPENROUTER_MODEL` | `anthropic/claude-3.5-sonnet` | model id |
 | `AI_CORS_ORIGINS` | *(web + local dev)* | comma-separated allowed browser origins (see CORS below) |
 | `AI_CORS_ORIGIN_REGEX` | `https://.*\.pages\.dev` | regex for dynamic origins (CF Pages previews); `""` disables |
+| `AI_POLITICS_UNLOCK` | *(unset → vote questions always refused)* | **secret** word that lets the team ask vote-orientation questions (see *Political gate* below) |
 
 `GET /health` reports the live cost-control state (cache hits/size, spend
 to-date vs caps, rate-limit config).
@@ -244,6 +245,44 @@ policy (`src/datapoble_ai/api.py`) with **explicit, safe defaults — never `*`*
 domains (it *replaces* the defaults), e.g.
 `AI_CORS_ORIGINS=https://riusdegent.cat,https://riusdegent.pages.dev`. Tune or
 disable the preview regex via `AI_CORS_ORIGIN_REGEX` (`""` turns it off).
+
+### Political gate — vote questions are refused (discreetly)
+
+By project decision, the public "Pregunta-li" **does not answer questions about
+voting orientation**. Those are the metrics tagged `dimension: politica` in the
+contract (`pct_indep`, `pct_esquerra`, `pct_extrema_dreta`, `guanya`). When a
+question resolves to one of them, the agent returns a **neutral refusal**
+(`refusal_reason: political_gated`):
+
+> «Aquest observatori no respon preguntes sobre orientació de vot.»
+> «Este observatorio no responde preguntas sobre orientación de voto.»
+
+The gate lives in the **shared resolution layer** (`Router.execute_intent` in
+`src/datapoble_ai/router.py`, via `src/datapoble_ai/politics.py`), so it holds
+for **both** backends — offline and OpenRouter — and keys off the *resolved*
+metric's dimension, not on brittle keyword matching. The same `politica` metrics
+are also **omitted from `GET /metrics`**, so the public catalog never advertises
+what the agent will decline.
+
+**The refusal is deliberately discreet:** the message gives *no* hint that any
+bypass exists.
+
+**Team unlock (`AI_POLITICS_UNLOCK`).** For internal use, a single **secret word**
+read at runtime from the `AI_POLITICS_UNLOCK` env var opens the gate. If a question
+contains the word (matched whole-word, case- and accent-insensitively), the agent
+answers normally — and the word is **stripped from the question before routing**, so
+it never pollutes metric matching nor echoes back in the answer, the query, or the
+provenance. The value is **never hardcoded and never committed** (same discipline as
+`OPENROUTER_API_KEY` / `CostControl.from_env`).
+
+**Fail-safe.** If `AI_POLITICS_UNLOCK` is **unset or empty**, there is no word to
+match, so vote metrics are **always refused** — with no secret configured, the
+observatory answers no political question. Locking is the default; unlocking is the
+deliberate exception.
+
+**On Render:** to enable the team unlock, add `AI_POLITICS_UNLOCK` as a **secret**
+service env var (Render *Environment → Secret*), never as a committed value. Leave
+it unset to keep every vote question refused.
 
 ### The container
 
