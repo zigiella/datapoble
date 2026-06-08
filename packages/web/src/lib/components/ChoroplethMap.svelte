@@ -34,6 +34,7 @@
 	import { type Classification } from '$lib/map/classify';
 	import { mapValue } from '$lib/map/indicators';
 	import { rampColors, divergingColors, NODATA, MAP } from '$lib/map/palette';
+	import { isCategorical, tipologiaMeta, tipologiaMatchExpression } from '$lib/map/tipologia';
 
 	/** Nivell de confiança de l'estimació que rep tractament d'honestedat (no es pinta sòlid). */
 	const LOW_CONFIDENCE = 'baixa';
@@ -44,6 +45,8 @@
 		value: number | string | null;
 		/** Confiança de l'estimació (clau `confianca` del contracte); null si no n'hi ha. */
 		conf: string | null;
+		/** Confiança auditable 0-100 (`confianca_score`); complementa la bandera. null si no n'hi ha. */
+		confScore: number | null;
 		/** True si el municipi és del Berguedà (té dades); fals → «sense dades encara» (atenuat). */
 		inBergueda: boolean;
 		x: number;
@@ -156,11 +159,16 @@
 
 	/**
 	 * Expressió data-driven de MapLibre per al color de farciment.
-	 * Es construeix una rampa step a partir dels talls de la classificació i els colors
-	 * mostrejats de la rampa activa. El valor de cada municipi s'injecta com a feature
+	 *
+	 * CATEGÒRIC (tipologia): `match` sobre la cadena d'arquetip `__cat` → un color per tipus
+	 * (diccionari de tipologia), no rampa. El color comunica IDENTITAT, no ordre.
+	 *
+	 * SEQÜENCIAL / DIVERGENT: rampa `step` a partir dels talls de la classificació i els colors
+	 * mostrejats de la rampa activa. El valor numèric de cada municipi s'injecta com a feature
 	 * property `__val` (join amb el dataset) abans de crear la font.
 	 */
-	function fillColorExpression(c: Classification): unknown {
+	function fillColorExpression(c: Classification, key: MetricKey): unknown {
+		if (c.method === 'categorical' || isCategorical(key)) return tipologiaMatchExpression();
 		const colors = classColors(c);
 		if (c.classes <= 1 || c.breaks.length === 0) {
 			// una sola classe (o tots iguals): color únic; el "sense dada" el tapa la capa hatch.
@@ -181,18 +189,43 @@
 	 */
 	function joinValues(fc: FeatureCollection, key: MetricKey): FeatureCollection {
 		const berg = bergSet;
+		const categorical = isCategorical(key);
 		return {
 			...fc,
 			features: fc.features.map((f) => {
 				const ine5 = (f.properties?.ine5 as string) ?? '';
 				const inBerg = berg.has(ine5);
 				const row = inBerg ? dataset.municipis[ine5] : undefined;
+				const conf = (row?.values?.confianca as string | undefined) ?? null;
+
+				if (categorical) {
+					// CATEGÒRIC (tipologia): el valor és una cadena d'arquetip. __cat la transporta
+					// (la fa servir l'expressió `match` del color); __hasval és cert si l'arquetip és
+					// conegut (inclou `indeterminat`, que és un estat HONEST i SÍ es pinta, en neutre,
+					// no com a tramat «sense dada»). Si el valor falta o no és reconegut → tramat.
+					const catRaw = inBerg ? row?.values?.[key] : null;
+					const hasCat = inBerg && typeof catRaw === 'string' && !!tipologiaMeta(catRaw);
+					return {
+						...f,
+						id: ine5,
+						properties: {
+							...f.properties,
+							__inberg: inBerg,
+							__val: null,
+							__cat: hasCat ? (catRaw as string) : null,
+							__hasval: hasCat,
+							__conf: conf,
+							// confiança baixa també vela la tipologia (honestedat: arquetip menys ferm).
+							__lowconf: hasCat && conf === LOW_CONFIDENCE
+						}
+					};
+				}
+
 				// `mapValue` degrada a null el 0 d'OSM de la restauració (buit de mapejat): així
 				// __hasval és fals i el municipi del Berguedà cau a la capa de tramat «sense dada»,
 				// no al color de classe baixa (honestedat: 0 d'OSM ≠ 0 real d'hostaleria).
 				const raw = inBerg ? mapValue(key, row?.values?.[key]) : null;
 				const hasVal = typeof raw === 'number' && Number.isFinite(raw);
-				const conf = (row?.values?.confianca as string | undefined) ?? null;
 				return {
 					...f,
 					id: ine5, // feature-state per hover/select
@@ -200,6 +233,7 @@
 						...f.properties,
 						__inberg: inBerg,
 						__val: hasVal ? (raw as number) : null,
+						__cat: null,
 						__hasval: hasVal,
 						__conf: conf,
 						// confiança baixa NOMÉS és rellevant quan hi ha valor a pintar (gap/estimació).
@@ -311,7 +345,7 @@
 				source: SRC,
 				filter: ['all', ['get', '__inberg'], ['get', '__hasval']],
 				paint: {
-					'fill-color': fillColorExpression(classification) as never,
+					'fill-color': fillColorExpression(classification, indicator) as never,
 					'fill-opacity': ['case', ['boolean', ['get', '__lowconf'], false], 0.55, 0.92]
 				}
 			});
@@ -424,11 +458,13 @@
 				// Mateix tractament que el pintat: el 0 d'OSM de la restauració es mostra «sense
 				// dada» al tooltip, no «0,0 per mil» (és buit de mapejat, no absència real).
 				const value = inBerg ? mapValue(indicator, row?.values?.[indicator]) : null;
+				const cs = row?.values?.confianca_score;
 				onhover?.({
 					ine5,
 					nom: (feat.properties?.nom as string) ?? row?.nom ?? ine5,
 					value,
 					conf: (row?.values?.confianca as string | undefined) ?? null,
+					confScore: typeof cs === 'number' ? cs : null,
 					inBergueda: inBerg,
 					x: e.point.x,
 					y: e.point.y
@@ -465,7 +501,7 @@
 		if (!src) return;
 		src.setData(buildData(key) as never);
 		if (map.getLayer(FILL)) {
-			map.setPaintProperty(FILL, 'fill-color', fillColorExpression(c) as never);
+			map.setPaintProperty(FILL, 'fill-color', fillColorExpression(c, key) as never);
 		}
 	});
 
