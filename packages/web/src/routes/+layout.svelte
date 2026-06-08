@@ -15,15 +15,19 @@
 	import LangSwitcher from '$lib/components/LangSwitcher.svelte';
 	import ThemeSwitcher from '$lib/components/ThemeSwitcher.svelte';
 	import ContourField from '$lib/components/ContourField.svelte';
-	import { localizeHref } from '$lib/i18n';
+	import { localizeHref, deLocalizeUrl } from '$lib/i18n';
 	import { base } from '$app/paths';
 	import { page } from '$app/state';
 	import { m } from '$lib/paraglide/messages';
 
 	let { children } = $props();
 
-	// Rutes canòniques (sense prefix de locale); reroute/localize fan la traducció.
-	const path = $derived(page.url.pathname);
+	// `isActive` compara contra rutes CANÒNIQUES (sense prefix de locale: /resum…), però
+	// `page.url.pathname` el conserva a /es/* (el reroute de Paraglide des-localitza el routing
+	// de fitxers, no la URL observable). Sense des-localitzar, cap ítem del nav s'activa a /es/*.
+	// `deLocalizeUrl` clona la URL (no muta `page.url`) i treu el segment de locale:
+	// /es/resum/ → /resum · /resum/ (ca) intacte → tots dos casen amb isActive.
+	const path = $derived(deLocalizeUrl(page.url).pathname);
 	function isActive(p: string): boolean {
 		return path === p || path.startsWith(p + '/');
 	}
