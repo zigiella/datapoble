@@ -55,17 +55,32 @@
 		},
 		{
 			ref: 'B',
+			title: () => m.muni_blk_origen(),
+			sub: () => m.muni_blk_origen_sub(),
+			keys: [
+				'poblacio_nascuda_catalunya',
+				'poblacio_nascuda_resta_espanya',
+				'poblacio_nascuda_estranger',
+				'pct_nascuda_estranger',
+				'pct_nacionalitat_estrangera',
+				'bretxa_naturalitzacio',
+				'delta_pct_estrangera_finestra',
+				'confianca_origen'
+			]
+		},
+		{
+			ref: 'C',
 			title: () => m.muni_blk_turisme(),
 			keys: ['rtc_total', 'rtc_hut', 'rtc_per_1000hab', 'rtc_per_100hab_viv']
 		},
 		{
-			ref: 'C',
+			ref: 'D',
 			title: () => m.muni_blk_fisics(),
 			sub: () => m.resum_grp_fisics(),
 			keys: ['kg_hab_any', 'kwh_hab', 'vidre_hab', 'restauracio_estab', 'restauracio_per_1000hab']
 		},
 		{
-			ref: 'D',
+			ref: 'E',
 			title: () => m.muni_blk_capes(),
 			sub: () => m.muni_blk_capes_sub(),
 			keys: [
@@ -77,13 +92,13 @@
 			]
 		},
 		{
-			ref: 'E',
+			ref: 'F',
 			title: () => m.muni_blk_ietr(),
 			sub: () => m.muni_blk_ietr_sub(),
 			keys: ['IETR', 'IETR_rank', 'IETR_stock', 'IETR_impact', 'pct_icaen_EFG']
 		},
 		{
-			ref: 'F',
+			ref: 'G',
 			title: () => m.muni_blk_politica(),
 			sub: () => m.muni_blk_politica_sub(),
 			keys: ['guanya', 'pct_indep', 'pct_esquerra', 'pct_extrema_dreta']
@@ -95,6 +110,7 @@
 	const highlightRows = new Set<MetricKey>([
 		'pct_noprincipal',
 		'rtc_per_1000hab',
+		'bretxa_naturalitzacio',
 		'gap_pernocta_pct',
 		'IETR'
 	]);
@@ -113,6 +129,11 @@
 		poblacio_pernocta_est: 'hab.',
 		carrega_total_est: 'hab.',
 		gap_pernocta: 'hab.',
+		poblacio_nascuda_catalunya: 'hab.',
+		poblacio_nascuda_resta_espanya: 'hab.',
+		poblacio_nascuda_estranger: 'hab.',
+		bretxa_naturalitzacio: 'pts',
+		delta_pct_estrangera_finestra: 'pts',
 		rtc_per_1000hab: '‰'
 	};
 

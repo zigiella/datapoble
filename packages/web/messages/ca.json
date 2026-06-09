@@ -160,6 +160,8 @@
   "muni_pick_map": "Veure'l al mapa →",
   "muni_blk_demografia": "Demografia i habitatge",
   "muni_blk_turisme": "Turisme reglat",
+  "muni_blk_origen": "Origen i arrelament",
+  "muni_blk_origen_sub": "Composició per lloc de naixement i nacionalitat · lectura ecològica, mai individual",
   "muni_blk_fisics": "Senyals físics per càpita",
   "muni_blk_capes": "Les 3 capes",
   "muni_blk_capes_sub": "Inferència · població invisible, càrrega i pressió turística",
