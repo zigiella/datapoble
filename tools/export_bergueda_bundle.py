@@ -78,6 +78,22 @@ def fact_sheet(r, ctx) -> str:
     L.append("")
     L.append(f"CONTEXT COMARCAL: població mediana {_n(ctx['pop_median'])} hab · IETR mitjà {_n(ctx['ietr_mean'])} · "
              "el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).")
+    mir = ctx.get("mirall", {}).get(r["ine5"], [])
+    if mir:
+        L.append("MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): " + ", ".join(mir))
+    flags = []
+    l1, l2 = r.get("poblacio_pernocta_est"), r.get("carrega_total_est")
+    if isinstance(l1, (int, float)) and isinstance(l2, (int, float)) and l1 > l2:
+        flags.append("L1>L2 (pernocta > càrrega per residus): senyals DIVERGENTS, interpretar amb prudència")
+    vid, rest = r.get("vidre_hab"), r.get("restauracio_estab")
+    if isinstance(vid, (int, float)) and vid > 30 and (rest == 0 or pd.isna(rest)):
+        flags.append("vidre alt amb restauració OSM = 0: probable INFRA-MAPEIG (no absència real)")
+    if r.get("confianca") == "baixa":
+        flags.append("confiança BAIXA")
+    if isinstance(r.get("poblacio"), (int, float)) and r["poblacio"] < 75:
+        flags.append("micromunicipi (padró < 75): explosió de denominador, rànquings volàtils")
+    if flags:
+        L.append("⚠️ FLAGS DE QUALITAT: " + " · ".join(flags))
     cav = "Confiança baixa: senyals que divergeixen o padró petit → llegeix-ho amb prudència." if r.get("confianca") == "baixa" else "Inferència sobre senyals físics, no cens."
     L.append(f"CAVEATS: les 3 capes i els gaps són INFERÈNCIA. {cav}")
     L.append("[Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]")
@@ -98,6 +114,23 @@ def comarca_block(muni: pd.DataFrame, ctx) -> str:
     L.append(f"IETR mitjà comarcal: {_n(ctx['ietr_mean'])}")
     L.append("CAVEATS: z-scores i índexs són COMARCALS (no comparables entre comarques). Tot inferència sobre senyals físics.")
     return "\n".join(L)
+
+
+MIRALL_FEATURES = ["gap_pernocta_pct", "kg_hab_any", "vidre_hab", "pct_noprincipal",
+                   "rtc_per_1000hab", "restauracio_per_1000hab", "serveis_per_1000hab", "index_envelliment"]
+
+
+def _mirall_map(muni: pd.DataFrame, k: int = 5) -> dict:
+    """Per a cada municipi, els k més semblants en COMPORTAMENT (vector per càpita/relatiu,
+    z-normalitzat, distància euclidiana). Mirall del que fa lib/analysis/mirall.ts al web."""
+    X = muni[MIRALL_FEATURES].astype(float)
+    X = X.fillna(X.mean())
+    Z = (X - X.mean()) / X.std(ddof=0).replace(0, 1)
+    out = {}
+    for i, row in muni.iterrows():
+        d = ((Z - Z.loc[i]) ** 2).sum(axis=1) ** 0.5
+        out[row["ine5"]] = [muni.loc[j, "municipi"] for j in d.sort_values().index if j != i][:k]
+    return out
 
 
 def main() -> int:
@@ -131,6 +164,7 @@ def main() -> int:
 
     # --- 3) Fulls de fets (el digest del #65) ---------------------------------
     ctx = {"pop_median": float(muni["poblacio"].median()), "ietr_mean": float(muni["IETR"].mean())}
+    ctx["mirall"] = _mirall_map(muni)
     parts = ["# Fulls de fets — Berguedà (per a la interpretació, #65)",
              "",
              "*El digest EXACTE que llegiria el model d'interpretació. Enganxa'n un al prompt d'escriptor i itera.*",
