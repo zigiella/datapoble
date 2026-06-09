@@ -27,6 +27,13 @@ SOCRATA_DOMAIN = "https://analisi.transparenciacatalunya.cat"
 # Endpoint base Idescat EMEX.
 IDESCAT_EMEX_BASE = "https://api.idescat.cat/emex/v1/dades.json"
 
+# Idescat "Població estrangera" — sèrie municipal anual (b=6 = per municipis).
+# Descàrrega SSV (semicolon-separated, ISO-8859) per municipi: dóna la SÈRIE
+# 2021→ (Cens anual de població de l'INE) amb total, estrangers, % i variacions.
+# És l'ÚNICA via oberta amb sèrie temporal municipal de la població estrangera
+# (l'EMEX només dóna el darrer any). Vegeu docs/demografia-origen-fonts.md.
+IDESCAT_POBESTR_BASE = "https://www.idescat.cat/poblacioestrangera/"
+
 # Overpass API (OpenStreetMap) — POIs d'amenity per a la densitat de restauració
 # (2n proxy d'hostaleria, complement del vidre). Sense auth. Llista de miralls per
 # robustesa (el primari respon 406 sense User-Agent → cal capçalera; vegeu connector).
@@ -79,6 +86,25 @@ SOURCES: dict[str, dict] = {
         "url": f"{IDESCAT_EMEX_BASE}?id={{codi6}}",
         "llicencia": "Idescat, reutilització amb atribució",
         "kind": "idescat_emex",
+    },
+    # Composició i arrelament (origen) — TRANSFORMACIÓ DEMOGRÀFICA. Dues vies
+    # Idescat complementàries, totes municipals i obertes (verificades en viu
+    # 2026-06-08; vegeu docs/demografia-origen-fonts.md):
+    #   (A) EMEX (mateix endpoint que idescat_emex): FOTO del darrer any (2025) de
+    #       població per NACIONALITAT (f183/f184) i per LLOC DE NAIXEMENT (f69/f72/
+    #       f73/f74), amb comarca i Catalunya al mateix camp v (lectura ecològica).
+    #   (B) "Població estrangera" (SSV per municipi): SÈRIE 2021→ (Cens anual INE)
+    #       de població estrangera (% i variacions) → els DELTES.
+    # INE (Tempus3) NO dóna municipal+sèrie per nacionalitat/naixement (les taules
+    # municipals només porten població per sexe; el detall país/edat-per-origen és
+    # nacional/CCAA i topa amb el secret estadístic sota província).
+    "demografia_origen": {
+        "organisme": "Idescat",
+        "producte": "Cens de població (anual) — població per nacionalitat i lloc de naixement; Població estrangera (sèrie municipal)",
+        "dataset_id": None,
+        "url": f"{IDESCAT_EMEX_BASE}?id={{codi6}}  ·  {IDESCAT_POBESTR_BASE}?b=6&geo=mun:{{codi6}}&f=ssv",
+        "llicencia": "Idescat, reutilització amb atribució (a partir del Cens anual de població de l'INE)",
+        "kind": "idescat_mixed",
     },
     "electoral": {
         "organisme": "Generalitat — Departament competent en processos electorals",

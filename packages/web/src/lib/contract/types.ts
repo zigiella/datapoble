@@ -41,6 +41,15 @@ export type MetricKey =
 	| 'pct_noprincipal'
 	| 'hab_per_hab'
 	| 'index_envelliment'
+	// Origen: composició i arrelament (capa sensible; lectura ecològica, mai individual)
+	| 'poblacio_nascuda_catalunya'
+	| 'poblacio_nascuda_resta_espanya'
+	| 'poblacio_nascuda_estranger'
+	| 'pct_nascuda_estranger'
+	| 'pct_nacionalitat_estrangera'
+	| 'bretxa_naturalitzacio'
+	| 'delta_pct_estrangera_finestra'
+	| 'confianca_origen'
 	// Turisme
 	| 'rtc_total'
 	| 'rtc_hut'

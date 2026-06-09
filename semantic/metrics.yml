@@ -22,6 +22,12 @@ sources:
     producte: El municipi en xifres (EMEX) / Cens 2021
     acces: "https://api.idescat.cat/emex/v1/dades.json?id={codi6}"
     llicencia: "Idescat, reutilització amb atribució"
+  idescat_pobestr:
+    organisme: Idescat
+    producte: Població estrangera (sèrie municipal per nacionalitat)
+    acces: "https://www.idescat.cat/poblacioestrangera/?b=6&geo=mun:{codi6}&f=ssv"
+    llicencia: "Idescat, reutilització amb atribució"
+    nota: "ÚNICA via municipal oberta amb SÈRIE temporal de població estrangera. S'ingereix NOMÉS 2021→ (Cens anual, homogeni) per no barrejar-ho amb el Padró pre-2021 (ruptura de font). El marcador (..) = secret estadístic dels micromunicipis → NULL."
   rtc:
     organisme: Generalitat — Registre de Turisme de Catalunya
     producte: Establiments d'allotjament turístic
@@ -176,6 +182,138 @@ metrics:
     column: index_envelliment
     visibility: public
     status: planned
+
+  # --- Origen: composició i arrelament (TRANSFORMACIÓ DEMOGRÀFICA, no «extranjería») ---
+  # Capa SENSIBLE. Tres lents que la gent confon: nacionalitat (passaport) ≠ lloc de
+  # naixement (biografia) ≠ evolució (el delta). Lectura ECOLÒGICA (sobre el municipi,
+  # MAI individus); secret estadístic dels micromunicipis respectat (NULL). Llegir
+  # sempre contra el context comarcal i català. Vegeu docs/demografia-origen-fonts.md.
+  poblacio_nascuda_catalunya:
+    label: {ca: Nascuts a Catalunya, es: Nacidos en Cataluña}
+    definicio:
+      ca: "Població nascuda a Catalunya (lloc de naixement, no nacionalitat). Part de la composició d'origen del municipi."
+      es: "Población nacida en Cataluña (lugar de nacimiento, no nacionalidad). Parte de la composición de origen del municipio."
+    dimension: origen
+    unit: {ca: habitants, es: habitantes}
+    formula: "EMEX f69 (darrer any)"
+    source: idescat_emex
+    date: "2025"
+    table: mart_demografia
+    column: poblacio_nascuda_catalunya
+    visibility: public
+    synonyms: {ca: [origen, lloc de naixement, autòcton], es: [origen, lugar de nacimiento, autóctono]}
+
+  poblacio_nascuda_resta_espanya:
+    label: {ca: Nascuts a la resta d'Espanya, es: Nacidos en el resto de España}
+    definicio:
+      ca: "Població nascuda a la resta de l'Estat espanyol (fora de Catalunya). Lloc de naixement, no nacionalitat."
+      es: "Población nacida en el resto del Estado español (fuera de Cataluña). Lugar de nacimiento, no nacionalidad."
+    dimension: origen
+    unit: {ca: habitants, es: habitantes}
+    formula: "EMEX f72 (darrer any)"
+    source: idescat_emex
+    date: "2025"
+    table: mart_demografia
+    column: poblacio_nascuda_resta_espanya
+    visibility: public
+
+  poblacio_nascuda_estranger:
+    label: {ca: Nascuts a l'estranger, es: Nacidos en el extranjero}
+    definicio:
+      ca: "Població nascuda fora d'Espanya (lloc de naixement). INCLOU qui ja té nacionalitat espanyola: és la biografia, no el passaport."
+      es: "Población nacida fuera de España (lugar de nacimiento). INCLUYE a quien ya tiene nacionalidad española: es la biografía, no el pasaporte."
+    dimension: origen
+    unit: {ca: habitants, es: habitantes}
+    formula: "EMEX f73 (darrer any)"
+    source: idescat_emex
+    date: "2025"
+    table: mart_demografia
+    column: poblacio_nascuda_estranger
+    visibility: public
+
+  pct_nascuda_estranger:
+    label: {ca: "% nascuts a l'estranger", es: "% nacidos en el extranjero"}
+    definicio:
+      ca: "Pes de la població nascuda fora d'Espanya sobre el total. Mesura de BIOGRAFIA migratòria, no de nacionalitat actual."
+      es: "Peso de la población nacida fuera de España sobre el total. Medida de BIOGRAFÍA migratoria, no de nacionalidad actual."
+    dimension: origen
+    unit: {ca: "%", es: "%"}
+    formula: "poblacio_nascuda_estranger / total lloc de naixement * 100"
+    source: idescat_emex
+    date: "2025"
+    table: mart_demografia
+    column: pct_nascuda_estranger
+    visibility: public
+    note:
+      ca: "Llegeix-ho SEMPRE contra el context (comarca i Catalunya, al costat). Lectura ECOLÒGICA. NO és «extranjería»: molts nascuts fora són ciutadans espanyols (vegeu bretxa de naturalització)."
+      es: "Léelo SIEMPRE contra el contexto (comarca y Cataluña, al lado). Lectura ECOLÓGICA. NO es «extranjería»: muchos nacidos fuera son ciudadanos españoles (ver brecha de naturalización)."
+
+  pct_nacionalitat_estrangera:
+    label: {ca: "% nacionalitat estrangera", es: "% nacionalidad extranjera"}
+    definicio:
+      ca: "Pes de la població amb nacionalitat estrangera (passaport no espanyol) sobre el total. NO és lloc de naixement: és situació administrativa, reversible amb la naturalització."
+      es: "Peso de la población con nacionalidad extranjera (pasaporte no español) sobre el total. NO es lugar de nacimiento: es situación administrativa, reversible con la naturalización."
+    dimension: origen
+    unit: {ca: "%", es: "%"}
+    formula: "poblacio_nacionalitat_estrangera / total nacionalitat * 100"
+    source: idescat_emex
+    date: "2025"
+    table: mart_demografia
+    column: pct_nacionalitat_estrangera
+    visibility: public
+    note:
+      ca: "Sempre ≤ % nascuts a l'estranger: la diferència són els qui s'han naturalitzat. Lectura ECOLÒGICA, mai individual."
+      es: "Siempre ≤ % nacidos en el extranjero: la diferencia son quienes se han naturalizado. Lectura ECOLÓGICA, nunca individual."
+
+  bretxa_naturalitzacio:
+    label: {ca: Bretxa de naturalització (arrelament), es: Brecha de naturalización (arraigo)}
+    definicio:
+      ca: "% nascuts a l'estranger − % nacionalitat estrangera. Aproxima qui va arribar de fora i JA té nacionalitat espanyola: senyal d'ARRELAMENT (gent que ve, es queda i s'arrela), no un recompte de «forasters»."
+      es: "% nacidos en el extranjero − % nacionalidad extranjera. Aproxima a quien llegó de fuera y YA tiene nacionalidad española: señal de ARRAIGO (gente que viene, se queda y se arraiga), no un recuento de «forasteros»."
+    dimension: origen
+    unit: {ca: punts, es: puntos}
+    formula: "pct_nascuda_estranger − pct_nacionalitat_estrangera"
+    source: datapoble
+    origin_source: idescat_emex
+    date: "2025"
+    table: mart_demografia
+    column: bretxa_naturalitzacio
+    visibility: public
+    note:
+      ca: "Com més alta, més població d'origen estranger ARRELADA (naturalitzada). Dona la volta al marc de l'«extranjería»: mesura integració, no amenaça. Lectura ecològica."
+      es: "Cuanto más alta, más población de origen extranjero ARRAIGADA (naturalizada). Da la vuelta al marco de la «extranjería»: mide integración, no amenaza. Lectura ecológica."
+
+  delta_pct_estrangera_finestra:
+    label: {ca: "Variació % estrangera (2021→)", es: "Variación % extranjera (2021→)"}
+    definicio:
+      ca: "Variació en punts del % de població de nacionalitat estrangera dins la finestra homogènia 2021→ (Cens anual). L'EVOLUCIÓ, no la foto."
+      es: "Variación en puntos del % de población de nacionalidad extranjera dentro de la ventana homogénea 2021→ (Censo anual). La EVOLUCIÓN, no la foto."
+    dimension: origen
+    unit: {ca: punts, es: puntos}
+    formula: "% estrangera (any final) − % estrangera (any inicial), finestra 2021→"
+    source: idescat_pobestr
+    date: "2025"
+    table: mart_demografia
+    column: delta_pct_estrangera_finestra
+    visibility: public
+    note:
+      ca: "NOMÉS 2021→ (Cens anual homogeni); no es barreja amb el Padró pre-2021 (ruptura de font). NULL on el secret estadístic suprimeix la sèrie."
+      es: "SOLO 2021→ (Censo anual homogéneo); no se mezcla con el Padrón pre-2021 (ruptura de fuente). NULL donde el secreto estadístico suprime la serie."
+
+  confianca_origen:
+    label: {ca: Confiança (origen), es: Confianza (origen)}
+    definicio:
+      ca: "Fiabilitat de la lectura d'origen del municipi (alta/mitjana/baixa), segons la mida del padró i el secret estadístic. Baixa als micromunicipis."
+      es: "Fiabilidad de la lectura de origen del municipio (alta/media/baja), según el tamaño del padrón y el secreto estadístico. Baja en los micromunicipios."
+    dimension: origen
+    unit: {ca: "", es: ""}
+    formula: "regla sobre mida del padró + supressió per secret estadístic"
+    source: datapoble
+    origin_source: idescat_emex
+    date: "2025"
+    table: mart_demografia
+    column: confianca_origen
+    visibility: public
 
   # --- Turisme ---
   rtc_total:

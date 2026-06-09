@@ -19,6 +19,11 @@ Scope d'aquest PR: Berguedà (31 municipis). Fonts actives:
     + amenity (bank/pharmacy/post_office/townhall/…) assignats per
     punt-en-polígon. El senyal és el COMPTE ABSOLUT (no la densitat). OSM
     infra-mapeja el rural → MÍNIM, no cens. Llicència ODbL. Cablejat a `all`.
+  - demografia_origen (composició i arrelament)    · Idescat (EMEX + Pob. estrangera)
+    TRANSFORMACIÓ DEMOGRÀFICA (origen), MAI «extranjería». Població per
+    NACIONALITAT i per LLOC DE NAIXEMENT (foto darrer any, EMEX) + SÈRIE
+    municipal 2021→ de població estrangera (deltes). Lectura ECOLÒGICA;
+    secret estadístic dels micromunicipis respectat (NULL). Cablejat a `all`.
 
 Cada connector deixa les dades crues a ``data/raw/<source>/`` i un sidecar
 ``_provenance.json`` (source, url, dataset_id, fetched_at, llicència, files).

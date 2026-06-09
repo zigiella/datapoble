@@ -44,6 +44,12 @@ vars:
   # poblacio_min_confianca: per sota d'aquest padró un municipi és micro (secret
   #   estadístic, soroll de denominador) → confiança SEMPRE baixa.
   poblacio_min_confianca: 75
+  # demografia_min_n: LLINDAR MÍNIM N de la capa de composició i arrelament (origen).
+  #   Per sota d'aquesta població els percentatges d'origen són soroll (1 persona
+  #   mou el % més de 2 punts) o vénen ja suprimits per secret estadístic → NO es
+  #   publiquen els percentatges fins (el recompte brut sí, no és secret). Lectura
+  #   ECOLÒGICA (municipi, no individus). 50 hab ≈ punt on 1 persona ≤ 2 pp.
+  demografia_min_n: 50
   # any_corroborador_electric: darrer any amb cobertura plena del consum domèstic
   #   (31/31, zero forats). És el senyal de la capa L1 (pernocta) i corroborador
   #   secundari de la resta.

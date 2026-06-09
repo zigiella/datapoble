@@ -107,6 +107,21 @@
 			title: () => m.met_block_politica(),
 			intro: () => m.met_politica_intro(),
 			keys: ['pct_indep', 'pct_extrema_dreta']
+		},
+		{
+			ref: 'G',
+			title: () => m.met_block_origen(),
+			intro: () => m.met_origen_intro(),
+			keys: [
+				'poblacio_nascuda_catalunya',
+				'poblacio_nascuda_resta_espanya',
+				'poblacio_nascuda_estranger',
+				'pct_nascuda_estranger',
+				'pct_nacionalitat_estrangera',
+				'bretxa_naturalitzacio',
+				'delta_pct_estrangera_finestra',
+				'confianca_origen'
+			]
 		}
 	];
 
@@ -188,7 +203,7 @@
 							{/if}
 							<dl class="met-card__body">
 								<dt>{m.met_lbl_what()}</dt>
-								<dd>{WHAT[key]?.() ?? pick(def.label, locale)}</dd>
+								<dd>{WHAT[key]?.() ?? (def.definicio ? pick(def.definicio, locale) : pick(def.label, locale))}</dd>
 								<dt>{m.met_lbl_how()}</dt>
 								<dd class="met-card__how">{HOW[key]?.() ?? '—'}</dd>
 								<dt>{m.met_lbl_src()}</dt>

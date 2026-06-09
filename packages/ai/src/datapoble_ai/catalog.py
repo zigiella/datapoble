@@ -149,11 +149,20 @@ class Metric:
         return self.raw.get("status", "public")
 
     def is_available(self) -> bool:
-        """True when the metric is public and actually computed.
+        """True when the metric is public, computed, and exposable to the agent.
 
         ``status: planned`` => defined but not yet produced by the pipeline, so
         the router must not query it (it would hit a missing column).
+
+        The ``origen`` dimension (composició i arrelament: nationality / birthplace
+        / naturalisation) is SENSITIVE. It is public on the web and the glossary,
+        but it is deliberately HELD BACK from the agent's catalogue until the origen
+        frontier exists — the guardrail that refuses individual-level, causal or
+        ethnic-framing queries and enforces the ecological, non-«extranjería»
+        reading (task #71). Until then the router must not query it.
         """
+        if self.dimension == "origen":
+            return False
         return self.visibility == "public" and self.status != "planned"
 
     # --- localized accessors ---
