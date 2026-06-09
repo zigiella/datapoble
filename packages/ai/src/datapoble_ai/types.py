@@ -66,6 +66,7 @@ class Answer:
     provenance: Provenance | None = None
     refusal_reason: RefusalReason | None = None
     metric_key: str | None = None   # convenience for evals/tests
+    generation: dict[str, Any] | None = None  # LLM model + token usage (transparency #64); None = deterministic, no LLM
 
     @property
     def is_answer(self) -> bool:

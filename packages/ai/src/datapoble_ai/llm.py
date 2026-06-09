@@ -177,6 +177,9 @@ class OpenRouterBackend(LLMBackend):
         # Tracks whether the *last* ask actually hit the network (for the API's
         # cache decision: only LLM-backed answers are worth caching).
         self.last_call_used_llm = False
+        # Last call's LLM provenance (model + token usage) for transparency (#64).
+        # None until an actual LLM call runs; deterministic answers leave it None.
+        self.last_call_generation: dict | None = None
 
     @classmethod
     def available(cls) -> bool:
@@ -208,6 +211,7 @@ class OpenRouterBackend(LLMBackend):
     def ask(self, question: str, locale: str | None = None) -> Answer:
         loc = self.catalog.resolve_locale(locale)
         self.last_call_used_llm = False
+        self.last_call_generation = None
 
         # --- (0) political gate: resolve unlock once, strip the secret word ----
         # Mirrors Router.ask: the gate keys off the resolved metric, but the
@@ -261,8 +265,32 @@ class OpenRouterBackend(LLMBackend):
             temperature=0,
         )
         self.last_call_used_llm = True  # pragma: no cover - needs key
+        self._record_generation(resp)  # pragma: no cover - needs key
         self._record_spend(resp)  # pragma: no cover - needs key
-        return self._dispatch(question, loc, resp, unlocked)  # pragma: no cover - needs key
+        answer = self._dispatch(question, loc, resp, unlocked)  # pragma: no cover - needs key
+        if answer.is_answer:  # pragma: no cover - needs key
+            answer.generation = self.last_call_generation  # pragma: no cover - needs key
+        return answer  # pragma: no cover - needs key
+
+    def _record_generation(self, resp) -> None:  # pragma: no cover - needs key
+        """Capture the call's model + token usage for transparency (#64).
+
+        The same ``usage`` the spend guard reads, surfaced to the user: which
+        model answered and how many tokens it cost. Best-effort, never raises.
+        """
+        gen: dict[str, object] = {"model": self.model}
+        usage = getattr(resp, "usage", None)
+        if usage is not None:
+            pt = getattr(usage, "prompt_tokens", None)
+            ct = getattr(usage, "completion_tokens", None)
+            tt = getattr(usage, "total_tokens", None)
+            gen["prompt_tokens"] = pt
+            gen["completion_tokens"] = ct
+            gen["total_tokens"] = tt if tt is not None else (pt or 0) + (ct or 0)
+            if pt is not None and ct is not None:
+                cost = estimate_call_usd(self.model, pt, ct)
+                gen["cost_usd"] = round(cost, 5) if cost is not None else None
+        self.last_call_generation = gen
 
     def _record_spend(self, resp) -> None:  # pragma: no cover - needs key
         """Account the call's cost against the spend guard (actual if known)."""
