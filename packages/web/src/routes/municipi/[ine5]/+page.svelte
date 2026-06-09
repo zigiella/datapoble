@@ -88,6 +88,7 @@
 				'gap_pernocta',
 				'gap_pernocta_pct',
 				'carrega_total_est',
+				'carrega_funcional_est',
 				'index_turisme'
 			]
 		},
@@ -107,11 +108,20 @@
 
 	// Files ressaltades: els proxies de pernocta/no-principal i la mètrica estrella (gap pernocta,
 	// la població invisible) + l'IETR. Mateix criteri editorial que el Resum.
+	// Alerta de divergència L1>L2: la pernocta elèctrica supera la càrrega per residus
+	// (residus/càpita baixos o base mal calibrada) → la càrrega per residus no és un sostre.
+	const l1GtL2 = $derived(
+		typeof row?.values.poblacio_pernocta_est === 'number' &&
+			typeof row?.values.carrega_total_est === 'number' &&
+			row.values.poblacio_pernocta_est > row.values.carrega_total_est
+	);
+
 	const highlightRows = new Set<MetricKey>([
 		'pct_noprincipal',
 		'rtc_per_1000hab',
 		'bretxa_naturalitzacio',
 		'gap_pernocta_pct',
+		'carrega_funcional_est',
 		'IETR'
 	]);
 
@@ -128,6 +138,7 @@
 		hab_noprincipal: 'hab.',
 		poblacio_pernocta_est: 'hab.',
 		carrega_total_est: 'hab.',
+		carrega_funcional_est: 'hab.',
 		gap_pernocta: 'hab.',
 		poblacio_nascuda_catalunya: 'hab.',
 		poblacio_nascuda_resta_espanya: 'hab.',
@@ -360,6 +371,11 @@
 							{@render fichaRow(row, key)}
 						{/each}
 					</div>
+					{#if block.ref === 'E' && l1GtL2}
+						<div class="alert" style="margin-top:10px">
+							<span class="bar"></span><div>{m.muni_capes_divergence()}</div>
+						</div>
+					{/if}
 					<p class="muni-sec__src">{srcLine(dataset.metrics[block.keys[0]])}</p>
 				</section>
 			{/each}
