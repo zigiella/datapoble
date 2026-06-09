@@ -176,6 +176,8 @@
   "muni_blk_capes": "Tres rastres de presència",
   "muni_blk_capes_sub": "Inferència · qui dorm, quina càrrega suporta i quina empremta hostalera deixa",
   "muni_capes_divergence": "⚠️ La pernocta (qui dorm) supera la càrrega per residus. Senyal de DIVERGÈNCIA: residus/càpita baixos, recollida atípica o base mal calibrada. El sostre realista per governar és la càrrega funcional = màx(pernocta, residus).",
+  "muni_mirall_title": "Municipis mirall",
+  "muni_mirall_sub": "Els 5 municipis que es comporten més igual (no els veïns de mapa): semblants en pernocta, càrrega, hostaleria, habitatge i envelliment.",
   "muni_blk_ietr": "Índex IETR",
   "muni_blk_ietr_sub": "Estructura (stock) i pressió realitzada (impacte)",
   "muni_blk_politica": "Política",

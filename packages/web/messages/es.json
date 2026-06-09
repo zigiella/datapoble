@@ -176,6 +176,8 @@
   "muni_blk_capes": "Tres rastros de presencia",
   "muni_blk_capes_sub": "Inferencia · quién duerme, qué carga soporta y qué huella hostelera deja",
   "muni_capes_divergence": "⚠️ La pernoctación (quién duerme) supera la carga por residuos. Señal de DIVERGENCIA: residuos/cápita bajos, recogida atípica o base mal calibrada. El techo realista para gobernar es la carga funcional = máx(pernoctación, residuos).",
+  "muni_mirall_title": "Municipios espejo",
+  "muni_mirall_sub": "Los 5 municipios que se comportan más igual (no los vecinos de mapa): parecidos en pernoctación, carga, hostelería, vivienda y envejecimiento.",
   "muni_blk_ietr": "Índice IETR",
   "muni_blk_ietr_sub": "Estructura (stock) y presión realizada (impacto)",
   "muni_blk_politica": "Política",
