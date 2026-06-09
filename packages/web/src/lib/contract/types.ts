@@ -71,8 +71,10 @@ export type MetricKey =
 	| 'poblacio_pernocta_est'
 	| 'gap_pernocta'
 	| 'gap_pernocta_pct'
-	//  L2 CÀRREGA humana total (via residus, inclou excursionistes de dia)
+	//  L2 CÀRREGA per residus (via residus, inclou excursionistes de dia; pot ser < L1)
 	| 'carrega_total_est'
+	//  Denominador funcional: max(L1, L2) — el sostre per governar serveis
+	| 'carrega_funcional_est'
 	//  L3 PRESSIÓ turística (via vidre/hostaleria, 0-100)
 	| 'index_turisme'
 	// Compatibilitat (model d'una sola capa, reenquadrat com a càrrega) + confiança

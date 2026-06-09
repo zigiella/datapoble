@@ -584,12 +584,12 @@ metrics:
 
   # --- L2 · CÀRREGA HUMANA TOTAL (residus) — inclou visitants de dia ---
   carrega_total_est:
-    label: {ca: "Càrrega humana total", es: "Carga humana total"}
-    label_ca: "Càrrega humana total"
-    label_es: "Carga humana total"
+    label: {ca: "Càrrega per residus", es: "Carga por residuos"}
+    label_ca: "Càrrega per residus"
+    label_es: "Carga por residuos"
     definicio:
-      ca: "Pressió humana total sobre el municipi inclosos els visitants de DIA (excursionistes), estimada a partir de la generació de residus per habitant. NO és població: és càrrega."
-      es: "Presión humana total sobre el municipio incluidos los visitantes de DÍA (excursionistas), estimada a partir de la generación de residuos por habitante. NO es población: es carga."
+      ca: "Càrrega que suggereixen els RESIDUS (residents + 2a residència + estacionals + excursionistes de dia), via residus per habitant. NO és població ni un sostre: pot quedar PER SOTA de la pernocta (L1). Per al sostre realista useu carrega_funcional_est."
+      es: "Carga que sugieren los RESIDUOS (residentes + 2ª residencia + estacionales + excursionistas de día), vía residuos por habitante. NO es población ni un techo: puede quedar POR DEBAJO de la pernoctación (L1). Para el techo realista usad carrega_funcional_est."
     dimension: pressio
     categoria: derived
     unit: {ca: persones-equivalent (est.), es: personas-equivalente (est.)}
@@ -602,9 +602,31 @@ metrics:
     column: carrega_total_est
     visibility: public
     caveat:
-      ca: "INFERÈNCIA, no cens, i NO és «població»: és càrrega total (residents + 2a residència + estacionals + EXCURSIONISTES de dia). Els residus de les viles porten part de COMERÇ (sostre de la base, terra de la càrrega). Sempre ≥ la població pernocta, perquè inclou el dia. Lectura ECOLÒGICA. Vegeu confianca."
-      es: "INFERENCIA, no censo, y NO es «población»: es carga total (residentes + 2ª residencia + estacionales + EXCURSIONISTAS de día). Los residuos de las villas llevan parte de COMERCIO (techo de la base, suelo de la carga). Siempre ≥ la población pernocta, porque incluye el día. Lectura ECOLÓGICA. Véase confianza."
+      ca: "INFERÈNCIA, no cens, i NO és «població». Els residus porten part de COMERÇ. ⚠️ NO sempre ≥ la pernocta: a 16/31 munis del pilot la càrrega per residus queda PER SOTA de la pernocta elèctrica (residus/càpita baixos, recollida atípica o base mal calibrada) → senyal de DIVERGÈNCIA, no una mesura tancada. Per governar, useu carrega_funcional_est = max(L1, L2). Lectura ECOLÒGICA. Vegeu confianca."
+      es: "INFERENCIA, no censo, y NO es «población». Los residuos llevan parte de COMERCIO. ⚠️ NO siempre ≥ la pernoctación: en 16/31 munis del piloto la carga por residuos queda POR DEBAJO de la pernoctación eléctrica (residuos/cápita bajos, recogida atípica o base mal calibrada) → señal de DIVERGENCIA, no una medida cerrada. Para gobernar, usad carrega_funcional_est = max(L1, L2). Lectura ECOLÓGICA. Véase confianza."
     synonyms: {ca: [càrrega humana, pressió total, càrrega real, excursionistes], es: [carga humana, presión total, carga real, excursionistas]}
+
+  carrega_funcional_est:
+    label: {ca: "Càrrega funcional (denominador per governar)", es: "Carga funcional (denominador para gobernar)"}
+    label_ca: "Càrrega funcional (denominador per governar)"
+    label_es: "Carga funcional (denominador para gobernar)"
+    definicio:
+      ca: "El SOSTRE realista de càrrega humana: el màxim entre la pernocta (L1, via elèctric) i la càrrega per residus (L2). El «denominador per governar» — el nombre amb què dimensionar serveis (residus, aigua, neteja) en lloc del padró."
+      es: "El TECHO realista de carga humana: el máximo entre la pernoctación (L1, vía eléctrico) y la carga por residuos (L2). El «denominador para gobernar» — el número con el que dimensionar servicios (residuos, agua, limpieza) en lugar del padrón."
+    dimension: pressio
+    categoria: derived
+    unit: {ca: persones-equivalent (est.), es: personas-equivalente (est.)}
+    formula: "max(poblacio_pernocta_est, carrega_total_est)"
+    source: datapoble
+    origin_source: residus
+    date: "2024/2025"
+    table: mart_municipi
+    column: carrega_funcional_est
+    visibility: public
+    caveat:
+      ca: "INFERÈNCIA (combina dos rastres físics). Resol la contradicció L2<L1 agafant el més alt. És el denominador recomanat per a serveis municipals; NO és «població» (que es compta amb el padró). Lectura ECOLÒGICA."
+      es: "INFERENCIA (combina dos rastros físicos). Resuelve la contradicción L2<L1 tomando el más alto. Es el denominador recomendado para servicios municipales; NO es «población» (que se cuenta con el padrón). Lectura ECOLÓGICA."
+    synonyms: {ca: [denominador funcional, càrrega per governar, sostre de càrrega], es: [denominador funcional, carga para gobernar, techo de carga]}
 
   # --- L3 · PRESSIÓ TURÍSTICA (hostaleria, via vidre) — NO és població ---
   index_turisme:
