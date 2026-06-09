@@ -71,6 +71,14 @@
 	function backendLabel(b: AskResponse['backend']): string {
 		return b === 'openrouter' ? m.pl_backend_openrouter() : m.pl_backend_offline();
 	}
+	// Transparència (#64): tokens i cost reals de la generació LLM, formatats al locale.
+	function fmtTokens(n: number): string {
+		return new Intl.NumberFormat(locale === 'es' ? 'es-ES' : 'ca-ES').format(n);
+	}
+	function fmtCost(usd: number): string {
+		if (usd < 0.0005) return '< $0,001';
+		return '~ $' + usd.toFixed(usd < 0.01 ? 4 : 3).replace('.', ',');
+	}
 	function refusalMessage(reason: RefusalReason | null): string {
 		switch (reason) {
 			case 'out_of_catalog':
@@ -243,6 +251,18 @@
 						<span class="pl-backend">
 							<span class="pl-backend__lbl">{m.pl_backend_lbl()}</span>{backendLabel(res.backend)}
 						</span>
+						{#if res.generation}
+							<span class="pl-gen" title={m.pl_gen_title()}>
+								<span class="pl-gen__lbl">{m.pl_gen_by()}</span>
+								<span class="pl-gen__model">{res.generation.model}</span>
+								{#if res.generation.total_tokens != null}<span class="pl-gen__dot">·</span><span
+										>{m.pl_gen_tokens({ n: fmtTokens(res.generation.total_tokens) })}</span
+									>{/if}
+								{#if res.generation.cost_usd != null}<span class="pl-gen__dot">·</span><span
+										>{fmtCost(res.generation.cost_usd)}</span
+									>{/if}
+							</span>
+						{/if}
 						{#if res.provenance?.is_fixture}
 							<span class="pl-fixture" title={m.pl_fixture_note()}>{m.pl_fixture_badge()}</span>
 						{/if}
@@ -560,6 +580,27 @@
 		letter-spacing: 0.06em;
 		margin-right: 7px;
 		opacity: 0.85;
+	}
+	/* Transparència (#64): model + tokens + cost de la generació LLM. */
+	.pl-gen {
+		display: inline-flex;
+		align-items: baseline;
+		gap: 6px;
+		flex-wrap: wrap;
+		font-family: var(--dp-font-mono);
+		font-size: 0.62rem;
+		color: var(--dp-text-subtle);
+	}
+	.pl-gen__lbl {
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		opacity: 0.85;
+	}
+	.pl-gen__model {
+		color: var(--dp-text-muted);
+	}
+	.pl-gen__dot {
+		opacity: 0.5;
 	}
 	.pl-fixture {
 		font-family: var(--dp-font-mono);

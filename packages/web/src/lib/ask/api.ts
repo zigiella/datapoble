@@ -57,6 +57,19 @@ export interface AskProvenance {
 /** Una fila de les dades crues darrere la resposta (forma lliure: clau → valor). */
 export type AskRow = Record<string, unknown>;
 
+/**
+ * Procedència de la GENERACIÓ (transparència #64): quin model frontier ha respost i
+ * quants tokens ha costat. `null` quan la resposta és DETERMINISTA (motor offline, sense
+ * LLM) — cosa que també és transparent: no s'ha gastat cap crida.
+ */
+export interface AskGeneration {
+	model: string;
+	prompt_tokens?: number | null;
+	completion_tokens?: number | null;
+	total_tokens?: number | null;
+	cost_usd?: number | null;
+}
+
 /** Cos JSON exacte que retorna `POST {API_BASE}/ask`. */
 export interface AskResponse {
 	kind: AskKind;
@@ -66,6 +79,7 @@ export interface AskResponse {
 	provenance: AskProvenance | null;
 	refusal_reason: RefusalReason | null;
 	metric_key: string | null;
+	generation: AskGeneration | null;
 }
 
 /**
