@@ -258,12 +258,38 @@ L'enginy és **reutilitzable** (es reaprofita canviant els parquets d'entrada); 
 ## 9. Reproductibilitat i accés
 
 - **Repositori:** monorepo públic (`packages/{ingestion,transform,ai,web,design-system,signals}`, `semantic/metrics.yml`, `data/{marts,events}`, `docs/`).
-- **Web:** **riusdegent.cat** — Resum comarcal, Mapa (coroplètic MapLibre, 7 indicadors), Metodologia pública, **Glossari** (generat des del contracte: cada terme amb definició, font, procedència i caveat) i **Pregunta-li** (IA traçable, en preparació). *(Pre-llançament: `noindex` actiu fins a obrir-ho.)*
+- **Web:** **riusdegent.cat** — Resum comarcal, Mapa (coroplètic MapLibre, 7 indicadors), Metodologia pública, **Glossari** (generat des del contracte: cada terme amb definició, font, procedència i caveat) i **Pregunta-li** (IA traçable, **en viu** a `api.riusdegent.cat`: SQL *read-only* sobre marts reals + procedència, amb gate polític i control de cost). *(Pre-llançament: `noindex` actiu fins a obrir-ho.)*
 - **IA traçable:** una pregunta en llenguatge natural → SQL parametritzat *read-only* sobre els marts → resposta + **procedència** (font, data, fórmula i **la consulta SQL exacta**) o un **refús** amb motiu. Provada *offline* sobre dades reals (p. ex. «Quina relació hi ha entre l'IETR i els residus?» → Spearman 0,87, amb fórmula i font).
 
 ---
 
-## 10. Preguntes obertes (on volem el teu criteri)
+## 10. Novetats des de la primera revisió (juny 2026)
+
+*Des de la versió que vau revisar, el model s'ha endurit i ha crescut en tres fronts. Cadascun té el seu document de mètode detallat a `docs/`; aquí en va la síntesi i, sobretot, les fronteres.*
+
+### 10.1 Fase 1 — endurir el model sense fonts noves
+Tres derivats nous a `mart_municipi`, calculats NOMÉS sobre senyals que ja hi eren (cap dada nova). Doc: `docs/tipologia-municipal.md`.
+- **`tipologia`** — classificador de REGLES amb NOM (capital de serveis, segona residència, excursió, dormitori invisible, buit administratiu) sobre z-scores comarcals. La primera regla que encaixa guanya; si cap encaixa amb claredat → **`indeterminat`** (la meitat del pilot: és honestedat, no un fracàs). És una LECTURA narrativa, no un cens.
+- **`confianca_score`** (0–100, auditable) — complementa la bandera `confianca`. El component de **concordança** dels senyals físics marca els casos on els senyals divergeixen (Castellar: residus alts però elèctric baix per la calefacció de llenya) que un binari «alta» amagaria. Es publiquen tots dos.
+- **IETR dual** (`IETR_stock` + `IETR_impact`) — desglossa l'IETR (§6) en exposició estructural (resident) i pressió realitzada (turística). Identitat verificada: `0,5·stock + 0,5·impact = IETR`.
+- **Frontera:** tot és inferència/lectura; els z-scores són COMARCALS (recalibrables per comarca a escala Catalunya).
+
+### 10.2 Revisió de `capital_serveis` — de «mida» a «centre de serveis real»
+Al pilot sortien municipis grans però SENSE capçalera de serveis (Casserres hi entrava només per volum). Una capital de serveis no és «un poble gran»: és on els veïns van a comprar i a fer gestions. Doc: `docs/tipologia-municipal.md`.
+- **Senyal nou `serveis_estab`** — compte d'establiments de comerç quotidià (supermercat, forn, carnisseria…) i serveis essencials (banc, farmàcia, correus, ajuntament, benzinera, metge…) a OpenStreetMap, assignats per punt-en-polígon a la geometria real. El senyal de capçalera és el **compte ABSOLUT** (no la densitat per habitant): un poble és capçalera per TENIR aquests serveis.
+- **Regla nova:** `població ≥ 2000` **i** `z_serveis ≥ 0,8` **i** `z_carrega ≥ 0,5` **i** `z_turisme ≤ 0,3`. Resultat al Berguedà: Berga, Gironella, Puig-reig, Avià, Bagà. Casserres (pocs serveis per a la seva mida) i la Pobla de Lillet (1.106 hab, dotada però petita i aïllada) en queden fora.
+- **Frontera:** OSM INFRA-MAPEJA el rural → `serveis_estab` és un **mínim observat, no un cens**; el senyal i el sòl de 2.000 s'han de **calibrar per comarca** (la signatura de «capçalera» és molt diferent entre Vallès, Pirineu i costa).
+
+### 10.3 Capa d'origen — composició i arrelament (TRANSFORMACIÓ DEMOGRÀFICA, no «extranjería»)
+Capa nova i SENSIBLE (`mart_demografia`). Separa tres lents que sovint es confonen: **nacionalitat** (passaport) ≠ **lloc de naixement** (biografia) ≠ **evolució** (el delta). Doc: `docs/demografia-origen-fonts.md`.
+- **Mètriques:** composició per lloc de naixement (Catalunya / resta d'Espanya / estranger), % de nacionalitat estrangera, % de nascuts a l'estranger, i la **bretxa de naturalització** (= % nascuts fora − % nacionalitat estrangera): aproxima qui va arribar de fora i JA té nacionalitat espanyola — un senyal d'**ARRELAMENT** que dona la volta al marc de l'«extranjería» (mesura integració, no amenaça).
+- **Fonts:** Idescat EMEX (la foto del darrer any) + Idescat població estrangera (la sèrie municipal); s'ingereix NOMÉS 2021→ (Cens anual, homogeni) per no barrejar-ho amb el Padró pre-2021 (ruptura de font).
+- **Frontera ÈTICA (innegociable):** lectura **ECOLÒGICA, mai individual**; secret estadístic dels micromunicipis respectat (→ NULL); es llegeix SEMPRE contra el context comarcal i català.
+- **Govern de la IA:** la capa és **pública** al web i al glossari, però **RETINGUDA del catàleg de la IA** fins que existeixi el *frontier* d'origen (la guarda que refusa consultes individuals/causals/de marc ètnic). Pública per llegir-la amb context; encara no consultable per la IA en llenguatge obert.
+
+---
+
+## 11. Preguntes obertes (on volem el teu criteri)
 
 1. **Calibratge extern.** Les estimacions de població són *proxies* sense ancoratge dur. L'únic nombre dur d'excursionisme que tenim és el de **visitants d'equipaments** (Castellar: Tren del Ciment ~29.000 + Museu del Ciment ~21.000 el 2024, a un poble de 166 hab). Com construiries un **factor de calibratge** «població real / padró» a partir d'un sol ancoratge dur, i com el validaries?
 2. **Normalització del proxy elèctric.** `kwh_hab` divideix per habitant; però el consum domèstic també puja amb renda, superfície i nombre de llars, i baixa amb calefacció no elèctrica. Normalitzaries per **habitatge** (`kwh/hab_total`) en comptes de per habitant? Com separaries «més presència» de «llars més grans/riques»?
@@ -275,6 +301,7 @@ L'enginy és **reutilitzable** (es reaprofita canviant els parquets d'entrada); 
 8. **Tractament de l'infra-mapeig d'OSM.** Pintar el 0 d'OSM com a «sense dada» (no com a mínim de l'escala) és la decisió honesta? Hi ha una manera millor de comunicar «mínim observat»?
 9. **Lectura ecològica i capa política.** Com comunicaries responsablement indicadors electorals municipals (amb la falàcia ecològica i la volatilitat de N petit) en un observatori obert? Els inclouries a una IA de preguntes obertes, o els refusaries?
 10. **Llicències i derivats.** Barregem fonts amb llicències diferents (Dades Obertes de Catalunya amb atribució; **OSM amb ODbL, compartir-igual**). Quines obligacions de llicència té el *dataset derivat* (`mart_municipi`) i com el publicaries net?
+11. **Capa d'origen i IA oberta.** La **bretxa de naturalització** com a indicador d'ARRELAMENT, és un enquadrament defensable i robust davant del marc de l'«extranjería»? I quins límits posaríeu a una IA de preguntes obertes sobre dades d'origen municipal — què hauria de refusar (consultes individuals, causals, de marc ètnic) per defecte?
 
 ---
 
