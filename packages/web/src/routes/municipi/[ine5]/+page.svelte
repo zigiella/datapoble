@@ -212,6 +212,24 @@
 		return null;
 	});
 
+	// Divergència dels senyals (0-100): 0 concordants · 100 màxima discrepància. El «per què»
+	// AUDITABLE de la confiança (el component de concordança del score, exposat sol).
+	const diverg = $derived.by<number | null>(() => {
+		const v = row?.values.divergencia_senyals;
+		return typeof v === 'number' && Number.isFinite(v) ? v : null;
+	});
+	// «Per què» de la confiança: fragments de la DADA real (concordança dels senyals + mida del padró).
+	const confWhy = $derived.by<string[]>(() => {
+		const out: string[] = [];
+		if (diverg !== null)
+			out.push(
+				diverg <= 33 ? m.conf_sig_converg() : diverg >= 67 ? m.conf_sig_diverg() : m.conf_sig_partial()
+			);
+		const pop = row?.values.poblacio;
+		if (typeof pop === 'number' && pop < 200) out.push(m.conf_padro_small());
+		return out;
+	});
+
 	// IETR per al rètol gran de la capçalera (1 decimal) i el rang.
 	const ietr = $derived.by<number | null>(() => {
 		const v = row?.values.IETR;
@@ -342,20 +360,31 @@
 						</div>
 					{/if}
 
-					<!-- Confiança: bandera (alta/mitjana/baixa) + score auditable 0-100. Es mostren TOTS DOS
-					     perquè poden divergir (el costat fi i honest de la tensió dels senyals). -->
+					<!-- Confiança (consultor #2): bandera GRAN + «per què» (concordança/padró) + divergència
+					     dels senyals 0-100 + riscos. Que ningú confongui la qualitat amb una xifra opaca. -->
 					{#if confLabel || score !== null}
 						<div class="muni-card__conf">
-							<span class="muni-card__conf-lbl">{m.map_confidence_label()}</span>
-							{#if confLabel}<span class="muni-card__conf-flag muni-card__conf-flag--{confFlag}"
-									>{confLabel}</span
-								>{/if}
-							{#if score !== null}
-								<span class="muni-card__conf-score" title={m.map_confidence_score_label()}
-									>{formatDecimal(score, locale, 0)}<span class="muni-card__conf-scale">/100</span
-									></span
-								>
+							<div class="muni-card__conf-head">
+								<span class="muni-card__conf-lbl">{m.map_confidence_label()}</span>
+								{#if confLabel}<span class="muni-card__conf-flag muni-card__conf-flag--{confFlag}">{confLabel}</span>{/if}
+								{#if score !== null}<span class="muni-card__conf-global" title={m.map_confidence_score_label()}>{m.conf_global_label()} {formatDecimal(score, locale, 0)}<span class="muni-card__conf-scale">/100</span></span>{/if}
+							</div>
+							{#if confWhy.length}
+								<p class="muni-card__conf-line">
+									<span class="muni-card__conf-k">{m.conf_why_label()}</span>
+									{#each confWhy as w}<span class="muni-card__conf-chip">{w}</span>{/each}
+								</p>
 							{/if}
+							{#if diverg !== null}
+								<p class="muni-card__conf-line">
+									<span class="muni-card__conf-k">{m.conf_diverg_label()}</span>
+									<span class="muni-card__conf-diverg">{formatDecimal(diverg, locale, 0)}<span class="muni-card__conf-scale">/100</span></span>
+								</p>
+							{/if}
+							<p class="muni-card__conf-line">
+								<span class="muni-card__conf-k">{m.conf_risks_label()}</span>
+								<span class="muni-card__conf-v">{m.conf_risk_noseries()} · {m.conf_risk_osm()}</span>
+							</p>
 						</div>
 					{/if}
 				</div>
@@ -554,14 +583,20 @@
 		max-width: 52ch;
 	}
 
-	/* Línia de confiança (bandera + score), mateix gest que .ex__conf del Resum. */
+	/* Bloc de confiança (consultor #2): bandera + per què + divergència + riscos, en files.
+	   Que ningú confongui la qualitat (bandera) amb una puntuació opaca. Gest mono del Resum. */
 	.muni-card__conf {
-		display: flex;
-		align-items: baseline;
-		gap: 8px;
 		margin: 12px 0 0;
 		font-family: var(--dp-font-mono);
 		font-size: 0.68rem;
+		display: grid;
+		gap: 4px;
+	}
+	.muni-card__conf-head {
+		display: flex;
+		align-items: baseline;
+		gap: 8px;
+		flex-wrap: wrap;
 	}
 	.muni-card__conf-lbl {
 		text-transform: uppercase;
@@ -578,7 +613,35 @@
 	.muni-card__conf-flag--baixa {
 		color: var(--dp-warning, #b5612a);
 	}
-	.muni-card__conf-score {
+	.muni-card__conf-global {
+		margin-left: auto;
+		color: var(--dp-text-subtle);
+		font-feature-settings: 'tnum' 1;
+	}
+	.muni-card__conf-line {
+		margin: 0;
+		display: flex;
+		gap: 6px;
+		flex-wrap: wrap;
+		align-items: baseline;
+		line-height: 1.5;
+	}
+	.muni-card__conf-k {
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: var(--dp-text-subtle);
+		min-width: 8.5em;
+	}
+	.muni-card__conf-v {
+		color: var(--dp-text-muted);
+	}
+	.muni-card__conf-chip {
+		color: var(--dp-text);
+		background: var(--dp-surface-2, color-mix(in srgb, var(--dp-text) 6%, transparent));
+		border-radius: var(--dp-radius-sm);
+		padding: 1px 7px;
+	}
+	.muni-card__conf-diverg {
 		font-weight: 700;
 		color: var(--dp-text);
 		font-feature-settings: 'tnum' 1;

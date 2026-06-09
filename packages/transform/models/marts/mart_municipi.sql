@@ -312,7 +312,11 @@ conf as (
             -- (d) penalització d'outlier
             - 10.0 * least(1.0, greatest(0.0,
                 (greatest(abs(z.z_kg), abs(z.z_kwh), abs(z.z_np)) - 2.0) / 1.0))
-        )) as confianca_score
+        )) as confianca_score,
+        -- DIVERGÈNCIA DELS SENYALS (0-100): el component (b) exposat sol i llegible —
+        -- el spread dels 3 z de presència. 0 = concordants · 100 = màxima discrepància.
+        round(100.0 * least(1.0, greatest(0.0,
+            (greatest(z.z_kg, z.z_kwh, z.z_np) - least(z.z_kg, z.z_kwh, z.z_np)) / 3.0)), 0) as divergencia_senyals
     from zsig2 z
     join ind i using (ine5)
 )
@@ -484,6 +488,9 @@ select
     -- físics + cobertura − outlier. Label derivable amb talls documentats
     -- (<45 baixa · 45–65 mitjana · ≥65 alta) al contracte.
     round(conf.confianca_score, 1)                              as confianca_score,
+    -- DIVERGÈNCIA dels senyals (0-100): el component de concordança, exposat sol perquè el
+    -- bloc de confiança del web sigui auditable (0 concordants · 100 màxima discrepància).
+    conf.divergencia_senyals                                    as divergencia_senyals,
 
     -- Traçabilitat dels talls temporals
     ind.kg_hab_any_year,
