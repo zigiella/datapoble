@@ -37,6 +37,7 @@ TURISME REGLAT: 30 establiments (180,7 per 1000 hab)
 HABITATGE: 74,3% no principal · índex d'envelliment 466,7
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Saldes, Gósol, Gisclareny, Nou de Berguedà, la, Vallcebre
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Inferència sobre senyals físics, no cens.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -59,6 +60,8 @@ TURISME REGLAT: 5 establiments (200 per 1000 hab)
 HABITATGE: 56,4% no principal · índex d'envelliment 350
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Saldes, Castell de l'Areny, Castellar de n'Hug, Quar, la, Capolat
+⚠️ FLAGS DE QUALITAT: vidre alt amb restauració OSM = 0: probable INFRA-MAPEIG (no absència real) · confiança BAIXA · micromunicipi (padró < 75): explosió de denominador, rànquings volàtils
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Confiança baixa: senyals que divergeixen o padró petit → llegeix-ho amb prudència.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -81,6 +84,8 @@ TURISME REGLAT: 4 establiments (142,9 per 1000 hab)
 HABITATGE: 65,1% no principal · índex d'envelliment 650
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Gósol, Castellar de n'Hug, Saldes, Nou de Berguedà, la, Vallcebre
+⚠️ FLAGS DE QUALITAT: confiança BAIXA · micromunicipi (padró < 75): explosió de denominador, rànquings volàtils
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Confiança baixa: senyals que divergeixen o padró petit → llegeix-ho amb prudència.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -103,6 +108,7 @@ TURISME REGLAT: 20 establiments (96,6 per 1000 hab)
 HABITATGE: 67,9% no principal · índex d'envelliment 310,5
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Saldes, Gisclareny, Castellar de n'Hug, Nou de Berguedà, la, Capolat
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Inferència sobre senyals físics, no cens.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -125,6 +131,7 @@ TURISME REGLAT: 13 establiments (139,8 per 1000 hab)
 HABITATGE: 43,3% no principal · índex d'envelliment 106,3
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Castellar del Riu, Espunyola, l', Viver i Serrateix, Montmajor, Nou de Berguedà, la
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Inferència sobre senyals físics, no cens.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -147,6 +154,7 @@ TURISME REGLAT: 23 establiments (76,4 per 1000 hab)
 HABITATGE: 61,6% no principal · índex d'envelliment 359,3
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Nou de Berguedà, la, Borredà, Gósol, Vallcebre, Castellar de n'Hug
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Inferència sobre senyals físics, no cens.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -169,6 +177,8 @@ TURISME REGLAT: 20 establiments (130,7 per 1000 hab)
 HABITATGE: 43,6% no principal · índex d'envelliment 163,2
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Santa Maria de Merlès, Quar, la, Viver i Serrateix, Capolat, Nou de Berguedà, la
+⚠️ FLAGS DE QUALITAT: L1>L2 (pernocta > càrrega per residus): senyals DIVERGENTS, interpretar amb prudència
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Inferència sobre senyals físics, no cens.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -191,6 +201,8 @@ TURISME REGLAT: 17 establiments (112,6 per 1000 hab)
 HABITATGE: 45,2% no principal · índex d'envelliment 117,4
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Capolat, Viver i Serrateix, Borredà, Espunyola, l', Montmajor
+⚠️ FLAGS DE QUALITAT: confiança BAIXA
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Confiança baixa: senyals que divergeixen o padró petit → llegeix-ho amb prudència.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -213,6 +225,8 @@ TURISME REGLAT: 6 establiments (88,2 per 1000 hab)
 HABITATGE: 53,0% no principal · índex d'envelliment 450
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Vallcebre, Borredà, Montclar, Montmajor, Pobla de Lillet, la
+⚠️ FLAGS DE QUALITAT: vidre alt amb restauració OSM = 0: probable INFRA-MAPEIG (no absència real) · confiança BAIXA · micromunicipi (padró < 75): explosió de denominador, rànquings volàtils
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Confiança baixa: senyals que divergeixen o padró petit → llegeix-ho amb prudència.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -235,6 +249,8 @@ TURISME REGLAT: 11 establiments (82,7 per 1000 hab)
 HABITATGE: 47,1% no principal · índex d'envelliment 140,9
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Viver i Serrateix, Guardiola de Berguedà, Bagà, Cercs, Casserres
+⚠️ FLAGS DE QUALITAT: L1>L2 (pernocta > càrrega per residus): senyals DIVERGENTS, interpretar amb prudència · vidre alt amb restauració OSM = 0: probable INFRA-MAPEIG (no absència real) · confiança BAIXA
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Confiança baixa: senyals que divergeixen o padró petit → llegeix-ho amb prudència.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -257,6 +273,8 @@ TURISME REGLAT: 4 establiments (90,9 per 1000 hab)
 HABITATGE: 41,9% no principal · índex d'envelliment 240
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Sagàs, Santa Maria de Merlès, Viver i Serrateix, Montmajor, Sant Julià de Cerdanyola
+⚠️ FLAGS DE QUALITAT: L1>L2 (pernocta > càrrega per residus): senyals DIVERGENTS, interpretar amb prudència · vidre alt amb restauració OSM = 0: probable INFRA-MAPEIG (no absència real) · confiança BAIXA · micromunicipi (padró < 75): explosió de denominador, rànquings volàtils
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Confiança baixa: senyals que divergeixen o padró petit → llegeix-ho amb prudència.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -279,6 +297,8 @@ TURISME REGLAT: 14 establiments (78,2 per 1000 hab)
 HABITATGE: 46,9% no principal · índex d'envelliment 87,5
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Viver i Serrateix, Sagàs, Montmajor, Sant Julià de Cerdanyola, Montclar
+⚠️ FLAGS DE QUALITAT: L1>L2 (pernocta > càrrega per residus): senyals DIVERGENTS, interpretar amb prudència · confiança BAIXA
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Confiança baixa: senyals que divergeixen o padró petit → llegeix-ho amb prudència.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -301,6 +321,7 @@ TURISME REGLAT: 26 establiments (59,9 per 1000 hab)
 HABITATGE: 54,6% no principal · índex d'envelliment 361,8
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Vallcebre, Montmajor, Castell de l'Areny, Nou de Berguedà, la, Cercs
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Inferència sobre senyals físics, no cens.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -323,6 +344,7 @@ TURISME REGLAT: 15 establiments (57,7 per 1000 hab)
 HABITATGE: 53,1% no principal · índex d'envelliment 537,5
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Borredà, Castell de l'Areny, Pobla de Lillet, la, Nou de Berguedà, la, Montmajor
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Inferència sobre senyals físics, no cens.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -345,6 +367,7 @@ TURISME REGLAT: 11 establiments (67,5 per 1000 hab)
 HABITATGE: 48,0% no principal · índex d'envelliment 391,7
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Borredà, Montmajor, Saldes, Vallcebre, Capolat
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Inferència sobre senyals físics, no cens.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -367,6 +390,8 @@ TURISME REGLAT: 13 establiments (73,0 per 1000 hab)
 HABITATGE: 42,1% no principal · índex d'envelliment 122,9
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Montclar, Santa Maria de Merlès, Guardiola de Berguedà, Montmajor, Castellar del Riu
+⚠️ FLAGS DE QUALITAT: L1>L2 (pernocta > càrrega per residus): senyals DIVERGENTS, interpretar amb prudència · vidre alt amb restauració OSM = 0: probable INFRA-MAPEIG (no absència real)
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Inferència sobre senyals físics, no cens.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -389,6 +414,8 @@ TURISME REGLAT: 3 establiments (73,2 per 1000 hab)
 HABITATGE: 35,3% no principal · índex d'envelliment 1.100
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Vallcebre, Castell de l'Areny, Pobla de Lillet, la, Borredà, Vilada
+⚠️ FLAGS DE QUALITAT: confiança BAIXA · micromunicipi (padró < 75): explosió de denominador, rànquings volàtils
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Confiança baixa: senyals que divergeixen o padró petit → llegeix-ho amb prudència.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -411,6 +438,8 @@ TURISME REGLAT: 31 establiments (28,0 per 1000 hab)
 HABITATGE: 52,1% no principal · índex d'envelliment 407,1
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Vilada, Bagà, Guardiola de Berguedà, Cercs, Sant Julià de Cerdanyola
+⚠️ FLAGS DE QUALITAT: L1>L2 (pernocta > càrrega per residus): senyals DIVERGENTS, interpretar amb prudència
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Inferència sobre senyals físics, no cens.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -433,6 +462,8 @@ TURISME REGLAT: 29 establiments (23,5 per 1000 hab)
 HABITATGE: 52,8% no principal · índex d'envelliment 270
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Bagà, Vilada, Pobla de Lillet, la, Sant Julià de Cerdanyola, Guardiola de Berguedà
+⚠️ FLAGS DE QUALITAT: L1>L2 (pernocta > càrrega per residus): senyals DIVERGENTS, interpretar amb prudència
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Inferència sobre senyals físics, no cens.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -455,6 +486,7 @@ TURISME REGLAT: 17 establiments (65,4 per 1000 hab)
 HABITATGE: 30,5% no principal · índex d'envelliment 176,5
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Montmajor, Viver i Serrateix, Capolat, Guardiola de Berguedà, Castellar del Riu
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Inferència sobre senyals físics, no cens.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -477,6 +509,8 @@ TURISME REGLAT: 44 establiments (45,7 per 1000 hab)
 HABITATGE: 41,2% no principal · índex d'envelliment 286,8
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Bagà, Casserres, Olvan, Vilada, Pobla de Lillet, la
+⚠️ FLAGS DE QUALITAT: L1>L2 (pernocta > càrrega per residus): senyals DIVERGENTS, interpretar amb prudència
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Inferència sobre senyals físics, no cens.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -499,6 +533,8 @@ TURISME REGLAT: 4 establiments (17,1 per 1000 hab)
 HABITATGE: 49,6% no principal · índex d'envelliment 281,8
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Cercs, Vilada, Bagà, Pobla de Lillet, la, Montmajor
+⚠️ FLAGS DE QUALITAT: L1>L2 (pernocta > càrrega per residus): senyals DIVERGENTS, interpretar amb prudència · confiança BAIXA
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Confiança baixa: senyals que divergeixen o padró petit → llegeix-ho amb prudència.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -521,6 +557,7 @@ TURISME REGLAT: 18 establiments (38,2 per 1000 hab)
 HABITATGE: 42,6% no principal · índex d'envelliment 211,3
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Espunyola, l', Borredà, Sant Julià de Cerdanyola, Cercs, Nou de Berguedà, la
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Inferència sobre senyals físics, no cens.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -543,6 +580,8 @@ TURISME REGLAT: 46 establiments (21,2 per 1000 hab)
 HABITATGE: 46,4% no principal · índex d'envelliment 295,7
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Cercs, Guardiola de Berguedà, Vilada, Casserres, Pobla de Lillet, la
+⚠️ FLAGS DE QUALITAT: L1>L2 (pernocta > càrrega per residus): senyals DIVERGENTS, interpretar amb prudència
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Inferència sobre senyals físics, no cens.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -565,6 +604,8 @@ TURISME REGLAT: 7 establiments (16,3 per 1000 hab)
 HABITATGE: 44,3% no principal · índex d'envelliment 325
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Bagà, Pobla de Lillet, la, Cercs, Guardiola de Berguedà, Sant Julià de Cerdanyola
+⚠️ FLAGS DE QUALITAT: L1>L2 (pernocta > càrrega per residus): senyals DIVERGENTS, interpretar amb prudència
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Inferència sobre senyals físics, no cens.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -587,6 +628,8 @@ TURISME REGLAT: 30 establiments (18,0 per 1000 hab)
 HABITATGE: 35,1% no principal · índex d'envelliment 202,6
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Olvan, Avià, Bagà, Guardiola de Berguedà, Gironella
+⚠️ FLAGS DE QUALITAT: L1>L2 (pernocta > càrrega per residus): senyals DIVERGENTS, interpretar amb prudència
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Inferència sobre senyals físics, no cens.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -609,6 +652,8 @@ TURISME REGLAT: 19 establiments (20,5 per 1000 hab)
 HABITATGE: 32,1% no principal · índex d'envelliment 221,2
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Casserres, Avià, Gironella, Puig-reig, Berga
+⚠️ FLAGS DE QUALITAT: L1>L2 (pernocta > càrrega per residus): senyals DIVERGENTS, interpretar amb prudència
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Inferència sobre senyals físics, no cens.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -631,6 +676,8 @@ TURISME REGLAT: 30 establiments (13,3 per 1000 hab)
 HABITATGE: 25,6% no principal · índex d'envelliment 168,4
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Gironella, Olvan, Berga, Puig-reig, Casserres
+⚠️ FLAGS DE QUALITAT: L1>L2 (pernocta > càrrega per residus): senyals DIVERGENTS, interpretar amb prudència
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Inferència sobre senyals físics, no cens.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -653,6 +700,8 @@ TURISME REGLAT: 20 establiments (4,4 per 1000 hab)
 HABITATGE: 26,7% no principal · índex d'envelliment 218,7
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Berga, Gironella, Avià, Olvan, Casserres
+⚠️ FLAGS DE QUALITAT: L1>L2 (pernocta > càrrega per residus): senyals DIVERGENTS, interpretar amb prudència
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Inferència sobre senyals físics, no cens.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -675,6 +724,8 @@ TURISME REGLAT: 21 establiments (4,1 per 1000 hab)
 HABITATGE: 26,4% no principal · índex d'envelliment 185,6
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Avià, Puig-reig, Berga, Olvan, Casserres
+⚠️ FLAGS DE QUALITAT: L1>L2 (pernocta > càrrega per residus): senyals DIVERGENTS, interpretar amb prudència
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Inferència sobre senyals físics, no cens.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
 
@@ -697,5 +748,6 @@ TURISME REGLAT: 45 establiments (2,6 per 1000 hab)
 HABITATGE: 24,2% no principal · índex d'envelliment 182
 
 CONTEXT COMARCAL: població mediana 260 hab · IETR mitjà 38,9 · el Berguedà és rural i envellit, amb un extrem turístic (Gósol, Castellar, Saldes) i una capital de serveis (Berga).
+MUNICIPIS MIRALL (es comporten igual, no veïns de mapa): Puig-reig, Avià, Gironella, Olvan, Casserres
 CAVEATS: les 3 capes i els gaps són INFERÈNCIA. Inferència sobre senyals físics, no cens.
 [Composició d'origen/arrelament: capa SENSIBLE, FORA de la interpretació v1 (vegeu el CSV/SQLite si la vols consultar a banda).]
