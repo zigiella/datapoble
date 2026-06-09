@@ -40,9 +40,12 @@ SERVEIS_RAW = REPO / "data" / "raw" / "serveis_osm" / "serveis_osm.parquet"
 # Vars del model (dbt_project.yml). Han de coincidir amb les del pipeline.
 POBLACIO_MIN_CONFIANCA = 75
 BASE_RESIDENCIAL = 410
+BASE_ELECTRIC = 1224
+BASE_VIDRE = 26.5
 
 # Columnes noves de la Fase 1 (ordre d'inserció just després de IETR_rank).
-NEW_COLS = ["IETR_stock", "IETR_impact", "tipologia", "confianca_score", "carrega_funcional_est"]
+NEW_COLS = ["IETR_stock", "IETR_impact", "tipologia", "confianca_score", "carrega_funcional_est",
+            "residu_base_ratio", "kwh_base_ratio", "vidre_base_ratio"]
 
 # Columnes base del senyal de centralitat (serveis OSM). Es materialitzen al mart just
 # després de restauracio_per_1000hab (vegeu mart_municipi.sql · CTE `serveis` + SELECT).
@@ -150,7 +153,12 @@ select m.*,
     tipo.tipologia,
     round(conf.confianca_score, 1) as confianca_score,
     -- DENOMINADOR FUNCIONAL: max(pernocta L1, càrrega per residus L2). Resol L2<L1.
-    greatest(m.poblacio_pernocta_est, m.carrega_total_est) as carrega_funcional_est
+    greatest(m.poblacio_pernocta_est, m.carrega_total_est) as carrega_funcional_est,
+    -- BASE-RATIOS: pressió ABSOLUTA vs base residencial (no z-score comarcal). >1 = per
+    -- sobre del que genera una vila de vall poc turística; comparable entre comarques.
+    round(m.kg_hab_any / {BASE_RESIDENCIAL}, 2) as residu_base_ratio,
+    round(m.kwh_hab / {BASE_ELECTRIC}, 2) as kwh_base_ratio,
+    round(m.vidre_hab / {BASE_VIDRE}, 2) as vidre_base_ratio
 from m
 join nrm  using (ine5)
 join tipo using (ine5)
