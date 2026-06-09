@@ -7,6 +7,7 @@
     python -m datapoble_ingestion electoral
     python -m datapoble_ingestion icaen_consum
     python -m datapoble_ingestion restauracio_osm
+    python -m datapoble_ingestion serveis_osm
 """
 from __future__ import annotations
 
@@ -14,7 +15,15 @@ import argparse
 import json
 import sys
 
-from . import electoral, icaen_consum, idescat_emex, residus, restauracio_osm, rtc
+from . import (
+    electoral,
+    icaen_consum,
+    idescat_emex,
+    residus,
+    restauracio_osm,
+    rtc,
+    serveis_osm,
+)
 
 RUNNERS = {
     "rtc": rtc.run,
@@ -23,6 +32,7 @@ RUNNERS = {
     "electoral": electoral.run,
     "icaen_consum": icaen_consum.run,
     "restauracio_osm": restauracio_osm.run,
+    "serveis_osm": serveis_osm.run,
 }
 
 

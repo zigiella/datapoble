@@ -105,6 +105,23 @@ SOURCES: dict[str, dict] = {
         "llicencia": "ODbL (OpenStreetMap) — atribució + compartir-igual",
         "kind": "overpass",
     },
+    # Comerç i serveis essencials (CCAE-47 comerç al detall + serveis de proximitat)
+    # com a senyal de CENTRALITAT FUNCIONAL: distingeix el «centre de serveis real»
+    # (té supermercat/farmàcia/banc/ferreteria que serveixen els pobles veïns) del
+    # «municipi gran sense serveis». PRIMARI = OSM via Overpass: es compten els POIs
+    # amb shop in (supermarket/convenience/bakery/butcher/…) i amenity in
+    # (bank/pharmacy/post_office/townhall/fuel/doctors/…) i s'assignen al municipi per
+    # punt-en-polígon amb la geometria REAL dels 31 munis. El senyal és el COMPTE
+    # ABSOLUT (no la densitat). FRONTERA HONESTA: OSM INFRA-MAPEJA el rural → MÍNIM, no
+    # cens. Idescat (CCAE-47) NO és municipal per API oberta (secret estadístic).
+    "serveis_osm": {
+        "organisme": "OpenStreetMap (col·laboradors) — via Overpass API",
+        "producte": "Punts d'interès de comerç i serveis essencials (shop=…/amenity=bank,pharmacy,…)",
+        "dataset_id": None,
+        "url": OVERPASS_ENDPOINTS[0],
+        "llicencia": "ODbL (OpenStreetMap) — atribució + compartir-igual",
+        "kind": "overpass",
+    },
 }
 
 

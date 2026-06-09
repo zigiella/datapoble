@@ -331,6 +331,49 @@ metrics:
       es: "Densidad per cápita: aísla la orientación a visitantes del tamaño del municipio (Berga tiene el máximo absoluto de establecimientos pero queda baja per cápita; los pueblos de montaña turísticos quedan altos). Hereda el caveat de completitud de OSM (MÍNIMO, no censo): en los micromunicipios no mapeados subestima. Validado como 2º proxy independiente del vidrio (Spearman ≈ 0,54 con vidre_hab y con index_turisme, N=31, p<0,01)."
     synonyms: {ca: [densitat restauració, restaurants per habitant, hostaleria per càpita], es: [densidad restauración, restaurantes por habitante, hostelería per cápita]}
 
+  # --- SENYAL DE CENTRALITAT FUNCIONAL (comerç i serveis, OSM) — «centre de serveis real» ---
+  # Distingeix el CENTRE de serveis real (té supermercat/farmàcia/banc/ferreteria que serveixen
+  # els pobles veïns) del «municipi gran sense serveis». El senyal és el COMPTE ABSOLUT
+  # (serveis_estab): un poble és capçalera per TENIR serveis, no per la mida. Redefineix la
+  # tipologia capital_serveis (vegeu docs/tipologia-municipal.md). MESURA, no inferència; OSM
+  # infra-mapeja el rural → MÍNIM observat, no cens. A escala Catalunya, calibrar PER COMARCA.
+  serveis_estab:
+    label: {ca: Establiments de comerç i serveis, es: Establecimientos de comercio y servicios}
+    definicio:
+      ca: "Nombre d'establiments de comerç quotidià (supermercat, botiga de conveniència, forn, carnisseria, fruiteria, ferreteria…) i serveis essencials (banc, farmàcia, oficina de correus, ajuntament, benzinera, metge/clínica…) mapejats a OpenStreetMap dins el municipi. Senyal de CENTRALITAT funcional: mesura si el municipi és un centre de serveis real."
+      es: "Número de establecimientos de comercio cotidiano (supermercado, tienda de conveniencia, panadería, carnicería, frutería, ferretería…) y servicios esenciales (banco, farmacia, oficina de correos, ayuntamiento, gasolinera, médico/clínica…) mapeados en OpenStreetMap dentro del municipio. Señal de CENTRALIDAD funcional: mide si el municipio es un centro de servicios real."
+    dimension: serveis
+    unit: {ca: establiments, es: establecimientos}
+    formula: "compte de POIs shop in (supermarket,convenience,bakery,butcher,greengrocer,hardware,doityourself,chemist,kiosk,general) + amenity in (bank,pharmacy,post_office,townhall,fuel,doctors,clinic,hospital,veterinary,school) assignats per punt-en-polígon a la geometria municipal real"
+    source: osm_overpass
+    date: "2026"
+    table: mart_municipi
+    column: serveis_estab
+    visibility: public
+    note:
+      ca: "El senyal de CENTRALITAT és el COMPTE ABSOLUT (no la densitat): un poble és capçalera per TENIR supermercat/farmàcia/banc, independentment de la mida. MÍNIM observat, NO un cens: OSM INFRA-MAPEJA les zones rurals (la completesa varia entre municipis). És una MESURA; la lectura de «centre de serveis» que se'n fa (regla capital_serveis) SÍ és inferència. El contrast oficial Idescat (CCAE-47 comerç, serveis) no és municipal per API oberta (secret estadístic; l'EMEX només dóna 'serveis' agregat). A escala Catalunya el senyal s'ha de z-scoritzar PER COMARCA (signatures molt diferents Vallès/Pirineu/costa). Llicència ODbL (atribució + compartir-igual)."
+      es: "La señal de CENTRALIDAD es el RECUENTO ABSOLUTO (no la densidad): un pueblo es cabecera por TENER supermercado/farmacia/banco, independientemente del tamaño. MÍNIMO observado, NO un censo: OSM INFRAMAPEA las zonas rurales (la completitud varía entre municipios). Es una MEDIDA; la lectura de «centro de servicios» que se hace (regla capital_serveis) SÍ es inferencia. El contraste oficial Idescat (CCAE-47 comercio, servicios) no es municipal por API abierta (secreto estadístico; el EMEX solo da 'servicios' agregado). A escala Cataluña la señal debe z-scorizarse POR COMARCA (firmas muy distintas Vallès/Pirineo/costa). Licencia ODbL (atribución + compartir-igual)."
+    synonyms: {ca: [serveis, comerç, centralitat, supermercat, farmàcia, banc, capçalera], es: [servicios, comercio, centralidad, supermercado, farmacia, banco, cabecera]}
+
+  serveis_per_1000hab:
+    label: {ca: Serveis / 1000 hab, es: Servicios / 1000 hab}
+    definicio:
+      ca: "Densitat d'establiments de comerç i serveis essencials per cada 1000 habitants empadronats. Context secundari del senyal de centralitat (el senyal primari és el compte absolut): aïlla la dotació de serveis de la mida del municipi."
+      es: "Densidad de establecimientos de comercio y servicios esenciales por cada 1000 habitantes empadronados. Contexto secundario de la señal de centralidad (la señal primaria es el recuento absoluto): aísla la dotación de servicios del tamaño del municipio."
+    dimension: serveis
+    unit: {ca: per mil, es: por mil}
+    formula: "serveis_estab / poblacio * 1000"
+    source: datapoble
+    origin_source: osm_overpass
+    date: "2026"
+    table: mart_municipi
+    column: serveis_per_1000hab
+    visibility: public
+    note:
+      ca: "Densitat per càpita: complementa el compte absolut (que és el senyal de capçalera). Un micromunicipi amb pocs serveis però molt pocs habitants pot sortir alt per càpita sense ser capçalera; per això la regla capital_serveis usa el COMPTE ABSOLUT (z-score), no la densitat. Hereta el caveat de completesa d'OSM (MÍNIM, no cens)."
+      es: "Densidad per cápita: complementa el recuento absoluto (que es la señal de cabecera). Un micromunicipio con pocos servicios pero muy pocos habitantes puede salir alto per cápita sin ser cabecera; por eso la regla capital_serveis usa el RECUENTO ABSOLUTO (z-score), no la densidad. Hereda el caveat de completitud de OSM (MÍNIMO, no censo)."
+    synonyms: {ca: [densitat serveis, serveis per habitant, dotació de serveis], es: [densidad servicios, servicios por habitante, dotación de servicios]}
+
   # --- L1 · POBLACIÓ REAL ESTIMADA (PERNOCTA) — la nova «població invisible» ---
   poblacio_pernocta_est:
     label: {ca: "Població real estimada (pernocta)", es: "Población real estimada (pernocta)"}
