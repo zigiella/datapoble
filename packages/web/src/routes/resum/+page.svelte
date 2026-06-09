@@ -15,6 +15,7 @@
 	 * design-system (aplicacio.css): classes .ap-hero, .kpi-grid, .axis, .extremes.
 	 */
 	import ContourField from '$lib/components/ContourField.svelte';
+	import StockImpactScatter from '$lib/components/StockImpactScatter.svelte';
 	import { currentLocale, pick, localizeHref } from '$lib/i18n';
 	import { formatMetric, formatDecimal } from '$lib/format';
 	import { SIGNED_PCT_KEYS } from '$lib/map/classify';
@@ -367,6 +368,16 @@
 			</div>
 
 			<p class="srcline">{m.resum_srcline()}</p>
+		</section>
+
+		<!-- Bloc C — Constel·lació stock × empremta (onada B): l'IETR com a mapa mental, no número. -->
+		<section class="ds-sec">
+			<div class="ds-sec__hd">
+				<span class="ref">C</span><h2>{m.resum_constel_title()}</h2>
+			</div>
+			<p class="lead">{m.resum_constel_lede()}</p>
+			<StockImpactScatter {dataset} />
+			<p class="srcline">{m.resum_constel_legend()}</p>
 		</section>
 	</div>
 </section>
