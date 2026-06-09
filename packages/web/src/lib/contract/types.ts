@@ -93,6 +93,8 @@ export type MetricKey =
 	//  · IETR dual: els dos costats de l'IETR (estructural/stock + pressió realitzada/impacte).
 	| 'tipologia'
 	| 'confianca_score'
+	//  · divergencia_senyals: 0-100, el component de concordança exposat sol (auditar el «per què»).
+	| 'divergencia_senyals'
 	// Energia / rehabilitació
 	| 'pct_icaen_EFG'
 	// Índex IETR

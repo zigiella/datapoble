@@ -44,7 +44,8 @@ BASE_ELECTRIC = 1224
 BASE_VIDRE = 26.5
 
 # Columnes noves de la Fase 1 (ordre d'inserció just després de IETR_rank).
-NEW_COLS = ["IETR_stock", "IETR_impact", "tipologia", "confianca_score", "carrega_funcional_est",
+NEW_COLS = ["IETR_stock", "IETR_impact", "tipologia", "confianca_score", "divergencia_senyals",
+            "carrega_funcional_est",
             "residu_base_ratio", "kwh_base_ratio", "vidre_base_ratio"]
 
 # Columnes base del senyal de centralitat (serveis OSM). Es materialitzen al mart just
@@ -143,7 +144,12 @@ conf as (
                + case when m.poblacio is not null then 1 else 0 end) / 5.0)
             - 10.0 * least(1.0, greatest(0.0,
                 (greatest(abs(z.z_kg), abs(z.z_kwh), abs(z.z_np)) - 2.0) / 1.0))
-        )) as confianca_score
+        )) as confianca_score,
+        -- DIVERGÈNCIA DELS SENYALS (0-100): el spread dels 3 z de presència (z_kg/z_kwh/z_np),
+        -- exactament el component (b) de confianca_score però exposat tot sol i llegible:
+        -- 0 = concordants · 100 = màxima discrepància. Fa auditable el «per què» de la confiança.
+        round(100.0 * least(1.0, greatest(0.0,
+            (greatest(z.z_kg, z.z_kwh, z.z_np) - least(z.z_kg, z.z_kwh, z.z_np)) / 3.0)), 0) as divergencia_senyals
     from zsig2 z join m using (ine5)
 )
 
@@ -152,6 +158,7 @@ select m.*,
     round(nrm.B_turis, 2) as IETR_impact,
     tipo.tipologia,
     round(conf.confianca_score, 1) as confianca_score,
+    conf.divergencia_senyals,
     -- DENOMINADOR FUNCIONAL: max(pernocta L1, càrrega per residus L2). Resol L2<L1.
     greatest(m.poblacio_pernocta_est, m.carrega_total_est) as carrega_funcional_est,
     -- BASE-RATIOS: pressió ABSOLUTA vs base residencial (no z-score comarcal). >1 = per

@@ -957,6 +957,28 @@ metrics:
       es: "Auditable por construcción: cada punto viene de un componente explícito (tamaño, concordancia, cobertura, outlier). PUEDE divergir de la bandera `confianza` —y es intencionado— precisamente donde la concordancia o el denominador desmienten un 'alta' binario: p. ej. Castellar de n'Hug sale bajo porque las señales divergen (calefacción de leña → residuos altos pero eléctrico bajo). El score es el lado HONESTO de esa tensión. Relativo a la comarca (z-scores)."
     synonyms: {ca: [confiança score, fiabilitat, puntuació de confiança, qualitat de l'estimació], es: [confianza score, fiabilidad, puntuación de confianza, calidad de la estimación]}
 
+  divergencia_senyals:
+    label: {ca: "Divergència dels senyals (0-100)", es: "Divergencia de las señales (0-100)"}
+    label_ca: "Divergència dels senyals (0-100)"
+    label_es: "Divergencia de las señales (0-100)"
+    definicio:
+      ca: "Com de DISCREPANTS són els tres senyals físics de presència (residus, elèctric, % habitatge no principal) un cop normalitzats a la comarca. 0 = concordants (estimació fiable) · 100 = màxima discrepància (llegir amb prudència). És el component de concordança del `confianca_score`, exposat sol perquè el «per què» de la confiança sigui auditable."
+      es: "Cómo de DISCREPANTES son las tres señales físicas de presencia (residuos, eléctrico, % vivienda no principal) una vez normalizadas a la comarca. 0 = concordantes (estimación fiable) · 100 = máxima discrepancia (leer con prudencia). Es el componente de concordancia del `confianca_score`, expuesto solo para que el «por qué» de la confianza sea auditable."
+    dimension: pressio
+    categoria: derived
+    unit: "0-100"
+    formula: "100 * min(1, (max(z_kg,z_kwh,z_np) − min(z_kg,z_kwh,z_np)) / 3) sobre els z-scores comarcals dels 3 senyals de presència"
+    source: datapoble
+    origin_source: residus
+    date: "2024/2025"
+    table: mart_municipi
+    column: divergencia_senyals
+    visibility: public
+    caveat:
+      ca: "Relativa a la comarca (z-scores). Alta divergència sol venir de proxies confosos (p. ex. calefacció de llenya: residus alts però elèctric baix), no necessàriament d'un error: és un senyal per llegir amb cura, no un veto. Lectura ECOLÒGICA."
+      es: "Relativa a la comarca (z-scores). Alta divergencia suele venir de proxies confundidos (p. ej. calefacción de leña: residuos altos pero eléctrico bajo), no necesariamente de un error: es una señal para leer con cuidado, no un veto. Lectura ECOLÓGICA."
+    synonyms: {ca: [divergència de senyals, discrepància, concordança], es: [divergencia de señales, discrepancia, concordancia]}
+
   # --- Política (visible, lectura ecològica) ---
   pct_indep:
     label: {ca: "% vot independentista", es: "% voto independentista"}
