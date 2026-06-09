@@ -387,11 +387,21 @@ select
         ({{ estimacio_presencia('ind.poblacio', 'ind.kwh_hab', var('base_electric')) }} - ind.poblacio)
         / nullif(ind.poblacio, 0) * 100, 1)                     as gap_pernocta_pct,
 
-    -- L2 · CÀRREGA HUMANA TOTAL: pressió total inclosos els visitants de DIA
-    -- (excursionistes). Senyal = residus / base_residencial (410). NO és població:
-    -- els residus de les viles porten part de comerç. Era l'antic poblacio_real_est.
+    -- L2 · CÀRREGA PER RESIDUS: pressió que suggereixen els residus, inclosos els
+    -- visitants de DIA (excursionistes). Senyal = residus / base_residencial (410). NO és
+    -- població. ⚠️ NO és un sostre: pot quedar PER SOTA de la pernocta (L1) quan la
+    -- recollida és atípica o la base està mal calibrada (passa a 16/31 munis del pilot).
+    -- El nom «total» del passat era enganyós; per governar, usa carrega_funcional_est.
     cast({{ estimacio_presencia('ind.poblacio', 'ind.kg_hab_any', var('base_residencial')) }} as integer)
                                                                 as carrega_total_est,
+
+    -- DENOMINADOR FUNCIONAL: max(pernocta L1, càrrega per residus L2). El sostre realista
+    -- de càrrega humana que suporta el municipi — el «denominador per governar» (residus,
+    -- aigua, neteja, serveis). Resol la contradicció L2<L1 agafant el més alt dels dos rastres.
+    cast(greatest(
+        {{ estimacio_presencia('ind.poblacio', 'ind.kwh_hab', var('base_electric')) }},
+        {{ estimacio_presencia('ind.poblacio', 'ind.kg_hab_any', var('base_residencial')) }}
+    ) as integer)                                               as carrega_funcional_est,
 
     -- L3 · PRESSIÓ TURÍSTICA (hostaleria): intensitat d'activitat de visitants, via
     -- vidre/hab (ampolles de bar/restaurant). z-score comarcal del vidre_hab portat

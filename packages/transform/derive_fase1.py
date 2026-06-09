@@ -42,7 +42,7 @@ POBLACIO_MIN_CONFIANCA = 75
 BASE_RESIDENCIAL = 410
 
 # Columnes noves de la Fase 1 (ordre d'inserció just després de IETR_rank).
-NEW_COLS = ["IETR_stock", "IETR_impact", "tipologia", "confianca_score"]
+NEW_COLS = ["IETR_stock", "IETR_impact", "tipologia", "confianca_score", "carrega_funcional_est"]
 
 # Columnes base del senyal de centralitat (serveis OSM). Es materialitzen al mart just
 # després de restauracio_per_1000hab (vegeu mart_municipi.sql · CTE `serveis` + SELECT).
@@ -148,7 +148,9 @@ select m.*,
     round(nrm.A_resid, 2) as IETR_stock,
     round(nrm.B_turis, 2) as IETR_impact,
     tipo.tipologia,
-    round(conf.confianca_score, 1) as confianca_score
+    round(conf.confianca_score, 1) as confianca_score,
+    -- DENOMINADOR FUNCIONAL: max(pernocta L1, càrrega per residus L2). Resol L2<L1.
+    greatest(m.poblacio_pernocta_est, m.carrega_total_est) as carrega_funcional_est
 from m
 join nrm  using (ine5)
 join tipo using (ine5)

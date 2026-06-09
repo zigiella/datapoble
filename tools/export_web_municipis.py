@@ -74,8 +74,8 @@ METRIC_KEYS = [
     # Indicador estrella: MODEL DE 3 CAPES (derived, inferència).
     # L1 població pernocta (la nova «població invisible»):
     "poblacio_pernocta_est", "gap_pernocta", "gap_pernocta_pct",
-    # L2 càrrega humana total · L3 pressió turística:
-    "carrega_total_est", "index_turisme", "confianca",
+    # L2 càrrega per residus · denominador funcional (max L1,L2) · L3 pressió turística:
+    "carrega_total_est", "carrega_funcional_est", "index_turisme", "confianca",
     # Compatibilitat (model anterior d'una capa), reenquadrades:
     "poblacio_real_est", "gap_abs", "gap_pct", "poblacio_real_rel",
     "pct_icaen_EFG", "IETR", "IETR_rank",
@@ -107,6 +107,7 @@ FORMAT_BY_KEY = {
     # convenció que pct_noprincipal); index_turisme és 0-100 → decimal; confianca → text.
     "poblacio_pernocta_est": "integer", "gap_pernocta": "integer",
     "gap_pernocta_pct": "percent", "carrega_total_est": "integer",
+    "carrega_funcional_est": "integer",
     "index_turisme": "decimal",
     # Compatibilitat (model anterior).
     "poblacio_real_est": "integer", "gap_abs": "integer", "gap_pct": "percent",
@@ -138,6 +139,7 @@ COL_MUNI = {
     # Indicador estrella: model de 3 capes.
     "poblacio_pernocta_est": "poblacio_pernocta_est", "gap_pernocta": "gap_pernocta",
     "gap_pernocta_pct": "gap_pernocta_pct", "carrega_total_est": "carrega_total_est",
+    "carrega_funcional_est": "carrega_funcional_est",
     "index_turisme": "index_turisme",
     # Compatibilitat (model anterior d'una capa).
     "poblacio_real_est": "poblacio_real_est", "gap_abs": "gap_abs",
