@@ -287,6 +287,8 @@
 
   "met_capes_intro": "L'indicador estrella de riusdegent. El padró no veu qui omple un municipi sense constar-hi, però «qui l'omple» no és una sola cosa: per això no estimem un sol número sinó TRES capes que separen fenòmens diferents, cadascuna a partir d'un senyal físic independent. Rastres administratius involuntaris revelen presència que cap cens captura. La base de cada capa surt de les viles de vall poc turístiques (IETR < 5, ponderada per població): 410 kg de residus, 1.224 kWh i 26,5 kg de vidre per habitant. Tot és inferència, no cens, i es llegeix com un rang.",
   "met_politica_intro": "Lectura ECOLÒGICA: parla del municipi, mai de persones concretes (la falàcia ecològica). Volàtil als micromunicipis (poques paperetes).",
+  "met_block_origen": "Origen i arrelament",
+  "met_origen_intro": "Composició i arrelament del municipi. TRANSFORMACIÓ DEMOGRÀFICA, no «extranjería»: separem tres lents que sovint es confonen —nacionalitat (passaport), lloc de naixement (biografia) i evolució (el delta). Lectura ECOLÒGICA, mai sobre individus; el secret estadístic dels micromunicipis es respecta. La bretxa de naturalització mesura ARRELAMENT (gent que ve i s'arrela), no amenaça. Es llegeix sempre contra la comarca i Catalunya.",
 
   "met_poblacio_what": "Població empadronada: el recompte oficial de residents registrats.",
   "met_poblacio_how": "Directe (Idescat / Cens).",

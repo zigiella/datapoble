@@ -287,6 +287,8 @@
 
   "met_capes_intro": "El indicador estrella de riusdegent. El padrón no ve a quien llena un municipio sin constar en él, pero «quien lo llena» no es una sola cosa: por eso no estimamos un solo número sino TRES capas que separan fenómenos distintos, cada una a partir de una señal física independiente. Rastros administrativos involuntarios revelan presencia que ningún censo captura. La base de cada capa sale de las villas de valle poco turísticas (IETR < 5, ponderada por población): 410 kg de residuos, 1.224 kWh y 26,5 kg de vidrio por habitante. Todo es inferencia, no censo, y se lee como un rango.",
   "met_politica_intro": "Lectura ECOLÓGICA: habla del municipio, nunca de personas concretas (la falacia ecológica). Volátil en micromunicipios (pocas papeletas).",
+  "met_block_origen": "Origen y arraigo",
+  "met_origen_intro": "Composición y arraigo del municipio. TRANSFORMACIÓN DEMOGRÁFICA, no «extranjería»: separamos tres lentes que a menudo se confunden —nacionalidad (pasaporte), lugar de nacimiento (biografía) y evolución (el delta). Lectura ECOLÓGICA, nunca sobre individuos; el secreto estadístico de los micromunicipios se respeta. La brecha de naturalización mide ARRAIGO (gente que viene y se arraiga), no amenaza. Se lee siempre contra la comarca y Cataluña.",
 
   "met_poblacio_what": "Población empadronada: el recuento oficial de residentes registrados.",
   "met_poblacio_how": "Directo (Idescat / Censo).",
