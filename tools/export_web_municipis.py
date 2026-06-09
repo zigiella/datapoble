@@ -46,6 +46,7 @@ import yaml
 REPO = Path(__file__).resolve().parents[1]
 MART_MUNI = REPO / "data" / "marts" / "mart_municipi.parquet"
 MART_ELEC = REPO / "data" / "marts" / "mart_electoral.parquet"
+MART_DEMOG = REPO / "data" / "marts" / "mart_demografia.parquet"
 METRICS_YML = REPO / "semantic" / "metrics.yml"
 OUT = REPO / "data" / "web" / "municipis.bergueda.json"
 
@@ -57,6 +58,11 @@ ELEC = "A20241"
 METRIC_KEYS = [
     "poblacio", "hab_total", "hab_principal", "hab_noprincipal",
     "pct_noprincipal", "hab_per_hab", "index_envelliment",
+    # Origen: composició i arrelament (capa sensible; lectura ecològica, mai individual).
+    "poblacio_nascuda_catalunya", "poblacio_nascuda_resta_espanya",
+    "poblacio_nascuda_estranger", "pct_nascuda_estranger",
+    "pct_nacionalitat_estrangera", "bretxa_naturalitzacio",
+    "delta_pct_estrangera_finestra", "confianca_origen",
     "rtc_total", "rtc_hut", "rtc_per_1000hab", "rtc_per_100hab_viv",
     "kg_hab_any",
     # Senyals físics per càpita (inputs de les 3 capes).
@@ -84,6 +90,11 @@ FORMAT_BY_KEY = {
     "poblacio": "integer", "hab_total": "integer", "hab_principal": "integer",
     "hab_noprincipal": "integer", "pct_noprincipal": "percent",
     "hab_per_hab": "ratio", "index_envelliment": "decimal",
+    # Origen (composició i arrelament): comptes enters, %s en 0-100, bretxa/delta en punts.
+    "poblacio_nascuda_catalunya": "integer", "poblacio_nascuda_resta_espanya": "integer",
+    "poblacio_nascuda_estranger": "integer", "pct_nascuda_estranger": "percent",
+    "pct_nacionalitat_estrangera": "percent", "bretxa_naturalitzacio": "decimal",
+    "delta_pct_estrangera_finestra": "decimal", "confianca_origen": "text",
     "rtc_total": "integer", "rtc_hut": "integer", "rtc_per_1000hab": "decimal",
     "rtc_per_100hab_viv": "decimal", "kg_hab_any": "decimal",
     # Senyals per càpita.
@@ -140,6 +151,21 @@ COL_MUNI = {
 
 # Columnes de mart_municipi que són TEXT (no numèriques) → no passen per _num().
 TEXT_COLS_MUNI = {"confianca", "tipologia"}
+
+# Capa d'origen (mart_demografia), unida per ine5 com l'electoral. Lectura ECOLÒGICA;
+# el secret estadístic dels micromunicipis ja ve cuit com a NULL del connector.
+COL_DEMOG = {
+    "poblacio_nascuda_catalunya": "poblacio_nascuda_catalunya",
+    "poblacio_nascuda_resta_espanya": "poblacio_nascuda_resta_espanya",
+    "poblacio_nascuda_estranger": "poblacio_nascuda_estranger",
+    "pct_nascuda_estranger": "pct_nascuda_estranger",
+    "pct_nacionalitat_estrangera": "pct_nacionalitat_estrangera",
+    "bretxa_naturalitzacio": "bretxa_naturalitzacio",
+    "delta_pct_estrangera_finestra": "delta_pct_estrangera_finestra",
+    "confianca_origen": "confianca_origen",
+}
+TEXT_COLS_DEMOG = {"confianca_origen"}
+
 COL_ELEC = {
     "pct_indep": f"pct_indep_{ELEC}",
     "pct_esquerra": f"pct_esq_{ELEC}",
@@ -219,9 +245,10 @@ def _num(v: Any) -> Any:
     return int(f) if f.is_integer() else f
 
 
-def build_municipis(muni: pd.DataFrame, elec: pd.DataFrame) -> dict[str, dict]:
+def build_municipis(muni: pd.DataFrame, elec: pd.DataFrame, demog: pd.DataFrame) -> dict[str, dict]:
     """Files per municipi (Record<Ine5, MunicipiRow>), dades reals."""
     elec_by = elec.set_index("ine5")
+    demog_by = demog.set_index("ine5")
     out: dict[str, dict] = {}
     for _, r in muni.iterrows():
         ine5 = str(r["ine5"])
@@ -234,6 +261,21 @@ def build_municipis(muni: pd.DataFrame, elec: pd.DataFrame) -> dict[str, dict]:
                 values[key] = None if pd.isna(v) else str(v)
             else:
                 values[key] = _num(r[col])
+        # Capa d'origen des de mart_demografia (unida per ine5). confianca_origen és text;
+        # els valors absents (secret estadístic) ja vénen com a NULL.
+        if ine5 in demog_by.index:
+            dr = demog_by.loc[ine5]
+            for key, col in COL_DEMOG.items():
+                if col not in demog.columns:
+                    values[key] = None
+                elif col in TEXT_COLS_DEMOG:
+                    v = dr[col]
+                    values[key] = None if pd.isna(v) else str(v)
+                else:
+                    values[key] = _num(dr[col])
+        else:
+            for key in COL_DEMOG:
+                values[key] = None
         # Polítics des de mart_electoral (A20241). guanya és text (sigla) o None.
         if ine5 in elec_by.index:
             er = elec_by.loc[ine5]
@@ -302,6 +344,7 @@ def build_dataset() -> dict:
     contract = yaml.safe_load(METRICS_YML.read_text(encoding="utf-8"))
     muni = pd.read_parquet(MART_MUNI)
     elec = pd.read_parquet(MART_ELEC)
+    demog = pd.read_parquet(MART_DEMOG)
 
     n = len(muni)
     if n != 31:
@@ -311,7 +354,7 @@ def build_dataset() -> dict:
         "contractVersion": str(contract["meta"]["version"]),
         "scope": str(contract["meta"]["scope"]),
         "metrics": build_metrics(contract),
-        "municipis": build_municipis(muni, elec),
+        "municipis": build_municipis(muni, elec, demog),
         "comarca": build_comarca(muni, contract),
     }
 
@@ -324,7 +367,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = ap.parse_args(argv)
 
-    for p in (MART_MUNI, MART_ELEC, METRICS_YML):
+    for p in (MART_MUNI, MART_ELEC, MART_DEMOG, METRICS_YML):
         if not p.exists():
             print(f"FALLA: no existeix {p} (executa abans el pipeline transform)", file=sys.stderr)
             return 2
