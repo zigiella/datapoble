@@ -7,6 +7,7 @@
     python -m datapoble_ingestion electoral
     python -m datapoble_ingestion icaen_consum
     python -m datapoble_ingestion restauracio_osm
+    python -m datapoble_ingestion serveis_osm
     python -m datapoble_ingestion demografia_origen
 """
 from __future__ import annotations
@@ -23,6 +24,7 @@ from . import (
     residus,
     restauracio_osm,
     rtc,
+    serveis_osm,
 )
 
 RUNNERS = {
@@ -32,6 +34,7 @@ RUNNERS = {
     "electoral": electoral.run,
     "icaen_consum": icaen_consum.run,
     "restauracio_osm": restauracio_osm.run,
+    "serveis_osm": serveis_osm.run,
     "demografia_origen": demografia_origen.run,
 }
 

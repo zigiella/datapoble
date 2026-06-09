@@ -13,6 +13,12 @@ Scope d'aquest PR: Berguedà (31 municipis). Fonts actives:
     (restaurant/cafe/bar/…) assignats per punt-en-polígon a la geometria
     real dels 31 munis. OSM infra-mapeja el rural → compte = MÍNIM, no cens.
     Llicència ODbL. Cablejat a `all`.
+  - serveis_osm (comerç i serveis essencials)       · OpenStreetMap/Overpass
+    Senyal de CENTRALITAT funcional (centre de serveis real) per a la
+    tipologia capital_serveis. POIs shop (supermarket/convenience/bakery/…)
+    + amenity (bank/pharmacy/post_office/townhall/…) assignats per
+    punt-en-polígon. El senyal és el COMPTE ABSOLUT (no la densitat). OSM
+    infra-mapeja el rural → MÍNIM, no cens. Llicència ODbL. Cablejat a `all`.
   - demografia_origen (composició i arrelament)    · Idescat (EMEX + Pob. estrangera)
     TRANSFORMACIÓ DEMOGRÀFICA (origen), MAI «extranjería». Població per
     NACIONALITAT i per LLOC DE NAIXEMENT (foto darrer any, EMEX) + SÈRIE

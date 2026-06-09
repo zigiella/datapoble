@@ -54,6 +54,9 @@ export type MetricKey =
 	// 2n proxy d'hostaleria de la capa L3 (restauració OSM, complement del vidre)
 	| 'restauracio_estab'
 	| 'restauracio_per_1000hab'
+	// Senyal de centralitat funcional (comerç i serveis, OSM): redefineix capital_serveis.
+	| 'serveis_estab'
+	| 'serveis_per_1000hab'
 	// Indicador estrella — MODEL DE 3 CAPES (mètode v2 a docs/poblacio-real-metode.md):
 	//  L1 població que PERNOCTA (via elèctric) → la «població invisible»
 	| 'poblacio_pernocta_est'
@@ -111,7 +114,15 @@ export interface MetricDef {
 	definicio?: Localized;
 	/** Unitat de mesura (unit del contracte). "%" és comú a ambdós locales. */
 	unit: Localized;
-	dimension: 'demografia' | 'vivenda' | 'turisme' | 'pressio' | 'energia' | 'index' | 'politica';
+	dimension:
+		| 'demografia'
+		| 'vivenda'
+		| 'turisme'
+		| 'serveis'
+		| 'pressio'
+		| 'energia'
+		| 'index'
+		| 'politica';
 	format: MetricFormat;
 	/** Organisme/producte de la font (sources.* del contracte). */
 	source: string;

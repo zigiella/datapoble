@@ -194,13 +194,48 @@ corredor poblat i poc turístic (UE 16, Berga/Gironella). Vegeu la bitàcola.
 **Intern:** aquest output **no es mostra al web** (decisió de Bea). Només
 `packages/signals` + `data/events`.
 
+## La capa d'intel·ligència institucional de licitacions (PAS 1)
+
+> «Una licitació és una **confessió administrativa**.»
+
+Per damunt de la taula `events`, una capa **derivada i offline** que llegeix la
+contractació ja materialitzada (`events_bergueda.parquet`) i en deriva
+intel·ligència territorial **sense tocar el contracte**. Tres sortides a
+`data/events/`:
+
+| sortida | fitxer | gra |
+|---|---|---|
+| Events enriquits (taxonomia territorial) | `licitacions_enriquit_bergueda.parquet` | 1.295 (1/contracte) |
+| Repartiment supramunicipal declarat | `licitacions_repartiment_bergueda.parquet` | 16.325 (event × muni) |
+| Indicador `dependencia_supramunicipal` | `licitacions_dependencia_bergueda.parquet` | 31 (1/municipi) |
+
+- **Taxonomia pròpia** (no només CPV): `tema_administratiu` (15 temes) ·
+  `caracter_senyal` (ordinari/reforç/emergencia/transformacio/promocio/diagnostic) ·
+  `contract_signal_type` (evidencia_directa/proxy_fort/proxy_feble/nomes_context),
+  cada un amb confiança i mètode. Cobertura **95,4 % classificat / 4,6 `altres`**
+  (vs ~38 % del `tipus_senyal` de 6 famílies).
+- **Repartiment supramunicipal** dels 695 events comarcals (avui inútils a
+  `ine5=NULL`) als 31 municipis amb `allocation_method` explícit
+  (`directe_textual`/`per_poblacio`/`igualitari`/`no_assignable`) + confiança.
+  Conserva l'import. **Inferència declarada**, no «la veritat».
+- **`dependencia_supramunicipal`** = € comarcal assignable / € municipal directe.
+  Resultat honest: **29 de 31 municipis no contracten res propi** en aquest feed
+  (`no_contracta_propi`; no contractar ≠ no necessitar). Només Berga i Castellar
+  tenen denominador.
+
+Mètode complet i fronteres: `docs/licitacions-intel-metode.md`. CLI:
+`python -m datapoble_signals licitacions` (NO baixa res; fora d'`all`). El **PAS 2**
+(LLM sobre `altres`, validació de 300 contractes, repartiment fi, els altres 4
+indicadors) queda fora d'aquí.
+
 ## Fora de scope (PRs següents)
 
 L'extracció **LLM** (OpenRouter) per a fonts messy i per refinar `altres`;
 l'**escala Catalunya** (atenció: el dataset de sequera és **només Conques
-Internes** — les conques de l'Ebre les gestiona la CHE, no l'ACA); i, per al motor
-de convergència, **repartir el senyal comarcal de contractació als
-micromunicipis** (avui el secundari de contractació és mut als pobles petits).
+Internes** — les conques de l'Ebre les gestiona la CHE, no l'ACA); el **PAS 2** de
+la capa de licitacions (vegeu la secció anterior); i, per al motor de convergència,
+incorporar el repartiment supra de contractació (ja materialitzat aquí) perquè el
+seu senyal secundari deixi de ser mut als micromunicipis.
 
 ## Estructura
 
