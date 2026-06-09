@@ -117,6 +117,32 @@
 			row.values.poblacio_pernocta_est > row.values.carrega_total_est
 	);
 
+	// Infra-mapeig OSM: vidre alt amb restauració = 0 → el 0 és buit de mapa, no absència real.
+	const osmSospita = $derived(
+		typeof row?.values.vidre_hab === 'number' &&
+			row.values.vidre_hab > 30 &&
+			(row?.values.restauracio_estab === 0 || row?.values.restauracio_estab == null)
+	);
+	// Ràtio de càrrega: equivalents de presència per cada empadronat (denominador funcional / padró).
+	const ratioCarrega = $derived.by<number | null>(() => {
+		const c = row?.values.carrega_funcional_est;
+		const p = row?.values.poblacio;
+		return typeof c === 'number' && typeof p === 'number' && p > 0 ? c / p : null;
+	});
+	// «Lectura per a serveis» (consultor #4): quin denominador hauria d'usar cada servei municipal.
+	const serveisLectura = $derived.by(() => {
+		const v = row?.values ?? {};
+		const num = (k: MetricKey) => (typeof v[k] === 'number' ? (v[k] as number) : null);
+		return [
+			{ servei: m.muni_serv_residus(), denom: m.muni_serv_d_carrega(), val: num('carrega_funcional_est'), unit: 'hab.' },
+			{ servei: m.muni_serv_aigua(), denom: m.muni_serv_d_l1(), val: num('poblacio_pernocta_est'), unit: 'hab.' },
+			{ servei: m.muni_serv_vivenda(), denom: m.muni_serv_d_padro_np(), val: null, unit: '' },
+			{ servei: m.muni_serv_turisme(), denom: m.muni_serv_d_turisme(), val: num('IETR'), unit: 'IETR' },
+			{ servei: m.muni_serv_socials(), denom: m.muni_serv_d_socials(), val: null, unit: '' },
+			{ servei: m.muni_serv_seguretat(), denom: m.muni_serv_d_seguretat(), val: null, unit: '' }
+		];
+	});
+
 	const highlightRows = new Set<MetricKey>([
 		'pct_noprincipal',
 		'rtc_per_1000hab',
@@ -408,9 +434,30 @@
 							<span class="bar"></span><div>{m.muni_capes_divergence()}</div>
 						</div>
 					{/if}
+					{#if block.ref === 'D' && osmSospita}
+						<div class="alert warn" style="margin-top:10px">
+							<span class="bar"></span><div>{m.muni_osm_sospita()}</div>
+						</div>
+					{/if}
 					<p class="muni-sec__src">{srcLine(dataset.metrics[block.keys[0]])}</p>
 				</section>
 			{/each}
+
+			<section class="ds-sec">
+				<div class="ds-sec__hd"><span class="ref">⚙</span><h2>{m.muni_serv_title()}</h2></div>
+				<p class="muni-sec__sub">{m.muni_serv_sub()}</p>
+				{#if ratioCarrega}
+					<p class="muni-serv__punch">{m.muni_serv_ratio({ x: formatDecimal(ratioCarrega, locale, 1) })}</p>
+				{/if}
+				<dl class="muni-serv">
+					{#each serveisLectura as s (s.servei)}
+						<div class="muni-serv__row">
+							<dt>{s.servei}</dt>
+							<dd>{s.denom}{#if s.val != null} · <strong>{formatDecimal(s.val, locale, 0)}</strong>{#if s.unit} {s.unit}{/if}{/if}</dd>
+						</div>
+					{/each}
+				</dl>
+			</section>
 
 			{#if mirall.length}
 				<section class="ds-sec">
@@ -667,6 +714,49 @@
 		font-size: 0.64rem;
 		color: var(--dp-text-subtle);
 		line-height: 1.45;
+	}
+
+	/* Caixeta «Lectura per a serveis» (consultor #4): quin denominador toca a cada servei. */
+	.muni-serv__punch {
+		margin: 4px 0 12px;
+		font-size: 0.92rem;
+		line-height: 1.5;
+		color: var(--dp-text);
+	}
+	.muni-serv {
+		margin: 0;
+		display: grid;
+		gap: 1px;
+		background: var(--dp-border);
+		border: 1px solid var(--dp-border);
+		border-radius: var(--dp-radius-md);
+		overflow: hidden;
+	}
+	.muni-serv__row {
+		display: flex;
+		justify-content: space-between;
+		gap: 14px;
+		align-items: baseline;
+		background: var(--dp-surface);
+		padding: 9px 13px;
+	}
+	.muni-serv__row dt {
+		font-family: var(--dp-font-mono);
+		font-size: 0.64rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: var(--dp-text-subtle);
+		white-space: nowrap;
+	}
+	.muni-serv__row dd {
+		margin: 0;
+		text-align: right;
+		font-size: 0.84rem;
+		color: var(--dp-text-muted);
+	}
+	.muni-serv__row dd strong {
+		color: var(--dp-text);
+		font-feature-settings: 'tnum' 1;
 	}
 
 	/* Estat «sense dades encara» (fora del Berguedà). To apagat i amable; cap xifra. */
