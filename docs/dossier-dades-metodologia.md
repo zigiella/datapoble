@@ -173,7 +173,8 @@ La **base** és la generació/consum d'un resident «normal», calculada de les 
   El *gap* és la gent que **dorm** al territori sense constar: residents no registrats, segones residències, turisme que pernocta. **Això sí que és «població».**
 - **L2 · Càrrega humana total**
   `carrega_total_est = round(padró × kg_residus_hab / 410)`.
-  La pressió humana **total**, **inclosos els excursionistes de dia** i part del comerç. **No en diem «població» — en diem «càrrega».** Sempre ≥ L1.
+  La pressió humana **total**, **inclosos els excursionistes de dia** i part del comerç. **No en diem «població» — en diem «càrrega».**
+  *Correcció (juny 2026):* havíem assumit **L2 ≥ L1 sempre**; sobre dades reals **NO es compleix a 16/31 municipis** (pobles de 2a residència on es dorm molt però es genera poc residu de dia). Per això el **denominador per governar serveis** no és L2, sinó `carrega_funcional_est = max(L1, L2)` — el **sostre** de presència, vingui de qui pernocta o de qui carrega. Vegeu §10.4.
 - **L3 · Pressió turística (hostaleria)**
   `index_turisme = z-score comarcal de (vidre_hab) → escala 0–100` (50 = municipi mitjà del Berguedà).
   Intensitat d'**activitat de visitants**. **No és població; és pressió turística**, i és **relativa a la comarca**.
@@ -286,6 +287,13 @@ Capa nova i SENSIBLE (`mart_demografia`). Separa tres lents que sovint es confon
 - **Fonts:** Idescat EMEX (la foto del darrer any) + Idescat població estrangera (la sèrie municipal); s'ingereix NOMÉS 2021→ (Cens anual, homogeni) per no barrejar-ho amb el Padró pre-2021 (ruptura de font).
 - **Frontera ÈTICA (innegociable):** lectura **ECOLÒGICA, mai individual**; secret estadístic dels micromunicipis respectat (→ NULL); es llegeix SEMPRE contra el context comarcal i català.
 - **Govern de la IA:** la capa és **pública** al web i al glossari, però **RETINGUDA del catàleg de la IA** fins que existeixi el *frontier* d'origen (la guarda que refusa consultes individuals/causals/de marc ètnic). Pública per llegir-la amb context; encara no consultable per la IA en llenguatge obert.
+
+### 10.4 Lectura absoluta (`base-ratios`) i la correcció del sostre L2
+Dos refinaments sobre el model de capes, sense fonts noves, arran de la 2a revisió externa.
+- **`base-ratios` — la lectura ABSOLUTA que faltava.** Les capes L1–L3 són **relatives** (z-scores comarcals): diuen «molt per a aquesta comarca», no «molt en absolut». Afegim el quocient cru contra la base residencial: `residu_base_ratio = kg_hab/410`, `kwh_base_ratio = kwh_hab/1224`, `vidre_base_ratio = vidre_hab/26,5`. Un `vidre_base_ratio = 5,6` (Gósol) es llegeix directe: «genera 5,6 vegades el vidre d'un resident normal». Complementa el z-score (comparable entre comarques) sense substituir-lo.
+- **El sostre funcional `carrega_funcional_est = max(L1, L2)`.** L'assumpció «L2 ≥ L1» queia a **16/31** municipis (vegeu §5.3). Per dimensionar serveis (aigua, residus, places) importa el **màxim** de presència, vingui de qui pernocta (L1) o de qui carrega de dia (L2). Quan **L1 > L2** ho marquem com a **senyal divergent** (bandera de qualitat), no ho amaguem.
+- **Honestedat operativa (paquet local de dades).** Per a la capa d'interpretació, cada municipi porta **banderes de qualitat** automàtiques (L1>L2 divergent, vidre alt amb restauració OSM=0 → probable infra-mapeig, confiança baixa, micromunicipi <75) i un mapa de **municipis mirall** (els 5 més semblants en *comportament*, no veïns de mapa). Serveixen perquè cap lectura automàtica afirmi de més.
+- **Frontera:** els base-ratios hereten la base del Berguedà (410/1224/26,5); a escala Catalunya van amb base per comarca (§11, pregunta 4). `carrega_funcional_est` és un sostre d'inferència, no un cens.
 
 ---
 

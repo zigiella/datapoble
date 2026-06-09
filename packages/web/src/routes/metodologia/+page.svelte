@@ -67,6 +67,13 @@
 		pct_indep: () => m.met_indep_how(),
 		pct_extrema_dreta: () => m.met_xd_how()
 	};
+	// Fórmula curta (codi, sense i18n: idèntica ca/es) com a darrer recurs del «com es calcula».
+	const FORMULA: Partial<Record<MetricKey, string>> = {
+		kwh_base_ratio: 'kwh_hab / 1224',
+		residu_base_ratio: 'kg_hab_any / 410',
+		vidre_base_ratio: 'vidre_hab / 26,5',
+		carrega_funcional_est: 'max(L1 pernocta, L2 càrrega)'
+	};
 
 	// Blocs editorials de la metodologia (referència + títol + llista de claus, en ordre).
 	interface Block {
@@ -90,7 +97,7 @@
 			ref: 'C',
 			title: () => m.met_block_capes(),
 			intro: () => m.met_capes_intro(),
-			keys: ['kwh_hab', 'gap_pernocta_pct', 'kg_hab_any', 'carrega_total_est', 'vidre_hab', 'index_turisme', 'restauracio_per_1000hab', 'restauracio_estab', 'confianca']
+			keys: ['kwh_hab', 'kwh_base_ratio', 'gap_pernocta_pct', 'kg_hab_any', 'residu_base_ratio', 'carrega_total_est', 'carrega_funcional_est', 'vidre_hab', 'vidre_base_ratio', 'index_turisme', 'restauracio_per_1000hab', 'restauracio_estab', 'confianca']
 		},
 		{
 			ref: 'D',
@@ -205,7 +212,7 @@
 								<dt>{m.met_lbl_what()}</dt>
 								<dd>{WHAT[key]?.() ?? (def.definicio ? pick(def.definicio, locale) : pick(def.label, locale))}</dd>
 								<dt>{m.met_lbl_how()}</dt>
-								<dd class="met-card__how">{HOW[key]?.() ?? '—'}</dd>
+								<dd class="met-card__how">{HOW[key]?.() ?? FORMULA[key] ?? '—'}</dd>
 								<dt>{m.met_lbl_src()}</dt>
 								<dd class="met-card__src">{srcLine(key)}</dd>
 							</dl>
