@@ -67,6 +67,8 @@ METRIC_KEYS = [
     "kg_hab_any",
     # Senyals físics per càpita (inputs de les 3 capes).
     "kwh_hab", "vidre_hab",
+    # Base-ratios: pressió ABSOLUTA vs base residencial (complement dels z-scores comarcals).
+    "residu_base_ratio", "kwh_base_ratio", "vidre_base_ratio",
     # 2n proxy d'hostaleria de la capa L3 (restauració OSM, complement del vidre).
     "restauracio_estab", "restauracio_per_1000hab",
     # Senyal de CENTRALITAT funcional (comerç i serveis OSM) — redefineix capital_serveis.
@@ -99,6 +101,7 @@ FORMAT_BY_KEY = {
     "rtc_per_100hab_viv": "decimal", "kg_hab_any": "decimal",
     # Senyals per càpita.
     "kwh_hab": "decimal", "vidre_hab": "decimal",
+    "residu_base_ratio": "decimal", "kwh_base_ratio": "decimal", "vidre_base_ratio": "decimal",
     # Restauració (2n proxy hostaleria L3): compte enter + densitat decimal.
     "restauracio_estab": "integer", "restauracio_per_1000hab": "decimal",
     # Centralitat (comerç i serveis OSM): compte enter + densitat decimal.
@@ -130,6 +133,7 @@ COL_MUNI = {
     "rtc_per_100hab_viv": "rtc_per_100hab_viv", "kg_hab_any": "kg_hab_any",
     # Senyals per càpita.
     "kwh_hab": "kwh_hab", "vidre_hab": "vidre_hab",
+    "residu_base_ratio": "residu_base_ratio", "kwh_base_ratio": "kwh_base_ratio", "vidre_base_ratio": "vidre_base_ratio",
     # Restauració (2n proxy hostaleria L3).
     "restauracio_estab": "restauracio_estab",
     "restauracio_per_1000hab": "restauracio_per_1000hab",

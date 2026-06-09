@@ -428,6 +428,56 @@ metrics:
     visibility: public
     synonyms: {ca: [vidre, ampolles, hostaleria], es: [vidrio, botellas, hostelería]}
 
+  # --- BASE-RATIOS: pressió ABSOLUTA vs base residencial (complement dels z-scores comarcals) ---
+  residu_base_ratio:
+    label: {ca: "Residus vs base (×)", es: "Residuos vs base (×)"}
+    definicio:
+      ca: "Residus per habitant dividits per la base residencial (410 kg/hab/any). >1 = el municipi genera MÉS del que generaria una vila de vall poc turística; <1 = menys. Pressió ABSOLUTA (no relativa a la comarca), comparable entre comarques."
+      es: "Residuos por habitante divididos por la base residencial (410 kg/hab/año). >1 = el municipio genera MÁS de lo que generaría una villa de valle poco turística; <1 = menos. Presión ABSOLUTA (no relativa a la comarca), comparable entre comarcas."
+    dimension: pressio
+    categoria: derived
+    unit: {ca: "× base", es: "× base"}
+    formula: "kg_hab_any / 410"
+    source: datapoble
+    origin_source: residus
+    date: "2024"
+    table: mart_municipi
+    column: residu_base_ratio
+    visibility: public
+    synonyms: {ca: [excés de residus, residus vs base], es: [exceso de residuos, residuos vs base]}
+
+  kwh_base_ratio:
+    label: {ca: "Elèctric vs base (×)", es: "Eléctrico vs base (×)"}
+    definicio:
+      ca: "Consum elèctric domèstic per habitant dividit per la base (1.224 kWh/hab/any). >1 = més pernocta/consum del que tocaria a una vila de vall."
+      es: "Consumo eléctrico doméstico por habitante dividido por la base (1.224 kWh/hab/año). >1 = más pernoctación/consumo del que correspondería a una villa de valle."
+    dimension: pressio
+    categoria: derived
+    unit: {ca: "× base", es: "× base"}
+    formula: "kwh_hab / 1224"
+    source: datapoble
+    origin_source: icaen_consum
+    date: "2024"
+    table: mart_municipi
+    column: kwh_base_ratio
+    visibility: public
+
+  vidre_base_ratio:
+    label: {ca: "Vidre vs base (×)", es: "Vidrio vs base (×)"}
+    definicio:
+      ca: "Vidre per habitant dividit per la base (26,5 kg/hab/any). >1 = més empremta hostalera del que tocaria a una vila de vall poc turística."
+      es: "Vidrio por habitante dividido por la base (26,5 kg/hab/año). >1 = más huella hostelera de la que correspondería a una villa de valle poco turística."
+    dimension: pressio
+    categoria: derived
+    unit: {ca: "× base", es: "× base"}
+    formula: "vidre_hab / 26.5"
+    source: datapoble
+    origin_source: residus
+    date: "2024"
+    table: mart_municipi
+    column: vidre_base_ratio
+    visibility: public
+
   # --- 2n PROXY D'HOSTALERIA de la capa L3 (restauració, OSM) — complement del vidre ---
   # El vidre mesura ACTIVITAT (ampolles consumides); la restauració, CAPACITAT instal·lada
   # (stock de locals). Dos senyals INDEPENDENTS que apunten al mateix fenomen. És una

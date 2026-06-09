@@ -60,6 +60,10 @@ export type MetricKey =
 	// Senyals físics per càpita (inputs de les 3 capes)
 	| 'kwh_hab'
 	| 'vidre_hab'
+	// Base-ratios: pressió absoluta vs base residencial (×base)
+	| 'residu_base_ratio'
+	| 'kwh_base_ratio'
+	| 'vidre_base_ratio'
 	// 2n proxy d'hostaleria de la capa L3 (restauració OSM, complement del vidre)
 	| 'restauracio_estab'
 	| 'restauracio_per_1000hab'

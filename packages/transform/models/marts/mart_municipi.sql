@@ -403,6 +403,13 @@ select
         {{ estimacio_presencia('ind.poblacio', 'ind.kg_hab_any', var('base_residencial')) }}
     ) as integer)                                               as carrega_funcional_est,
 
+    -- BASE-RATIOS: pressió ABSOLUTA vs base residencial (no z-score comarcal). >1 = per sobre
+    -- del que genera una vila de vall poc turística; comparable entre comarques (a escala
+    -- Catalunya, amb la base de la comarca corresponent).
+    round(ind.kg_hab_any / {{ var('base_residencial') }}, 2)    as residu_base_ratio,
+    round(ind.kwh_hab    / {{ var('base_electric') }}, 2)       as kwh_base_ratio,
+    round(ind.vidre_hab  / {{ var('base_vidre') }}, 2)          as vidre_base_ratio,
+
     -- L3 · PRESSIÓ TURÍSTICA (hostaleria): intensitat d'activitat de visitants, via
     -- vidre/hab (ampolles de bar/restaurant). z-score comarcal del vidre_hab portat
     -- a 0–100 (50 = mitjana comarcal). NO és població. Calculat a la CTE `tur`.
