@@ -31,11 +31,12 @@ gap_pernocta = poblacio_pernocta_est − padró
 ```
 El **gap** és la gent que **dorm** al territori sense constar al padró: residents no registrats, **segones residències**, turisme que pernocta. **Això sí que és «població».**
 
-### L2 · Càrrega humana total
+### L2 · Càrrega per residus  ·  i el denominador funcional
 ```
-carrega_total_est = round(padró × kg_residus_hab / 410)
+carrega_total_est     = round(padró × kg_residus_hab / 410)            # càrrega que suggereixen els residus
+carrega_funcional_est = max(poblacio_pernocta_est, carrega_total_est)  # el sostre per governar
 ```
-La pressió humana **total** que suporta el territori, **inclosos els excursionistes de dia** i part del comerç. **NO en diem «població» — en diem «càrrega».**
+La pressió que **suggereixen els residus**, **inclosos els excursionistes de dia** i part del comerç. **NO en diem «població» — en diem «càrrega».** ⚠️ **No és un sostre:** la càrrega per residus pot quedar **PER SOTA de la pernocta (L1)** quan els residus/càpita són baixos, la recollida és atípica o la base està mal calibrada (passa a **16 dels 31** municipis del pilot; el nom «total» del passat era enganyós). Per **dimensionar serveis** (residus, aigua, neteja) s'usa la **càrrega funcional = max(L1, L2)**, i quan L1 > L2 es marca una **alerta de divergència**.
 
 ### L3 · Pressió turística (hostaleria)
 ```
