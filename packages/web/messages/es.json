@@ -35,6 +35,7 @@
   "resum_rank_of": "de 31",
   "resum_ietr_scale": "IETR · 0–100",
   "resum_srcline": "Ninguna cifra sin procedencia. Lectura a escala comarcal. Datos reales de los 31 municipios del Berguedà, con la forma del contrato semántico (fuente: marts de riusdegent).",
+  "narrativa_mare": "El padrón dice quién consta; los rastros, quién está de verdad y cuál es el uso. Riusdegent hace visible esa distancia.",
   "resum_constel_title": "Constelación stock × huella",
   "resum_constel_lede": "Cada punto es un municipio. Cuanto más a la derecha, más preparado está para recibir gente (stock: vivienda no principal y oferta reglada); cuanto más arriba, más rastro deja ya el uso (impact: residuos y vidrio). Así se ve de un vistazo qué tipo de exposición tiene cada lugar, no solo si hay mucha o poca.",
   "resum_constel_legend": "Color = tipología · tamaño = población · anillo discontinuo = confianza baja. Pasa el ratón (o toca) para ver los valores de cada municipio.",

@@ -179,6 +179,7 @@
 			</p>
 			<h1>{m.met_h1_a()} <span class="q">{m.met_h1_b()}</span>.</h1>
 			<p class="lede">{m.met_lede()}</p>
+				<p class="tesi" style="margin:16px 0 0; padding-left:14px; border-left:3px solid var(--dp-brand, var(--dp-border-strong)); font-size:18px; line-height:1.5; color:var(--dp-text); max-width:56ch; font-weight:500;">{m.narrativa_mare()}</p>
 			<div class="met-key">
 				<span class="prov prov--measured"><span class="dot"></span>{m.met_badge_measured()}</span>
 				<span class="prov prov--derived"><span class="dot"></span>{m.met_badge_derived()}</span>
