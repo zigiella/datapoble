@@ -55,3 +55,19 @@ def test_provenance_fields_present_on_contract(catalog):
     for m in catalog.available_metrics():
         assert m.formula, f"{m.key} has no formula"
         assert m.source_key, f"{m.key} has no source"
+
+
+def test_origen_metrics_are_held_back_from_agent(catalog):
+    # The «origen» dimension (composició i arrelament: nationality / birthplace /
+    # naturalisation) is SENSITIVE: public on the web but deliberately held back from
+    # the agent until the origen frontier exists. Regression guard for that gate.
+    origen = [m for m in catalog.metrics.values() if m.dimension == "origen"]
+    assert origen, "no origen-dimension metrics in the contract (test would be vacuous)"
+    for m in origen:
+        assert m.is_available() is False, f"{m.key} (origen) leaked: must not be agent-available"
+    available = {m.key for m in catalog.available_metrics()}
+    assert available.isdisjoint({m.key for m in origen}), "origen metrics leaked into the available set"
+    # Concrete sentinel that must stay held back.
+    sentinel = catalog.metric("pct_nascuda_estranger")
+    assert sentinel is not None and sentinel.dimension == "origen"
+    assert sentinel.is_available() is False
