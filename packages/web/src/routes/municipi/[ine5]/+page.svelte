@@ -264,6 +264,24 @@
 	const ietrRank = $derived(row?.values.IETR_rank ?? null);
 	const numMunis = $derived(dataset.comarca.num_municipis);
 
+	// Lectura IETR-família: estructura (stock) × empremta (impact) → quadrant, reusant la
+	// MATEIXA semàntica que la constel·lació del Resum (claus i18n constel_q_*). Treu l'IETR
+	// de número únic («no només 26,0»): diu QUIN tipus d'exposició, no només quant.
+	const ietrReading = $derived.by(() => {
+		const s = typeof row?.values.IETR_stock === 'number' ? row.values.IETR_stock : null;
+		const i = typeof row?.values.IETR_impact === 'number' ? row.values.IETR_impact : null;
+		if (s === null || i === null) return null;
+		const q =
+			s >= 50 && i >= 50
+				? { name: m.constel_q_consolidada(), help: m.constel_q_consolidada_help() }
+				: s >= 50
+					? { name: m.constel_q_latent(), help: m.constel_q_latent_help() }
+					: i >= 50
+						? { name: m.constel_q_sense_stock(), help: m.constel_q_sense_stock_help() }
+						: { name: m.constel_q_baixa(), help: m.constel_q_baixa_help() };
+		return { stock: s, impact: i, name: q.name, help: q.help };
+	});
+
 	// Nom del municipi (topònim, igual en ambdós locales) o, sense dada, el codi.
 	const muniNom = $derived(row?.nom ?? ine5);
 
@@ -367,6 +385,12 @@
 							</div>
 						{/if}
 					</div>
+					{#if ietrReading}
+						<p class="muni-card__ietr-reading" style="margin:6px 0 0; display:flex; flex-wrap:wrap; gap:4px 10px; align-items:baseline; font-size:13px;">
+							<span style="font-family:var(--dp-font-mono); color:var(--dp-text-muted)">stock {formatDecimal(ietrReading.stock, locale, 0)} · impact {formatDecimal(ietrReading.impact, locale, 0)}</span>
+							<span style="color:var(--dp-text)"><b>{ietrReading.name}</b> · {ietrReading.help}</span>
+						</p>
+					{/if}
 					<p class="muni-card__meta">
 						<span>INE {ine5}</span>
 						{#if typeof row.values.poblacio === 'number'}<span
