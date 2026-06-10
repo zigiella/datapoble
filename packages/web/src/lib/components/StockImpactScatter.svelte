@@ -5,6 +5,11 @@
 	 * punt; X = estructura PREPARADA (stock: habitatge no principal + reglat), Y = empremta
 	 * OBSERVADA (impact: residus/vidre). Quatre quadrants amb lectura. Color = tipologia, mida =
 	 * població, halo = confiança baixa. Cap xifra inventada: tot surt del dataset (contracte).
+	 *
+	 * Mantenim els termes `stock`/`impact` (vocabulari del projecte) però els ACOMPANYEM amb text
+	 * planer als eixos, als quadrants (gloss) i al tooltip, perquè un usuari que entra fred entengui
+	 * QUÈ mira. El tooltip és HTML real (substitueix el <title> SVG natiu, lent i poc fiable):
+	 * apareix a l'instant amb el ratolí, el dit (tàctil) i el focus de teclat.
 	 */
 	import { tipologiaColor } from '$lib/map/tipologia';
 	import { m } from '$lib/paraglide/messages';
@@ -64,48 +69,97 @@
 	);
 
 	const color = (tip: string | null) => tipologiaColor(tip);
+
+	// Lectura planera del quadrant (la mateixa gloss que les etiquetes dels quadrants).
+	const quadHelp = (p: Pt) =>
+		p.stock >= 50
+			? p.impact >= 50
+				? m.constel_q_consolidada_help()
+				: m.constel_q_latent_help()
+			: p.impact >= 50
+				? m.constel_q_sense_stock_help()
+				: m.constel_q_baixa_help();
+
+	// Tooltip HTML (posició relativa a la <figure>). Substitueix el <title> SVG natiu.
+	let figEl: HTMLElement | undefined = $state();
+	let hovered = $state<Pt | null>(null);
+	let tx = $state(0);
+	let ty = $state(0);
+
+	function moveTo(clientX: number, clientY: number) {
+		if (!figEl) return;
+		const r = figEl.getBoundingClientRect();
+		tx = clientX - r.left;
+		ty = clientY - r.top;
+	}
+	function show(p: Pt, e: PointerEvent) {
+		hovered = p;
+		moveTo(e.clientX, e.clientY);
+	}
+	function track(e: PointerEvent) {
+		if (hovered) moveTo(e.clientX, e.clientY);
+	}
+	function hide() {
+		hovered = null;
+	}
 </script>
 
-<figure class="constel">
+<figure class="constel" bind:this={figEl}>
 	<svg viewBox="0 0 {W} {H}" role="img" aria-label={m.constel_aria()} preserveAspectRatio="xMidYMid meet">
 		<!-- Línies de quadrant (a stock=50 i impact=50) -->
 		<line x1={sx(50)} y1={MT} x2={sx(50)} y2={MT + PH} class="grid" />
 		<line x1={ML} y1={sy(50)} x2={ML + PW} y2={sy(50)} class="grid" />
 
-		<!-- Etiquetes de quadrant -->
-		<text x={sx(74)} y={sy(94)} class="q">{m.constel_q_consolidada()}</text>
-		<text x={sx(74)} y={sy(6)} class="q">{m.constel_q_latent()}</text>
-		<text x={sx(26)} y={sy(94)} class="q">{m.constel_q_sense_stock()}</text>
-		<text x={sx(26)} y={sy(6)} class="q">{m.constel_q_baixa()}</text>
+		<!-- Etiquetes de quadrant: nom tècnic + gloss planera -->
+		<text x={sx(74)} y={sy(96)} class="q">{m.constel_q_consolidada()}</text>
+		<text x={sx(74)} y={sy(96) + 13} class="qh">{m.constel_q_consolidada_help()}</text>
+		<text x={sx(74)} y={sy(4)} class="q">{m.constel_q_latent()}</text>
+		<text x={sx(74)} y={sy(4) + 13} class="qh">{m.constel_q_latent_help()}</text>
+		<text x={sx(26)} y={sy(96)} class="q">{m.constel_q_sense_stock()}</text>
+		<text x={sx(26)} y={sy(96) + 13} class="qh">{m.constel_q_sense_stock_help()}</text>
+		<text x={sx(26)} y={sy(4)} class="q">{m.constel_q_baixa()}</text>
+		<text x={sx(26)} y={sy(4) + 13} class="qh">{m.constel_q_baixa_help()}</text>
 
 		<!-- Punts (halo de confiança baixa a sota) -->
 		{#each pts as p (p.ine5)}
 			{#if p.baixa}
 				<circle cx={sx(p.stock)} cy={sy(p.impact)} r={radius(p.pob) + 3.5} class="halo" />
 			{/if}
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
 			<circle
 				cx={sx(p.stock)}
 				cy={sy(p.impact)}
 				r={radius(p.pob)}
 				fill={color(p.tipologia)}
 				class="pt"
-			>
-				<title>{p.nom} · stock {Math.round(p.stock)} · empremta {Math.round(p.impact)}</title>
-			</circle>
+				onpointerenter={(e) => show(p, e)}
+				onpointermove={track}
+				onpointerleave={hide}
+			></circle>
 			{#if labelled.has(p.ine5)}
 				<text x={sx(p.stock)} y={sy(p.impact) - radius(p.pob) - 4} class="lbl">{p.nom}</text>
 			{/if}
 		{/each}
 
-		<!-- Etiquetes d'eix -->
+		<!-- Etiquetes d'eix: frase planera + el terme (stock/impact) entre parèntesis -->
 		<text x={ML + PW} y={H - 8} class="axis" text-anchor="end">{m.constel_x()} →</text>
 		<text x={ML + 2} y={MT + 12} class="axis" text-anchor="start">↑ {m.constel_y()}</text>
 	</svg>
+
+	{#if hovered}
+		<div class="tip" style="left:{tx}px; top:{ty}px" aria-hidden="true">
+			<span class="tip__nom">{hovered.nom}</span>
+			<span class="tip__row">{m.constel_x()}: <b>{Math.round(hovered.stock)}</b>/100</span>
+			<span class="tip__row">{m.constel_y()}: <b>{Math.round(hovered.impact)}</b>/100</span>
+			<span class="tip__q">{quadHelp(hovered)}</span>
+		</div>
+	{/if}
 </figure>
 
 <style>
 	.constel {
 		margin: 0;
+		position: relative;
 	}
 	.constel svg {
 		width: 100%;
@@ -127,10 +181,17 @@
 		text-transform: uppercase;
 		letter-spacing: 0.04em;
 	}
+	.qh {
+		font-family: var(--dp-font-sans);
+		font-size: 10px;
+		fill: var(--dp-text-muted);
+		text-anchor: middle;
+	}
 	.pt {
 		stroke: var(--dp-surface);
 		stroke-width: 1.2;
 		opacity: 0.9;
+		cursor: pointer;
 	}
 	.halo {
 		fill: none;
@@ -153,5 +214,42 @@
 		font-size: 11px;
 		fill: var(--dp-text-muted);
 		letter-spacing: 0.04em;
+	}
+	.tip {
+		position: absolute;
+		transform: translate(-50%, calc(-100% - 14px));
+		pointer-events: none;
+		z-index: 5;
+		min-width: 150px;
+		max-width: 240px;
+		padding: 8px 10px;
+		background: var(--dp-surface);
+		border: 1px solid var(--dp-border-strong);
+		border-radius: 8px;
+		box-shadow: 0 4px 14px rgb(0 0 0 / 12%);
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		font-family: var(--dp-font-sans);
+	}
+	.tip__nom {
+		font-weight: 600;
+		font-size: 13px;
+		color: var(--dp-text);
+		margin-bottom: 2px;
+	}
+	.tip__row {
+		font-size: 12px;
+		color: var(--dp-text-muted);
+	}
+	.tip__row b {
+		color: var(--dp-text);
+		font-weight: 600;
+	}
+	.tip__q {
+		font-size: 12px;
+		color: var(--dp-text-subtle);
+		margin-top: 3px;
+		font-style: italic;
 	}
 </style>
