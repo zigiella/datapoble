@@ -35,7 +35,6 @@ variar amb el temps, però la query i l'assignació espacial són reproduïbles.
 from __future__ import annotations
 
 import time
-from pathlib import Path
 
 import duckdb
 import pandas as pd

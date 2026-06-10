@@ -38,8 +38,8 @@ jobs:
           python-version: "3.11"
       - name: Install (dbt-duckdb + verifiers)
         run: pip install dbt-duckdb duckdb pandas pyarrow ruff
-      - name: Lint (ruff) · transform
-        run: ruff check packages/transform
+      - name: Lint (ruff) · transform + ingestion + signals
+        run: ruff check packages/transform packages/ingestion packages/signals
       - name: dbt parse (plantilla + schema vàlids)
         run: dbt parse --project-dir packages/transform --profiles-dir packages/transform
       - name: Verify marts (ancoratges + Spearman)
