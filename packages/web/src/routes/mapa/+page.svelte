@@ -55,7 +55,8 @@
 		restauracio_per_1000hab: () => m.map_ind_restauracio(),
 		IETR: () => m.map_ind_ietr(),
 		pct_noprincipal: () => m.map_ind_nop(),
-		kg_hab_any: () => m.map_ind_res()
+		kg_hab_any: () => m.map_ind_res(),
+		divergencia_senyals: () => m.map_ind_divergencia()
 	};
 	const labelFor = (key: MetricKey): string => INDICATOR_LABEL[key]?.() ?? key;
 
