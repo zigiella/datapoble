@@ -141,9 +141,9 @@
 			{/if}
 		{/each}
 
-		<!-- Etiquetes d'eix: frase planera + el terme (stock/impact) entre parèntesis -->
-		<text x={ML + PW} y={H - 8} class="axis" text-anchor="end">{m.constel_x()} →</text>
-		<text x={ML + 2} y={MT + 12} class="axis" text-anchor="start">↑ {m.constel_y()}</text>
+		<!-- Etiquetes d'eix: X centrada a baix; Y VERTICAL a l'esquerra (evita encavalcar amb els quadrants) -->
+		<text x={ML + PW / 2} y={H - 8} class="axis" text-anchor="middle">{m.constel_x()} →</text>
+		<text x={12} y={MT + PH / 2} class="axis" text-anchor="middle" transform="rotate(-90 12 {MT + PH / 2})">{m.constel_y()} ↑</text>
 	</svg>
 
 	{#if hovered}
