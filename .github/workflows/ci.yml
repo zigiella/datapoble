@@ -21,12 +21,31 @@ jobs:
           done
           echo "foundation OK"
 
-  # TODO(Sondeig): python lint (ruff) + dbt build + dbt test
-  # python:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - run: pipx run ruff check packages/ingestion packages/transform
+  # Sondeig: gate de dades. dbt build/test complets necessiten data/raw/ (gitignored)
+  # → NO reproduïbles en checkout net; aquí corre el que SÍ que ho és, sobre artefactes
+  # versionats: ruff + dbt parse (plantilla/schema vàlids) + verificadors offline
+  # (ancoratges/Spearman + mirall Fase 1 byte-fidel al parquet). PYTHONUTF8=1: dbt llegeix
+  # els fitxers del projecte amb l'encoding del sistema; força UTF-8 (defensa anti-cp1252).
+  data:
+    name: data marts (dbt parse + verifiers)
+    runs-on: ubuntu-latest
+    env:
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install (dbt-duckdb + verifiers)
+        run: pip install dbt-duckdb duckdb pandas pyarrow ruff
+      - name: Lint (ruff) · transform
+        run: ruff check packages/transform
+      - name: dbt parse (plantilla + schema vàlids)
+        run: dbt parse --project-dir packages/transform --profiles-dir packages/transform
+      - name: Verify marts (ancoratges + Spearman)
+        run: python packages/transform/verify_marts.py
+      - name: Fase 1 · derivats al dia (mirall offline)
+        run: python packages/transform/derive_fase1.py --check
 
   # Brúixola: evals de la capa de IA (texto→SQL trazable). Corre OFFLINE
   # (sin OPENROUTER_API_KEY): determinista, sin red. Gate anti-regresión.
