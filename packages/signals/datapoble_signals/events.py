@@ -41,7 +41,7 @@ def write_events_table(
         con.register("ev", df)
         # Cast explícit: data -> DATE, import/confianca -> DOUBLE. La resta VARCHAR.
         con.execute(
-            f"""
+            """
             CREATE TABLE events AS
             SELECT
                 CAST(event_id     AS VARCHAR) AS event_id,

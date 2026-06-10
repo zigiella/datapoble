@@ -218,7 +218,8 @@ def test_parquet_pilot_compleix_invariants():
     p = str(events_path("events_bergueda.parquet"))
     con = duckdb.connect()
     con.execute(f"CREATE VIEW e AS SELECT * FROM read_parquet('{p}')")
-    q = lambda s: con.execute(s).fetchone()[0]
+    def q(s):
+        return con.execute(s).fetchone()[0]
 
     assert q("SELECT count(*) FROM e") > 0
     assert q("SELECT count(*) - count(DISTINCT event_id) FROM e") == 0  # únic

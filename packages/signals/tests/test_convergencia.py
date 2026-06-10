@@ -17,7 +17,6 @@ from datapoble_signals.config import events_path
 from datapoble_signals.convergencia import (
     CONVERGENCIA_COLUMNS,
     LLINDAR_SEQUERA_ALTA,
-    LLINDAR_TURISME_ALT,
     QUADRANTS,
 )
 
