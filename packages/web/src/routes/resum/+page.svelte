@@ -16,6 +16,10 @@
 	 */
 	import ContourField from '$lib/components/ContourField.svelte';
 	import StockImpactScatter from '$lib/components/StockImpactScatter.svelte';
+	import ChoroplethMap from '$lib/components/ChoroplethMap.svelte';
+	import { classify, methodFor } from '$lib/map/classify';
+	import { mapValue } from '$lib/map/indicators';
+	import { browser } from '$app/environment';
 	import { currentLocale, pick, localizeHref } from '$lib/i18n';
 	import { formatMetric, formatDecimal } from '$lib/format';
 	import { SIGNED_PCT_KEYS } from '$lib/map/classify';
@@ -28,7 +32,26 @@
 	let { data }: { data: PageData } = $props();
 	const dataset = $derived(data.dataset);
 	const featured = $derived(data.featured);
+	const geojson = $derived(data.geojson);
+	const comarques = $derived(data.comarques);
 	const locale = $derived(currentLocale());
+
+	// Atles de contradiccions: coroplètic de `divergencia_senyals` (Jenks) — fosc = els senyals
+	// físics d'un municipi es contradiuen. Reusa el ChoroplethMap del mapa (mateix geojson estàtic).
+	const ATLES_KEY: MetricKey = 'divergencia_senyals';
+	const divClassification = $derived(
+		classify(
+			Object.values(dataset.municipis).map((r) => mapValue(ATLES_KEY, r.values[ATLES_KEY])),
+			methodFor(ATLES_KEY)
+		)
+	);
+	let atlesHover = $state<{
+		nom: string;
+		value: number | string | null;
+		inBergueda: boolean;
+		x: number;
+		y: number;
+	} | null>(null);
 
 	// KPIs comarcals (ordre editorial del target). El nombre de municipis va a l'eyebrow/lede.
 	const comarcaKpis: MetricKey[] = [
@@ -379,6 +402,47 @@
 			<p class="lead">{m.resum_constel_lede()}</p>
 			<StockImpactScatter {dataset} />
 			<p class="srcline">{m.resum_constel_legend()}</p>
+		</section>
+
+		<!-- Bloc D — Atles de contradiccions: on els senyals físics no encaixen (divergencia_senyals).
+		     Converteix la incertesa en producte: fosc = senyals que es contradiuen → llegir amb prudència. -->
+		<section class="ds-sec">
+			<div class="ds-sec__hd">
+				<span class="ref">D</span><h2>{m.resum_atles_title()}</h2>
+			</div>
+			<p class="lead">{m.resum_atles_lede()}</p>
+			<div
+				class="atles-map"
+				style="position:relative; height:380px; border:0.5px solid var(--dp-border-strong); border-radius:8px; overflow:hidden;"
+			>
+				{#if browser}
+					<ChoroplethMap
+						{dataset}
+						{geojson}
+						{comarques}
+						indicator={ATLES_KEY}
+						classification={divClassification}
+						onhover={(p) => (atlesHover = p)}
+					/>
+					{#if atlesHover && atlesHover.inBergueda}
+						<div
+							class="atles-tip"
+							style="position:absolute; left:{atlesHover.x}px; top:{atlesHover.y}px; transform:translate(-50%, calc(-100% - 12px)); pointer-events:none; z-index:5; white-space:nowrap; background:var(--dp-surface); border:1px solid var(--dp-border-strong); border-radius:8px; padding:7px 10px; font-family:var(--dp-font-sans);"
+						>
+							<span style="font-weight:600; color:var(--dp-text)">{atlesHover.nom}</span>
+							<span style="display:block; font-size:12px; color:var(--dp-text-muted)"
+								>{m.resum_atles_tip()}:
+								<b style="color:var(--dp-text)"
+									>{typeof atlesHover.value === 'number' ? Math.round(atlesHover.value) : '—'}</b
+								>/100</span
+							>
+						</div>
+					{/if}
+				{:else}
+					<div class="map-ssr" aria-hidden="true">{m.map_loading()}</div>
+				{/if}
+			</div>
+			<p class="srcline">{m.resum_atles_legend()}</p>
 		</section>
 	</div>
 </section>
