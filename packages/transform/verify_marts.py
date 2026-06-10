@@ -1,7 +1,9 @@
 """Verificació de la mart contra docs/data-sources.md (Experiment 0).
 
 Comprova que Castellar (08052) i Berga (08022) cuadren amb els valors verificats
-en viu. Surt amb codi != 0 si algun ancoratge falla → apte per a CI.
+en viu, la cobertura (cap font clau buida) i els invariants del contracte
+(IETR = 0,5·stock + 0,5·impact; carrega_funcional = max(padró, L1, L2)).
+Surt amb codi != 0 si algun check falla → apte per a CI.
 
     python packages/transform/verify_marts.py
 """
@@ -79,6 +81,31 @@ def main() -> int:
             errors.append(f"Spearman(IETR, kg_hab_any)={rho:.3f} <= {SPEARMAN_MIN}")
         else:
             print(f"Spearman(IETR, kg_hab_any) = {rho:.3f} (> {SPEARMAN_MIN}) · l'IETR prediu la càrrega real")
+
+    # --- Cobertura: cap font clau buida (la bateria FALLA si en falta una) ---
+    coverage_cols = ["poblacio", "kg_hab_any", "kwh_hab", "vidre_hab", "IETR"]
+    for col in coverage_cols:
+        if col not in df.columns:
+            errors.append(f"cobertura: falta la columna {col}")
+        elif int(df[col].isna().sum()):
+            errors.append(f"cobertura: {col} té {int(df[col].isna().sum())} nuls (esperat 0 de {len(df)})")
+
+    # --- Invariant: IETR = 0,5·IETR_stock + 0,5·IETR_impact (tolerància d'arrodoniment 0,02) ---
+    if {"IETR", "IETR_stock", "IETR_impact"}.issubset(df.columns):
+        diff = ((0.5 * df["IETR_stock"] + 0.5 * df["IETR_impact"]).round(2) - df["IETR"].round(2)).abs()
+        if diff.max() > 0.02:
+            errors.append(f"IETR != 0.5*stock+0.5*impact a {df.index[diff > 0.02].tolist()} (diff màx {diff.max():.3f})")
+        else:
+            print(f"Invariant IETR = 0,5·stock + 0,5·impact OK (diff màx {diff.max():.3f})")
+
+    # --- Invariant: carrega_funcional_est = max(padró, pernocta L1, càrrega residus L2) ---
+    if {"carrega_funcional_est", "poblacio", "poblacio_pernocta_est", "carrega_total_est"}.issubset(df.columns):
+        expected = df[["poblacio", "poblacio_pernocta_est", "carrega_total_est"]].max(axis=1)
+        mismatch = df.index[df["carrega_funcional_est"] != expected].tolist()
+        if mismatch:
+            errors.append(f"carrega_funcional_est != max(padró, L1, L2) a {mismatch}")
+        else:
+            print(f"Invariant carrega_funcional_est = max(padró, L1, L2) OK · cobertura sense nuls ({len(df)} munis)")
 
     if errors:
         print("VERIFICACIÓ FALLIDA:", file=sys.stderr)
