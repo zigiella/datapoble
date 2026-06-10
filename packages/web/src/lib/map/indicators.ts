@@ -44,7 +44,10 @@ export const MAP_INDICATORS: MetricKey[] = [
 	'restauracio_per_1000hab',
 	'IETR',
 	'pct_noprincipal',
-	'kg_hab_any'
+	'kg_hab_any',
+	// Atles de contradiccions: divergència dels 3 senyals de presència (0-100). Fosc = els
+	// senyals físics es contradiuen → llegir amb prudència. Converteix la incertesa en producte.
+	'divergencia_senyals'
 ];
 
 /** Indicador per defecte en obrir el mapa: la població invisible (gap de pernocta, L1). */
