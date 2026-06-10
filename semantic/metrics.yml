@@ -661,12 +661,12 @@ metrics:
     label_ca: "Càrrega funcional (denominador per governar)"
     label_es: "Carga funcional (denominador para gobernar)"
     definicio:
-      ca: "El SOSTRE realista de càrrega humana: el màxim entre la pernocta (L1, via elèctric) i la càrrega per residus (L2). El «denominador per governar» — el nombre amb què dimensionar serveis (residus, aigua, neteja) en lloc del padró."
-      es: "El TECHO realista de carga humana: el máximo entre la pernoctación (L1, vía eléctrico) y la carga por residuos (L2). El «denominador para gobernar» — el número con el que dimensionar servicios (residuos, agua, limpieza) en lugar del padrón."
+      ca: "El SOSTRE realista de càrrega humana: el màxim entre el padró, la pernocta (L1, via elèctric) i la càrrega per residus (L2). El «denominador per governar» — el nombre amb què dimensionar serveis (residus, aigua, neteja) en lloc del padró, i que MAI hi queda per sota."
+      es: "El TECHO realista de carga humana: el máximo entre el padrón, la pernoctación (L1, vía eléctrico) y la carga por residuos (L2). El «denominador para gobernar» — el número con el que dimensionar servicios (residuos, agua, limpieza) en lugar del padrón, y que NUNCA queda por debajo."
     dimension: pressio
     categoria: derived
     unit: {ca: persones-equivalent (est.), es: personas-equivalente (est.)}
-    formula: "max(poblacio_pernocta_est, carrega_total_est)"
+    formula: "max(poblacio, poblacio_pernocta_est, carrega_total_est)"
     source: datapoble
     origin_source: residus
     date: "2024/2025"
@@ -674,8 +674,8 @@ metrics:
     column: carrega_funcional_est
     visibility: public
     caveat:
-      ca: "INFERÈNCIA (combina dos rastres físics). Resol la contradicció L2<L1 agafant el més alt. És el denominador recomanat per a serveis municipals; NO és «població» (que es compta amb el padró). Lectura ECOLÒGICA."
-      es: "INFERENCIA (combina dos rastros físicos). Resuelve la contradicción L2<L1 tomando el más alto. Es el denominador recomendado para servicios municipales; NO es «población» (que se cuenta con el padrón). Lectura ECOLÓGICA."
+      ca: "INFERÈNCIA (combina el padró amb dos rastres físics). Pren el més alt de padró/L1/L2: resol la contradicció L2<L1 i té el padró com a sòl (mai per sota dels residents registrats). És el denominador recomanat per a serveis municipals; NO és «població» (que es compta amb el padró). Lectura ECOLÒGICA."
+      es: "INFERENCIA (combina el padrón con dos rastros físicos). Toma el más alto de padrón/L1/L2: resuelve la contradicción L2<L1 y tiene el padrón como suelo (nunca por debajo de los residentes registrados). Es el denominador recomendado para servicios municipales; NO es «población» (que se cuenta con el padrón). Lectura ECOLÓGICA."
     synonyms: {ca: [denominador funcional, càrrega per governar, sostre de càrrega], es: [denominador funcional, carga para gobernar, techo de carga]}
 
   # --- L3 · PRESSIÓ TURÍSTICA (hostaleria, via vidre) — NO és població ---
@@ -835,8 +835,8 @@ metrics:
   IETR:
     label: {ca: Índex d'Exposició Turística-Residencial, es: Índice de Exposición Turística-Residencial}
     definicio:
-      ca: "Exposició estructural a la pressió turística-residencial, relativa a la distribució (0=mín, 100=màx). Validat externament amb residus (r=0,87)."
-      es: "Exposición estructural a la presión turística-residencial, relativa a la distribución (0=mín, 100=máx). Validado externamente con residuos (r=0,87)."
+      ca: "Exposició turística-residencial relativa a la distribució (0=mín, 100=màx): SÍNTESI de l'estructura (stock) i l'empremta realitzada (impact). Validat externament amb residus (r=0,87)."
+      es: "Exposición turística-residencial relativa a la distribución (0=mín, 100=máx): SÍNTESIS de la estructura (stock) y la huella realizada (impact). Validado externamente con residuos (r=0,87)."
     dimension: index
     unit: "0-100"
     formula: "0.5*A_resid + 0.5*B_turis (min-max winsoritzat, pesos iguals)"
@@ -845,8 +845,8 @@ metrics:
     column: IETR
     visibility: public
     nota:
-      ca: "És exposició estructural (stock), no pressió realitzada. Robust a normalització (Spearman>0,97) i a pesos."
-      es: "Es exposición estructural (stock), no presión realizada. Robusto a normalización (Spearman>0,97) y a pesos."
+      ca: "NO és només stock: l'IETR és 0,5·estructura (stock) + 0,5·empremta realitzada (impact). Per al desglossament, vegeu IETR_stock i IETR_impact."
+      es: "NO es solo stock: el IETR es 0,5·estructura (stock) + 0,5·huella realizada (impact). Para el desglose, ved IETR_stock e IETR_impact."
     synonyms: {ca: [índex, exposició, ietr], es: [índice, exposición, ietr]}
 
   IETR_rank:

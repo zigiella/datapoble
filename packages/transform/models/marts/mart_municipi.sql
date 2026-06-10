@@ -399,10 +399,12 @@ select
     cast({{ estimacio_presencia('ind.poblacio', 'ind.kg_hab_any', var('base_residencial')) }} as integer)
                                                                 as carrega_total_est,
 
-    -- DENOMINADOR FUNCIONAL: max(pernocta L1, càrrega per residus L2). El sostre realista
-    -- de càrrega humana que suporta el municipi — el «denominador per governar» (residus,
-    -- aigua, neteja, serveis). Resol la contradicció L2<L1 agafant el més alt dels dos rastres.
+    -- DENOMINADOR FUNCIONAL: max(padró, pernocta L1, càrrega per residus L2). El sostre realista
+    -- de càrrega humana — el «denominador per governar» (residus, aigua, neteja, serveis). El
+    -- padró és el SÒL: mai per sota dels residents registrats (resol p.ex. Puig-reig, on L1 i L2
+    -- queden sota el padró). Resol també la contradicció L2<L1.
     cast(greatest(
+        ind.poblacio,
         {{ estimacio_presencia('ind.poblacio', 'ind.kwh_hab', var('base_electric')) }},
         {{ estimacio_presencia('ind.poblacio', 'ind.kg_hab_any', var('base_residencial')) }}
     ) as integer)                                               as carrega_funcional_est,
