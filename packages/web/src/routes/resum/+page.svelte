@@ -228,6 +228,7 @@
 				{m.resum_lede_a()} <b class="warm">{m.resum_lede_extrems()}</b>
 				{m.resum_lede_b()}
 			</p>
+			<p class="tesi" style="margin:16px 0 0; padding-left:14px; border-left:3px solid var(--dp-brand, var(--dp-border-strong)); font-size:18px; line-height:1.5; color:var(--dp-text); max-width:56ch; font-weight:500;">{m.narrativa_mare()}</p>
 		</div>
 	</div>
 
