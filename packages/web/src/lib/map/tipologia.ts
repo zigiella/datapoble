@@ -25,7 +25,9 @@
  *                          veu = inferència; el mateix to que la procedència «derivada».
  *  - `dormitori_invisible`→ verd-teal: hi dormen sense constar, amb poca hostaleria; fred, distingible
  *                          de la porpra.
- *  - `buit_administratiu`→ blau apagat: micromunicipi tranquil a tots els eixos; fred i serè.
+ *  - `buit_administratiu`→ ÀLIES de UI: es presenta com `indeterminat` (decisió 2026-06-10). La
+ *                          paraula «buit» sobre munis amb petjada ALTA (Fígols, 760 kg/hab) era
+ *                          insostenible. La dada i el classificador NO canvien; pendent del rework de tipologia.
  *  - `indeterminat`     → GRIS CÀLID neutre: estat honest (vegeu sobre).
  */
 
@@ -53,7 +55,7 @@ export interface TipologiaMeta {
 }
 
 /**
- * Els 6 arquetips en ORDRE editorial (de més estructural/ple a més buit; l'honest `indeterminat`
+ * Els 5 arquetips en ORDRE editorial (de més estructural/ple a més buit; l'honest `indeterminat`
  * tanca). Aquest ordre el segueix la LLEGENDA categòrica. Els colors són literals (sincronitzats
  * amb els tokens de marca/procedència del design-system, però no poden ser var() dins del canvas).
  */
@@ -83,12 +85,6 @@ export const TIPOLOGIA_ORDER: readonly TipologiaMeta[] = [
 		blurb: () => m.tipo_dormitori_invisible_blurb()
 	},
 	{
-		value: 'buit_administratiu',
-		color: '#5E7FA6', // blau apagat (serè, micromunicipi tranquil)
-		label: () => m.tipo_buit_administratiu_label(),
-		blurb: () => m.tipo_buit_administratiu_blurb()
-	},
-	{
 		value: 'indeterminat',
 		color: '#ADA89B', // GRIS CÀLID neutre — estat honest (territori mixt), no «buit lleig»
 		label: () => m.tipo_indeterminat_label(),
@@ -111,9 +107,19 @@ export function isCategorical(key: MetricKey): boolean {
 	return key === CATEGORICAL_KEY;
 }
 
-/** Metadades d'un valor de tipologia (o undefined si el valor no és conegut). */
+/**
+ * Àlies de PRESENTACIÓ (no de dada): valors que el mart emet però que la UI col·lapsa en un altre
+ * arquetip. `buit_administratiu`→`indeterminat` (decisió 2026-06-10, pendent del rework de tipologia):
+ * «buit» sobre munis amb petjada alta (Fígols) era insostenible. El classificador i la dada no canvien.
+ */
+const UI_ALIAS: Readonly<Record<string, TipologiaValue>> = {
+	buit_administratiu: 'indeterminat'
+};
+
+/** Metadades d'un valor de tipologia (o undefined si el valor no és conegut). Aplica UI_ALIAS. */
 export function tipologiaMeta(value: unknown): TipologiaMeta | undefined {
-	return typeof value === 'string' ? BY_VALUE.get(value) : undefined;
+	if (typeof value !== 'string') return undefined;
+	return BY_VALUE.get(UI_ALIAS[value] ?? value);
 }
 
 /** Color categòric d'un valor de tipologia; cau al neutre desconegut si el valor no és vàlid. */
@@ -141,6 +147,11 @@ export function tipologiaMatchExpression(): unknown {
 	const pairs: unknown[] = [];
 	for (const t of TIPOLOGIA_ORDER) {
 		pairs.push(t.value, t.color);
+	}
+	// Àlies de UI: el valor de dada (p.ex. buit_administratiu) s'acoloreix com el seu arquetip de presentació.
+	for (const [alias, target] of Object.entries(UI_ALIAS)) {
+		const meta = BY_VALUE.get(target);
+		if (meta) pairs.push(alias, meta.color);
 	}
 	return ['match', ['get', '__cat'], ...pairs, TIPOLOGIA_UNKNOWN_COLOR];
 }
