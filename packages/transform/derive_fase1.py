@@ -159,8 +159,9 @@ select m.*,
     tipo.tipologia,
     round(conf.confianca_score, 1) as confianca_score,
     conf.divergencia_senyals,
-    -- DENOMINADOR FUNCIONAL: max(pernocta L1, càrrega per residus L2). Resol L2<L1.
-    greatest(m.poblacio_pernocta_est, m.carrega_total_est) as carrega_funcional_est,
+    -- DENOMINADOR FUNCIONAL: max(padró, pernocta L1, càrrega per residus L2). El padró és el
+    -- SÒL (mai per sota dels residents registrats); resol també L2<L1.
+    greatest(m.poblacio, m.poblacio_pernocta_est, m.carrega_total_est) as carrega_funcional_est,
     -- BASE-RATIOS: pressió ABSOLUTA vs base residencial (no z-score comarcal). >1 = per
     -- sobre del que genera una vila de vall poc turística; comparable entre comarques.
     round(m.kg_hab_any / {BASE_RESIDENCIAL}, 2) as residu_base_ratio,

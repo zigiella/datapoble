@@ -675,8 +675,8 @@
       "source": "datapoble (calculat) — Indicadors derivats i índex IETR · Agència de Residus de Catalunya (ARC)",
       "date": "2024/2025",
       "definicio": {
-        "ca": "El SOSTRE realista de càrrega humana: el màxim entre la pernocta (L1, via elèctric) i la càrrega per residus (L2). El «denominador per governar» — el nombre amb què dimensionar serveis (residus, aigua, neteja) en lloc del padró.",
-        "es": "El TECHO realista de carga humana: el máximo entre la pernoctación (L1, vía eléctrico) y la carga por residuos (L2). El «denominador para gobernar» — el número con el que dimensionar servicios (residuos, agua, limpieza) en lugar del padrón."
+        "ca": "El SOSTRE realista de càrrega humana: el màxim entre el padró, la pernocta (L1, via elèctric) i la càrrega per residus (L2). El «denominador per governar» — el nombre amb què dimensionar serveis (residus, aigua, neteja) en lloc del padró, i que MAI hi queda per sota.",
+        "es": "El TECHO realista de carga humana: el máximo entre el padrón, la pernoctación (L1, vía eléctrico) y la carga por residuos (L2). El «denominador para gobernar» — el número con el que dimensionar servicios (residuos, agua, limpieza) en lugar del padrón, y que NUNCA queda por debajo."
       },
       "status": "public"
     },
@@ -833,12 +833,12 @@
       "format": "decimal",
       "source": "datapoble (calculat) — Indicadors derivats i índex IETR",
       "definicio": {
-        "ca": "Exposició estructural a la pressió turística-residencial, relativa a la distribució (0=mín, 100=màx). Validat externament amb residus (r=0,87).",
-        "es": "Exposición estructural a la presión turística-residencial, relativa a la distribución (0=mín, 100=máx). Validado externamente con residuos (r=0,87)."
+        "ca": "Exposició turística-residencial relativa a la distribució (0=mín, 100=màx): SÍNTESI de l'estructura (stock) i l'empremta realitzada (impact). Validat externament amb residus (r=0,87).",
+        "es": "Exposición turística-residencial relativa a la distribución (0=mín, 100=máx): SÍNTESIS de la estructura (stock) y la huella realizada (impact). Validado externamente con residuos (r=0,87)."
       },
       "note": {
-        "ca": "És exposició estructural (stock), no pressió realitzada. Robust a normalització (Spearman>0,97) i a pesos.",
-        "es": "Es exposición estructural (stock), no presión realizada. Robusto a normalización (Spearman>0,97) y a pesos."
+        "ca": "NO és només stock: l'IETR és 0,5·estructura (stock) + 0,5·empremta realitzada (impact). Per al desglossament, vegeu IETR_stock i IETR_impact.",
+        "es": "NO es solo stock: el IETR es 0,5·estructura (stock) + 0,5·huella realizada (impact). Para el desglose, ved IETR_stock e IETR_impact."
       },
       "status": "public"
     },
@@ -2210,7 +2210,7 @@
         "gap_pernocta": -215,
         "gap_pernocta_pct": -4.7,
         "carrega_total_est": 3713,
-        "carrega_funcional_est": 4343,
+        "carrega_funcional_est": 4558,
         "index_turisme": 27.1,
         "poblacio_real_est": 3713,
         "gap_abs": -845,
