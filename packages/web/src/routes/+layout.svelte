@@ -22,6 +22,9 @@
 
 	let { children } = $props();
 
+	// Estat del menú mòbil (hamburger). Es tanca amb Escape o en triar una destinació.
+	let menuOpen = $state(false);
+
 	// `isActive` compara contra rutes CANÒNIQUES (sense prefix de locale: /resum…), però
 	// `page.url.pathname` el conserva a /es/* (el reroute de Paraglide des-localitza el routing
 	// de fitxers, no la URL observable). Sense des-localitzar, cap ítem del nav s'activa a /es/*.
@@ -40,6 +43,8 @@
 	const footDivis = { cx: 600, cy: 110, r: 150, sq: 1.0, seed: 1.4 };
 	const footLabels = ['1.245 m', '42°16′N', '31', '1°53′E', '593'];
 </script>
+
+<svelte:window onkeydown={(e) => { if (e.key === 'Escape') menuOpen = false; }} />
 
 <a class="skip-link" href="#main">{m.skip_to_content()}</a>
 
@@ -71,6 +76,29 @@
 		<LangSwitcher />
 		<ThemeSwitcher />
 	</div>
+	<button
+		class="ds-burger"
+		aria-label={m.nav_menu()}
+		aria-expanded={menuOpen}
+		aria-controls="ds-drawer"
+		onclick={() => (menuOpen = !menuOpen)}
+	>
+		{#if menuOpen}
+			<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+		{:else}
+			<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+		{/if}
+	</button>
+	{#if menuOpen}
+		<div id="ds-drawer" class="ds-drawer">
+			<a href={localizeHref('/resum')} class:on={isActive('/resum')} onclick={() => (menuOpen = false)}>{m.nav_resum()}</a>
+			<a href={localizeHref('/mapa')} class:on={isActive('/mapa')} onclick={() => (menuOpen = false)}>{m.nav_mapa()}</a>
+			<a href={localizeHref('/pregunta-li')} class:on={isActive('/pregunta-li')} onclick={() => (menuOpen = false)}>{m.nav_preguntale()}</a>
+			<a href={localizeHref('/metodologia')} class:on={isActive('/metodologia')} onclick={() => (menuOpen = false)}>{m.foot_link_method_to()}</a>
+			<a href={localizeHref('/glossari')} class:on={isActive('/glossari')} onclick={() => (menuOpen = false)}>{m.foot_link_glossary()}</a>
+			<div class="ds-drawer__ctl"><LangSwitcher /><ThemeSwitcher /></div>
+		</div>
+	{/if}
 </header>
 
 <main id="main" tabindex="-1">
@@ -161,5 +189,70 @@
 		opacity: 0.55;
 		cursor: not-allowed;
 		user-select: none;
+	}
+
+	/* ——— Navegació MÒBIL: hamburger + drawer (≤760px). A escriptori, ocult. ——— */
+	.ds-burger {
+		display: none;
+		align-items: center;
+		justify-content: center;
+		width: 40px;
+		height: 40px;
+		border: 1px solid var(--dp-border);
+		border-radius: var(--dp-radius-sm);
+		background: transparent;
+		color: var(--dp-text);
+		cursor: pointer;
+	}
+	.ds-burger:hover {
+		background: var(--dp-accent-weak);
+	}
+	.ds-drawer {
+		display: none;
+	}
+	@media (max-width: 760px) {
+		.ds-nav {
+			display: none;
+		}
+		.ds-top__right {
+			display: none;
+		}
+		.ds-burger {
+			display: inline-flex;
+			margin-left: auto;
+		}
+		.ds-drawer {
+			display: flex;
+			flex-direction: column;
+			gap: 2px;
+			position: absolute;
+			top: 100%;
+			left: 0;
+			right: 0;
+			background: var(--dp-bg);
+			border-bottom: 1px solid var(--dp-border);
+			padding: 8px 16px 16px;
+			box-shadow: 0 10px 24px rgb(0 0 0 / 12%);
+			z-index: 50;
+		}
+		.ds-drawer a {
+			padding: 11px 8px;
+			border-radius: var(--dp-radius-sm);
+			color: var(--dp-text-muted);
+			text-decoration: none;
+			font-weight: 500;
+		}
+		.ds-drawer a.on {
+			color: var(--dp-forest);
+			background: var(--dp-accent-weak);
+			font-weight: 700;
+		}
+		.ds-drawer__ctl {
+			display: flex;
+			gap: 14px;
+			margin-top: 8px;
+			padding-top: 12px;
+			border-top: 1px solid var(--dp-border);
+		}
 	}
 </style>
