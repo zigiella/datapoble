@@ -17,6 +17,10 @@
 
 	let { dataset }: { dataset: MunicipisDataset } = $props();
 
+	// Tàctil (pointer coarse): a mòbil no hi ha hover → el tap fixa/commuta el tooltip d'un punt
+	// i un tap al fons el tanca; a escriptori es manté el hover de sempre.
+	const coarse = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches;
+
 	// Geometria (viewBox). Marges per als eixos.
 	const W = 640;
 	const H = 480;
@@ -93,18 +97,29 @@
 		ty = clientY - r.top;
 	}
 	function show(p: Pt, e: PointerEvent) {
+		if (coarse) return; // a tàctil el hover no aplica; el toc el gestiona `tap`
 		hovered = p;
 		moveTo(e.clientX, e.clientY);
 	}
 	function track(e: PointerEvent) {
+		if (coarse) return;
 		if (hovered) moveTo(e.clientX, e.clientY);
 	}
 	function hide() {
+		if (coarse) return; // a tàctil no s'amaga en aixecar el dit; es tanca amb un tap al fons
 		hovered = null;
+	}
+	// Tàctil: tap sobre un punt → mostra/commuta el seu tooltip (i evita que el tap arribi al fons).
+	function tap(p: Pt, e: PointerEvent) {
+		if (!coarse) return;
+		e.stopPropagation();
+		hovered = hovered?.ine5 === p.ine5 ? null : p;
+		if (hovered) moveTo(e.clientX, e.clientY);
 	}
 </script>
 
-<figure class="constel" bind:this={figEl}>
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+<figure class="constel" bind:this={figEl} onpointerup={() => { if (coarse) hovered = null; }}>
 	<svg viewBox="0 0 {W} {H}" role="img" aria-label={m.constel_aria()} preserveAspectRatio="xMidYMid meet">
 		<!-- Línies de quadrant (a stock=50 i impact=50) -->
 		<line x1={sx(50)} y1={MT} x2={sx(50)} y2={MT + PH} class="grid" />
@@ -135,6 +150,7 @@
 				onpointerenter={(e) => show(p, e)}
 				onpointermove={track}
 				onpointerleave={hide}
+				onpointerup={(e) => tap(p, e)}
 			></circle>
 			{#if labelled.has(p.ine5)}
 				<text x={sx(p.stock)} y={sy(p.impact) - radius(p.pob) - 4} class="lbl">{p.nom}</text>

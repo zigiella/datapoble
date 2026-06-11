@@ -439,6 +439,29 @@
 		// Capes interactives: el coroplètic i el tramat del Berguedà + la base atenuada de fora
 		// (LOWCONF s'apila sobre FILL → també ha de captar el hover dels munis de confiança baixa).
 		const interactive = [FILL, LOWCONF, HATCH, BASE];
+		// Tàctil (pointer coarse): a mòbil NO hi ha hover → el tap mostra la targeta i no navega;
+		// el CTA «obrir fitxa» de la targeta és qui navega, i un tap al fons la tanca.
+		const coarse = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches;
+
+		// Càrrega del tooltip per a una feature (compartida per hover d'escriptori i tap mòbil).
+		const buildHover = (feat: MapGeoJSONFeature, point: { x: number; y: number }) => {
+			const ine5 = (feat.properties?.ine5 as string) ?? '';
+			const inBerg = bergSet.has(ine5);
+			const row = inBerg ? dataset.municipis[ine5] : undefined;
+			// El 0 d'OSM de la restauració es mostra «sense dada» (buit de mapejat, no absència real).
+			const value = inBerg ? mapValue(indicator, row?.values?.[indicator]) : null;
+			const cs = row?.values?.confianca_score;
+			return {
+				ine5,
+				nom: (feat.properties?.nom as string) ?? row?.nom ?? ine5,
+				value,
+				conf: (row?.values?.confianca as string | undefined) ?? null,
+				confScore: typeof cs === 'number' ? cs : null,
+				inBergueda: inBerg,
+				x: point.x,
+				y: point.y
+			};
+		};
 
 		for (const layer of interactive) {
 			map.on('mousemove', layer, (e) => {
@@ -452,23 +475,7 @@
 				hoverId = ine5;
 				map.setFeatureState({ source: SRC, id: ine5 }, { hover: true });
 				map.getCanvas().style.cursor = 'pointer';
-
-				const inBerg = bergSet.has(ine5);
-				const row = inBerg ? dataset.municipis[ine5] : undefined;
-				// Mateix tractament que el pintat: el 0 d'OSM de la restauració es mostra «sense
-				// dada» al tooltip, no «0,0 per mil» (és buit de mapejat, no absència real).
-				const value = inBerg ? mapValue(indicator, row?.values?.[indicator]) : null;
-				const cs = row?.values?.confianca_score;
-				onhover?.({
-					ine5,
-					nom: (feat.properties?.nom as string) ?? row?.nom ?? ine5,
-					value,
-					conf: (row?.values?.confianca as string | undefined) ?? null,
-					confScore: typeof cs === 'number' ? cs : null,
-					inBergueda: inBerg,
-					x: e.point.x,
-					y: e.point.y
-				});
+				onhover?.(buildHover(feat, e.point));
 			});
 
 			map.on('mouseleave', layer, () => {
@@ -481,14 +488,32 @@
 
 			map.on('click', layer, (e) => {
 				if (!map) return;
-				const feat = e.features?.[0];
+				const feat = e.features?.[0] as MapGeoJSONFeature | undefined;
 				const ine5 = (feat?.properties?.ine5 as string) ?? '';
 				if (selected) map.setFeatureState({ source: SRC, id: selected }, { selected: false });
+				if (coarse) {
+					// Mòbil: el tap selecciona i MOSTRA la targeta; no navega (ho fa el CTA de la targeta).
+					selected = ine5 || null;
+					if (selected) map.setFeatureState({ source: SRC, id: selected }, { selected: true });
+					if (feat) onhover?.(buildHover(feat, e.point));
+					return;
+				}
 				selected = selected === ine5 ? null : ine5;
 				if (selected) map.setFeatureState({ source: SRC, id: selected }, { selected: true });
 				onselect?.(selected);
 			});
 		}
+
+		// Mòbil: tap al fons (sense municipi) → tanca la targeta i treu la selecció.
+		map.on('click', (e) => {
+			if (!map || !coarse) return;
+			if (map.queryRenderedFeatures(e.point, { layers: interactive }).length) return;
+			if (selected) {
+				map.setFeatureState({ source: SRC, id: selected }, { selected: false });
+				selected = null;
+			}
+			onhover?.(null);
+		});
 	}
 
 	// Reactiu: en canviar d'indicador, re-join de dades i re-pintat del color.
