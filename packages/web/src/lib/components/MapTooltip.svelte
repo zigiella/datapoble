@@ -31,9 +31,24 @@
 		y: number;
 		/** Pista d'acció opcional (p. ex. «Clica per obrir la fitxa»). Buida = no es mostra. */
 		hint?: string | null;
+		/** Enllaç a la fitxa del municipi. Si hi és, la pista d'acció esdevé un enllaç tocable. */
+		href?: string | null;
+		/** Tàctil: la targeta capta el toc (pointer-events) perquè el CTA «obrir fitxa» sigui tocable. */
+		touchMode?: boolean;
 	}
-	let { nom, metricKey, def, value, conf = null, confScore = null, x, y, hint = null }: Props =
-		$props();
+	let {
+		nom,
+		metricKey,
+		def,
+		value,
+		conf = null,
+		confScore = null,
+		x,
+		y,
+		hint = null,
+		href = null,
+		touchMode = false
+	}: Props = $props();
 
 	const locale = $derived(currentLocale());
 	// La tipologia és CATEGÒRICA: el valor és una cadena d'arquetip → es mostra l'etiqueta HUMANA
@@ -101,6 +116,7 @@
 
 <div
 	class="tip card"
+	class:tip--touch={touchMode}
 	style="left:{x}px; top:{y}px"
 	role="tooltip"
 	aria-live="polite"
@@ -149,8 +165,13 @@
 	{/if}
 
 	{#if hint}
-		<!-- Pista d'acció: el municipi és clicable i obre la seva fitxa completa. -->
-		<p class="tip__hint">{hint}</p>
+		<!-- Pista d'acció: obre la fitxa completa. A tàctil és un ENLLAÇ tocable (la targeta
+		     capta el toc); a escriptori, text (el clic al mapa ja navega). -->
+		{#if href}
+			<a class="tip__hint tip__hint--link" {href}>{hint}</a>
+		{:else}
+			<p class="tip__hint">{hint}</p>
+		{/if}
 	{/if}
 </div>
 
@@ -281,5 +302,19 @@
 		line-height: 1.35;
 		color: var(--dp-brand, #b5612a);
 		font-weight: 600;
+	}
+	/* Mode tàctil: la targeta capta el toc (per defecte és pointer-events:none, hover d'escriptori). */
+	.tip--touch {
+		pointer-events: auto;
+	}
+	/* CTA tocable: el «obrir fitxa» com a enllaç de bloc, àrea de toc còmoda. */
+	.tip__hint--link {
+		display: block;
+		text-decoration: none;
+		cursor: pointer;
+	}
+	.tip--touch .tip__hint--link {
+		margin-top: 9px;
+		padding: 8px 0 2px;
 	}
 </style>

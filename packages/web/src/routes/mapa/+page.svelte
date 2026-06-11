@@ -41,6 +41,9 @@
 	const geojson = $derived(data.geojson);
 	const comarques = $derived(data.comarques);
 	const locale = $derived(currentLocale());
+	// Tàctil (pointer coarse): a mòbil el hover no existeix → el tap mostra la targeta i NO navega;
+	// la targeta es fa tocable i el seu CTA «obrir fitxa» és qui obre la fitxa del municipi.
+	const coarse = browser && typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches;
 
 	let indicator = $state<MetricKey>(DEFAULT_INDICATOR);
 
@@ -244,7 +247,9 @@
 									confScore={hover.confScore}
 									x={hover.x}
 									y={hover.y}
-									hint={m.map_open_fitxa()}
+									hint={coarse ? m.map_open_fitxa_touch() : m.map_open_fitxa()}
+									touchMode={coarse}
+									href={localizeHref(`/municipi/${hover.ine5}`)}
 								/>
 							{:else}
 								<!-- Municipi de FORA del Berguedà: estat amable «sense dades encara»

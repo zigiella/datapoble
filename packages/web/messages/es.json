@@ -219,6 +219,7 @@
   "muni_srcline": "Datos del contrato semántico de datapoble · Berguedà · ninguna cifra sin origen.",
   "muni_outside_h2": "{nom} aún no tiene datos",
   "map_open_fitxa": "Clica para abrir la ficha →",
+  "map_open_fitxa_touch": "Abrir ficha →",
   "resum_open_fitxa": "Ficha completa →",
 
   "foot_link_method_to": "Metodología",
