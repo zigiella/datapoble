@@ -21,6 +21,7 @@
 	import { SIGNED_PCT_KEYS } from '$lib/map/classify';
 	import { provenanceOf } from '$lib/map/provenance';
 	import { tipologiaMeta } from '$lib/map/tipologia';
+	import { toSlug } from '$lib/contract/slug';
 	import { m } from '$lib/paraglide/messages';
 	import type { MetricDef, MetricKey, MetricValue, MunicipiRow } from '$lib/contract/types';
 	import type { PageData } from './$types';
@@ -305,7 +306,7 @@
 								<span class="v tnum">{fmtIetr(ietr)}</span><span class="u">{m.resum_ietr_scale()}</span>
 							</div>
 							<h3 class="ex__name">
-								<a href={localizeHref(`/municipi/${ex.row.ine5}`)} class="ex__name-link"
+								<a href={localizeHref(`/municipi/${toSlug(ex.row.nom)}`)} class="ex__name-link"
 									>{ex.row.nom}</a
 								>
 							</h3>
@@ -314,7 +315,7 @@
 									>{formatMetric(ex.row.values.poblacio, dataset.metrics.poblacio, locale)} hab.</span
 								>{#if elev}<span>{elev}</span>{/if}<a
 									class="ex__fitxa"
-									href={localizeHref(`/municipi/${ex.row.ine5}`)}>{m.resum_open_fitxa()}</a
+									href={localizeHref(`/municipi/${toSlug(ex.row.nom)}`)}>{m.resum_open_fitxa()}</a
 								>
 							</p>
 

@@ -31,6 +31,7 @@
 	import { classify, methodFor, classRangeLabels, makeMetricFormatter } from '$lib/map/classify';
 	import { divergingColors, rampColors } from '$lib/map/palette';
 	import { TIPOLOGIA_ORDER, isCategorical, tipologiaLabel } from '$lib/map/tipologia';
+	import { slugForIne5, toSlug } from '$lib/contract/slug';
 	import { currentLocale, localizeHref } from '$lib/i18n';
 	import type { MetricKey } from '$lib/contract/types';
 	import { m } from '$lib/paraglide/messages';
@@ -203,7 +204,7 @@
 	function onMuniSelect(ine5: string | null) {
 		if (!ine5) return;
 		if (!dataset.municipis[ine5]) return;
-		goto(localizeHref(`/municipi/${ine5}`));
+		goto(localizeHref(`/municipi/${slugForIne5(ine5, dataset)}`));
 	}
 
 	// Paletes de l'especificació: quina queda destacada (.on) segons l'indicador actiu.
@@ -290,7 +291,7 @@
 									y={hover.y}
 									hint={coarse ? m.map_open_fitxa_touch() : m.map_open_fitxa()}
 									touchMode={coarse}
-									href={localizeHref(`/municipi/${hover.ine5}`)}
+									href={localizeHref(`/municipi/${toSlug(hover.nom)}`)}
 								/>
 							{:else}
 								<!-- Municipi de FORA del Berguedà: estat amable «sense dades encara»

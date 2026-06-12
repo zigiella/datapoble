@@ -27,6 +27,7 @@
 	import { SIGNED_PCT_KEYS } from '$lib/map/classify';
 	import { provenanceOf } from '$lib/map/provenance';
 	import { tipologiaMeta, tipologiaColor } from '$lib/map/tipologia';
+	import { toSlug, slugForIne5 } from '$lib/contract/slug';
 	import { municipisMirall } from '$lib/analysis/mirall';
 	import { m } from '$lib/paraglide/messages';
 	import type { MetricDef, MetricKey, MetricValue, MunicipiRow } from '$lib/contract/types';
@@ -319,7 +320,7 @@
 	});
 
 	// Nom del municipi (topònim, igual en ambdós locales) o, sense dada, el codi.
-	const muniNom = $derived(row?.nom ?? ine5);
+	const muniNom = $derived(row?.nom ?? ine5 ?? '');
 
 	// ── Selector de municipi: salta a un altre dels 31 (ordenat per nom, localitzat) ──────────
 	// Es deriva del dataset (no llista codificada). El canvi navega a la fitxa corresponent.
@@ -329,8 +330,8 @@
 		return items.sort((a, b) => coll.compare(a.nom, b.nom));
 	});
 	function onPickMuni(e: Event) {
-		const v = (e.currentTarget as HTMLSelectElement).value;
-		if (v) goto(localizeHref(`/municipi/${v}`));
+		const v = (e.currentTarget as HTMLSelectElement).value; // value = ine5 (clau interna)
+		if (v) goto(localizeHref(`/municipi/${slugForIne5(v, dataset)}`));
 	}
 
 	// Corbes del hero (rètols editorials del full topogràfic; no xifres de cap municipi concret).
@@ -550,7 +551,7 @@
 					<ul class="mirall">
 						{#each mirall as mr (mr.ine5)}
 							<li>
-								<a class="mirall__item" href={localizeHref(`/municipi/${mr.ine5}`)}>
+								<a class="mirall__item" href={localizeHref(`/municipi/${toSlug(mr.nom)}`)}>
 									<span class="mirall__dot" style="background:{tipologiaColor(mr.tipologia)}"></span>
 									<span class="mirall__nom">{mr.nom}</span>
 									<span class="mirall__tipo">{tipologiaMeta(mr.tipologia)?.label() ?? ''}</span>
