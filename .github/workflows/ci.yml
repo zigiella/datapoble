@@ -48,6 +48,8 @@ jobs:
         run: python packages/transform/derive_fase1.py --check
       - name: Validació ETCA al dia (Pas 4 · offline)
         run: python tools/validacio_etca.py --check
+      - name: Tipus territorial al dia (Pas 4 · Nivell B · offline)
+        run: python tools/tipus_territorial.py --check
 
   # Brúixola: evals de la capa de IA (texto→SQL trazable). Corre OFFLINE
   # (sin OPENROUTER_API_KEY): determinista, sin red. Gate anti-regresión.

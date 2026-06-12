@@ -1,0 +1,32 @@
+ine5,municipi,tipus_territorial,micromunicipi,poblacio,altitud_m,densitat_hab_km2
+08011,Avià,interior_rural,False,2263,677,83.1
+08016,Bagà,interior_rural,False,2167,785,50.2
+08022,Berga,capital_comarcal,False,17539,704,777.1
+08024,Borredà,pirineu_alta_muntanya,False,434,854,10.0
+08045,Capolat,pirineu_alta_muntanya,True,93,1279,2.7
+08049,Casserres,interior_rural,False,1665,611,56.5
+08050,Castellar del Riu,pirineu_alta_muntanya,True,151,920,4.6
+08052,Castellar de n'Hug,pirineu_alta_muntanya,True,166,1395,3.5
+08057,Castell de l'Areny,pirineu_alta_muntanya,True,68,954,2.8
+08078,"Espunyola, l'",pirineu_alta_muntanya,False,260,803,7.3
+08080,Fígols,pirineu_alta_muntanya,True,41,1154,1.4
+08092,Gironella,interior_rural,False,5082,469,749.6
+08093,Gisclareny,pirineu_alta_muntanya,True,28,1340,0.8
+08099,Guardiola de Berguedà,interior_rural,False,962,720,15.6
+08130,Montclar,interior_rural,True,133,728,6.1
+08132,Montmajor,interior_rural,False,471,756,6.2
+08142,"Nou de Berguedà, la",pirineu_alta_muntanya,True,163,876,6.5
+08144,Olvan,interior_rural,False,926,553,26.0
+08166,"Pobla de Lillet, la",pirineu_alta_muntanya,False,1106,843,21.5
+08175,Puig-reig,interior_rural,False,4558,455,99.6
+08177,"Quar, la",pirineu_alta_muntanya,True,44,885,1.2
+08188,Sagàs,interior_rural,True,153,738,3.4
+08190,Saldes,pirineu_alta_muntanya,False,301,1215,4.5
+08216,Sant Jaume de Frontanyà,pirineu_alta_muntanya,True,25,1072,1.2
+08255,Santa Maria de Merlès,interior_rural,True,179,532,3.4
+08268,Cercs,interior_rural,False,1236,650,26.1
+08293,Vallcebre,pirineu_alta_muntanya,False,260,1123,9.3
+08299,Vilada,interior_rural,False,430,757,19.2
+08308,Viver i Serrateix,interior_rural,True,178,729,2.7
+08903,Sant Julià de Cerdanyola,pirineu_alta_muntanya,True,234,954,19.8
+25100,Gósol,pirineu_alta_muntanya,True,207,1423,3.7

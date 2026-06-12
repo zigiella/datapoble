@@ -43,6 +43,11 @@ INDICATORS: dict[str, str] = {
     "f342": "etca_estacional",   # Població estacional ETCA (total: no resident present − resident absent)
     "f343": "poblacio_etca",     # Població ETCA (resident + estacional; equivalent temps complet anual)
     "f344": "etca_pct",          # Població ETCA / població resident (%)
+    # Covariables estructurals (Pas 4 · Nivell B classificador tipus_territorial): què ÉS el
+    # municipi, no com s'habita. Estables, de fonts oficials.
+    "f258": "altitud_m",         # Altitud (m) — llindar Pirineu / alta muntanya
+    "f261": "superficie_km2",    # Superfície (km²)
+    "f262": "densitat_hab_km2",  # Densitat de població (hab/km²) — llindar metropolità
 }
 
 TIMEOUT = 60
