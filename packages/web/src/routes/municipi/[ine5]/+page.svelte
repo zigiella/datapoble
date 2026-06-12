@@ -152,6 +152,42 @@
 		'IETR'
 	]);
 
+	// ——— Pas 0 · «el rang és la dada» (spec consultora 2 §10) ———
+	// La família pernocta (qui dorm / gap) és inferència: es mostra en RANG, no com a punt.
+	// Banda interim = sensibilitat de la base ±10% (multiplicativa); §2 la substituirà pel
+	// p10–p90 del model d'esperats. Com que pernocta_est ∝ 1/base, la banda és
+	// [est/(1+s), est/(1−s)]. Si el rang del gap CREUA el 0, el signe no és concloent
+	// (cas Berga −2%, Puig-reig −5%): es diu «≈0 · no concloent», mai un número amb signe.
+	const GAP_SENSITIVITY = 0.1;
+	const PERNOCTA_RANGE_KEYS = new Set<MetricKey>([
+		'poblacio_pernocta_est',
+		'gap_pernocta',
+		'gap_pernocta_pct'
+	]);
+	const pernoctaBand = $derived.by(() => {
+		const est = row?.values.poblacio_pernocta_est;
+		const padro = row?.values.poblacio;
+		if (typeof est !== 'number' || typeof padro !== 'number' || padro <= 0) return null;
+		const s = GAP_SENSITIVITY;
+		const estLow = est / (1 + s);
+		const estHigh = est / (1 - s);
+		const pctLow = (estLow / padro - 1) * 100;
+		const pctHigh = (estHigh / padro - 1) * 100;
+		return {
+			inconcludent: pctLow < 0 && pctHigh > 0,
+			estLow, estHigh, est,
+			gapAbsLow: estLow - padro, gapAbsHigh: estHigh - padro, gapAbs: est - padro,
+			pctLow, pctHigh, pct: (est / padro - 1) * 100
+		};
+	});
+	// Enter localitzat (recomptes) i amb signe explícit (gaps), 0 decimals.
+	const fInt = (v: number): string => formatDecimal(v, locale, 0);
+	const fSign = (v: number): string =>
+		new Intl.NumberFormat(locale === 'es' ? 'es-ES' : 'ca-ES', {
+			signDisplay: 'exceptZero',
+			maximumFractionDigits: 0
+		}).format(v);
+
 	// Mètriques on un 0 NO és dada sinó absència de mapeig (recompte mínim d'OSM, no cens): es
 	// mostren «sense dada», no «0,0». Mateixa regla d'honestedat que el Resum i el mapa.
 	const ZERO_IS_ABSENT = new Set<MetricKey>(['restauracio_per_1000hab', 'restauracio_estab']);
@@ -317,10 +353,31 @@
 			><span class="pd {provDotClass(prov(r, key))}"></span><span>{pick(def.label, locale)}</span
 			></span
 		>
-		<span class="val"
-			>{fmt(r, key)}{#if isPct}<span class="u">%</span>{:else if unit}<span class="u">{unit}</span
-				>{/if}</span
-		>
+		{#if PERNOCTA_RANGE_KEYS.has(key) && pernoctaBand}
+			{#if pernoctaBand.inconcludent && (key === 'gap_pernocta' || key === 'gap_pernocta_pct')}
+				<span class="val val--neutral">{m.ficha_inconcludent()}</span>
+			{:else if key === 'poblacio_pernocta_est'}
+				<span class="val"
+					>{fInt(pernoctaBand.estLow)} … {fInt(pernoctaBand.estHigh)}<span class="u">hab.</span>
+					<span class="val-mid">({m.ficha_midpoint()} {fInt(pernoctaBand.est)})</span></span
+				>
+			{:else if key === 'gap_pernocta'}
+				<span class="val"
+					>{fSign(pernoctaBand.gapAbsLow)} … {fSign(pernoctaBand.gapAbsHigh)}<span class="u">hab.</span>
+					<span class="val-mid">({m.ficha_midpoint()} {fSign(pernoctaBand.gapAbs)})</span></span
+				>
+			{:else}
+				<span class="val"
+					>{fSign(pernoctaBand.pctLow)} … {fSign(pernoctaBand.pctHigh)}<span class="u">%</span>
+					<span class="val-mid">({m.ficha_midpoint()} {fSign(pernoctaBand.pct)})</span></span
+				>
+			{/if}
+		{:else}
+			<span class="val"
+				>{fmt(r, key)}{#if isPct}<span class="u">%</span>{:else if unit}<span class="u">{unit}</span
+					>{/if}</span
+			>
+		{/if}
 	</div>
 {/snippet}
 
@@ -453,6 +510,9 @@
 							{@render fichaRow(row, key)}
 						{/each}
 					</div>
+					{#if block.ref === 'E'}
+						<p class="muni-sec__rangenote">{m.ficha_range_note()}</p>
+					{/if}
 					{#if block.ref === 'E' && l1GtL2}
 						<div class="alert" style="margin-top:10px">
 							<span class="bar"></span><div>{m.muni_capes_divergence()}</div>
@@ -729,6 +789,24 @@
 		font-size: 0.66rem;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
+		color: var(--dp-text-subtle);
+	}
+	/* Pas 0 · nota de rang (família pernocta): explica que la inferència es publica en rang. */
+	.muni-sec__rangenote {
+		margin: 8px 0 0;
+		font-size: 0.74rem;
+		line-height: 1.4;
+		color: var(--dp-text-muted);
+	}
+	/* Valor «no concloent» (rang que creua 0): neutre, sense signe. */
+	.val--neutral {
+		color: var(--dp-text-subtle);
+		font-weight: 600;
+	}
+	/* Punt mig (cortesia): el rang és la dada; el punt, secundari. */
+	.val-mid {
+		font-size: 0.82em;
+		font-weight: 500;
 		color: var(--dp-text-subtle);
 	}
 	/* Línia de font per bloc. */
