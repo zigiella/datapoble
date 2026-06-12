@@ -30,7 +30,7 @@
 	import { MAP_INDICATORS, DEFAULT_INDICATOR, mapValue } from '$lib/map/indicators';
 	import { classify, methodFor, classRangeLabels, makeMetricFormatter } from '$lib/map/classify';
 	import { divergingColors, rampColors } from '$lib/map/palette';
-	import { TIPOLOGIA_ORDER, isCategorical } from '$lib/map/tipologia';
+	import { TIPOLOGIA_ORDER, isCategorical, tipologiaLabel } from '$lib/map/tipologia';
 	import { currentLocale, localizeHref } from '$lib/i18n';
 	import type { MetricKey } from '$lib/contract/types';
 	import { m } from '$lib/paraglide/messages';
@@ -122,6 +122,36 @@
 	const methodCaption = $derived(
 		method === 'quantiles' ? m.map_method_quantiles() : m.map_method_jenks()
 	);
+
+	// Accessibilitat (spec §1.5): alternativa en TAULA del mapa per a l'indicador actiu.
+	// Dades ja al client (els 31 del Berguedà); ordre per valor (numèric, desc) o per nom (categòric).
+	let showTable = $state(false);
+	const valueFmt = $derived(makeMetricFormatter(indicator, def.format, locale));
+	const mapTableRows = $derived.by(() => {
+		const rows = Object.values(dataset.municipis).map((muni) => {
+			const raw = muni.values[indicator];
+			const display =
+				raw === null || raw === undefined
+					? m.value_not_available()
+					: catMode
+						? tipologiaLabel(raw)
+						: valueFmt(raw as number);
+			const confRaw = muni.values.confianca;
+			return {
+				ine5: muni.ine5,
+				nom: muni.nom,
+				raw,
+				display,
+				conf: typeof confRaw === 'string' ? confRaw : m.value_not_available()
+			};
+		});
+		if (catMode) return rows.sort((a, b) => a.nom.localeCompare(b.nom, 'ca'));
+		return rows.sort((a, b) => {
+			const av = typeof a.raw === 'number' ? a.raw : -Infinity;
+			const bv = typeof b.raw === 'number' ? b.raw : -Infinity;
+			return bv - av;
+		});
+	});
 
 	// Corbes del hero amb VALORS reals del gap de PERNOCTA (talls de la classificació, no inventats):
 	// el «full topogràfic» mostra les cotes del propi indicador estrella (la població invisible).
@@ -224,7 +254,18 @@
 			     Presentacio simple (pre-Fase 2): SENSE marc de paper ni corbes; el MapLibre
 			     omple net el seu contenidor i .map-canvaswrap deixa overflow visible perque
 			     les targetes/tooltips de municipi no es retallin (decisio Bea). -->
-			<div class="map-wrap">
+			<div class="map-tablebar">
+					<button
+						type="button"
+						class="map-table-toggle"
+						aria-pressed={showTable}
+						onclick={() => (showTable = !showTable)}
+					>
+						{showTable ? m.viz_as_map() : m.viz_as_table()}
+					</button>
+				</div>
+				{#if !showTable}
+				<div class="map-wrap">
 				<div class="map-canvaswrap">
 					{#if browser}
 						<ChoroplethMap
@@ -371,7 +412,31 @@
 				</aside>
 			</div>
 
-			<div class="caveats" style="margin-top:20px">
+			{:else}
+					<div class="viz-table-wrap">
+						<table class="viz-table">
+							<caption>{labelFor(indicator)}</caption>
+							<thead>
+								<tr>
+									<th scope="col">{m.tbl_municipi()}</th>
+									<th scope="col">{m.tbl_valor()}</th>
+									<th scope="col">{m.tbl_confianca()}</th>
+								</tr>
+							</thead>
+							<tbody>
+								{#each mapTableRows as r (r.ine5)}
+									<tr>
+										<th scope="row">{r.nom}</th>
+										<td>{r.display}</td>
+										<td>{r.conf}</td>
+									</tr>
+								{/each}
+							</tbody>
+						</table>
+					</div>
+				{/if}
+
+				<div class="caveats" style="margin-top:20px">
 				{#if isLayer}
 					<div class="alert"><span class="bar"></span><div>{layerCaveat}</div></div>
 				{/if}
@@ -528,5 +593,58 @@
 		font-size: 0.56rem;
 		line-height: 1.4;
 		color: var(--dp-text-subtle);
+	}
+
+	/* Accessibilitat (spec §1.5): toggle + taula alternativa del mapa per a l'indicador actiu. */
+	.map-tablebar {
+		display: flex;
+		justify-content: flex-end;
+		margin-bottom: 8px;
+	}
+	.map-table-toggle {
+		font-family: var(--dp-font-mono);
+		font-size: 0.7rem;
+		letter-spacing: 0.03em;
+		padding: 6px 12px;
+		border: 1px solid var(--dp-border);
+		border-radius: var(--dp-radius-sm);
+		background: transparent;
+		color: var(--dp-text-muted);
+		cursor: pointer;
+	}
+	.map-table-toggle:hover {
+		background: var(--dp-accent-weak);
+		color: var(--dp-text);
+	}
+	.viz-table-wrap {
+		overflow-x: auto;
+	}
+	.viz-table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 0.84rem;
+		font-variant-numeric: tabular-nums;
+	}
+	.viz-table caption {
+		text-align: left;
+		font-weight: 600;
+		margin-bottom: 8px;
+		color: var(--dp-text);
+	}
+	.viz-table th,
+	.viz-table td {
+		text-align: right;
+		padding: 6px 10px;
+		border-bottom: 1px solid var(--dp-border);
+	}
+	.viz-table thead th {
+		color: var(--dp-text-subtle);
+		font-weight: 600;
+		border-bottom: 1px solid var(--dp-border-strong);
+	}
+	.viz-table th[scope='row'] {
+		text-align: left;
+		font-weight: 500;
+		color: var(--dp-text);
 	}
 </style>

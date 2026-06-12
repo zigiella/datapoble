@@ -116,8 +116,45 @@
 		hovered = hovered?.ine5 === p.ine5 ? null : p;
 		if (hovered) moveTo(e.clientX, e.clientY);
 	}
+
+	// Accessibilitat (spec §1.5): tota viz té alternativa en TAULA. Les dades ja són al client;
+	// la taula reordena alfabèticament per facilitar la cerca del municipi.
+	let showTable = $state(false);
+	const tableRows = $derived([...pts].sort((a, b) => a.nom.localeCompare(b.nom, 'ca')));
 </script>
 
+<div class="viz-bar">
+	<button type="button" class="viz-toggle" aria-pressed={showTable} onclick={() => (showTable = !showTable)}>
+		{showTable ? m.viz_as_chart() : m.viz_as_table()}
+	</button>
+</div>
+{#if showTable}
+	<div class="viz-table-wrap">
+		<table class="viz-table">
+			<caption>{m.resum_constel_title()}</caption>
+			<thead>
+				<tr>
+					<th scope="col">{m.tbl_municipi()}</th>
+					<th scope="col">{m.tbl_capacitat()}</th>
+					<th scope="col">{m.tbl_impacte()}</th>
+					<th scope="col">{m.tbl_poblacio()}</th>
+					<th scope="col">{m.tbl_confianca()}</th>
+				</tr>
+			</thead>
+			<tbody>
+				{#each tableRows as p (p.ine5)}
+					<tr>
+						<th scope="row">{p.nom}</th>
+						<td>{Math.round(p.stock)}</td>
+						<td>{Math.round(p.impact)}</td>
+						<td>{p.pob.toLocaleString('ca-ES')}</td>
+						<td>{p.baixa ? m.map_confidence_low() : m.map_confidence_high()}</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+	</div>
+{:else}
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <figure class="constel" bind:this={figEl} onpointerup={() => { if (coarse) hovered = null; }}>
 	<svg viewBox="0 0 {W} {H}" role="img" aria-label={m.constel_aria()} preserveAspectRatio="xMidYMid meet">
@@ -171,8 +208,61 @@
 		</div>
 	{/if}
 </figure>
+{/if}
 
 <style>
+	/* Barra d'accions de la viz (toggle taula) + taula alternativa accessible (spec §1.5). */
+	.viz-bar {
+		display: flex;
+		justify-content: flex-end;
+		margin-bottom: 6px;
+	}
+	.viz-toggle {
+		font-family: var(--dp-font-mono);
+		font-size: 0.7rem;
+		letter-spacing: 0.03em;
+		padding: 5px 11px;
+		border: 1px solid var(--dp-border);
+		border-radius: var(--dp-radius-sm);
+		background: transparent;
+		color: var(--dp-text-muted);
+		cursor: pointer;
+	}
+	.viz-toggle:hover {
+		background: var(--dp-accent-weak);
+		color: var(--dp-text);
+	}
+	.viz-table-wrap {
+		overflow-x: auto;
+	}
+	.viz-table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 0.82rem;
+		font-variant-numeric: tabular-nums;
+	}
+	.viz-table caption {
+		text-align: left;
+		font-weight: 600;
+		margin-bottom: 6px;
+		color: var(--dp-text);
+	}
+	.viz-table th,
+	.viz-table td {
+		text-align: right;
+		padding: 5px 8px;
+		border-bottom: 1px solid var(--dp-border);
+	}
+	.viz-table thead th {
+		color: var(--dp-text-subtle);
+		font-weight: 600;
+		border-bottom: 1px solid var(--dp-border-strong);
+	}
+	.viz-table th[scope='row'] {
+		text-align: left;
+		font-weight: 500;
+		color: var(--dp-text);
+	}
 	.constel {
 		margin: 0;
 		position: relative;
