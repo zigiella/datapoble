@@ -27,22 +27,28 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // `packages/web/scripts` → arrel del repo són tres nivells amunt.
 const REPO_ROOT = resolve(__dirname, '../../..');
-const SRC = resolve(REPO_ROOT, 'data/web/municipis.bergueda.json');
 const DEST_DIR = resolve(__dirname, '../static/data');
-const DEST = resolve(DEST_DIR, 'municipis.bergueda.json');
 
-if (!existsSync(SRC)) {
-	// CI i clons sense els marts no tenen la font generada: no és un error fatal.
-	console.warn(
-		`[copy-data] AVÍS: no s'ha trobat la font ${SRC}.\n` +
-			`           El web farà servir la còpia existent a static/data (si n'hi ha) o el ` +
-			`fallback del loader. Regenera-la amb: python tools/export_web_municipis.py`
-	);
-	process.exit(0);
-}
+// Actius de dades a copiar (font → nom a static/data). El dataset és l'únic imprescindible;
+// la validació ETCA és opcional (la genera `tools/validacio_etca.py`).
+const FILES = [
+	{ src: resolve(REPO_ROOT, 'data/web/municipis.bergueda.json'), name: 'municipis.bergueda.json' },
+	{ src: resolve(REPO_ROOT, 'data/web/etca-validacio.json'), name: 'etca-validacio.json' }
+];
 
 mkdirSync(DEST_DIR, { recursive: true });
-copyFileSync(SRC, DEST);
 
-const kb = (statSync(DEST).size / 1024).toFixed(1);
-console.log(`[copy-data] OK: data/web/municipis.bergueda.json → static/data/ (${kb} kB)`);
+for (const f of FILES) {
+	if (!existsSync(f.src)) {
+		// CI i clons sense els marts no tenen la font generada: no és un error fatal.
+		console.warn(
+			`[copy-data] AVÍS: no s'ha trobat ${f.src}. Es manté la còpia existent (si n'hi ha) ` +
+				`o el fallback del loader. Regenera-la amb el pipeline (Sondeig).`
+		);
+		continue;
+	}
+	const dest = resolve(DEST_DIR, f.name);
+	copyFileSync(f.src, dest);
+	const kb = (statSync(dest).size / 1024).toFixed(1);
+	console.log(`[copy-data] OK: ${f.name} → static/data/ (${kb} kB)`);
+}
