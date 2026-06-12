@@ -46,6 +46,8 @@ jobs:
         run: python packages/transform/verify_marts.py
       - name: Fase 1 · derivats al dia (mirall offline)
         run: python packages/transform/derive_fase1.py --check
+      - name: Validació ETCA al dia (Pas 4 · offline)
+        run: python tools/validacio_etca.py --check
 
   # Brúixola: evals de la capa de IA (texto→SQL trazable). Corre OFFLINE
   # (sin OPENROUTER_API_KEY): determinista, sin red. Gate anti-regresión.
