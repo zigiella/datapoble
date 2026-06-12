@@ -37,6 +37,12 @@ INDICATORS: dict[str, str] = {
     "f167": "pob_0_14",          # Població de 0 a 14 anys
     "f28": "pob_65_84",          # Població de 65 a 84 anys
     "f29": "pob_85_mes",         # Població de 85 anys i més
+    # ETCA (Estimacions de població estacional, Idescat EPE base 2021) — àncora de
+    # validació externa del Pas 4. Només present als munis ≥1.000 hab (els petits no en
+    # tenen → no apareixeran a la resposta EMEX, queden NULL: cobertura honesta).
+    "f342": "etca_estacional",   # Població estacional ETCA (total: no resident present − resident absent)
+    "f343": "poblacio_etca",     # Població ETCA (resident + estacional; equivalent temps complet anual)
+    "f344": "etca_pct",          # Població ETCA / població resident (%)
 }
 
 TIMEOUT = 60

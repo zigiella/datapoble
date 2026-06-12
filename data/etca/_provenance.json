@@ -1,0 +1,10 @@
+{
+  "source": "idescat_epe",
+  "organisme": "Idescat — Estimacions de població estacional (ETCA)",
+  "base": "2021",
+  "any": "2024 (p)",
+  "format": "SSV n=17886 geo=mun",
+  "url": "https://www.idescat.cat/pub/?id=epe&n=17886&geo=mun&f=ssv",
+  "scope": "Berguedà (31 munis; 9 amb ETCA municipal, ≥1.000 hab)",
+  "nota": "ETCA municipal només per a munis grans; els petits (turístics extrems) no hi són."
+}

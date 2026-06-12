@@ -1,0 +1,364 @@
+{
+  "font": "Idescat — Estimacions de població estacional (ETCA)",
+  "base": "2021",
+  "any": "2024 (p)",
+  "go_no_go": {
+    "rho_min": 0.7,
+    "error_max_pct": 15.0
+  },
+  "pernocta_vs_etca": {
+    "n": 9,
+    "spearman": 1.0,
+    "error_median_pct": 11.9,
+    "passa": true
+  },
+  "carrega_vs_etca": {
+    "n": 9,
+    "spearman": 1.0,
+    "error_median_pct": 15.1,
+    "passa": false
+  },
+  "municipis": [
+    {
+      "ine5": "08022",
+      "municipi": "Berga",
+      "padro": 17539,
+      "etca": 17057,
+      "pernocta_est": 17174,
+      "err_pernocta_pct": 0.7,
+      "carrega_funcional_est": 19626,
+      "err_carrega_pct": 15.1,
+      "covered": true
+    },
+    {
+      "ine5": "08092",
+      "municipi": "Gironella",
+      "padro": 5082,
+      "etca": 4760,
+      "pernocta_est": 5245,
+      "err_pernocta_pct": 10.2,
+      "carrega_funcional_est": 5245,
+      "err_carrega_pct": 10.2,
+      "covered": true
+    },
+    {
+      "ine5": "08175",
+      "municipi": "Puig-reig",
+      "padro": 4558,
+      "etca": 4313,
+      "pernocta_est": 4343,
+      "err_pernocta_pct": 0.7,
+      "carrega_funcional_est": 4558,
+      "err_carrega_pct": 5.7,
+      "covered": true
+    },
+    {
+      "ine5": "08011",
+      "municipi": "Avià",
+      "padro": 2263,
+      "etca": 1990,
+      "pernocta_est": 2684,
+      "err_pernocta_pct": 34.9,
+      "carrega_funcional_est": 2684,
+      "err_carrega_pct": 34.9,
+      "covered": true
+    },
+    {
+      "ine5": "08016",
+      "municipi": "Bagà",
+      "padro": 2167,
+      "etca": 2305,
+      "pernocta_est": 2780,
+      "err_pernocta_pct": 20.6,
+      "carrega_funcional_est": 2780,
+      "err_carrega_pct": 20.6,
+      "covered": true
+    },
+    {
+      "ine5": "08049",
+      "municipi": "Casserres",
+      "padro": 1665,
+      "etca": 1571,
+      "pernocta_est": 2225,
+      "err_pernocta_pct": 41.6,
+      "carrega_funcional_est": 2225,
+      "err_carrega_pct": 41.6,
+      "covered": true
+    },
+    {
+      "ine5": "08268",
+      "municipi": "Cercs",
+      "padro": 1236,
+      "etca": 1130,
+      "pernocta_est": 1652,
+      "err_pernocta_pct": 46.2,
+      "carrega_funcional_est": 1652,
+      "err_carrega_pct": 46.2,
+      "covered": true
+    },
+    {
+      "ine5": "08166",
+      "municipi": "Pobla de Lillet, la",
+      "padro": 1106,
+      "etca": 1121,
+      "pernocta_est": 1243,
+      "err_pernocta_pct": 10.9,
+      "carrega_funcional_est": 1243,
+      "err_carrega_pct": 10.9,
+      "covered": true
+    },
+    {
+      "ine5": "08099",
+      "municipi": "Guardiola de Berguedà",
+      "padro": 962,
+      "etca": 1005,
+      "pernocta_est": 1125,
+      "err_pernocta_pct": 11.9,
+      "carrega_funcional_est": 1125,
+      "err_carrega_pct": 11.9,
+      "covered": true
+    },
+    {
+      "ine5": "08144",
+      "municipi": "Olvan",
+      "padro": 926,
+      "etca": null,
+      "pernocta_est": 1118,
+      "err_pernocta_pct": null,
+      "carrega_funcional_est": 1118,
+      "err_carrega_pct": null,
+      "covered": false
+    },
+    {
+      "ine5": "08132",
+      "municipi": "Montmajor",
+      "padro": 471,
+      "etca": null,
+      "pernocta_est": 766,
+      "err_pernocta_pct": null,
+      "carrega_funcional_est": 969,
+      "err_carrega_pct": null,
+      "covered": false
+    },
+    {
+      "ine5": "08024",
+      "municipi": "Borredà",
+      "padro": 434,
+      "etca": null,
+      "pernocta_est": 619,
+      "err_pernocta_pct": null,
+      "carrega_funcional_est": 908,
+      "err_carrega_pct": null,
+      "covered": false
+    },
+    {
+      "ine5": "08299",
+      "municipi": "Vilada",
+      "padro": 430,
+      "etca": null,
+      "pernocta_est": 554,
+      "err_pernocta_pct": null,
+      "carrega_funcional_est": 554,
+      "err_carrega_pct": null,
+      "covered": false
+    },
+    {
+      "ine5": "08190",
+      "municipi": "Saldes",
+      "padro": 301,
+      "etca": null,
+      "pernocta_est": 560,
+      "err_pernocta_pct": null,
+      "carrega_funcional_est": 681,
+      "err_carrega_pct": null,
+      "covered": false
+    },
+    {
+      "ine5": "08078",
+      "municipi": "Espunyola, l'",
+      "padro": 260,
+      "etca": null,
+      "pernocta_est": 391,
+      "err_pernocta_pct": null,
+      "carrega_funcional_est": 530,
+      "err_carrega_pct": null,
+      "covered": false
+    },
+    {
+      "ine5": "08293",
+      "municipi": "Vallcebre",
+      "padro": 260,
+      "etca": null,
+      "pernocta_est": 326,
+      "err_pernocta_pct": null,
+      "carrega_funcional_est": 531,
+      "err_carrega_pct": null,
+      "covered": false
+    },
+    {
+      "ine5": "08903",
+      "municipi": "Sant Julià de Cerdanyola",
+      "padro": 234,
+      "etca": null,
+      "pernocta_est": 412,
+      "err_pernocta_pct": null,
+      "carrega_funcional_est": 412,
+      "err_carrega_pct": null,
+      "covered": false
+    },
+    {
+      "ine5": "25100",
+      "municipi": "Gósol",
+      "padro": 207,
+      "etca": null,
+      "pernocta_est": 386,
+      "err_pernocta_pct": null,
+      "carrega_funcional_est": 535,
+      "err_carrega_pct": null,
+      "covered": false
+    },
+    {
+      "ine5": "08255",
+      "municipi": "Santa Maria de Merlès",
+      "padro": 179,
+      "etca": null,
+      "pernocta_est": 398,
+      "err_pernocta_pct": null,
+      "carrega_funcional_est": 398,
+      "err_carrega_pct": null,
+      "covered": false
+    },
+    {
+      "ine5": "08308",
+      "municipi": "Viver i Serrateix",
+      "padro": 178,
+      "etca": null,
+      "pernocta_est": 311,
+      "err_pernocta_pct": null,
+      "carrega_funcional_est": 311,
+      "err_carrega_pct": null,
+      "covered": false
+    },
+    {
+      "ine5": "08052",
+      "municipi": "Castellar de n'Hug",
+      "padro": 166,
+      "etca": null,
+      "pernocta_est": 218,
+      "err_pernocta_pct": null,
+      "carrega_funcional_est": 397,
+      "err_carrega_pct": null,
+      "covered": false
+    },
+    {
+      "ine5": "08142",
+      "municipi": "Nou de Berguedà, la",
+      "padro": 163,
+      "etca": null,
+      "pernocta_est": 259,
+      "err_pernocta_pct": null,
+      "carrega_funcional_est": 373,
+      "err_carrega_pct": null,
+      "covered": false
+    },
+    {
+      "ine5": "08188",
+      "municipi": "Sagàs",
+      "padro": 153,
+      "etca": null,
+      "pernocta_est": 394,
+      "err_pernocta_pct": null,
+      "carrega_funcional_est": 394,
+      "err_carrega_pct": null,
+      "covered": false
+    },
+    {
+      "ine5": "08050",
+      "municipi": "Castellar del Riu",
+      "padro": 151,
+      "etca": null,
+      "pernocta_est": 188,
+      "err_pernocta_pct": null,
+      "carrega_funcional_est": 379,
+      "err_carrega_pct": null,
+      "covered": false
+    },
+    {
+      "ine5": "08130",
+      "municipi": "Montclar",
+      "padro": 133,
+      "etca": null,
+      "pernocta_est": 204,
+      "err_pernocta_pct": null,
+      "carrega_funcional_est": 204,
+      "err_carrega_pct": null,
+      "covered": false
+    },
+    {
+      "ine5": "08045",
+      "municipi": "Capolat",
+      "padro": 93,
+      "etca": null,
+      "pernocta_est": 131,
+      "err_pernocta_pct": null,
+      "carrega_funcional_est": 206,
+      "err_carrega_pct": null,
+      "covered": false
+    },
+    {
+      "ine5": "08057",
+      "municipi": "Castell de l'Areny",
+      "padro": 68,
+      "etca": null,
+      "pernocta_est": 92,
+      "err_pernocta_pct": null,
+      "carrega_funcional_est": 149,
+      "err_carrega_pct": null,
+      "covered": false
+    },
+    {
+      "ine5": "08177",
+      "municipi": "Quar, la",
+      "padro": 44,
+      "etca": null,
+      "pernocta_est": 127,
+      "err_pernocta_pct": null,
+      "carrega_funcional_est": 127,
+      "err_carrega_pct": null,
+      "covered": false
+    },
+    {
+      "ine5": "08080",
+      "municipi": "Fígols",
+      "padro": 41,
+      "etca": null,
+      "pernocta_est": 34,
+      "err_pernocta_pct": null,
+      "carrega_funcional_est": 76,
+      "err_carrega_pct": null,
+      "covered": false
+    },
+    {
+      "ine5": "08093",
+      "municipi": "Gisclareny",
+      "padro": 28,
+      "etca": null,
+      "pernocta_est": 55,
+      "err_pernocta_pct": null,
+      "carrega_funcional_est": 71,
+      "err_carrega_pct": null,
+      "covered": false
+    },
+    {
+      "ine5": "08216",
+      "municipi": "Sant Jaume de Frontanyà",
+      "padro": 25,
+      "etca": null,
+      "pernocta_est": 47,
+      "err_pernocta_pct": null,
+      "carrega_funcional_est": 69,
+      "err_carrega_pct": null,
+      "covered": false
+    }
+  ]
+}
