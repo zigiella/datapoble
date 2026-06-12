@@ -64,8 +64,8 @@ sources:
     llicencia: "ODbL (OpenStreetMap) — atribució + compartir-igual"
     nota: "2n proxy d'hostaleria de la capa L3 (complement del vidre). POIs assignats al municipi per PUNT-EN-POLÍGON amb la geometria real (ine5). OSM INFRA-MAPEJA el rural → el compte és un MÍNIM observat, NO un cens. Idescat (ee, CCAE-56) oficial NO és municipal per API oberta (secret estadístic; l'EMEX només dóna 'serveis' agregat)."
   datapoble:
-    organisme: datapoble (calculat)
-    producte: Indicadors derivats i índex IETR
+    organisme: indicador derivat
+    producte: vegeu la metodologia
     nota: "Inferència pròpia a partir de fonts oficials."
 
 # ----------------------------------------------------------------------------
@@ -833,10 +833,10 @@ metrics:
 
   # --- Índex IETR ---
   IETR:
-    label: {ca: Índex d'Exposició Turística-Residencial, es: Índice de Exposición Turística-Residencial}
+    label: {ca: Exposició (IETR), es: Exposición (IETR)}
     definicio:
-      ca: "Exposició turística-residencial relativa a la distribució (0=mín, 100=màx): SÍNTESI de l'estructura (stock) i l'empremta realitzada (impact). Validat externament amb residus (r=0,87)."
-      es: "Exposición turística-residencial relativa a la distribución (0=mín, 100=máx): SÍNTESIS de la estructura (stock) y la huella realizada (impact). Validado externamente con residuos (r=0,87)."
+      ca: "Exposició turística-residencial relativa a la distribució (0=mín, 100=màx): SÍNTESI de la capacitat (estructura) i l'impacte (empremta realitzada). Validat externament amb residus (r=0,87)."
+      es: "Exposición turística-residencial relativa a la distribución (0=mín, 100=máx): SÍNTESIS de la capacidad (estructura) y el impacto (huella realizada). Validado externamente con residuos (r=0,87)."
     dimension: index
     unit: "0-100"
     formula: "0.5*A_resid + 0.5*B_turis (min-max winsoritzat, pesos iguals)"
@@ -845,12 +845,12 @@ metrics:
     column: IETR
     visibility: public
     nota:
-      ca: "NO és només stock: l'IETR és 0,5·estructura (stock) + 0,5·empremta realitzada (impact). Per al desglossament, vegeu IETR_stock i IETR_impact."
-      es: "NO es solo stock: el IETR es 0,5·estructura (stock) + 0,5·huella realizada (impact). Para el desglose, ved IETR_stock e IETR_impact."
+      ca: "L'exposició combina dues cares: 0,5·capacitat (estructura preparada) + 0,5·impacte (empremta realitzada). Per al desglossament, vegeu Capacitat i Impacte."
+      es: "La exposición combina dos caras: 0,5·capacidad (estructura preparada) + 0,5·impacto (huella realizada). Para el desglose, ved Capacidad e Impacto."
     synonyms: {ca: [índex, exposició, ietr], es: [índice, exposición, ietr]}
 
   IETR_rank:
-    label: {ca: Rànquing IETR, es: Ranking IETR}
+    label: {ca: Rànquing d'exposició, es: Ranking de exposición}
     definicio:
       ca: Posició del municipi dins la distribució (1 = major exposició).
       es: Posición del municipio dentro de la distribución (1 = mayor exposición).
@@ -866,9 +866,9 @@ metrics:
   # IETR DUAL: l'IETR (= 0.5*A_resid + 0.5*B_turis) barreja stock estructural i
   # impacte realitzat; els exposem per separat. Tots dos ja són 0-100 (winsoritzats).
   IETR_stock:
-    label: {ca: "IETR · component estructural (stock)", es: "IETR · componente estructural (stock)"}
-    label_ca: "IETR · component estructural (stock)"
-    label_es: "IETR · componente estructural (stock)"
+    label: {ca: "Capacitat · component estructural", es: "Capacidad · componente estructural"}
+    label_ca: "Capacitat · component estructural"
+    label_es: "Capacidad · componente estructural"
     definicio:
       ca: "Costat ESTRUCTURAL/resident de l'IETR (eix A reescalat 0-100): exposició LATENT inscrita al parc d'habitatge (habitatge no principal + habitatges per habitant). Quant de territori està preparat per a la pressió turística-residencial, hi hagi o no activitat ara mateix."
       es: "Lado ESTRUCTURAL/residente del IETR (eje A reescalado 0-100): exposición LATENTE inscrita en el parque de vivienda (vivienda no principal + viviendas por habitante). Cuánto territorio está preparado para la presión turística-residencial, haya o no actividad ahora mismo."
@@ -889,9 +889,9 @@ metrics:
     synonyms: {ca: [ietr estructural, stock, exposició latent, habitatge buit], es: [ietr estructural, stock, exposición latente, vivienda vacía]}
 
   IETR_impact:
-    label: {ca: "IETR · component de pressió (impacte)", es: "IETR · componente de presión (impacto)"}
-    label_ca: "IETR · component de pressió (impacte)"
-    label_es: "IETR · componente de presión (impacto)"
+    label: {ca: "Impacte · component de pressió", es: "Impacto · componente de presión"}
+    label_ca: "Impacte · component de pressió"
+    label_es: "Impacto · componente de presión"
     definicio:
       ca: "Costat de PRESSIÓ realitzada de l'IETR (eix B reescalat 0-100): activitat turística viva inscrita als establiments reglats (RTC per 1000 hab + per 100 habitatges). Quanta pressió turística s'està exercint realment, ara."
       es: "Lado de PRESIÓN realizada del IETR (eje B reescalado 0-100): actividad turística viva inscrita en los establecimientos reglados (RTC por 1000 hab + por 100 viviendas). Cuánta presión turística se está ejerciendo realmente, ahora."

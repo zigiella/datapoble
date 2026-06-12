@@ -25,8 +25,8 @@ from datapoble_ai import Agent
 with Agent() as agent:                       # offline by default (no key needed)
     ans = agent.ask("Quin municipi té més exposició turística-residencial?", locale="ca")
     print(ans.text)
-    # El municipi amb més Índex d'Exposició Turística-Residencial és
-    # Castellar de n'Hug (100 0-100). Font: datapoble … Fórmula: 0.5*A_resid + 0.5*B_turis …
+    # El municipi amb més Exposició (IETR) és
+    # Castellar de n'Hug (100 0-100). Font: … indicador derivat … Fórmula: 0.5*A_resid + 0.5*B_turis …
     print(ans.provenance.to_dict())          # source · date · formula · query · note
 ```
 
