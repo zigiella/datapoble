@@ -61,11 +61,14 @@ def test_provenance_includes_query_and_source(agent):
 
 def test_derived_metric_cites_origin_source(agent):
     # pct_noprincipal is source: datapoble with origin_source: idescat_emex.
+    # El bloc de procedència `datapoble` es retola en públic com a «indicador derivat»
+    # (renom de l'spec de consultora 2 §1.4); la clau interna del contracte segueix sent
+    # `datapoble`, però la cadena visible marca la capa derivada amb «indicador derivat».
     ans = agent.ask("Quin municipi té més % habitatge no principal?", locale="ca")
     assert ans.kind == AnswerKind.ANSWER
     assert ans.metric_key == "pct_noprincipal"
     assert "Idescat" in (ans.provenance.source or "")   # upstream origin surfaced
-    assert "datapoble" in (ans.provenance.source or "").lower()  # via the derived layer
+    assert "indicador derivat" in (ans.provenance.source or "").lower()  # via the derived layer
 
 
 def test_note_caveat_surfaced_for_political_metric(monkeypatch):
