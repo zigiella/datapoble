@@ -22,6 +22,13 @@
 	let { data }: { data: PageData } = $props();
 	const dataset = $derived(data.dataset);
 	const locale = $derived(currentLocale());
+	// Validació externa contra ETCA (Pas 4): artefacte opcional (data/web/etca-validacio.json).
+	const etca = $derived(data.etca);
+	const intl = $derived(locale === 'es' ? 'es-ES' : 'ca-ES');
+	const dec = (v: number, n = 1) =>
+		v.toLocaleString(intl, { minimumFractionDigits: n, maximumFractionDigits: n });
+	const intf = (v: number | null) => (v == null ? '—' : v.toLocaleString(intl));
+	const sgn = (v: number | null) => (v == null ? '—' : `${v > 0 ? '+' : ''}${dec(v)}%`);
 
 	// «Què mesura» (definició curta i clara) per clau de mètrica — copy i18n de funcionalitat.
 	const WHAT: Partial<Record<MetricKey, () => string>> = {
@@ -223,6 +230,58 @@
 			</section>
 		{/each}
 
+		{#if etca?.pernocta_vs_etca}
+			{@const s = etca.pernocta_vs_etca}
+			<section class="ds-sec">
+				<div class="ds-sec__hd">
+					<span class="ref">H</span><h2>{m.met_block_validacio()}</h2>
+				</div>
+				<p class="lead">{m.met_validacio_intro()}</p>
+				<div class="val-headline" class:val-headline--ok={s.passa}>
+					<span class="val-headline__metric"
+						>{m.met_val_rho()} <b>{dec(s.spearman)}</b></span
+					>
+					<span class="val-headline__metric"
+						>{m.met_val_err()} <b>{dec(s.error_median_pct)}%</b></span
+					>
+					<span class="val-headline__verdict"
+						>{s.passa ? m.met_val_passa() : m.met_val_nopassa()}</span
+					>
+				</div>
+				<p class="val-llindar">
+					{m.met_val_llindar()} ρ ≥ {dec(etca.go_no_go.rho_min)} · {m.met_val_err()} ≤ {etca.go_no_go.error_max_pct}%
+				</p>
+				<div class="val-table-wrap">
+					<table class="val-table">
+						<thead>
+							<tr>
+								<th scope="col">{m.tbl_municipi()}</th>
+								<th scope="col">{m.met_val_th_padro()}</th>
+								<th scope="col">{m.met_val_th_etca()}</th>
+								<th scope="col">{m.met_val_th_nostra()}</th>
+								<th scope="col">{m.met_val_th_error()}</th>
+							</tr>
+						</thead>
+						<tbody>
+							{#each etca.municipis.filter((x) => x.covered) as r (r.ine5)}
+								<tr>
+									<th scope="row">{r.municipi}</th>
+									<td>{intf(r.padro)}</td>
+									<td>{intf(r.etca)}</td>
+									<td>{intf(r.pernocta_est)}</td>
+									<td class="val-err">{sgn(r.err_pernocta_pct)}</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</div>
+				<p class="val-nota">{m.met_validacio_nota()}</p>
+				<p class="met-card__src val-font">
+					{m.met_validacio_font({ base: etca.base ?? '', any: etca.any ?? '' })}
+				</p>
+			</section>
+		{/if}
+
 		<section class="ds-sec">
 			<div class="ds-sec__hd">
 				<span class="ref">★</span><h2>{m.met_honesty_title()}</h2>
@@ -346,6 +405,84 @@
 		font-size: 0.66rem;
 		color: var(--dp-text-subtle);
 		line-height: 1.45;
+	}
+
+	/* ——— Validació externa ETCA (Pas 4) ——— */
+	.val-headline {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 10px 22px;
+		margin: 10px 0 4px;
+		padding: 12px 16px;
+		border: 1px solid var(--dp-border);
+		border-left: 3px solid var(--dp-prov-derived, var(--dp-border-strong));
+		border-radius: var(--dp-radius-lg);
+		background: var(--dp-surface);
+	}
+	.val-headline--ok {
+		border-left-color: var(--dp-forest, #2f6b4f);
+	}
+	.val-headline__metric {
+		font-size: 0.82rem;
+		color: var(--dp-text-muted);
+	}
+	.val-headline__metric b {
+		font-family: var(--dp-font-mono);
+		font-size: 1.05rem;
+		color: var(--dp-text);
+	}
+	.val-headline__verdict {
+		margin-left: auto;
+		font-family: var(--dp-font-mono);
+		font-size: 0.7rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		font-weight: 700;
+		color: var(--dp-forest, #2f6b4f);
+	}
+	.val-llindar {
+		margin: 0 0 12px;
+		font-family: var(--dp-font-mono);
+		font-size: 0.66rem;
+		color: var(--dp-text-subtle);
+	}
+	.val-table-wrap {
+		overflow-x: auto;
+	}
+	.val-table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 0.84rem;
+		font-variant-numeric: tabular-nums;
+	}
+	.val-table th,
+	.val-table td {
+		text-align: right;
+		padding: 6px 10px;
+		border-bottom: 1px solid var(--dp-border);
+	}
+	.val-table thead th {
+		color: var(--dp-text-subtle);
+		font-weight: 600;
+		border-bottom: 1px solid var(--dp-border-strong);
+	}
+	.val-table th[scope='row'] {
+		text-align: left;
+		font-weight: 500;
+		color: var(--dp-text);
+	}
+	.val-table .val-err {
+		color: var(--dp-text-muted);
+	}
+	.val-nota {
+		margin: 14px 0 0;
+		font-size: 0.84rem;
+		line-height: 1.5;
+		color: var(--dp-text-muted);
+	}
+	.val-font {
+		margin-top: 8px;
 	}
 
 	@media (max-width: 520px) {

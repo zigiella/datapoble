@@ -10,9 +10,19 @@
  * Prerender-safe: usa el `fetch` de SvelteKit sobre l'actiu estàtic, com la resta de rutes.
  */
 import { loadMunicipisDataset } from '$lib/data/dataset';
+import type { EtcaValidacio } from '$lib/contract/etca';
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ fetch }) => {
 	const dataset = await loadMunicipisDataset(fetch);
-	return { dataset };
+	// Validació externa contra ETCA (Pas 4). És opcional: si l'actiu no hi és (entorn sense
+	// el pipeline), la secció no es renderitza. Prerender-safe (actiu estàtic, copiat al prebuild).
+	let etca: EtcaValidacio | null = null;
+	try {
+		const res = await fetch('/data/etca-validacio.json');
+		if (res.ok) etca = (await res.json()) as EtcaValidacio;
+	} catch {
+		etca = null;
+	}
+	return { dataset, etca };
 };
