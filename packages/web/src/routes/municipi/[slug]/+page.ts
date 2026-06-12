@@ -1,5 +1,5 @@
 /**
- * Càrrega de la FITXA DE MUNICIPI (`/municipi/[ine5]` · `/es/municipi/[ine5]`).
+ * Càrrega de la FITXA DE MUNICIPI (`/municipi/[slug]` · `/es/municipi/[slug]`).
  *
  * Generalitza la riquesa que el Resum només donava als dos extrems (Berga i Castellar) a
  * QUALSEVOL dels 31 municipis del Berguedà. Tira del MATEIX dataset real (`MunicipisDataset`,
@@ -19,6 +19,7 @@
  * (el `fallback` SPA del 404 els serveix amb l'estat «sense dades»).
  */
 import { loadMunicipisDataset } from '$lib/data/dataset';
+import { buildSlugIndex } from '$lib/contract/slug';
 import type { EntryGenerator, PageLoad } from './$types';
 
 export const prerender = true;
@@ -45,7 +46,10 @@ export const entries: EntryGenerator = async () => {
 		const dataset = JSON.parse(readFileSync(path, 'utf8')) as Awaited<
 			ReturnType<typeof loadMunicipisDataset>
 		>;
-		return Object.keys(dataset.municipis).map((ine5) => ({ ine5 }));
+		// Slug públic per municipi (derivat del nom oficial); buildSlugIndex llança si dos
+		// municipis xoquen → el build falla = test de col·lisió a CI (spec §8.1).
+		const { ine5ToSlug } = buildSlugIndex(dataset.municipis);
+		return Object.values(ine5ToSlug).map((slug) => ({ slug }));
 	} catch (err) {
 		// Degradació NO-FATAL (mateix esperit que copy-data): si l'actiu no hi és en un entorn
 		// sense els marts, no prerenderitzem cap fitxa explícita — el fallback SPA del 404 les
@@ -60,8 +64,10 @@ export const entries: EntryGenerator = async () => {
 
 export const load: PageLoad = async ({ fetch, params }) => {
 	const dataset = await loadMunicipisDataset(fetch);
-	const ine5 = params.ine5;
-	// `row` null = el codi no és al dataset (fora del Berguedà) → estat «sense dades encara».
-	const row = dataset.municipis[ine5] ?? null;
+	// El slug és la cara pública de la URL; l'ine5 (clau interna) es resol del nom oficial.
+	const { slugToIne5 } = buildSlugIndex(dataset.municipis);
+	const ine5 = slugToIne5[params.slug] ?? null;
+	// `row` null = slug desconegut → estat «sense dades encara» (degradació amable, no 404 lleig).
+	const row = ine5 ? (dataset.municipis[ine5] ?? null) : null;
 	return { dataset, ine5, row };
 };
