@@ -48,3 +48,6 @@ Thumbs.db
 # --- Personal scratch (never tracked) ---
 _scratch/
 CAJON/
+
+# Sortides de l'eval de models (locals, mai committejades)
+data/eval/
