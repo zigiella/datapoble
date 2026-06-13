@@ -3,9 +3,9 @@
 	 * Secció Licitacions (`/licitacions`) — el pilar 2 (el cabal) al web.
 	 *
 	 * «Una licitació és una confessió administrativa»: el que un ajuntament contracta revela
-	 * el que espera. Mostra el resum comarcal (taxonomia de 1.295 contractes + dependència
-	 * supramunicipal) amb l'enquadrament HONEST: «no contracta res propi» = centralització al
-	 * Consell + biaix de font, MAI mala gestió. Dada del cabal (data/web/licitacions-bergueda.json).
+	 * el que espera. Mostra el resum comarcal (taxonomia de 2.770 contractes dels 31 municipis
+	 * + dependència supramunicipal) amb l'enquadrament HONEST: la dependència del Consell =
+	 * centralització de serveis, MAI mala gestió. Dada del cabal (data/web/licitacions-bergueda.json).
 	 */
 	import ContourField from '$lib/components/ContourField.svelte';
 	import { currentLocale } from '$lib/i18n';
@@ -26,14 +26,14 @@
 	const maxN = $derived(Math.max(1, ...temes.map((t) => t.n)));
 	// Taula per municipi: per població descendent (familiar; el relat de dependència es llegeix sol).
 	const munis = $derived([...lic.municipis].sort((a, b) => (b.poblacio ?? 0) - (a.poblacio ?? 0)));
-	const nNoPropi = $derived(lic.comarca.dependencia?.no_contracta_propi ?? 0);
+	const nAutonom = $derived(lic.comarca.dependencia?.autonom ?? 0);
 
 	const heroSummits = [
 		{ cx: 880, cy: 150, r0: 16, step: 23, rings: 10, sq: 0.96, seed: 1.4, lt: 0.03 },
 		{ cx: 1080, cy: 300, r0: 14, step: 21, rings: 9, sq: 1.05, seed: 3.0, lt: 0.1 }
 	];
 	const heroDivis = { cx: 760, cy: 225, r: 150, sq: 1.18, seed: 0.9 };
-	const heroLabels = ['1.295', '695 comarcals', '600 municipals', '12 temes', '€'];
+	const heroLabels = ['2.770', '713 comarcals', '2.057 municipals', '12 temes', '€'];
 </script>
 
 <svelte:head>
@@ -64,7 +64,7 @@
 		<!-- P1 · El veredicte: la dependència supramunicipal, amb el caveat de seguida. -->
 		<section class="ds-sec first">
 			<div class="lic-verdict">
-				<span class="lic-verdict__big">{nNoPropi} <span class="lic-verdict__of">/ 31</span></span>
+				<span class="lic-verdict__big">{nAutonom} <span class="lic-verdict__of">/ 31</span></span>
 				<div class="lic-verdict__txt">
 					<p class="lic-verdict__lead">{m.lic_verdict_lead()}</p>
 					<p class="lic-verdict__caveat">{m.lic_verdict_caveat()}</p>

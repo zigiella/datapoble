@@ -44,14 +44,14 @@ from .taxonomy import classify
 SOURCE = "contractacio"
 FONT_CLAU = SOURCE
 
-# Filtre del pilot: Berga (08022) + Castellar (08052) per codi_ine10, i el Consell
-# Comarcal del Berguedà per nom (el seu codi_ine10 no és municipal → no filtrable
-# per prefix INE5). "la resta + el Consell" del brief: el Consell és l'òrgan supra
-# que dona servei als micromunicipis; les seves files són el senyal comarcal.
+# Filtre del Berguedà: els 31 municipis per prefix INE5 (codi_ine10) + el Consell
+# Comarcal per nom (el seu codi_ine10 no és municipal → no filtrable per prefix). Es
+# genera des de BERGUEDA_INE5 per no derivar quan canviï la llista. La font ybgg-dgi6
+# ja conté els 31 municipis (verificat): ampliar de 3 òrgans a 31 és NOMÉS eixamplar
+# aquest filtre geogràfic; el tipus de contracte (menor/major) és un eix a part.
 PILOT_WHERE = (
-    "starts_with(codi_ine10,'08022') "
-    "OR starts_with(codi_ine10,'08052') "
-    "OR nom_organ like '%Comarcal del Bergued%'"
+    " OR ".join(f"starts_with(codi_ine10,'{ine5}')" for ine5 in BERGUEDA_INE5)
+    + " OR nom_organ like '%Comarcal del Bergued%'"
 )
 
 

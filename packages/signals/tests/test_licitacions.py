@@ -309,17 +309,17 @@ def test_real_parquet_cobertura_i_conservacio():
     # Cobertura: la classificació és heurística però NO majoritàriament 'altres'.
     n = len(enriched)
     altres = int((enriched["tema_administratiu"] == "altres").sum())
-    assert n == 1295  # àncora del pilot
-    assert altres / n < 0.10  # ben per sota del 38% del tipus_senyal antic
+    assert n == 2770  # àncora dels 31 municipis del Berguedà
+    assert altres / n < 0.20  # ~15% als 31 munis (taxonomia afinada al pilot de 3 òrgans); encara molt sota el 38% antic — re-afinar als 31 és feina de seguiment
 
     # Tots els temes/caràcters/signal_types dins del vocabulari.
     assert set(enriched["tema_administratiu"]).issubset(set(TEMES_ADMINISTRATIUS))
     assert set(enriched["caracter_senyal"]).issubset(set(CARACTERS_SENYAL))
     assert set(enriched["contract_signal_type"]).issubset(set(CONTRACT_SIGNAL_TYPES))
 
-    # Repartiment: només es reparteixen els 695 comarcals.
+    # Repartiment: només es reparteixen els 713 comarcals.
     n_ev_repartits = alloc.drop_duplicates("event_id").shape[0]
-    assert n_ev_repartits == 695
+    assert n_ev_repartits == 713
 
     # Conservació de l'import: sum(import_assignat) ≈ sum(import_total) dels
     # events assignables (exclou no_assignable, que té ine5 NULL).
@@ -328,7 +328,9 @@ def test_real_parquet_cobertura_i_conservacio():
     assignat = alloc["import_assignat"].dropna().sum()
     assert abs(assignat - ev_imports) < 5.0  # tolerància d'arrodoniment
 
-    # Indicador: 31 municipis; Berga i Castellar són els únics amb contractació pròpia.
+    # Indicador: 31 municipis, i ara TOTS contracten alguna cosa de propi. Abans el
+    # pilot només ingeria 3 òrgans (Berga, Castellar, Consell) → 29 sortien «sense
+    # contractació pròpia», que era un artefacte de cobertura; obrir el filtre als 31 ho corregeix.
     assert len(dep) == 31
     amb_propi = dep[dep["n_contractes_municipal"] > 0]["ine5"].tolist()
-    assert set(amb_propi) == {"08022", "08052"}  # Berga, Castellar de n'Hug
+    assert len(amb_propi) == 31

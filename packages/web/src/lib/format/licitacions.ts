@@ -28,7 +28,8 @@ const LECTURA: Record<string, () => string> = {
 	autonom: () => m.lic_lectura_autonom(),
 	dependencia_mitjana: () => m.lic_lectura_mitjana(),
 	molt_dependent: () => m.lic_lectura_molt(),
-	no_contracta_propi: () => m.lic_lectura_nopropi()
+	no_contracta_propi: () => m.lic_lectura_nopropi(),
+	sense_dada: () => m.lic_lectura_sensedada()
 };
 export const lecturaLabel = (l: string): string => LECTURA[l]?.() ?? l;
 
