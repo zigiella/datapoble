@@ -451,5 +451,10 @@
   "lic_lectura_autonom": "Autónomo",
   "lic_lectura_mitjana": "Dependencia media",
   "lic_lectura_molt": "Muy dependiente",
-  "lic_lectura_nopropi": "No contrata propio"
+  "lic_lectura_nopropi": "No contrata propio",
+  "muni_lic_sub": "Lo que contrata el municipio y lo que le asigna el Consell · lectura del cabal",
+  "muni_lic_dependencia": "Dependencia del Consell",
+  "muni_lic_propi": "Contrata de propio",
+  "muni_lic_temes": "sobre todo en",
+  "muni_lic_nota": "No consta contratación propia: la centraliza el Consell Comarcal (y puede haber sesgo de fuente). No significa mala gestión."
 }

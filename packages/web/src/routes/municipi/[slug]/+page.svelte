@@ -28,6 +28,7 @@
 	import { provenanceOf } from '$lib/map/provenance';
 	import { tipologiaMeta, tipologiaColor } from '$lib/map/tipologia';
 	import { toSlug, slugForIne5 } from '$lib/contract/slug';
+	import { temaLabel, lecturaLabel, eurCurt } from '$lib/format/licitacions';
 	import { municipisMirall } from '$lib/analysis/mirall';
 	import { m } from '$lib/paraglide/messages';
 	import type { MetricDef, MetricKey, MetricValue, MunicipiRow } from '$lib/contract/types';
@@ -37,7 +38,9 @@
 	const dataset = $derived(data.dataset);
 	const row = $derived(data.row);
 	const ine5 = $derived(data.ine5);
+	const lic = $derived(data.lic);
 	const locale = $derived(currentLocale());
+	const eurLic = (v: number | null) => eurCurt(v, locale === 'es' ? 'es-ES' : 'ca-ES');
 
 	// ── Blocs editorials que cobreixen TOT el catàleg del contracte ──────────────────────────
 	// Mateix esperit que la metodologia/Resum, però aquí l'objectiu és NO deixar fora cap mètrica
@@ -559,6 +562,35 @@
 							</li>
 						{/each}
 					</ul>
+				</section>
+			{/if}
+
+			{#if lic}
+				<section class="ds-sec">
+					<div class="ds-sec__hd"><span class="ref">L</span><h2>{m.nav_licitacions()}</h2></div>
+					<p class="muni-sec__sub">{m.muni_lic_sub()}</p>
+					<dl class="muni-serv">
+						<div class="muni-serv__row">
+							<dt>{m.muni_lic_dependencia()}</dt>
+							<dd>{lecturaLabel(lic.dependencia_lectura)}</dd>
+						</div>
+						<div class="muni-serv__row">
+							<dt>{m.muni_lic_propi()}</dt>
+							<dd>{lic.n_contractes_municipal} · {eurLic(lic.import_municipal_directe)}</dd>
+						</div>
+						<div class="muni-serv__row">
+							<dt>{m.lic_th_serveis()}</dt>
+							<dd
+								>{eurLic(lic.import_serveis_comarcals)}{#if lic.temes_rebuts.length} · {m.muni_lic_temes()}
+									{lic.temes_rebuts.map((t) => temaLabel(t.tema)).join(', ')}{/if}</dd
+							>
+						</div>
+					</dl>
+					{#if lic.dependencia_lectura === 'no_contracta_propi'}
+						<div class="alert" style="margin-top:10px">
+							<span class="bar"></span><div>{m.muni_lic_nota()}</div>
+						</div>
+					{/if}
 				</section>
 			{/if}
 
