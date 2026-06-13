@@ -1,0 +1,36 @@
+name: eval writer (manual)
+
+# Eval del motor d'escriptura de la fitxa (§3) amb models reals via OpenRouter.
+# Corre NOMÉS a mà (workflow_dispatch) perquè usa el secret OPENROUTER_API_KEY i té cost.
+# Les sortides (lectures generades + resum) pugen com a artifact; res es committeja.
+
+on:
+  workflow_dispatch:
+    inputs:
+      args:
+        description: "args per eval_writer.py (p.ex. '--muni 08022 --model anthropic/claude-sonnet-4.6'). Buit = 3 munis × 6 models."
+        required: false
+        default: ""
+
+jobs:
+  eval:
+    name: writer eval (OpenRouter)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run writer eval
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          PYTHONUTF8: "1"
+          ARGS: ${{ github.event.inputs.args }}
+        run: python tools/eval_writer.py $ARGS
+      - name: Upload outputs (lectures + resum)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-writer-outputs
+          path: data/eval/
+          if-no-files-found: warn
