@@ -35,11 +35,18 @@ INPUTS = REPO / "data" / "territorial" / "inputs_bergueda.csv"
 MART = REPO / "data" / "marts" / "mart_municipi.parquet"
 OUT = REPO / "data" / "territorial" / "tipus_territorial_bergueda.csv"
 
-# Llistes de Catalunya (a omplir a escala; al Berguedà, interior, són buides/mínimes).
-COSTANERS: set[str] = set()  # municipis costaners (Generalitat-Territori)
-AMB: set[str] = set()  # 36 municipis de l'Àrea Metropolitana de Barcelona
+# Llistes de Catalunya. PARCIALS: omplertes amb el pilot (Berguedà) + el primer lot
+# d'escala (Barcelonès + Tarragonès turístic). A completar amb les llistes oficials
+# senceres (AMB 36, costaners ~70, 41 capitals) quan s'escali a tot Catalunya.
+COSTANERS: set[str] = {
+    "08019", "08015", "08194",  # Barcelona, Badalona, Sant Adrià de Besòs (litoral metropolità)
+    "43905", "43038", "43171", "43148",  # Salou, Cambrils, Vila-seca, Tarragona (litoral)
+}
+AMB: set[str] = {  # municipis de l'Àrea Metropolitana de Barcelona (parcial: Barcelonès)
+    "08019", "08101", "08015", "08245", "08194",
+}
 CORONA: set[str] = set()  # corona metropolitana (contigüitat funcional, mobilitat obligada)
-CAPITALS_COMARCALS: set[str] = {"08022"}  # Berga (extensible a les 41 capitals)
+CAPITALS_COMARCALS: set[str] = {"08022", "43148"}  # Berga, Tarragona (extensible a les 41)
 
 DENSITAT_METRO = 1500.0  # hab/km² (llindar metropolità dens)
 ALTITUD_PIRINEU = 800.0  # m (llindar Pirineu / alta muntanya)
@@ -49,7 +56,9 @@ PADRO_MICRO = 250  # flag micromunicipi (modificador, no tipus)
 def classify(ine5: str, altitud: float | None, densitat: float | None) -> str:
     """Tipus territorial per ORDRE (primera regla que encaixa; rural és el residual)."""
     if ine5 in COSTANERS:
-        return "litoral_metropolita" if (ine5 in AMB or (densitat or 0) >= DENSITAT_METRO) else "litoral_vacacional"
+        # Litoral metropolità (AMB) vs vacacional (la resta): la densitat sola no distingeix
+        # un resort dens (Salou) d'una ciutat metro, per això partim per AMB.
+        return "litoral_metropolita" if ine5 in AMB else "litoral_vacacional"
     if ine5 in AMB or (densitat is not None and densitat >= DENSITAT_METRO):
         return "metropolita_dens"
     if ine5 in CORONA:
