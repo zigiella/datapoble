@@ -1,0 +1,868 @@
+{
+  "scope": "Berguedà",
+  "font": "Plataforma de Serveis de Contractació Pública (Generalitat) · Socrata ybgg-dgi6",
+  "comarca": {
+    "n_contractes": 1295,
+    "n_comarcal": 695,
+    "n_municipal": 600,
+    "import_total": 42411888,
+    "temes": [
+      {
+        "tema": "mobilitat",
+        "n": 195,
+        "import": 7143658
+      },
+      {
+        "tema": "administracio",
+        "n": 194,
+        "import": 2140054
+      },
+      {
+        "tema": "educacio",
+        "n": 193,
+        "import": 2654977
+      },
+      {
+        "tema": "cultura",
+        "n": 155,
+        "import": 1564955
+      },
+      {
+        "tema": "urbanisme",
+        "n": 94,
+        "import": 6664484
+      },
+      {
+        "tema": "digitalitzacio",
+        "n": 87,
+        "import": 1550433
+      },
+      {
+        "tema": "manteniment",
+        "n": 86,
+        "import": 1651602
+      },
+      {
+        "tema": "social",
+        "n": 62,
+        "import": 550054
+      },
+      {
+        "tema": "altres",
+        "n": 60,
+        "import": 362562
+      },
+      {
+        "tema": "residus",
+        "n": 43,
+        "import": 11105631
+      },
+      {
+        "tema": "aigua",
+        "n": 37,
+        "import": 4945106
+      },
+      {
+        "tema": "turisme",
+        "n": 32,
+        "import": 353438
+      },
+      {
+        "tema": "salut",
+        "n": 31,
+        "import": 149418
+      },
+      {
+        "tema": "seguretat",
+        "n": 18,
+        "import": 587087
+      },
+      {
+        "tema": "energia",
+        "n": 8,
+        "import": 988428
+      }
+    ],
+    "dependencia": {
+      "no_contracta_propi": 29,
+      "autonom": 2
+    }
+  },
+  "municipis": [
+    {
+      "ine5": "08011",
+      "nom": "Avià",
+      "poblacio": 2263,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 650035,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "residus",
+          "import": 242802
+        },
+        {
+          "tema": "educacio",
+          "import": 131216
+        },
+        {
+          "tema": "mobilitat",
+          "import": 87675
+        }
+      ]
+    },
+    {
+      "ine5": "08016",
+      "nom": "Bagà",
+      "poblacio": 2167,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 632200,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "residus",
+          "import": 232502
+        },
+        {
+          "tema": "educacio",
+          "import": 125650
+        },
+        {
+          "tema": "mobilitat",
+          "import": 87675
+        }
+      ]
+    },
+    {
+      "ine5": "08022",
+      "nom": "Berga",
+      "poblacio": 17539,
+      "import_municipal_directe": 21280508,
+      "n_contractes_municipal": 577,
+      "import_serveis_comarcals": 4166575,
+      "dependencia_ratio": 0.196,
+      "dependencia_lectura": "autonom",
+      "confianca": 0.5,
+      "temes_rebuts": [
+        {
+          "tema": "residus",
+          "import": 2065923
+        },
+        {
+          "tema": "educacio",
+          "import": 1030199
+        },
+        {
+          "tema": "aigua",
+          "import": 353643
+        }
+      ]
+    },
+    {
+      "ine5": "08024",
+      "nom": "Borredà",
+      "poblacio": 434,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 331866,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "mobilitat",
+          "import": 108892
+        },
+        {
+          "tema": "aigua",
+          "import": 75768
+        },
+        {
+          "tema": "urbanisme",
+          "import": 47923
+        }
+      ]
+    },
+    {
+      "ine5": "08045",
+      "nom": "Capolat",
+      "poblacio": 93,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 402567,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "urbanisme",
+          "import": 203595
+        },
+        {
+          "tema": "mobilitat",
+          "import": 87675
+        },
+        {
+          "tema": "aigua",
+          "import": 75768
+        }
+      ]
+    },
+    {
+      "ine5": "08049",
+      "nom": "Casserres",
+      "poblacio": 1665,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 719106,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "residus",
+          "import": 178641
+        },
+        {
+          "tema": "urbanisme",
+          "import": 177336
+        },
+        {
+          "tema": "educacio",
+          "import": 107633
+        }
+      ]
+    },
+    {
+      "ine5": "08050",
+      "nom": "Castellar del Riu",
+      "poblacio": 151,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 257670,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "mobilitat",
+          "import": 87675
+        },
+        {
+          "tema": "aigua",
+          "import": 75768
+        },
+        {
+          "tema": "urbanisme",
+          "import": 47923
+        }
+      ]
+    },
+    {
+      "ine5": "08052",
+      "nom": "Castellar de n'Hug",
+      "poblacio": 166,
+      "import_municipal_directe": 1198604,
+      "n_contractes_municipal": 23,
+      "import_serveis_comarcals": 260457,
+      "dependencia_ratio": 0.217,
+      "dependencia_lectura": "autonom",
+      "confianca": 0.5,
+      "temes_rebuts": [
+        {
+          "tema": "mobilitat",
+          "import": 87675
+        },
+        {
+          "tema": "aigua",
+          "import": 75768
+        },
+        {
+          "tema": "urbanisme",
+          "import": 47923
+        }
+      ]
+    },
+    {
+      "ine5": "08057",
+      "nom": "Castell de l'Areny",
+      "poblacio": 68,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 242251,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "mobilitat",
+          "import": 87675
+        },
+        {
+          "tema": "aigua",
+          "import": 75768
+        },
+        {
+          "tema": "urbanisme",
+          "import": 47923
+        }
+      ]
+    },
+    {
+      "ine5": "08078",
+      "nom": "l'Espunyola",
+      "poblacio": 260,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 277920,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "mobilitat",
+          "import": 87675
+        },
+        {
+          "tema": "aigua",
+          "import": 75768
+        },
+        {
+          "tema": "urbanisme",
+          "import": 47923
+        }
+      ]
+    },
+    {
+      "ine5": "08080",
+      "nom": "Fígols",
+      "poblacio": 41,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 245378,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "mobilitat",
+          "import": 87675
+        },
+        {
+          "tema": "aigua",
+          "import": 75768
+        },
+        {
+          "tema": "urbanisme",
+          "import": 47923
+        }
+      ]
+    },
+    {
+      "ine5": "08092",
+      "nom": "Gironella",
+      "poblacio": 5082,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 3080909,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "mobilitat",
+          "import": 886380
+        },
+        {
+          "tema": "aigua",
+          "import": 600102
+        },
+        {
+          "tema": "residus",
+          "import": 545258
+        }
+      ]
+    },
+    {
+      "ine5": "08093",
+      "nom": "Gisclareny",
+      "poblacio": 28,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 234820,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "mobilitat",
+          "import": 87675
+        },
+        {
+          "tema": "aigua",
+          "import": 75768
+        },
+        {
+          "tema": "urbanisme",
+          "import": 47923
+        }
+      ]
+    },
+    {
+      "ine5": "08099",
+      "nom": "Guardiola de Berguedà",
+      "poblacio": 962,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 996402,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "urbanisme",
+          "import": 555663
+        },
+        {
+          "tema": "residus",
+          "import": 103215
+        },
+        {
+          "tema": "mobilitat",
+          "import": 87675
+        }
+      ]
+    },
+    {
+      "ine5": "08130",
+      "nom": "Montclar",
+      "poblacio": 133,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 254326,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "mobilitat",
+          "import": 87675
+        },
+        {
+          "tema": "aigua",
+          "import": 75768
+        },
+        {
+          "tema": "urbanisme",
+          "import": 47923
+        }
+      ]
+    },
+    {
+      "ine5": "08132",
+      "nom": "Montmajor",
+      "poblacio": 471,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 395567,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "aigua",
+          "import": 154215
+        },
+        {
+          "tema": "mobilitat",
+          "import": 87675
+        },
+        {
+          "tema": "residus",
+          "import": 50535
+        }
+      ]
+    },
+    {
+      "ine5": "08142",
+      "nom": "la Nou de Berguedà",
+      "poblacio": 163,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 259900,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "mobilitat",
+          "import": 87675
+        },
+        {
+          "tema": "aigua",
+          "import": 75768
+        },
+        {
+          "tema": "urbanisme",
+          "import": 47923
+        }
+      ]
+    },
+    {
+      "ine5": "08144",
+      "nom": "Olvan",
+      "poblacio": 926,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 503986,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "urbanisme",
+          "import": 132092
+        },
+        {
+          "tema": "residus",
+          "import": 99352
+        },
+        {
+          "tema": "mobilitat",
+          "import": 87675
+        }
+      ]
+    },
+    {
+      "ine5": "08166",
+      "nom": "la Pobla de Lillet",
+      "poblacio": 1106,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 584893,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "aigua",
+          "import": 225572
+        },
+        {
+          "tema": "residus",
+          "import": 118665
+        },
+        {
+          "tema": "mobilitat",
+          "import": 87675
+        }
+      ]
+    },
+    {
+      "ine5": "08175",
+      "nom": "Puig-reig",
+      "poblacio": 4558,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 1153559,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "residus",
+          "import": 489037
+        },
+        {
+          "tema": "educacio",
+          "import": 267274
+        },
+        {
+          "tema": "urbanisme",
+          "import": 112749
+        }
+      ]
+    },
+    {
+      "ine5": "08177",
+      "nom": "la Quar",
+      "poblacio": 44,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 241547,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "mobilitat",
+          "import": 87675
+        },
+        {
+          "tema": "aigua",
+          "import": 75768
+        },
+        {
+          "tema": "urbanisme",
+          "import": 47923
+        }
+      ]
+    },
+    {
+      "ine5": "08188",
+      "nom": "Sagàs",
+      "poblacio": 153,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 258042,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "mobilitat",
+          "import": 87675
+        },
+        {
+          "tema": "aigua",
+          "import": 75768
+        },
+        {
+          "tema": "urbanisme",
+          "import": 47923
+        }
+      ]
+    },
+    {
+      "ine5": "08190",
+      "nom": "Saldes",
+      "poblacio": 301,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 293480,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "mobilitat",
+          "import": 87675
+        },
+        {
+          "tema": "aigua",
+          "import": 75768
+        },
+        {
+          "tema": "urbanisme",
+          "import": 55865
+        }
+      ]
+    },
+    {
+      "ine5": "08216",
+      "nom": "Sant Jaume de Frontanyà",
+      "poblacio": 25,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 234262,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "mobilitat",
+          "import": 87675
+        },
+        {
+          "tema": "aigua",
+          "import": 75768
+        },
+        {
+          "tema": "urbanisme",
+          "import": 47923
+        }
+      ]
+    },
+    {
+      "ine5": "08255",
+      "nom": "Santa Maria de Merlès",
+      "poblacio": 179,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 269472,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "mobilitat",
+          "import": 87675
+        },
+        {
+          "tema": "aigua",
+          "import": 75768
+        },
+        {
+          "tema": "urbanisme",
+          "import": 47923
+        }
+      ]
+    },
+    {
+      "ine5": "08268",
+      "nom": "Cercs",
+      "poblacio": 1236,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 1054705,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "aigua",
+          "import": 635233
+        },
+        {
+          "tema": "residus",
+          "import": 132613
+        },
+        {
+          "tema": "mobilitat",
+          "import": 87675
+        }
+      ]
+    },
+    {
+      "ine5": "08293",
+      "nom": "Vallcebre",
+      "poblacio": 260,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 277920,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "mobilitat",
+          "import": 87675
+        },
+        {
+          "tema": "aigua",
+          "import": 75768
+        },
+        {
+          "tema": "urbanisme",
+          "import": 47923
+        }
+      ]
+    },
+    {
+      "ine5": "08299",
+      "nom": "Vilada",
+      "poblacio": 430,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 335503,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "mobilitat",
+          "import": 87675
+        },
+        {
+          "tema": "aigua",
+          "import": 75768
+        },
+        {
+          "tema": "urbanisme",
+          "import": 73923
+        }
+      ]
+    },
+    {
+      "ine5": "08308",
+      "nom": "Viver i Serrateix",
+      "poblacio": 178,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 262686,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "mobilitat",
+          "import": 87675
+        },
+        {
+          "tema": "aigua",
+          "import": 75768
+        },
+        {
+          "tema": "urbanisme",
+          "import": 47923
+        }
+      ]
+    },
+    {
+      "ine5": "08903",
+      "nom": "Sant Julià de Cerdanyola",
+      "poblacio": 234,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 273090,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "mobilitat",
+          "import": 87675
+        },
+        {
+          "tema": "aigua",
+          "import": 75768
+        },
+        {
+          "tema": "urbanisme",
+          "import": 47923
+        }
+      ]
+    },
+    {
+      "ine5": "25100",
+      "nom": "Gósol",
+      "poblacio": 207,
+      "import_municipal_directe": 0,
+      "n_contractes_municipal": 0,
+      "import_serveis_comarcals": 268074,
+      "dependencia_ratio": null,
+      "dependencia_lectura": "no_contracta_propi",
+      "confianca": 0.35,
+      "temes_rebuts": [
+        {
+          "tema": "mobilitat",
+          "import": 87675
+        },
+        {
+          "tema": "aigua",
+          "import": 75768
+        },
+        {
+          "tema": "urbanisme",
+          "import": 47923
+        }
+      ]
+    }
+  ]
+}
