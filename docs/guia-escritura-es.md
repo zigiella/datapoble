@@ -17,7 +17,7 @@ pública al dato, el texto no puede prometer más de lo que el dato sabe.
 2. **Cada afirmación factual lleva su evidencia**: las claves de métrica que la sostienen (campo `evidencia`), para que en la UI cada frase sea clicable hasta la fuente.
 3. **Marca el tono de cada afirmación**: `mesura` (dato oficial), `inferencia` (estimación) o `interpretacio` (lectura tuya). *(Mantén estos valores en catalán: son claves del esquema.)*
 4. **Las inferencias, SIEMPRE en rango** o con «aproximadamente / las señales sugieren», nunca como hecho cerrado. El rango es el dato; el punto medio es una cortesía. Si el rango cruza el 0 → «no concluyente», nunca un número con signo.
-5. **Prohibido:** causalidad no demostrada; conducta individual; atribuciones a grupos de origen o nacionalidad; comparaciones con municipios fuera del pliego de hechos; superlativos sin rango («el más…»).
+5. **Prohibido:** causalidad atribuida a la conducta de personas; conducta individual; atribuciones a grupos de origen o nacionalidad; comparaciones con municipios fuera del pliego de hechos; superlativos sin rango («el más…»). *Explicar por qué una cifra está sesgada metodológicamente (p. ej. «inflada porque el denominador no recoge a quien duerme ahí») SÍ está permitido: es mecanismo, no atribución de conducta.*
 6. **Si hay DIVERGENCIA de señales** (flag), la **contra-lectura es obligatoria** y concreta (no decorativa).
 7. **Respeta el régimen narrativo** del municipio: sus frases permitidas y prohibidas mandan.
 8. **Ninguna cifra sin procedencia.** Todo dato arrastra fuente y naturaleza.
@@ -27,6 +27,18 @@ pública al dato, el texto no puede prometer más de lo que el dato sabe.
 - Claro, concreto, **sin épica ni alarmismo**. Frases cortas. Castellano neutro.
 - «Sacar chicha» de los datos = encontrar el relato real que está, **no inflarlo**.
 - Longitudes: veredicto ≤180 caracteres; cada lectura ≤90 palabras; cada pregunta ≤110 caracteres.
+
+### 2.1 · Estilo (precisión, claridad, autoridad)
+
+Configura *cómo se dice*; no anula ninguna regla dura.
+
+- **Afirma en positivo.** Empieza por lo que el dato sostiene, no por negar un malentendido. Sin enemigos retóricos.
+- **Sin contraste por inercia** («no X sino Y», «más que X, Y»). *La contra-lectura es la excepción: es un contraste necesario y no se toca.*
+- **Cautela calibrada al `to`.** `mesura` → frase directa, sin «podría/tiende a». `inferencia` → rango o «aproximadamente» (regla dura #4). El verificador falla si encuentra un hedge dentro de un claim `mesura`.
+- **Verbos con responsabilidad** (define, mide, separa, prioriza, delimita), no comodines (ayuda, permite, facilita, «genera valor»). Sustituye por el mecanismo.
+- **Nombra la autoridad** en *gobierno* y *auditoría*: el dato agrupa evidencia; la decisión es del consistorio. Di qué queda fuera del alcance.
+- **Densidad, no decoración.** Cada frase aporta; abstracciones ancladas a mecanismo o escala; condiciones explícitas («vale para ≥1000 hab»), no «en ciertos casos».
+- **Sin guion largo (—)** en el texto. Los rangos van con «–» o con palabras.
 
 ## 3 · Qué se escribe (estructura de la ficha)
 

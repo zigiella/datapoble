@@ -12,7 +12,7 @@
 2. **Cada afirmació factual porta la seva evidència**: les claus de mètrica que la sostenen (camp `evidencia`), perquè a la UI cada frase sigui clicable fins a la font.
 3. **Marca el to de cada afirmació**: `mesura` (dada oficial), `inferencia` (estimació) o `interpretacio` (lectura teva).
 4. **Les inferències, SEMPRE en rang** o amb «aproximadament / els senyals suggereixen», mai com a fet tancat. El rang és la dada; el punt mig és una cortesia. Si el rang creua el 0 → «no concloent», mai un número amb signe.
-5. **Prohibit:** causalitat no demostrada; conducta individual; atribucions a grups d'origen o nacionalitat; comparacions amb municipis fora del full de fets; superlatius sense rang («el més…»).
+5. **Prohibit:** causalitat atribuïda a la conducta de persones; conducta individual; atribucions a grups d'origen o nacionalitat; comparacions amb municipis fora del full de fets; superlatius sense rang («el més…»). *Explicar per què una xifra està esbiaixada metodològicament (p. ex. «inflada perquè el denominador no recull qui hi dorm») SÍ és permès: és mecanisme, no atribució de conducta.*
 6. **Si hi ha DIVERGÈNCIA de senyals** (flag), la **contra-lectura és obligatòria** i concreta (no decorativa).
 7. **Respecta el règim narratiu** del municipi (§3): les seves frases permeses i prohibides manen.
 8. **Cap xifra sense procedència.** Tota dada arrossega font i naturalesa.
@@ -23,6 +23,18 @@
 - Llenguatge de carrer a P1 (zero sigles: ni IETR, ni stock, ni L1/L2). El terme tècnic, si cal, com a cognom entre parèntesis a P2.
 - Res de floritura: la dada impressiona sola quan es diu bé. «Treure suc» de les dades vol dir trobar el relat real que hi és, **no inflar-lo**.
 - Longituds: veredicte ≤180 caràcters; cada lectura ≤90 paraules; cada pregunta ≤110 caràcters.
+
+### 2.1 · Estil (precisió, claredat, autoritat)
+
+Resum operatiu de [`estil-agnostic.md`](estil-agnostic.md). Configura *com es diu*; no anul·la cap regla dura.
+
+- **Afirma en positiu.** Comença pel que la dada sosté, no per negar un malentès. Sense enemics retòrics.
+- **Sense contrast per inèrcia** («no X sinó Y», «més que X, Y»). *La contra-lectura n'és l'excepció: és un contrast necessari i no es toca.*
+- **Cautela calibrada al `to`.** `mesura` → frase directa, sense «podria/tendeix a». `inferencia` → rang o «aproximadament» (regla dura #4). El verificador falla si troba un hedge dins d'un claim `mesura`.
+- **Verbs amb responsabilitat** (defineix, mesura, separa, prioritza, delimita), no comodins (ajuda, permet, facilita, «genera valor»). Substitueix pel mecanisme.
+- **Nomena l'autoritat** a *govern* i *auditoria*: la dada agrupa evidència; la decisió és del consistori. Digues què queda fora de l'abast.
+- **Densitat, no decoració.** Cada frase aporta; abstraccions ancorades a mecanisme o escala; condicions explícites («val per a ≥1000 hab»), no «en certs casos».
+- **Sense guió llarg (—)** al text. Els rangs van amb «–» o amb paraules.
 
 ## 3 · Què s'escriu (estructura de la fitxa)
 

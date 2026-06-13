@@ -99,7 +99,10 @@ def load_territorial() -> dict:
 
 # ---- Verificador determinista ----
 NUM_RE = re.compile(r"[-+]?\d[\d.]*(?:,\d+)?%?")
-BLACKLIST = re.compile(r"\b(perquè|a causa de|degut a|provoca|causa que|el més|la més|el millor|el pitjor|sens dubte|claríssim)\b", re.I)
+BLACKLIST = re.compile(
+    r"\b(a causa de|degut a|provoca|causa que|el més|la més|el millor|el pitjor|sens dubte|claríssim|"
+    r"revoluciona|canvia les regles|marca un abans i un després|porta al següent nivell|reinventa|"
+    r"genera valor|generar valor|canvi de paradigma|transformació integral|a nivell de)\b", re.I)
 REQUIRED = ["veredicte", "lectures", "contra_lectura", "preguntes", "confianca"]
 
 
