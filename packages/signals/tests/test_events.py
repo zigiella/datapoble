@@ -230,7 +230,7 @@ def test_parquet_pilot_compleix_invariants():
     assert q("SELECT count(*) FROM e WHERE ambit!='municipal' AND ine5 IS NOT NULL") == 0
     # totes les dates no nul·les són DATE vàlides (TRY_CAST ja ho garanteix al COPY)
     assert q("SELECT count(*) FROM e WHERE data IS NOT NULL AND TRY_CAST(data AS DATE) IS NULL") == 0
-    # àncores de Talaia (municipal = Berga 577 + Castellar 23 = 600; comarcal 695)
-    assert q("SELECT count(*) FROM e WHERE ambit='comarcal'") == 695
+    # àncores de Talaia (31 municipis del Berguedà; comarcal = Consell; Berga/Castellar fixos)
+    assert q("SELECT count(*) FROM e WHERE ambit='comarcal'") == 713
     assert q("SELECT count(*) FROM e WHERE ine5='08022'") == 577   # Berga
     assert q("SELECT count(*) FROM e WHERE ine5='08052'") == 23    # Castellar
