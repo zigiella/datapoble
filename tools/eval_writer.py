@@ -98,26 +98,29 @@ def load_territorial() -> dict:
 
 
 # ---- Verificador determinista ----
-NUM_RE = re.compile(r"[-+]?\d[\d.  ]*(?:,\d+)?%?")
+NUM_RE = re.compile(r"[-+]?\d[\d.]*(?:,\d+)?%?")
 BLACKLIST = re.compile(r"\b(perquè|a causa de|degut a|provoca|causa que|el més|la més|el millor|el pitjor|sens dubte|claríssim)\b", re.I)
 REQUIRED = ["veredicte", "lectures", "contra_lectura", "preguntes", "confianca"]
 
 
-def _norm_num(tok: str):
-    t = tok.strip().replace("%", "").replace(" ", "").replace(" ", "").replace("+", "")
-    if "," in t:  # decimal català
-        t = t.replace(".", "").replace(",", ".")
-    try:
-        return float(t)
-    except ValueError:
-        return None
+def _candidates(tok: str) -> set[float]:
+    """Valors candidats d'un token, provant les DUES convencions (català: «.» milers / «,»
+    decimal; anglès: «,» milers / «.» decimal) → robust a com escrigui el model."""
+    t = tok.strip().replace("%", "").replace("+", "").replace(" ", "")
+    out: set[float] = set()
+    for cand in (t.replace(".", "").replace(",", "."), t.replace(",", "")):
+        try:
+            out.add(float(cand))
+        except ValueError:
+            pass
+    return out
 
 
 def _fact_numbers(facts: dict) -> set[float]:
     nums: set[float] = set()
 
     def add(x):
-        if isinstance(x, (int, float)):
+        if isinstance(x, (int, float)) and not isinstance(x, bool):
             nums.add(float(x))
             nums.add(float(round(x)))
 
@@ -131,6 +134,10 @@ def _fact_numbers(facts: dict) -> set[float]:
         else:
             add(o)
     walk(facts)
+    try:
+        nums.add(float(int(facts.get("ine5", "x"))))  # l'ine5 no és confabulació
+    except (ValueError, TypeError):
+        pass
     return nums
 
 
@@ -150,13 +157,13 @@ def verify(content: str, facts: dict) -> dict:
         if facts.get("divergencia_pernocta_carrega"):
             cl = obj.get("contra_lectura") or {}
             res["contra_ok"] = bool((cl.get("text") if isinstance(cl, dict) else cl))
-    # Xifres no verificades (confabulació): compara amb els fets (tolerància).
+    # Xifres no verificades (confabulació): compara amb els fets (tolerància, doble convenció).
     allowed = _fact_numbers(facts)
     for tok in NUM_RE.findall(content):
-        x = _norm_num(tok)
-        if x is None or 2018 <= x <= 2027:  # ignora anys
+        cands = {c for c in _candidates(tok) if not (2018 <= c <= 2027)}  # ignora anys
+        if not cands:
             continue
-        if not any(abs(x - a) <= max(1.0, 0.02 * abs(x)) for a in allowed):
+        if not any(abs(c - a) <= max(1.0, 0.02 * abs(c)) for c in cands for a in allowed):
             res["unmatched_numbers"].append(tok.strip())
     res["blacklist"] = list({m.group(0).lower() for m in BLACKLIST.finditer(content)})
     return res
@@ -239,7 +246,7 @@ def main(argv=None) -> int:
             summary.append(row)
             flags = []
             if not ver["valid_json"]:
-                flags.append("JSON✗")
+                flags.append("JSON-no")
             if ver["missing_fields"]:
                 flags.append("falten:" + ",".join(ver["missing_fields"]))
             if ver["unmatched_numbers"]:
