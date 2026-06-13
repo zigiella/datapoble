@@ -173,7 +173,7 @@ def call_model(model: str, system: str, user: str) -> tuple[str, dict, float]:
     body = json.dumps({
         "model": model,
         "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
-        "temperature": 0.3, "max_tokens": 2200,
+        "temperature": 0.3, "max_tokens": 4096,
     }).encode("utf-8")
     req = urllib.request.Request(
         "https://openrouter.ai/api/v1/chat/completions", data=body,
@@ -185,7 +185,12 @@ def call_model(model: str, system: str, user: str) -> tuple[str, dict, float]:
     with urllib.request.urlopen(req, timeout=300) as r:
         d = json.load(r)
     dt = time.time() - t0
-    content = d["choices"][0]["message"]["content"]
+    if d.get("error"):  # OpenRouter pot tornar error dins un cos 200
+        raise RuntimeError(str(d["error"])[:160])
+    msg = (d.get("choices") or [{}])[0].get("message", {})
+    # Models de raonament poden deixar `content` buit (tokens gastats en raonament): no peta,
+    # cau a string buida → el verificador ho marca com a JSON invàlid (sortida fallida).
+    content = msg.get("content") or msg.get("reasoning") or ""
     return content, d.get("usage", {}), dt
 
 
