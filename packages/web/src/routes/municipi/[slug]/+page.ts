@@ -20,6 +20,7 @@
  */
 import { loadMunicipisDataset } from '$lib/data/dataset';
 import { buildSlugIndex } from '$lib/contract/slug';
+import type { LicitacionsData, LicitacionsMuni } from '$lib/contract/licitacions';
 import type { EntryGenerator, PageLoad } from './$types';
 
 export const prerender = true;
@@ -69,5 +70,19 @@ export const load: PageLoad = async ({ fetch, params }) => {
 	const ine5 = slugToIne5[params.slug] ?? null;
 	// `row` null = slug desconegut → estat «sense dades encara» (degradació amable, no 404 lleig).
 	const row = ine5 ? (dataset.municipis[ine5] ?? null) : null;
-	return { dataset, ine5, row };
+
+	// Licitacions del municipi (el cabal): opcional, de l'artefacte standalone. Prerender-safe.
+	let lic: LicitacionsMuni | null = null;
+	if (ine5) {
+		try {
+			const res = await fetch('/data/licitacions-bergueda.json');
+			if (res.ok) {
+				const data = (await res.json()) as LicitacionsData;
+				lic = data.municipis.find((mu) => mu.ine5 === ine5) ?? null;
+			}
+		} catch {
+			lic = null;
+		}
+	}
+	return { dataset, ine5, row, lic };
 };
