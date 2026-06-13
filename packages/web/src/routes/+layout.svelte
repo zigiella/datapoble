@@ -159,7 +159,7 @@
 	</div>
 	<div class="ap-foot__bottom">
 		<span>{m.foot_legal()}</span>
-		<span class="coord"><span>42°16′N · 1°53′E</span><span>{m.foot_update()}</span></span>
+		<span class="coord"><span>42°17′N · 2°01′E</span><span>{m.foot_update()}</span></span>
 	</div>
 </footer>
 
