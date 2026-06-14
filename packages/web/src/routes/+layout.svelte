@@ -185,7 +185,7 @@
 		</div>
 	</div>
 	<div class="ap-foot__bottom">
-		<span>{m.foot_legal()}</span>
+		<span>{m.foot_legal()} · <a href="https://zigiella.com/legal/">{m.foot_legal_notice()}</a> · <a href="https://zigiella.com/privacidad/">{m.foot_privacy()}</a></span>
 		<span class="coord"><span>42°17′N · 2°01′E</span><span>{m.foot_update()}</span></span>
 	</div>
 </footer>
