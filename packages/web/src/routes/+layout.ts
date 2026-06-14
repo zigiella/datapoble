@@ -8,6 +8,12 @@
  *
  * `trailingSlash = 'always'`: genera `ruta/index.html` (compatible amb el routing
  * d'arxius estàtics de Pages i amb el rewrite de locale de Paraglide).
+ *
+ * PREFIX DE LLENGUA: amb `urlPatterns` (vite.config) totes les URLs porten prefix /ca|/es.
+ * Les rutes canòniques (sense prefix) es generen igualment com a fallback en ca, però NO
+ * s'enllacen enlloc (tots els enllaços passen per `localizeHref`) i el host les redirigeix
+ * a /ca via `static/_redirects`. La redirecció es fa al host (no a un `load` universal):
+ * fer-la al layout trenca el prerender de SvelteKit (fetch + redirect = «Body already read»).
  */
 export const prerender = true;
 export const trailingSlash = 'always';
