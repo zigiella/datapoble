@@ -59,14 +59,16 @@
 	const contraLectura = $derived(
 		hasLectura && lectura?.contra_lectura?.text ? lectura.contra_lectura : null
 	);
-	// Perfils de lectura (ciutadania + visitant), apilats: cada perfil amb el seu subtítol i les
-	// seves afirmacions. Es mostren tots dos (cap interacció): més honest i robust que un toggle.
+	// Perfils de lectura (ciutadania + visitant): cada perfil amb les seves afirmacions. Es
+	// renderitzen TOTS DOS llistats (estàtics) i la pestanya activa només commuta quin és visible
+	// via `hidden` — mateix mecanisme provat que el toggle «mode dades» (`open={modeDades}`).
 	const lectGroups = $derived(
 		[
-			{ key: 'ciutadania', label: m.muni_lect_tab_ciutadania(), claims: lectClaims?.ciutadania ?? [] },
-			{ key: 'visitant', label: m.muni_lect_tab_visitant(), claims: lectClaims?.visitant ?? [] }
+			{ key: 'ciutadania' as const, label: m.muni_lect_tab_ciutadania(), claims: lectClaims?.ciutadania ?? [] },
+			{ key: 'visitant' as const, label: m.muni_lect_tab_visitant(), claims: lectClaims?.visitant ?? [] }
 		].filter((g) => g.claims.length > 0)
 	);
+	let lectTab = $state<'ciutadania' | 'visitant'>('ciutadania');
 
 	// Naturalesa epistèmica d'un claim → etiqueta + punt de procedència (mateix codi que el mapa).
 	function toLabel(to: LectTo): string {
@@ -590,9 +592,19 @@
 				<section class="ds-sec">
 					<div class="ds-sec__hd"><span class="ref">P2</span><h2>{m.muni_lect_title()}</h2></div>
 					<p class="muni-sec__sub">{m.muni_lect_ai_note()}</p>
+					<div class="lect__tabs" role="tablist" aria-label={m.muni_lect_title()}>
+						{#each lectGroups as g (g.key)}
+							<button
+								type="button"
+								role="tab"
+								class="lect__tab"
+								aria-selected={lectTab === g.key}
+								onclick={() => (lectTab = g.key)}>{g.label}</button
+							>
+						{/each}
+					</div>
 					{#each lectGroups as g (g.key)}
-						<h3 class="lect__h"><span class="lect__h-dot"></span>{g.label}</h3>
-						<ul class="lect__list">
+						<ul class="lect__list" hidden={lectTab !== g.key}>
 							{#each g.claims as c, i (g.key + i)}
 								<li class="lect__claim">
 									<span class="lect__to lect__to--{c.to}"
@@ -1094,27 +1106,28 @@
 		padding: 2px 8px;
 	}
 
-	/* P2 · lectures (narració de la IA per perfil). Subtítol de perfil + llista de claims. */
-	.lect__h {
+	/* P2 · lectures (narració de la IA per perfil). Pestanyes + llista de claims. */
+	.lect__tabs {
 		display: flex;
-		align-items: center;
 		gap: 8px;
-		margin: 18px 0 12px;
-		font-family: 'Archivo', var(--dp-font-display);
-		font-weight: 700;
-		font-size: 1rem;
-		letter-spacing: -0.01em;
-		color: var(--dp-text);
+		margin: 0 0 14px;
+		flex-wrap: wrap;
 	}
-	.lect__h:first-of-type {
-		margin-top: 4px;
+	.lect__tab {
+		font-family: var(--dp-font-mono);
+		font-size: 0.7rem;
+		letter-spacing: 0.03em;
+		padding: 6px 14px;
+		border: 1px solid var(--dp-border-strong);
+		border-radius: var(--dp-radius-full);
+		background: var(--dp-surface);
+		color: var(--dp-text-muted);
+		cursor: pointer;
 	}
-	.lect__h-dot {
-		width: 7px;
-		height: 7px;
-		border-radius: 50%;
-		flex: none;
-		background: var(--dp-accent, var(--dp-forest));
+	.lect__tab[aria-selected='true'] {
+		background: var(--dp-text);
+		color: var(--dp-bg);
+		border-color: var(--dp-text);
 	}
 	.lect__list {
 		list-style: none;
