@@ -1,0 +1,146 @@
+<script lang="ts">
+	/**
+	 * HOME «La Llera» (cercador primer) — la portada de riusdegent.
+	 *
+	 * Decisió Bea: la Home s'articula sobre BUSCADOR + MAPA + TROBALLES; /resum passa a subhome
+	 * de comarca. Aquí: hero amb el buscador com a heroi (MuniSearch), tira de TROBALLES
+	 * deterministes (extrems honestos del territori, amb procedència), MAPA coroplètic per
+	 * TIPOLOGIA (suport, navega a la fitxa) i PORTES DE COMARCA (Berguedà → /resum). Funcional;
+	 * el poliment fi anirà a la DA externa. Estil: design-system (classes .ap-hero/.ds-sec/.card/
+	 * .dot-- i les noves .home-* d'aplicacio.css). Cap xifra sense procedència.
+	 */
+	import { goto } from '$app/navigation';
+	import ContourField from '$lib/components/ContourField.svelte';
+	import ChoroplethMap from '$lib/components/ChoroplethMap.svelte';
+	import MuniSearch from '$lib/components/MuniSearch.svelte';
+	import { classify, methodFor } from '$lib/map/classify';
+	import { mapValue } from '$lib/map/indicators';
+	import { slugForIne5 } from '$lib/contract/slug';
+	import { buildTroballes, type Troballa } from '$lib/analysis/troballes';
+	import { localizeHref } from '$lib/i18n';
+	import { m } from '$lib/paraglide/messages';
+	import type { MetricKey } from '$lib/contract/types';
+	import type { PageData } from './$types';
+
+	let { data }: { data: PageData } = $props();
+	const dataset = $derived(data.dataset);
+	const geojson = $derived(data.geojson);
+	const comarques = $derived(data.comarques);
+
+	const troballes = $derived(buildTroballes(dataset, data.licitacions));
+
+	// Mapa de suport: coloració per TIPOLOGIA (categòric: quin TIPUS de pressió, no «més/menys»).
+	const indicator = 'tipologia' as MetricKey;
+	const series = $derived(
+		geojson.features.map((f: import('geojson').Feature) =>
+			mapValue(indicator, dataset.municipis[(f.properties?.ine5 as string) ?? '']?.values?.[indicator])
+		)
+	);
+	const method = $derived(methodFor(indicator));
+	const classification = $derived(classify(series, method));
+
+	function navTo(ine5: string | null) {
+		if (ine5 && dataset.municipis[ine5]) goto(localizeHref(`/municipi/${slugForIne5(ine5, dataset)}`));
+	}
+
+	function troballaText(t: Troballa): string {
+		switch (t.kind) {
+			case 'gap':
+				return m.home_troballa_gap({ nom: t.nom });
+			case 'ietr':
+				return m.home_troballa_ietr({ nom: t.nom });
+			case 'div':
+				return m.home_troballa_div({ nom: t.nom });
+			case 'lic':
+				return m.home_troballa_lic({ nom: t.nom });
+		}
+	}
+	function troballaCognom(t: Troballa): string {
+		switch (t.kind) {
+			case 'gap':
+				return m.home_cognom_gap();
+			case 'ietr':
+				return m.home_cognom_ietr();
+			case 'div':
+				return m.home_cognom_div();
+			case 'lic':
+				return m.home_cognom_lic();
+		}
+	}
+	const valorTxt = (t: Troballa): string =>
+		t.kind === 'gap' ? `+${t.valor}%` : t.kind === 'lic' ? `${t.valor}` : `${t.valor}`;
+
+	const heroSummits = [
+		{ cx: 900, cy: 130, r0: 16, step: 23, rings: 9, sq: 0.96, seed: 1.1, lt: 0.03 },
+		{ cx: 1080, cy: 290, r0: 14, step: 21, rings: 8, sq: 1.05, seed: 2.7, lt: 0.08 }
+	];
+	const heroLabels = ['31 municipis', '42°17′N', '1.245 m', '2°01′E'];
+</script>
+
+<svelte:head>
+	<title>{m.app_name()} · {m.app_tagline()}</title>
+	<meta name="description" content={m.home_lede()} />
+</svelte:head>
+
+<section data-view="home" class="on">
+	<!-- HERO · el buscador com a heroi (P1: la pregunta, sense jerga) -->
+	<div class="ap-hero">
+		<ContourField class="ap-hero__field" viewBox="0 0 1200 380" summits={heroSummits} divis={null} labels={heroLabels} />
+		<div class="ap-hero__in">
+			<p class="ap-eyebrow"><span>{m.home_eyebrow()}</span></p>
+			<h1>{m.home_h1()}</h1>
+			<p class="lede">{m.home_lede()}</p>
+			<MuniSearch {dataset} />
+		</div>
+	</div>
+
+	<div class="ds-main">
+		<!-- TROBALLES · el que les dades criden (extrems honestos, amb procedència) -->
+		{#if troballes.length}
+			<section class="ds-sec first">
+				<div class="ds-sec__hd"><span class="ref">★</span><h2>{m.home_troballes_title()}</h2></div>
+				<ul class="home-troballes">
+					{#each troballes as t (t.kind)}
+						<li>
+							<a class="troballa" href={localizeHref(`/municipi/${t.slug}`)}>
+								<span class="troballa__txt">{troballaText(t)}</span>
+								<span class="troballa__meta">
+									<span class="dot {t.to === 'mesura' ? 'dot--measured' : 'dot--derived'}"></span>
+									<span class="troballa__val">{valorTxt(t)}</span>
+									<span class="troballa__cognom">{troballaCognom(t)}</span>
+								</span>
+							</a>
+						</li>
+					{/each}
+				</ul>
+			</section>
+		{/if}
+
+		<!-- MAPA · el territori d'un cop d'ull (color per tipus de pressió; clic → fitxa) -->
+		<section class="ds-sec">
+			<div class="ds-sec__hd"><span class="ref">◵</span><h2>{m.home_map_title()}</h2></div>
+			<p class="lead">{m.home_map_hint()}</p>
+			<div class="home-map">
+				<ChoroplethMap {dataset} {geojson} {comarques} {indicator} {classification} onselect={navTo} />
+			</div>
+			<p class="home-map__more"><a href={localizeHref('/mapa')}>{m.home_map_more()} →</a></p>
+		</section>
+
+		<!-- PORTES DE COMARCA · /resum és ara la subhome del Berguedà -->
+		<section class="ds-sec">
+			<div class="ds-sec__hd"><span class="ref">▦</span><h2>{m.home_portes_title()}</h2></div>
+			<div class="home-portes">
+				<a class="porta porta--on" href={localizeHref('/resum')}>
+					<span class="porta__nom">Berguedà</span>
+					<span class="porta__sub">{m.home_porta_bergueda_sub()}</span>
+					<span class="porta__cta">{m.home_porta_bergueda_cta()} →</span>
+				</a>
+				<div class="porta porta--soon" aria-disabled="true">
+					<span class="porta__nom">{m.home_porta_proxim()}</span>
+					<span class="porta__sub">{m.home_porta_proxim_sub()}</span>
+					<span class="porta__soon">{m.home_porta_soon()}</span>
+				</div>
+			</div>
+		</section>
+	</div>
+</section>

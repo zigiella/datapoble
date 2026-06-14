@@ -281,3 +281,54 @@
   border-top:1px solid var(--dp-border); display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
   font-family:var(--dp-font-mono); font-size:.62rem; letter-spacing:.03em; color:var(--dp-text-subtle); }
 .ap-foot__bottom .coord{ display:flex; gap:14px; flex-wrap:wrap; }
+
+/* ================================================================ HOME «La Llera» (cercador primer) */
+/* Buscador (heroi): camp gran sobre les corbes del hero; resultats amb xip de tipologia. */
+.home-search{ margin-top:22px; max-width:52ch; }
+.home-search__box{ display:flex; align-items:center; gap:11px; background:var(--dp-surface); border:1px solid var(--dp-border-strong);
+  border-radius:var(--dp-radius-lg); padding:13px 16px; transition:border-color .15s; }
+.home-search__box:focus-within{ border-color:var(--dp-brand); }
+[data-theme="dark"] .home-search__box:focus-within{ border-color:var(--dp-brand-dark); }
+.home-search__icon{ font-size:1.25rem; line-height:1; color:var(--dp-text-subtle); font-style:normal; }
+.home-search__input{ flex:1; border:none; background:transparent; font-size:1.1rem; color:var(--dp-text); outline:none; font-family:inherit; }
+.home-search__input::placeholder{ color:var(--dp-text-subtle); }
+.home-search__scope{ margin:9px 2px 0; font-family:var(--dp-font-mono); font-size:.66rem; letter-spacing:.03em; color:var(--dp-text-subtle); }
+.home-search__empty{ margin:10px 2px 0; font-size:.9rem; color:var(--dp-text-muted); }
+.home-results{ list-style:none; margin:8px 0 0; padding:0; border:1px solid var(--dp-border); border-radius:var(--dp-radius-lg); overflow:hidden; background:var(--dp-surface); }
+.home-result{ display:flex; align-items:center; gap:12px; padding:11px 15px; text-decoration:none; border-top:1px solid var(--dp-border); }
+.home-results li:first-child .home-result{ border-top:none; }
+.home-result:hover, .home-result.on{ background:var(--dp-surface-sunken); }
+.home-result__nom{ color:var(--dp-text); font-size:.98rem; }
+.home-result__tipo{ margin-left:auto; font-family:var(--dp-font-mono); font-size:.62rem; letter-spacing:.02em;
+  border:1px solid var(--tipo,var(--dp-border-strong)); color:var(--tipo,var(--dp-text-muted)); border-radius:var(--dp-radius-full); padding:2px 9px; white-space:nowrap; }
+
+/* Troballes: targetes d'extrems honestos, amb punt de procedència slate/porpra. */
+.home-troballes{ list-style:none; margin:6px 0 0; padding:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px; }
+.troballa{ display:flex; flex-direction:column; gap:10px; height:100%; padding:14px 16px; text-decoration:none;
+  background:var(--dp-surface); border:1px solid var(--dp-border); border-radius:var(--dp-radius-lg); transition:border-color .15s; }
+.troballa:hover{ border-color:var(--dp-border-strong); }
+.troballa__txt{ color:var(--dp-text); font-size:.98rem; line-height:1.4; }
+.troballa__meta{ display:flex; align-items:center; gap:7px; margin-top:auto; font-size:.74rem; color:var(--dp-text-muted); }
+.troballa__meta .dot{ width:8px; height:8px; border-radius:50%; flex:none; }
+.troballa__val{ font-family:var(--dp-font-mono); color:var(--dp-text); }
+.troballa__cognom{ color:var(--dp-text-subtle); }
+
+/* Mapa de suport. */
+.home-map{ position:relative; height:440px; border:1px solid var(--dp-border); border-radius:var(--dp-radius-lg); overflow:hidden; margin-top:6px; }
+.home-map > :global(div){ width:100%; height:100%; }
+.home-map__more{ margin:10px 2px 0; font-size:.84rem; }
+.home-map__more a{ color:var(--dp-brand); text-decoration:none; }
+[data-theme="dark"] .home-map__more a{ color:var(--dp-brand-dark); }
+
+/* Portes de comarca. */
+.home-portes{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+@media (max-width:560px){ .home-portes{ grid-template-columns:1fr; } }
+.porta{ display:flex; flex-direction:column; gap:5px; padding:15px 17px; border-radius:var(--dp-radius-lg); border:1px solid var(--dp-border); background:var(--dp-surface); text-decoration:none; }
+.porta--on{ border-color:var(--dp-brand); }
+[data-theme="dark"] .porta--on{ border-color:var(--dp-brand-dark); }
+.porta--soon{ opacity:.6; }
+.porta__nom{ font-family:var(--dp-font-display); font-size:1.1rem; color:var(--dp-text); }
+.porta__sub{ font-size:.82rem; color:var(--dp-text-muted); }
+.porta__cta{ margin-top:4px; font-size:.82rem; color:var(--dp-brand); }
+[data-theme="dark"] .porta__cta{ color:var(--dp-brand-dark); }
+.porta__soon{ margin-top:4px; font-family:var(--dp-font-mono); font-size:.66rem; color:var(--dp-text-subtle); }

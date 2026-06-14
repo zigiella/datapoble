@@ -50,7 +50,7 @@
 
 <!-- ============================ CAPÇALERA ============================ -->
 <header class="ds-top">
-	<a class="ds-top__brand" href={localizeHref('/resum')} aria-label={m.app_name()}>
+	<a class="ds-top__brand" href={localizeHref('/')} aria-label={m.app_name()}>
 		<img src="{base}/brand/riusdegent-mark.svg" width="30" height="30" alt="" />
 		<span class="txt">
 			<span class="wm">rius<b>degent</b></span>
@@ -58,6 +58,9 @@
 		</span>
 	</a>
 	<nav class="ds-nav" aria-label="Primary">
+		<a href={localizeHref('/')} class:on={isActive('/')} aria-current={isActive('/') ? 'page' : undefined}>
+			<span>{m.nav_inici()}</span>
+		</a>
 		<a href={localizeHref('/resum')} class:on={isActive('/resum')} aria-current={isActive('/resum') ? 'page' : undefined}>
 			<span>{m.nav_resum()}</span>
 		</a>
@@ -94,6 +97,7 @@
 	</button>
 	{#if menuOpen}
 		<div id="ds-drawer" class="ds-drawer">
+			<a href={localizeHref('/')} class:on={isActive('/')} onclick={() => (menuOpen = false)}>{m.nav_inici()}</a>
 			<a href={localizeHref('/resum')} class:on={isActive('/resum')} onclick={() => (menuOpen = false)}>{m.nav_resum()}</a>
 			<a href={localizeHref('/mapa')} class:on={isActive('/mapa')} onclick={() => (menuOpen = false)}>{m.nav_mapa()}</a>
 			<a href={localizeHref('/licitacions')} class:on={isActive('/licitacions')} onclick={() => (menuOpen = false)}>{m.nav_licitacions()}</a>
