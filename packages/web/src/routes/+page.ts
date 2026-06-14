@@ -1,11 +1,27 @@
 /**
- * Arrel `/`: redirigeix a la pantalla de resum, conservant el locale actiu.
- * El prefix d'idioma (/ca | /es) el resol Paraglide via `localizeHref`/reroute.
+ * Arrel `/` — la HOME «La Llera» (cercador primer): buscador de municipis + mapa + troballes.
+ * Abans redirigia a /resum; ara /resum és la subhome de comarca i l'arrel és la portada.
+ *
+ * Carrega el dataset (buscador + troballes), la geometria de Catalunya (mapa coroplètic) i
+ * l'artefacte de licitacions (per a la troballa de contractació pròpia). Tot són actius
+ * estàtics → `fetch` prerender-safe.
  */
-import { redirect } from '@sveltejs/kit';
-import { localizeHref } from '$lib/i18n';
+import { loadMunicipisDataset } from '$lib/data/dataset';
+import type { LicitacionsPayload } from '$lib/analysis/troballes';
+import type { FeatureCollection } from 'geojson';
 import type { PageLoad } from './$types';
 
-export const load: PageLoad = () => {
-	redirect(307, localizeHref('/resum'));
+export const prerender = true;
+
+export const load: PageLoad = async ({ fetch }) => {
+	const [dataset, munRes, comRes, licRes] = await Promise.all([
+		loadMunicipisDataset(fetch),
+		fetch('/geo/catalunya-municipis.geojson'),
+		fetch('/geo/catalunya-comarques.geojson'),
+		fetch('/data/licitacions-bergueda.json')
+	]);
+	const geojson = (await munRes.json()) as FeatureCollection;
+	const comarques = (await comRes.json()) as FeatureCollection;
+	const licitacions = licRes.ok ? ((await licRes.json()) as LicitacionsPayload) : null;
+	return { dataset, geojson, comarques, licitacions };
 };
