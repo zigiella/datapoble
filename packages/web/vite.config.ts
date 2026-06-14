@@ -10,7 +10,18 @@ export default defineConfig({
 		paraglideVitePlugin({
 			project: './project.inlang',
 			outdir: './src/lib/paraglide',
-			strategy: ['url', 'cookie', 'baseLocale']
+			strategy: ['url', 'cookie', 'baseLocale'],
+			// Prefix EXPLÍCIT per a TOTES les llengües, també la base (ca): /ca/… i /es/…,
+			// cap URL sense prefix d'idioma. Deixa el terreny per a oc (aranès) i en (anglès).
+			urlPatterns: [
+				{
+					pattern: ':protocol://:domain(.*)::port?/:path(.*)?',
+					localized: [
+						['ca', ':protocol://:domain(.*)::port?/ca/:path(.*)?'],
+						['es', ':protocol://:domain(.*)::port?/es/:path(.*)?']
+					]
+				}
+			]
 		}),
 		sveltekit()
 	]

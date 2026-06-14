@@ -15,7 +15,7 @@
 	import LangSwitcher from '$lib/components/LangSwitcher.svelte';
 	import ThemeSwitcher from '$lib/components/ThemeSwitcher.svelte';
 	import ContourField from '$lib/components/ContourField.svelte';
-	import { localizeHref, deLocalizeUrl } from '$lib/i18n';
+	import { localizeHref, deLocalizeUrl, currentLocale } from '$lib/i18n';
 	import { base } from '$app/paths';
 	import { page } from '$app/state';
 	import { m } from '$lib/paraglide/messages';
@@ -35,6 +35,15 @@
 		return path === p || path.startsWith(p + '/');
 	}
 
+	// SEO: canonical + hreflang + Open Graph a partir de la URL localitzada actual.
+	// `path` és la ruta canònica (sense prefix); localizeHref hi torna a posar /ca|/es.
+	const SITE = 'https://riusdegent.cat';
+	const canonicalUrl = $derived(SITE + page.url.pathname);
+	const altCa = $derived(SITE + localizeHref(path, { locale: 'ca' }));
+	const altEs = $derived(SITE + localizeHref(path, { locale: 'es' }));
+	const ogLocale = $derived(currentLocale() === 'es' ? 'es_ES' : 'ca_ES');
+	const ogLocaleAlt = $derived(currentLocale() === 'es' ? 'ca_ES' : 'es_ES');
+
 	// Corbes del peu (cims + divisòria + etiquetes de dada real), com al target.
 	const footSummits = [
 		{ cx: 250, cy: 120, r0: 16, step: 24, rings: 8, sq: 0.95, seed: 0.6, lt: 0.02 },
@@ -43,6 +52,20 @@
 	const footDivis = { cx: 600, cy: 110, r: 150, sq: 1.0, seed: 1.4 };
 	const footLabels = ['1.245 m', '42°16′N', '31', '1°53′E', '593'];
 </script>
+
+<svelte:head>
+	<link rel="canonical" href={canonicalUrl} />
+	<link rel="alternate" hreflang="ca" href={altCa} />
+	<link rel="alternate" hreflang="es" href={altEs} />
+	<link rel="alternate" hreflang="x-default" href={altCa} />
+	<meta property="og:type" content="website" />
+	<meta property="og:site_name" content={m.app_name()} />
+	<meta property="og:title" content={`${m.app_name()} · ${m.app_tagline()}`} />
+	<meta property="og:description" content={m.brand_sub()} />
+	<meta property="og:url" content={canonicalUrl} />
+	<meta property="og:locale" content={ogLocale} />
+	<meta property="og:locale:alternate" content={ogLocaleAlt} />
+</svelte:head>
 
 <svelte:window onkeydown={(e) => { if (e.key === 'Escape') menuOpen = false; }} />
 

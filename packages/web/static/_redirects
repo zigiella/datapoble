@@ -1,2 +1,19 @@
-/preguntale /pregunta-li 301
-/es/preguntale /es/pregunta-li 301
+# Prefix de llengua: amb `urlPatterns` (vite.config) tota URL porta prefix /ca|/es.
+# Les rutes canòniques (sense prefix) es generen com a fallback en ca però NO s'enllacen
+# (tots els enllaços passen per localizeHref → /ca|/es) i tenen <link rel=canonical> a /ca.
+# Cloudflare Pages avalua _redirects ABANS dels fitxers estàtics, així que aquestes regles
+# manen sobre les pàgines canòniques. L'arrel és la redirecció clau (la que tothom toca).
+/  /ca/  301
+
+# Rutes de contingut sense prefix → /ca (neteja; el splat conserva slug/subruta).
+/resum/*  /ca/resum/:splat  301
+/mapa/*  /ca/mapa/:splat  301
+/municipi/*  /ca/municipi/:splat  301
+/licitacions/*  /ca/licitacions/:splat  301
+/metodologia/*  /ca/metodologia/:splat  301
+/glossari/*  /ca/glossari/:splat  301
+/pregunta-li/*  /ca/pregunta-li/:splat  301
+
+# Legacy (l'alias antic sense guió) → ara amb prefix.
+/preguntale  /ca/pregunta-li  301
+/es/preguntale  /es/pregunta-li  301
