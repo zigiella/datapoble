@@ -84,6 +84,42 @@ def _nums(text: str) -> set[float]:
     return out
 
 
+def _text_blob(obj: dict) -> str:
+    """Concatena NOMÉS el text redactat de la lectura (camps `text`/strings visibles), no les
+    claus ni l'estructura del JSON. Els números i la llista negra es comproven sobre AIXÒ: la
+    clau `ine5` conté un dígit («5») i les claus d'evidència en porten («rtc_per_1000hab») —
+    escanejar el JSON cru els marcava com a confabulació (fals positiu)."""
+    parts: list[str] = []
+
+    def add(x):
+        if isinstance(x, str) and x.strip():
+            parts.append(x)
+
+    ver = obj.get("veredicte")
+    add(ver.get("text") if isinstance(ver, dict) else None)
+    add(obj.get("perfil_public"))
+    lec = obj.get("lectures")
+    if isinstance(lec, dict):
+        for claims in lec.values():
+            for c in (claims if isinstance(claims, list) else []):
+                if isinstance(c, dict):
+                    add(c.get("text"))
+    cl = obj.get("contra_lectura")
+    add(cl.get("text") if isinstance(cl, dict) else None)
+    for s in (obj.get("dades_que_falten") or []):
+        add(s)
+    preg = obj.get("preguntes")
+    if isinstance(preg, dict):
+        for arr in preg.values():
+            for s in (arr if isinstance(arr, list) else []):
+                add(s)
+    conf = obj.get("confianca")
+    if isinstance(conf, dict):
+        for s in (conf.get("motius") or []):
+            add(s)
+    return "\n".join(parts)
+
+
 def verify(content: str, facts: dict, bl: re.Pattern, hedge: re.Pattern | None = None) -> dict:
     res = {"valid_json": False, "missing": [], "unmatched": [], "blacklist": [],
            "hedge_mesura": [], "contra_ok": True}
@@ -103,13 +139,16 @@ def verify(content: str, facts: dict, bl: re.Pattern, hedge: re.Pattern | None =
                     if isinstance(c, dict) and c.get("to") == "mesura":
                         hits.update(m.group(0).lower() for m in hedge.finditer(c.get("text") or ""))
             res["hedge_mesura"] = sorted(hits)
-    allowed = _fact_numbers(facts)
-    for tok in NUM_RE.findall(content):
+    # Comprova números i llista negra sobre el TEXT redactat (no les claus del JSON). Si el JSON
+    # no ha parsejat, cau al cru per no deixar passar sortida trencada.
+    scan = _text_blob(obj) if obj else content
+    allowed = _fact_numbers(facts) | {0.0, 100.0}  # àncores d'escala (0-100: IETR, %, divergència)
+    for tok in NUM_RE.findall(scan):
         cands = {c for c in _candidates(tok) if not (2018 <= c <= 2027)}
         if cands and not any(abs(c - a) <= max(1.0, 0.02 * abs(c)) for c in cands for a in allowed):
             res["unmatched"].append(tok.strip())
-    bl_hits = {m.group(0).lower() for m in bl.finditer(content)}
-    if "—" in content:  # guió llarg (—) prohibit al text de la fitxa
+    bl_hits = {m.group(0).lower() for m in bl.finditer(scan)}
+    if "—" in scan:  # guió llarg (—) prohibit al text de la fitxa
         bl_hits.add("—")
     res["blacklist"] = sorted(bl_hits)
     return res
