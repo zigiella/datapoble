@@ -59,19 +59,13 @@
 	const contraLectura = $derived(
 		hasLectura && lectura?.contra_lectura?.text ? lectura.contra_lectura : null
 	);
-	// Pestanya activa (ciutadania per defecte); cau a la que existeixi si l'altra és buida.
-	let lectTab = $state<'ciutadania' | 'visitant'>('ciutadania');
-	const activeLectTab = $derived(
-		lectTab === 'visitant'
-			? hasVisitant
-				? 'visitant'
-				: 'ciutadania'
-			: hasCiutadania
-				? 'ciutadania'
-				: 'visitant'
-	);
-	const activeClaims = $derived(
-		(activeLectTab === 'visitant' ? lectClaims?.visitant : lectClaims?.ciutadania) ?? []
+	// Perfils de lectura (ciutadania + visitant), apilats: cada perfil amb el seu subtítol i les
+	// seves afirmacions. Es mostren tots dos (cap interacció): més honest i robust que un toggle.
+	const lectGroups = $derived(
+		[
+			{ key: 'ciutadania', label: m.muni_lect_tab_ciutadania(), claims: lectClaims?.ciutadania ?? [] },
+			{ key: 'visitant', label: m.muni_lect_tab_visitant(), claims: lectClaims?.visitant ?? [] }
+		].filter((g) => g.claims.length > 0)
 	);
 
 	// Naturalesa epistèmica d'un claim → etiqueta + punt de procedència (mateix codi que el mapa).
@@ -84,11 +78,19 @@
 	}
 	const toDot = (to: LectTo) => (to === 'mesura' ? 'dot--measured' : 'dot--derived');
 
-	// Claus d'evidència → etiquetes humanes de mètrica (les desconegudes es mostren tal qual).
+	// Claus d'evidència → etiquetes humanes. Primer mètriques del contracte; després els fets
+	// COMPOSTOS (pernocta en rang, validació ETCA, tipus de territori) que el relat cita però que
+	// no són mètriques; la resta, tal qual (mai una clau snake_case crua a l'usuari si es pot evitar).
+	const EV_COMPOSITE: Record<string, () => string> = {
+		pernocta_rang: () => m.muni_ev_pernocta_rang(),
+		etca_idescat: () => m.muni_ev_etca_idescat(),
+		tipus_territorial: () => m.muni_ev_tipus_territorial()
+	};
 	function evidLabels(keys: string[] | undefined): string[] {
 		return (keys ?? []).map((k) => {
 			const def = dataset.metrics[k as MetricKey];
-			return def ? pick(def.label, locale) : k;
+			if (def) return pick(def.label, locale);
+			return EV_COMPOSITE[k]?.() ?? k;
 		});
 	}
 
@@ -588,42 +590,25 @@
 				<section class="ds-sec">
 					<div class="ds-sec__hd"><span class="ref">P2</span><h2>{m.muni_lect_title()}</h2></div>
 					<p class="muni-sec__sub">{m.muni_lect_ai_note()}</p>
-					<div class="lect__tabs" role="tablist" aria-label={m.muni_lect_title()}>
-						{#if hasCiutadania}
-							<button
-								type="button"
-								role="tab"
-								class="lect__tab"
-								aria-selected={activeLectTab === 'ciutadania'}
-								onclick={() => (lectTab = 'ciutadania')}>{m.muni_lect_tab_ciutadania()}</button
-							>
-						{/if}
-						{#if hasVisitant}
-							<button
-								type="button"
-								role="tab"
-								class="lect__tab"
-								aria-selected={activeLectTab === 'visitant'}
-								onclick={() => (lectTab = 'visitant')}>{m.muni_lect_tab_visitant()}</button
-							>
-						{/if}
-					</div>
-					<ul class="lect__list">
-						{#each activeClaims as c (c.text)}
-							<li class="lect__claim">
-								<span class="lect__to lect__to--{c.to}"
-									><span class="pd {toDot(c.to)}"></span>{toLabel(c.to)}</span
-								>
-								<p class="lect__text">{c.text}</p>
-								{#if c.evidencia?.length}
-									<p class="lect__evid">
-										{#each evidLabels(c.evidencia) as e (e)}<span class="lect__evchip">{e}</span
-											>{/each}
-									</p>
-								{/if}
-							</li>
-						{/each}
-					</ul>
+					{#each lectGroups as g (g.key)}
+						<h3 class="lect__h"><span class="lect__h-dot"></span>{g.label}</h3>
+						<ul class="lect__list">
+							{#each g.claims as c, i (g.key + i)}
+								<li class="lect__claim">
+									<span class="lect__to lect__to--{c.to}"
+										><span class="pd {toDot(c.to)}"></span>{toLabel(c.to)}</span
+									>
+									<p class="lect__text">{c.text}</p>
+									{#if c.evidencia?.length}
+										<p class="lect__evid">
+											{#each evidLabels(c.evidencia) as e (e)}<span class="lect__evchip">{e}</span
+												>{/each}
+										</p>
+									{/if}
+								</li>
+							{/each}
+						</ul>
+					{/each}
 					{#if contraLectura}
 						<div class="alert" style="margin-top:6px">
 							<span class="bar"></span>
@@ -1109,28 +1094,27 @@
 		padding: 2px 8px;
 	}
 
-	/* P2 · lectures (narració de la IA per perfil). Pestanyes + llista de claims amb naturalesa. */
-	.lect__tabs {
+	/* P2 · lectures (narració de la IA per perfil). Subtítol de perfil + llista de claims. */
+	.lect__h {
 		display: flex;
+		align-items: center;
 		gap: 8px;
-		margin: 0 0 14px;
-		flex-wrap: wrap;
+		margin: 18px 0 12px;
+		font-family: 'Archivo', var(--dp-font-display);
+		font-weight: 700;
+		font-size: 1rem;
+		letter-spacing: -0.01em;
+		color: var(--dp-text);
 	}
-	.lect__tab {
-		font-family: var(--dp-font-mono);
-		font-size: 0.7rem;
-		letter-spacing: 0.03em;
-		padding: 6px 14px;
-		border: 1px solid var(--dp-border-strong);
-		border-radius: var(--dp-radius-full);
-		background: var(--dp-surface);
-		color: var(--dp-text-muted);
-		cursor: pointer;
+	.lect__h:first-of-type {
+		margin-top: 4px;
 	}
-	.lect__tab[aria-selected='true'] {
-		background: var(--dp-text);
-		color: var(--dp-bg);
-		border-color: var(--dp-text);
+	.lect__h-dot {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		flex: none;
+		background: var(--dp-accent, var(--dp-forest));
 	}
 	.lect__list {
 		list-style: none;
