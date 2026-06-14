@@ -21,6 +21,7 @@
 	 * Chrome del design-system (.ap-hero + .ds-main/.ds-sec); el text nou és i18n ca/es.
 	 */
 	import { goto } from '$app/navigation';
+	import { browser } from '$app/environment';
 	import ContourField from '$lib/components/ContourField.svelte';
 	import { currentLocale, pick, localizeHref } from '$lib/i18n';
 	import { formatMetric, formatDecimal, formatInteger } from '$lib/format';
@@ -41,6 +42,12 @@
 	const lic = $derived(data.lic);
 	const locale = $derived(currentLocale());
 	const eurLic = (v: number | null) => eurCurt(v, locale === 'es' ? 'es-ES' : 'ca-ES');
+
+	// «Mode dades» (spec §1.2): desplega la P3 (la maquinària) per defecte i es recorda.
+	let modeDades = $state(browser ? localStorage.getItem('rdg-dades') === '1' : false);
+	$effect(() => {
+		if (browser) localStorage.setItem('rdg-dades', modeDades ? '1' : '0');
+	});
 
 	// ── Blocs editorials que cobreixen TOT el catàleg del contracte ──────────────────────────
 	// Mateix esperit que la metodologia/Resum, però aquí l'objectiu és NO deixar fora cap mètrica
@@ -501,13 +508,48 @@
 				</div>
 			</section>
 
-			<!-- TOTES les mètriques, en blocs editorials. Cap mètrica del municipi queda fora; cada
-			     fila porta el seu punt de procedència (mesura/inferència) del contracte. -->
-			{#each blocks as block (block.ref)}
-				<section class="ds-sec">
-					<div class="ds-sec__hd">
-						<span class="ref">{block.ref}</span><h2>{block.title()}</h2>
+			<!-- P2 · L'EVIDÈNCIA: els cinc números (del dataset). El «qui hi dorm» és inferència i
+			     es mostra en RANG (el rang és la dada, spec §10). -->
+			<section class="ds-sec">
+				<div class="ds-sec__hd"><span class="ref">P2</span><h2>{m.muni_5num_title()}</h2></div>
+				<div class="muni-5num tnum">
+					<div class="n5">
+						<span class="n5__lab"><span class="pd dot--measured"></span>{m.muni_num_padro()}</span>
+						<span class="n5__v">{typeof row.values.poblacio === 'number' ? formatInteger(row.values.poblacio, locale) : '—'}</span>
 					</div>
+					<div class="n5">
+						<span class="n5__lab"><span class="pd dot--derived"></span>{m.muni_num_dorm()}</span>
+						<span class="n5__v">{#if pernoctaBand}{fInt(pernoctaBand.estLow)}–{fInt(pernoctaBand.estHigh)}{:else}—{/if}</span>
+					</div>
+					<div class="n5">
+						<span class="n5__lab"><span class="pd dot--derived"></span>{m.muni_num_carrega()}</span>
+						<span class="n5__v">{typeof row.values.carrega_total_est === 'number' ? fInt(row.values.carrega_total_est) : '—'}</span>
+					</div>
+					<div class="n5">
+						<span class="n5__lab"><span class="pd dot--measured"></span>{m.muni_num_nop()}</span>
+						<span class="n5__v">{typeof row.values.pct_noprincipal === 'number' ? formatDecimal(row.values.pct_noprincipal, locale, 0) : '—'}<span class="n5__u">%</span></span>
+					</div>
+					<div class="n5">
+						<span class="n5__lab"><span class="pd dot--derived"></span>{m.muni_num_expo()}</span>
+						<span class="n5__v">{ietr !== null ? formatDecimal(ietr, locale, 0) : '—'}<span class="n5__u">/100{#if ietrRank} · {ietrRank}è{/if}</span></span>
+					</div>
+				</div>
+			</section>
+
+			<!-- P3 · LA MAQUINÀRIA: la fitxa completa, plegada en acordions (oberts amb «mode dades»).
+			     «No traiem res, ho baixem de planta»: cada mètrica del municipi amb la seva procedència. -->
+			<section class="ds-sec muni-p3cap">
+				<div class="ds-sec__hd"><span class="ref">P3</span><h2>{m.muni_p3_cap()}</h2></div>
+				<div class="muni-p3cap__row">
+					<p class="muni-sec__sub" style="margin:0">{m.muni_p3_sub()}</p>
+					<button type="button" class="muni-mode" aria-pressed={modeDades} onclick={() => (modeDades = !modeDades)}>{m.muni_mode_dades()}</button>
+				</div>
+			</section>
+			{#each blocks as block (block.ref)}
+				<details class="ds-sec acc" open={modeDades}>
+					<summary class="ds-sec__hd acc__sum">
+						<span class="ref">{block.ref}</span><h2>{block.title()}</h2>
+					</summary>
 					{#if block.sub}<p class="muni-sec__sub">{block.sub()}</p>{/if}
 					<div class="ex__rows tnum">
 						{#each block.keys as key (key)}
@@ -528,7 +570,7 @@
 						</div>
 					{/if}
 					<p class="muni-sec__src">{srcLine(dataset.metrics[block.keys[0]])}</p>
-				</section>
+				</details>
 			{/each}
 
 			<section class="ds-sec">
@@ -849,6 +891,99 @@
 		font-size: 0.64rem;
 		color: var(--dp-text-subtle);
 		line-height: 1.45;
+	}
+
+	/* P2 · els cinc números. */
+	.muni-5num {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+		gap: 10px;
+	}
+	.n5 {
+		background: var(--dp-surface);
+		border: 1px solid var(--dp-border);
+		border-radius: var(--dp-radius-md);
+		padding: 11px 13px;
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+	.n5__lab {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		font-size: 0.74rem;
+		color: var(--dp-text-muted);
+	}
+	.n5__lab .pd {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		flex: none;
+	}
+	.n5__v {
+		font-family: 'Archivo', var(--dp-font-display);
+		font-weight: 700;
+		font-size: 1.4rem;
+		line-height: 1;
+		color: var(--dp-text);
+	}
+	.n5__u {
+		font-family: var(--dp-font-mono);
+		font-size: 0.6rem;
+		color: var(--dp-text-subtle);
+		margin-left: 3px;
+	}
+
+	/* P3 · capçalera + toggle «mode dades». */
+	.muni-p3cap__row {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 12px;
+		flex-wrap: wrap;
+	}
+	.muni-mode {
+		font-family: var(--dp-font-mono);
+		font-size: 0.66rem;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		padding: 5px 12px;
+		border: 1px solid var(--dp-border-strong);
+		border-radius: var(--dp-radius-full);
+		background: var(--dp-surface);
+		color: var(--dp-text-muted);
+		cursor: pointer;
+	}
+	.muni-mode[aria-pressed='true'] {
+		background: var(--dp-text);
+		color: var(--dp-bg);
+		border-color: var(--dp-text);
+	}
+
+	/* P3 · acordions (la fitxa d'ara, plegada). */
+	.acc__sum {
+		cursor: pointer;
+		list-style: none;
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+	.acc__sum::-webkit-details-marker {
+		display: none;
+	}
+	.acc__sum::after {
+		content: '';
+		margin-left: auto;
+		width: 8px;
+		height: 8px;
+		border-right: 2px solid var(--dp-text-subtle);
+		border-bottom: 2px solid var(--dp-text-subtle);
+		transform: rotate(45deg);
+		transition: transform 0.15s ease;
+	}
+	.acc[open] .acc__sum::after {
+		transform: rotate(-135deg);
 	}
 
 	/* Caixeta «Lectura per a serveis» (consultor #4): quin denominador toca a cada servei. */
