@@ -111,6 +111,8 @@
   "foot_lang": "Idioma",
   "foot_theme": "Tema",
   "foot_legal": "riusdegent · observatori territorial del Berguedà · dades obertes",
+  "foot_legal_notice": "Avís legal",
+  "foot_privacy": "Privacitat",
   "foot_update": "Darrera actualització · juny 2026",
   "stub_title": "{screen}",
   "stub_body": "Aquesta pantalla encara no està implementada. Forma part del full de ruta del frontend (sis pantalles); de moment només hi ha el «Resum».",
