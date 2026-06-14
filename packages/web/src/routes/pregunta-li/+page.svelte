@@ -17,6 +17,8 @@
 	 * --dp-*), com el glossari/metodologia. El copi nou és tot i18n ca/es. Accessibilitat:
 	 * label a l'input, region aria-live per a la resposta, estats de càrrega anunciats.
 	 */
+	import { onMount } from 'svelte';
+	import { page } from '$app/state';
 	import ContourField from '$lib/components/ContourField.svelte';
 	import { currentLocale } from '$lib/i18n';
 	import { m } from '$lib/paraglide/messages';
@@ -40,6 +42,16 @@
 	let question = $state('');
 	let view = $state<View>({ kind: 'idle' });
 	let pending: AbortController | null = null;
+
+	// Prefill des de la fitxa de municipi: `?q=` porta la pregunta ja escrita i la llança (l'usuari
+	// ja ha triat la pregunta des de la fitxa). El backend mort/dorment es gestiona amb amabilitat.
+	onMount(() => {
+		const q = page.url.searchParams.get('q');
+		if (q && q.trim()) {
+			question = q.trim();
+			void submit();
+		}
+	});
 
 	const isLoading = $derived(view.kind === 'loading');
 	const canSubmit = $derived(question.trim().length > 0 && !isLoading);

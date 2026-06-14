@@ -21,6 +21,7 @@
 import { loadMunicipisDataset } from '$lib/data/dataset';
 import { buildSlugIndex } from '$lib/contract/slug';
 import type { LicitacionsData, LicitacionsMuni } from '$lib/contract/licitacions';
+import type { LecturesData, LecturaEntry } from '$lib/contract/lectures';
 import type { EntryGenerator, PageLoad } from './$types';
 
 export const prerender = true;
@@ -84,5 +85,23 @@ export const load: PageLoad = async ({ fetch, params }) => {
 			lic = null;
 		}
 	}
-	return { dataset, ine5, row, lic };
+
+	// Lectura-IA del municipi (§3): opcional, de l'artefacte versionat `lectures.bergueda.json`
+	// (la genera `tools/gen_fitxa.py`). Es passa en els DOS idiomes; la pàgina en tria el del
+	// locale. Si l'artefacte no hi és encara (build sense generar), `lectura` és null i la fitxa
+	// degrada amablement (cap veredicte/lectura, només els números i la maquinària). Prerender-safe.
+	let lectura: LecturaEntry | null = null;
+	if (ine5) {
+		try {
+			const res = await fetch('/data/lectures.bergueda.json');
+			if (res.ok) {
+				const data = (await res.json()) as LecturesData;
+				lectura = data[ine5] ?? null;
+			}
+		} catch {
+			lectura = null;
+		}
+	}
+
+	return { dataset, ine5, row, lic, lectura };
 };
