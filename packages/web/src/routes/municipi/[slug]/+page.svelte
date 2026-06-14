@@ -33,6 +33,7 @@
 	import { municipisMirall } from '$lib/analysis/mirall';
 	import { m } from '$lib/paraglide/messages';
 	import type { MetricDef, MetricKey, MetricValue, MunicipiRow } from '$lib/contract/types';
+	import type { LectTo } from '$lib/contract/lectures';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -42,6 +43,65 @@
 	const lic = $derived(data.lic);
 	const locale = $derived(currentLocale());
 	const eurLic = (v: number | null) => eurCurt(v, locale === 'es' ? 'es-ES' : 'ca-ES');
+
+	// ── Lectura-IA (§3) ─────────────────────────────────────────────────────────────────────
+	// Branca del locale actiu de l'artefacte `lectures.bergueda.json` (la genera gen_fitxa.py:
+	// escriptor opus-4.8 es → traductor sonnet-4.6 ca, amb verificació de xifres). Si no hi és
+	// o és reserva (`_gen="fallback"`), la fitxa degrada: cap veredicte/lectura narrativa, només
+	// els cinc números i la maquinària. Mai una al·lucinació, mai una pantalla trencada.
+	const lectura = $derived(locale === 'es' ? (data.lectura?.es ?? null) : (data.lectura?.ca ?? null));
+	const hasLectura = $derived(!!lectura && lectura._gen !== 'fallback');
+	const veredicte = $derived(hasLectura && lectura?.veredicte?.text ? lectura.veredicte : null);
+	const lectClaims = $derived(hasLectura ? (lectura?.lectures ?? null) : null);
+	const hasCiutadania = $derived((lectClaims?.ciutadania?.length ?? 0) > 0);
+	const hasVisitant = $derived((lectClaims?.visitant?.length ?? 0) > 0);
+	const hasLectures = $derived(hasCiutadania || hasVisitant);
+	const contraLectura = $derived(
+		hasLectura && lectura?.contra_lectura?.text ? lectura.contra_lectura : null
+	);
+	// Pestanya activa (ciutadania per defecte); cau a la que existeixi si l'altra és buida.
+	let lectTab = $state<'ciutadania' | 'visitant'>('ciutadania');
+	const activeLectTab = $derived(
+		lectTab === 'visitant'
+			? hasVisitant
+				? 'visitant'
+				: 'ciutadania'
+			: hasCiutadania
+				? 'ciutadania'
+				: 'visitant'
+	);
+	const activeClaims = $derived(
+		(activeLectTab === 'visitant' ? lectClaims?.visitant : lectClaims?.ciutadania) ?? []
+	);
+
+	// Naturalesa epistèmica d'un claim → etiqueta + punt de procedència (mateix codi que el mapa).
+	function toLabel(to: LectTo): string {
+		return to === 'mesura'
+			? m.muni_to_mesura()
+			: to === 'inferencia'
+				? m.muni_to_inferencia()
+				: m.muni_to_interpretacio();
+	}
+	const toDot = (to: LectTo) => (to === 'mesura' ? 'dot--measured' : 'dot--derived');
+
+	// Claus d'evidència → etiquetes humanes de mètrica (les desconegudes es mostren tal qual).
+	function evidLabels(keys: string[] | undefined): string[] {
+		return (keys ?? []).map((k) => {
+			const def = dataset.metrics[k as MetricKey];
+			return def ? pick(def.label, locale) : k;
+		});
+	}
+
+	// Preguntes suggerides → enllaç a Pregunta-li amb la consulta precarregada (?q=). Capades a 6.
+	const preguntesFlat = $derived.by<string[]>(() => {
+		const p = hasLectura ? lectura?.preguntes : null;
+		if (!p) return [];
+		return [...(p.propies ?? []), ...(p.comarca ?? []), ...(p.miralls ?? [])]
+			.map((q) => q.trim())
+			.filter(Boolean)
+			.slice(0, 6);
+	});
+	const preguntaHref = (q: string) => localizeHref(`/pregunta-li?q=${encodeURIComponent(q)}`);
 
 	// «Mode dades» (spec §1.2): desplega la P3 (la maquinària) per defecte i es recorda.
 	let modeDades = $state(browser ? localStorage.getItem('rdg-dades') === '1' : false);
@@ -436,6 +496,20 @@
 		</section>
 
 		{#if row}
+			<!-- P1 · EL VEREDICTE: la frase-mare de la IA (verificada), el primer cop d'ull. Només si
+			     la lectura ve del model; si és reserva o no hi és, s'omet (degradació honesta). -->
+			{#if veredicte}
+				<section class="ds-sec muni-vd">
+					<p class="muni-vd__cap"><span class="ref">P1</span>{m.muni_veredicte_cap()}</p>
+					<p class="muni-vd__text">{veredicte.text}</p>
+					{#if veredicte.evidencia?.length}
+						<p class="muni-vd__evid">
+							{#each evidLabels(veredicte.evidencia) as e (e)}<span class="lect__evchip">{e}</span>{/each}
+						</p>
+					{/if}
+				</section>
+			{/if}
+
 			<!-- Capçalera de dades: rang IETR + valor gran, tipologia (pastilla) i confiança + score.
 			     És la MATEIXA lectura destacada que les fitxes dels extrems del Resum, ara per a
 			     qualsevol municipi. -->
@@ -508,10 +582,61 @@
 				</div>
 			</section>
 
+			<!-- P2 · LA LECTURA: la narració de la IA (verificada), per perfil. Cada afirmació porta la
+			     seva naturalesa (mesura/inferència/interpretació) i la seva evidència (mètriques). -->
+			{#if hasLectures}
+				<section class="ds-sec">
+					<div class="ds-sec__hd"><span class="ref">P2</span><h2>{m.muni_lect_title()}</h2></div>
+					<p class="muni-sec__sub">{m.muni_lect_ai_note()}</p>
+					<div class="lect__tabs" role="tablist" aria-label={m.muni_lect_title()}>
+						{#if hasCiutadania}
+							<button
+								type="button"
+								role="tab"
+								class="lect__tab"
+								aria-selected={activeLectTab === 'ciutadania'}
+								onclick={() => (lectTab = 'ciutadania')}>{m.muni_lect_tab_ciutadania()}</button
+							>
+						{/if}
+						{#if hasVisitant}
+							<button
+								type="button"
+								role="tab"
+								class="lect__tab"
+								aria-selected={activeLectTab === 'visitant'}
+								onclick={() => (lectTab = 'visitant')}>{m.muni_lect_tab_visitant()}</button
+							>
+						{/if}
+					</div>
+					<ul class="lect__list">
+						{#each activeClaims as c (c.text)}
+							<li class="lect__claim">
+								<span class="lect__to lect__to--{c.to}"
+									><span class="pd {toDot(c.to)}"></span>{toLabel(c.to)}</span
+								>
+								<p class="lect__text">{c.text}</p>
+								{#if c.evidencia?.length}
+									<p class="lect__evid">
+										{#each evidLabels(c.evidencia) as e (e)}<span class="lect__evchip">{e}</span
+											>{/each}
+									</p>
+								{/if}
+							</li>
+						{/each}
+					</ul>
+					{#if contraLectura}
+						<div class="alert" style="margin-top:6px">
+							<span class="bar"></span>
+							<div><strong>{m.muni_lect_contra()}:</strong> {contraLectura.text}</div>
+						</div>
+					{/if}
+				</section>
+			{/if}
+
 			<!-- P2 · L'EVIDÈNCIA: els cinc números (del dataset). El «qui hi dorm» és inferència i
 			     es mostra en RANG (el rang és la dada, spec §10). -->
 			<section class="ds-sec">
-				<div class="ds-sec__hd"><span class="ref">P2</span><h2>{m.muni_5num_title()}</h2></div>
+				<div class="ds-sec__hd"><span class="ref">5</span><h2>{m.muni_5num_title()}</h2></div>
 				<div class="muni-5num tnum">
 					<div class="n5">
 						<span class="n5__lab"><span class="pd dot--measured"></span>{m.muni_num_padro()}</span>
@@ -633,6 +758,18 @@
 							<span class="bar"></span><div>{m.muni_lic_nota()}</div>
 						</div>
 					{/if}
+				</section>
+			{/if}
+
+			{#if preguntesFlat.length}
+				<section class="ds-sec">
+					<div class="ds-sec__hd"><span class="ref">?</span><h2>{m.muni_preg_title()}</h2></div>
+					<p class="muni-sec__sub">{m.muni_preg_sub()}</p>
+					<ul class="preg">
+						{#each preguntesFlat as q (q)}
+							<li><a class="preg__chip" href={preguntaHref(q)}>{q}</a></li>
+						{/each}
+					</ul>
 				</section>
 			{/if}
 
@@ -933,6 +1070,135 @@
 		font-size: 0.6rem;
 		color: var(--dp-text-subtle);
 		margin-left: 3px;
+	}
+
+	/* P1 · veredicte (frase-mare de la IA). Lead destacat, sobri. */
+	.muni-vd__cap {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin: 0 0 8px;
+		font-family: var(--dp-font-mono);
+		font-size: 0.66rem;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--dp-text-subtle);
+	}
+	.muni-vd__text {
+		margin: 0;
+		font-family: var(--dp-font-display);
+		font-weight: 600;
+		font-size: 1.25rem;
+		line-height: 1.4;
+		color: var(--dp-text);
+		max-width: 60ch;
+	}
+	.muni-vd__evid,
+	.lect__evid {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		margin: 10px 0 0;
+	}
+	.lect__evchip {
+		font-family: var(--dp-font-mono);
+		font-size: 0.62rem;
+		color: var(--dp-text-muted);
+		background: var(--dp-surface-2, color-mix(in srgb, var(--dp-text) 6%, transparent));
+		border-radius: var(--dp-radius-sm);
+		padding: 2px 8px;
+	}
+
+	/* P2 · lectures (narració de la IA per perfil). Pestanyes + llista de claims amb naturalesa. */
+	.lect__tabs {
+		display: flex;
+		gap: 8px;
+		margin: 0 0 14px;
+		flex-wrap: wrap;
+	}
+	.lect__tab {
+		font-family: var(--dp-font-mono);
+		font-size: 0.7rem;
+		letter-spacing: 0.03em;
+		padding: 6px 14px;
+		border: 1px solid var(--dp-border-strong);
+		border-radius: var(--dp-radius-full);
+		background: var(--dp-surface);
+		color: var(--dp-text-muted);
+		cursor: pointer;
+	}
+	.lect__tab[aria-selected='true'] {
+		background: var(--dp-text);
+		color: var(--dp-bg);
+		border-color: var(--dp-text);
+	}
+	.lect__list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 16px;
+	}
+	.lect__claim {
+		display: grid;
+		gap: 6px;
+	}
+	.lect__to {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		width: fit-content;
+		font-family: var(--dp-font-mono);
+		font-size: 0.6rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: var(--dp-text-subtle);
+	}
+	.lect__to .pd {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		flex: none;
+	}
+	.lect__text {
+		margin: 0;
+		font-size: 0.98rem;
+		line-height: 1.55;
+		color: var(--dp-text);
+		max-width: 64ch;
+	}
+
+	/* Pregunta-li (preguntes suggerides → IA). Pastilles enllaçades. */
+	.preg {
+		list-style: none;
+		margin: 8px 0 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+	.preg__chip {
+		display: block;
+		padding: 10px 14px;
+		border: 1px solid var(--dp-border);
+		border-radius: var(--dp-radius-md);
+		background: var(--dp-surface);
+		text-decoration: none;
+		color: var(--dp-text);
+		font-size: 0.92rem;
+		line-height: 1.4;
+		transition:
+			border-color 0.15s ease,
+			background 0.15s ease;
+	}
+	.preg__chip::before {
+		content: '? ';
+		color: var(--dp-text-subtle);
+		font-family: var(--dp-font-mono);
+	}
+	.preg__chip:hover {
+		border-color: var(--dp-border-strong);
+		background: var(--dp-accent-weak);
 	}
 
 	/* P3 · capçalera + toggle «mode dades». */

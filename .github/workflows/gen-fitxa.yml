@@ -2,13 +2,14 @@ name: gen fitxa (manual)
 
 # Pipeline de generació de la lectura de fitxa (§3): escriptor opus-4.8 (es) → traductor
 # sonnet-4.6 (ca). Manual (workflow_dispatch) perquè usa el secret OPENROUTER_API_KEY i té cost.
-# Sortides (es + ca) com a artifact; res es committeja.
+# Genera l'artefacte versionat `data/web/lectures.bergueda.json` + els bolcats crus; tot puja
+# com a artifact. NO committeja: Talaia el baixa i el committeja per la porta del PR.
 
 on:
   workflow_dispatch:
     inputs:
       args:
-        description: "args per gen_fitxa.py (p.ex. '--muni 08052'). Buit = 3 munis."
+        description: "args per gen_fitxa.py (p.ex. '--muni 25100'). Buit = els 31 munis."
         required: false
         default: ""
 
@@ -27,7 +28,14 @@ jobs:
           PYTHONUTF8: "1"
           ARGS: ${{ github.event.inputs.args }}
         run: python tools/gen_fitxa.py $ARGS
-      - name: Upload outputs (es + ca)
+      - name: Upload artefacte versionat (lectures.bergueda.json)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lectures-bergueda
+          path: data/web/lectures.bergueda.json
+          if-no-files-found: warn
+      - name: Upload bolcats crus (es + ca)
         if: always()
         uses: actions/upload-artifact@v4
         with:
