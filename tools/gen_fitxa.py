@@ -84,6 +84,42 @@ def _nums(text: str) -> set[float]:
     return out
 
 
+def _text_blob(obj: dict) -> str:
+    """Concatena NOMÉS el text redactat de la lectura (camps `text`/strings visibles), no les
+    claus ni l'estructura del JSON. Els números i la llista negra es comproven sobre AIXÒ: la
+    clau `ine5` conté un dígit («5») i les claus d'evidència en porten («rtc_per_1000hab») —
+    escanejar el JSON cru els marcava com a confabulació (fals positiu)."""
+    parts: list[str] = []
+
+    def add(x):
+        if isinstance(x, str) and x.strip():
+            parts.append(x)
+
+    ver = obj.get("veredicte")
+    add(ver.get("text") if isinstance(ver, dict) else None)
+    add(obj.get("perfil_public"))
+    lec = obj.get("lectures")
+    if isinstance(lec, dict):
+        for claims in lec.values():
+            for c in (claims if isinstance(claims, list) else []):
+                if isinstance(c, dict):
+                    add(c.get("text"))
+    cl = obj.get("contra_lectura")
+    add(cl.get("text") if isinstance(cl, dict) else None)
+    for s in (obj.get("dades_que_falten") or []):
+        add(s)
+    preg = obj.get("preguntes")
+    if isinstance(preg, dict):
+        for arr in preg.values():
+            for s in (arr if isinstance(arr, list) else []):
+                add(s)
+    conf = obj.get("confianca")
+    if isinstance(conf, dict):
+        for s in (conf.get("motius") or []):
+            add(s)
+    return "\n".join(parts)
+
+
 def verify(content: str, facts: dict, bl: re.Pattern, hedge: re.Pattern | None = None) -> dict:
     res = {"valid_json": False, "missing": [], "unmatched": [], "blacklist": [],
            "hedge_mesura": [], "contra_ok": True}
@@ -103,13 +139,16 @@ def verify(content: str, facts: dict, bl: re.Pattern, hedge: re.Pattern | None =
                     if isinstance(c, dict) and c.get("to") == "mesura":
                         hits.update(m.group(0).lower() for m in hedge.finditer(c.get("text") or ""))
             res["hedge_mesura"] = sorted(hits)
-    allowed = _fact_numbers(facts)
-    for tok in NUM_RE.findall(content):
+    # Comprova números i llista negra sobre el TEXT redactat (no les claus del JSON). Si el JSON
+    # no ha parsejat, cau al cru per no deixar passar sortida trencada.
+    scan = _text_blob(obj) if obj else content
+    allowed = _fact_numbers(facts) | {0.0, 100.0}  # àncores d'escala (0-100: IETR, %, divergència)
+    for tok in NUM_RE.findall(scan):
         cands = {c for c in _candidates(tok) if not (2018 <= c <= 2027)}
         if cands and not any(abs(c - a) <= max(1.0, 0.02 * abs(c)) for c in cands for a in allowed):
             res["unmatched"].append(tok.strip())
-    bl_hits = {m.group(0).lower() for m in bl.finditer(content)}
-    if "—" in content:  # guió llarg (—) prohibit al text de la fitxa
+    bl_hits = {m.group(0).lower() for m in bl.finditer(scan)}
+    if "—" in scan:  # guió llarg (—) prohibit al text de la fitxa
         bl_hits.add("—")
     res["blacklist"] = sorted(bl_hits)
     return res
@@ -137,6 +176,22 @@ def fact_val(facts: dict, clau: str):
         if f.get("clau") == clau:
             return f.get("valor")
     return None
+
+
+def enrich_facts(facts: dict, ds: dict, ine5: str) -> dict:
+    """Afegeix al full els números de CONTEXT que el relat cita legítimament i que `assemble`
+    no inclou: la posició IETR del municipi i la mida de la comarca (p.ex. «4t de 31»). Sense
+    això el verificador els marca com a confabulació (fals positiu) i tota la fitxa cau a reserva."""
+    v = ds.get("municipis", {}).get(ine5, {}).get("values", {})
+    ctx: dict = {}
+    if isinstance(v.get("IETR_rank"), (int, float)):
+        ctx["IETR_rank"] = v["IETR_rank"]
+    nm = ds.get("comarca", {}).get("num_municipis")
+    if isinstance(nm, (int, float)):
+        ctx["num_municipis"] = nm
+    if ctx:
+        facts["context"] = ctx
+    return facts
 
 
 def fallback_obj(facts: dict, lang: str) -> dict:
@@ -185,10 +240,11 @@ def _retry_note(v: dict, only_es=None, only_ca=None) -> str:
             "No inventes ningún número fuera del pliego de hechos.")
 
 
-def gen_es(facts: dict, guia: str) -> tuple[str | None, dict]:
-    """Escriptor (es) amb re-intent retroalimentat. Torna (text|None, última_verif)."""
+def gen_es(facts: dict, guia: str) -> tuple[str | None, dict, str]:
+    """Escriptor (es) amb re-intent retroalimentat. Torna (text_ok|None, última_verif, cru_últim)."""
     base = INSTR_ES + json.dumps(facts, ensure_ascii=False, indent=2)
     last: dict = {}
+    last_raw = ""
     for attempt in range(MAX_RETRY + 1):
         prompt = base + (_retry_note(last) if attempt and last else "")
         try:
@@ -197,16 +253,18 @@ def gen_es(facts: dict, guia: str) -> tuple[str | None, dict]:
             last = {"valid_json": False, "missing": [], "unmatched": [], "blacklist": [f"ERR:{ex}"[:60]],
                     "hedge_mesura": [], "contra_ok": True}
             continue
+        last_raw = txt
         v = verify(txt, facts, BL_ES, HEDGE_ES)
         if not hard_fail(v):
-            return txt, v
+            return txt, v, txt
         last = v
-    return None, last
+    return None, last, last_raw
 
 
-def gen_ca(es_txt: str, facts: dict) -> tuple[str | None, dict]:
+def gen_ca(es_txt: str, facts: dict) -> tuple[str | None, dict, str]:
     """Traductor (ca) amb re-intent: verificació + preservació de números es↔ca."""
     last: dict = {}
+    last_raw = ""
     only_es: list = []
     only_ca: list = []
     for attempt in range(MAX_RETRY + 1):
@@ -218,13 +276,15 @@ def gen_ca(es_txt: str, facts: dict) -> tuple[str | None, dict]:
                     "hedge_mesura": [], "contra_ok": True}
             only_es, only_ca = [], []
             continue
+        last_raw = txt
         v = verify(txt, facts, BL_CA, HEDGE_CA)
         only_es = sorted(_nums(es_txt) - _nums(txt))
         only_ca = sorted(_nums(txt) - _nums(es_txt))
+        v = {**v, "only_es": only_es, "only_ca": only_ca}
         if not hard_fail(v) and not only_es and not only_ca:
-            return txt, v
+            return txt, v, txt
         last = v
-    return None, last
+    return None, last, last_raw
 
 
 def main(argv=None) -> int:
@@ -244,20 +304,19 @@ def main(argv=None) -> int:
 
     munis = args.muni or sorted(ds["municipis"].keys())
     artifact: dict = {}
+    diag: dict = {}
     n_fb_es = n_fb_ca = 0
     print(f"Generant lectures de {len(munis)} municipis (escriptor {WRITER} → traductor {TRANSLATOR})…\n")
 
     for i, ine5 in enumerate(munis, 1):
-        facts = assemble(ine5, ds, etca, terr)
+        facts = enrich_facts(assemble(ine5, ds, etca, terr), ds, ine5)
         nom = facts["municipi"]
 
         # 1) Escriptor (es)
-        es_txt, es_v = gen_es(facts, guia)
-        if es_txt:
-            (OUTDIR / f"{ine5}__ES_opus-4.8.txt").write_text(es_txt, encoding="utf-8")
-            es_obj = extract_obj(es_txt)
-        else:
-            es_obj = None
+        es_txt, es_v, es_raw = gen_es(facts, guia)
+        if es_raw:  # desa SEMPRE el cru (també si ha fallat) per a auditoria/diagnòstic
+            (OUTDIR / f"{ine5}__ES_opus-4.8.txt").write_text(es_raw, encoding="utf-8")
+        es_obj = extract_obj(es_txt) if es_txt else None
         if es_obj is None:
             es_obj = fallback_obj(facts, "es")
             n_fb_es += 1
@@ -265,13 +324,12 @@ def main(argv=None) -> int:
             es_obj["_gen"] = "model"
 
         # 2) Traductor (ca) — només si l'es és bo (traduir un fallback no té sentit)
+        ca_v: dict = {}
         if es_txt and es_obj.get("_gen") == "model":
-            ca_txt, ca_v = gen_ca(es_txt, facts)
-            if ca_txt:
-                (OUTDIR / f"{ine5}__CA_sonnet-4.6.txt").write_text(ca_txt, encoding="utf-8")
-                ca_obj = extract_obj(ca_txt)
-            else:
-                ca_obj = None
+            ca_txt, ca_v, ca_raw = gen_ca(es_txt, facts)
+            if ca_raw:
+                (OUTDIR / f"{ine5}__CA_sonnet-4.6.txt").write_text(ca_raw, encoding="utf-8")
+            ca_obj = extract_obj(ca_txt) if ca_txt else None
             if ca_obj is None:
                 ca_obj = fallback_obj(facts, "ca")
                 n_fb_ca += 1
@@ -282,14 +340,21 @@ def main(argv=None) -> int:
             n_fb_ca += 1
 
         artifact[ine5] = {"ca": ca_obj, "es": es_obj}
+        # Diagnòstic: per a cada banda fallida, els motius EXACTES (tokens no verificats, etc.).
+        diag[ine5] = {"nom": nom,
+                      "es": {"ok": es_obj.get("_gen") == "model", **{k: es_v.get(k) for k in
+                             ("valid_json", "missing", "blacklist", "hedge_mesura", "unmatched", "contra_ok")}},
+                      "ca": {"ok": ca_obj.get("_gen") == "model", **{k: ca_v.get(k) for k in
+                             ("valid_json", "blacklist", "hedge_mesura", "unmatched", "only_es", "only_ca")}}}
         es_tag = "model" if es_obj.get("_gen") == "model" else f"FALLBACK({_summ(es_v)})"
         ca_tag = "model" if ca_obj.get("_gen") == "model" else "FALLBACK"
         print(f"  [{i:2}/{len(munis)}] {nom:24} ({ine5})  es={es_tag}  ca={ca_tag}")
 
     ARTIFACT.write_text(json.dumps(artifact, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    (OUTDIR / "_diag.json").write_text(json.dumps(diag, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"\nArtefacte: {ARTIFACT.relative_to(REPO).as_posix()}  ({len(artifact)} munis; "
           f"reserva es={n_fb_es} ca={n_fb_ca})")
-    print(f"Bolcats crus a {OUTDIR.relative_to(REPO).as_posix()}/ (local).")
+    print(f"Bolcats crus + _diag.json a {OUTDIR.relative_to(REPO).as_posix()}/.")
     return 0
 
 
