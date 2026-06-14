@@ -126,6 +126,7 @@
 			<div class="caveats">
 				<div class="alert"><span class="bar"></span><div>{m.lic_honesty_1()}</div></div>
 				<div class="alert warn"><span class="bar"></span><div>{m.lic_honesty_2()}</div></div>
+				<div class="alert"><span class="bar"></span><div>{m.lic_honesty_3()}</div></div>
 			</div>
 			<p class="srcline">{m.lic_srcline({ font: lic.font })}</p>
 		</section>

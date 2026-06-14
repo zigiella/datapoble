@@ -37,11 +37,12 @@ export interface LicitacionsPayload {
 function argMaxMetric(
 	dataset: MunicipisDataset,
 	key: MetricKey,
-	opts: { min?: number; exclude?: ReadonlySet<string> } = {}
+	opts: { min?: number; exclude?: ReadonlySet<string>; guard?: (vals: Record<string, unknown>) => boolean } = {}
 ): { ine5: string; nom: string; value: number } | null {
 	let best: { ine5: string; nom: string; value: number } | null = null;
 	for (const [ine5, row] of Object.entries(dataset.municipis)) {
 		if (opts.exclude?.has(ine5)) continue;
+		if (opts.guard && !opts.guard((row.values ?? {}) as Record<string, unknown>)) continue;
 		const raw = row.values?.[key];
 		if (typeof raw !== 'number' || Number.isNaN(raw)) continue;
 		if (opts.min !== undefined && raw < opts.min) continue;
@@ -70,8 +71,13 @@ export function buildTroballes(dataset: MunicipisDataset, lic?: LicitacionsPaylo
 		out.push({ kind, ine5: hit.ine5, nom: displayNom(hit.nom), slug: slugForIne5(hit.ine5, dataset), valor, to });
 	};
 
-	// gap de pernocta màxim (positiu): on els senyals veuen més gent que el padró.
-	const gap = argMaxMetric(dataset, 'gap_pernocta_pct', { min: 0, exclude: used });
+	// Rècord honest del gap de pernocta: el màxim entre municipis de confiança ALTA i padró ≥ 200.
+	// Els micromunicipis (la Quar, etc.) inflen el % per denominador petit → fora del titular.
+	const gap = argMaxMetric(dataset, 'gap_pernocta_pct', {
+		min: 0,
+		exclude: used,
+		guard: (v) => v.confianca === 'alta' && Number(v.poblacio) >= 200
+	});
 	if (gap) push('gap', gap, 'inferencia', Math.round(gap.value));
 
 	// #1 d'exposició territorial (IETR màxim).
