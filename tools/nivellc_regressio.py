@@ -64,16 +64,26 @@ def main() -> int:
         return 2
 
     df = pd.read_csv(SRC, dtype={"ine5": str})
-    # Necessitem ETCA, pernocta_est i densitat>0 per al model.
+    # Covariable de renda (INE ADRH 2023, extreta per tools/extract_renda.py).
+    renda_path = REPO / "data" / "territorial" / "renda_municipi_cat.csv"
+    if renda_path.exists():
+        renda = pd.read_csv(renda_path, dtype={"ine5": str})[["ine5", "renda_neta_persona_2023"]]
+        df = df.merge(renda, on="ine5", how="left")
+    else:
+        df["renda_neta_persona_2023"] = pd.NA
+    # Necessitem ETCA, pernocta_est, densitat>0 i RENDA per a una comparació justa entre models.
     df = df[df["etca"].notna() & df["pernocta_est"].notna() & df["densitat_hab_km2"].notna()].copy()
     df = df[df["densitat_hab_km2"] > 0]
+    n_sense_renda = int(df["renda_neta_persona_2023"].isna().sum())
+    df = df[df["renda_neta_persona_2023"].notna()].copy()
     df["kwh_dom"] = df["pernocta_est"] * BASE_UNICA
     df["base_implied"] = df["kwh_dom"] / df["etca"]
     df["log_dens"] = np.log10(df["densitat_hab_km2"].astype(float))
     df["alt"] = pd.to_numeric(df["altitud_m"], errors="coerce").fillna(0.0)
+    df["renda_k"] = df["renda_neta_persona_2023"].astype(float) / 1000.0  # milers € (coef llegible)
     n = len(df)
     y = df["base_implied"].to_numpy()
-    print(f"N (munis amb ETCA + densitat) = {n}\n")
+    print(f"N (munis amb ETCA + densitat + renda) = {n}  (descartats sense renda: {n_sense_renda})\n")
 
     # --- Referència 1: base ÚNICA 1224 (l'error de població ja a la columna err_pernocta_pct) ---
     err_unica = df["err_pernocta_pct"].astype(float).to_numpy()
@@ -86,11 +96,14 @@ def main() -> int:
 
     # --- Models de regressió contínua ---
     ones = np.ones(n)
+    ld = df["log_dens"].to_numpy()
+    rk = df["renda_k"].to_numpy()
     models = {
         "base ~ const (mitjana)": np.column_stack([ones]),
-        "base ~ log10(densitat)": np.column_stack([ones, df["log_dens"].to_numpy()]),
-        "base ~ log10(densitat) + altitud": np.column_stack(
-            [ones, df["log_dens"].to_numpy(), df["alt"].to_numpy()]),
+        "base ~ log10(densitat)": np.column_stack([ones, ld]),
+        "base ~ renda": np.column_stack([ones, rk]),
+        "base ~ log10(densitat) + renda": np.column_stack([ones, ld, rk]),
+        "base ~ log10(densitat) + renda + altitud": np.column_stack([ones, ld, rk, df["alt"].to_numpy()]),
     }
     results = {}
     for name, X in models.items():
@@ -98,9 +111,8 @@ def main() -> int:
         err = (y - pred) / pred * 100  # err de població equivalent
         results[name] = {"beta": beta, "pred": pred, "r2": r2, "band": _band(err)}
 
-    # Model triat: densitat SOLA (l'altitud quasi no aporta R² i té signe contraintuïtiu;
-    # parsimònia + cobertura lleugerament millor).
-    best_name = "base ~ log10(densitat)"
+    # Model triat: densitat + renda (les dues covariables disponibles que aporten).
+    best_name = "base ~ log10(densitat) + renda"
     best = results[best_name]
     df["base_pred"] = best["pred"]
     df["err_regressio_pct"] = (df["base_implied"] - df["base_pred"]) / df["base_pred"] * 100
@@ -119,8 +131,8 @@ def main() -> int:
 
     print(f"\nModel triat: {best_name}")
     bb = best["beta"]
-    print(f"  base_pred = {bb[0]:.0f} {bb[1]:+.0f}·log10(dens)   (R²={best['r2']:.2f})")
-    print(f"  → densitat ×10 ⇒ base {bb[1]:+.0f} kWh/persona (pisos densos = menys elèctric/persona)")
+    print(f"  base_pred = {bb[0]:.0f} {bb[1]:+.0f}·log10(dens) {bb[2]:+.0f}·renda_k€   (R²={best['r2']:.2f})")
+    print(f"  → densitat ×10 ⇒ {bb[1]:+.0f} kWh/persona; +1.000 € renda ⇒ {bb[2]:+.0f} kWh/persona")
 
     print("\nResidual del model triat per tipus territorial:")
     for t, g in df.groupby("tipus_territorial"):
