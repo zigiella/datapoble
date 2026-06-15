@@ -68,7 +68,6 @@
 			{ key: 'visitant' as const, label: m.muni_lect_tab_visitant(), claims: lectClaims?.visitant ?? [] }
 		].filter((g) => g.claims.length > 0)
 	);
-	let lectTab = $state<'ciutadania' | 'visitant'>('ciutadania');
 
 	// Naturalesa epistèmica d'un claim → etiqueta + punt de procedència (mateix codi que el mapa).
 	function toLabel(to: LectTo): string {
@@ -592,19 +591,25 @@
 				<section class="ds-sec">
 					<div class="ds-sec__hd"><span class="ref">P2</span><h2>{m.muni_lect_title()}</h2></div>
 					<p class="muni-sec__sub">{m.muni_lect_ai_note()}</p>
+					<!-- Toggle CSS pur: radios (estat natiu del navegador) + `:checked ~` mostra el panell.
+					     Sense JS ni $state: robust i funciona encara que la hidratació falli. La pestanya
+					     activa per defecte és la primera (ciutadania). -->
+					{#each lectGroups as g, i (g.key)}
+						<input
+							type="radio"
+							name="lecttab"
+							id="lecttab-{g.key}"
+							class="lect__radio"
+							checked={i === 0}
+						/>
+					{/each}
 					<div class="lect__tabs" role="tablist" aria-label={m.muni_lect_title()}>
 						{#each lectGroups as g (g.key)}
-							<button
-								type="button"
-								role="tab"
-								class="lect__tab"
-								aria-selected={lectTab === g.key}
-								onclick={() => (lectTab = g.key)}>{g.label}</button
-							>
+							<label for="lecttab-{g.key}" class="lect__tab">{g.label}</label>
 						{/each}
 					</div>
 					{#each lectGroups as g (g.key)}
-						<ul class="lect__list" hidden={lectTab !== g.key}>
+						<ul class="lect__list lect__list--{g.key}">
 							{#each g.claims as c, i (g.key + i)}
 								<li class="lect__claim">
 									<span class="lect__to lect__to--{c.to}"
@@ -1106,7 +1111,14 @@
 		padding: 2px 8px;
 	}
 
-	/* P2 · lectures (narració de la IA per perfil). Pestanyes + llista de claims. */
+	/* P2 · lectures (narració de la IA per perfil). Toggle CSS pur: radios amagats + `:checked ~`. */
+	.lect__radio {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		opacity: 0;
+		pointer-events: none;
+	}
 	.lect__tabs {
 		display: flex;
 		gap: 8px;
@@ -1124,10 +1136,28 @@
 		color: var(--dp-text-muted);
 		cursor: pointer;
 	}
-	.lect__tab[aria-selected='true'] {
+	/* Pestanya activa = la del radio marcat. */
+	#lecttab-ciutadania:checked ~ .lect__tabs label[for='lecttab-ciutadania'],
+	#lecttab-visitant:checked ~ .lect__tabs label[for='lecttab-visitant'] {
 		background: var(--dp-text);
 		color: var(--dp-bg);
 		border-color: var(--dp-text);
+	}
+	/* Focus de teclat: ressalta la label del radio enfocat (els radios estan amagats). */
+	#lecttab-ciutadania:focus-visible ~ .lect__tabs label[for='lecttab-ciutadania'],
+	#lecttab-visitant:focus-visible ~ .lect__tabs label[for='lecttab-visitant'] {
+		outline: 2px solid var(--dp-focus, var(--dp-forest));
+		outline-offset: 2px;
+	}
+	/* Panells: amagats per defecte; es mostra el del radio marcat (classe doble per especificitat
+	   sobre la base `.lect__list`, independent de l'ordre; `grid` per mantenir el layout base). */
+	.lect__list.lect__list--ciutadania,
+	.lect__list.lect__list--visitant {
+		display: none;
+	}
+	#lecttab-ciutadania:checked ~ .lect__list.lect__list--ciutadania,
+	#lecttab-visitant:checked ~ .lect__list.lect__list--visitant {
+		display: grid;
 	}
 	.lect__list {
 		list-style: none;
