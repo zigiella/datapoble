@@ -69,10 +69,28 @@ Regressió de la base per persona present (calibrada a l'ETCA) sobre covariables
   i corona 75%, litoral_vacacional 60%, interior_rural 67%.
 - L'altitud quasi no aporta (R² 0,29→0,30) i té signe contraintuïtiu → model **densitat sola**.
 
-**Conclusió de l'estat:** el camí del disseny (covariables contínues + banda) es confirma. Amb una
-sola covariable (densitat) ja superem la base única i la base per tipus; per arribar a cobertura
-publicable (≈≥85% dins ±15%) calen covariables addicionals (renda, mix de calefacció) i tractar
-l'estacionalitat del litoral a part.
+### T4 · La RENDA dobla el model (2026-06-15, N=91, INE ADRH 2023) — #135
+Afegida la renda neta mitjana per persona (INE ADRH 2023, municipi; `tools/extract_renda.py` →
+`data/territorial/renda_municipi_cat.csv`, 948 munis CAT). Comparativa de models:
+
+| model | R² | \|err\| medià | cobertura ±15% | banda p10/p90 |
+|---|--:|--:|--:|--:|
+| ~ log10(densitat) | 0,29 | 11,9% | 69% | [−23, +21] |
+| ~ renda | 0,33 | 11,8% | 57% | [−22, +28] |
+| **~ log10(densitat) + renda** | **0,60** | **8,4%** | **77%** | **[−14, +17]** |
+| ~ log10(densitat) + renda + altitud | 0,62 | 9,3% | 74% | [−16, +17] |
+
+- **Densitat i renda són COMPLEMENTÀRIES** (R² es dobla 0,29→0,60): densitat = mida del pis (pisos
+  densos, menys elèctric/persona), renda = nivell de consum (més renda, més elèctric/persona).
+  `base = 1052 − 233·log10(dens) + 60·renda_k€` (+1.000 € de renda ⇒ +60 kWh/persona).
+- **Cobertura 77% dins ±15%, banda ±15%** — a tocar de publicable. Residual per tipus:
+  litoral_metropolita 100%, corona 88%, metropolita_dens 81%, litoral_vacacional 75%, interior 72%.
+- L'altitud segueix sense aportar (R² 0,60→0,62, pitjor cobertura) → model **densitat + renda**.
+
+**Conclusió de l'estat:** el camí del disseny (covariables contínues + banda) es confirma amb força.
+Densitat + renda donen R²=0,60 i cobertura 77% (vs 45% de la base única). Per arribar a publicable
+(≈≥85% dins ±15%) queda: més covariables (mix de calefacció/gas, grandària de la llar), validació
+held-out, i tractar l'estacionalitat del litoral vacacional a part (dada de pic).
 
 ---
 
@@ -87,6 +105,7 @@ l'estacionalitat del litoral a part.
 | D5 | 2026-06-15 | Construir la regressió contínua + bandes p10–p90 ara | Bea |
 | D6 | 2026-06-15 | Afegir tipus `corona_metropolitana` (AMB no densa ≠ dens urbà) | Talaia |
 | D7 | 2026-06-15 | Model Nivell C = densitat sola (altitud no aporta; parsimònia) | Talaia |
+| D8 | 2026-06-15 | Baixar la renda de l'INE ADRH (obert) i afegir-la al model → densitat+renda | Bea + Talaia |
 
 ---
 
@@ -95,9 +114,11 @@ l'estacionalitat del litoral a part.
 - `tools/nivellc_analisi.py` — dirigit per comarca; baixa senyals (ICAEN/ARC) + RTC + ETCA + EMEX,
   estima amb la base única, mesura error per tipus i recalibra base per tipus.
   → `data/territorial/nivellc_analisi.csv`, `data/territorial/nivellc_bases_tipus.csv`.
-- `tools/nivellc_regressio.py` — ajusta la base per persona ~ log10(densitat) (OLS numpy), compara
-  amb base única i per tipus, dona bandes p10–p90 i residual per tipus.
+- `tools/nivellc_regressio.py` — ajusta la base per persona ~ log10(densitat) + renda (OLS numpy),
+  compara amb base única i per tipus, dona bandes p10–p90 i residual per tipus.
   → `data/territorial/nivellc_regressio.csv`.
+- `tools/extract_renda.py` — extreu la renda municipal catalana de l'INE ADRH (taula 30824, ~335 MB
+  a OneDrive) → `data/territorial/renda_municipi_cat.csv` (948 munis, renda neta/persona 2023).
 - Bitàcola de detall: `bitacora/2026-06-15_nivellc-analisi-error-tipus_talaia.md`.
 - Comarques cobertes (N=91 amb ETCA): Berguedà, Barcelonès, Tarragonès, Baix Llobregat, Maresme.
 
@@ -105,9 +126,9 @@ l'estacionalitat del litoral a part.
 
 ## 5. Pendents / següents passos
 
-1. **Més covariables** per estrènyer la banda (R² 0,29 → objectiu): renda (INE ADRH — necessita
-   accés especial INE, ho gestiona Bea), mix de calefacció / gas natural (ICAEN), grandària de la
-   llar. Validació **held-out** (no només in-sample) abans del go/no-go.
+1. **Més covariables** per estrènyer la banda: ✅ **renda FETA** (INE ADRH 2023, obert; R² 0,29→0,60,
+   cobertura 77%); pendents: mix de calefacció / gas natural (ICAEN), grandària de la llar. Validació
+   **held-out** (no només in-sample) abans del go/no-go.
 2. **Estacionalitat del litoral vacacional**: l'elèctric domèstic anual no veu el pic estival; cal
    dada de pic (consum trimestral, ocupació turística) o modelar el flux a part.
 3. **Completar les llistes** del classificador (AMB 36 / costaners / corona oficials) perquè els
