@@ -1,0 +1,4 @@
+tipus_territorial,n,base_electric_tipus,factor,residual_medianpct,residual_maxpct,go_nogo
+litoral_metropolita,3,1044,1.172,2.5,2.8,GO
+litoral_vacacional,4,1089,1.124,5.2,33.0,NO-GO
+metropolita_dens,2,916,1.336,0.5,0.5,GO

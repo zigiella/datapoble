@@ -45,6 +45,23 @@ litoral_vacacional 15,6% ρ=0,80 (NO-GO, molt dispers); metropolita_dens 25,1% (
 4. **N massa petita** (2-4 per tipus) per a una regressió estable o un go/no-go fiable → confirma
    «obliga el carril dades»: cal ingerir més comarques per tenir N per tipus.
 
+## Recalibració ràpida — base per tipus (decisió Bea: «recalibració ràpida ja»)
+Base per tipus = `base_electric / factor`, factor = mediana(ETCA/pernocta_est). Residual =
+error que queda DESPRÉS de centrar (criteri honest amb base per tipus: el residual MÀXIM ≤15%,
+no la mediana, que per construcció va a ~0). Artefacte intern `data/territorial/nivellc_bases_tipus.csv`.
+
+| tipus | base/tipus | factor | residual medià | residual màx | go/no-go |
+|---|--:|--:|--:|--:|---|
+| metropolita_dens | 916 | ×1,34 | 0,5% | 0,5% | **GO** |
+| litoral_metropolita | 1.044 | ×1,17 | 2,5% | 2,8% | **GO** |
+| litoral_vacacional | 1.089 | ×1,12 | 5,2% | **33,0%** | **NO-GO** |
+
+**Lectura:** una base per tipus **clava** el metro dens i el litoral metropolità (residual <3% →
+publicables després de recalibrar, pendent de més N per fixar la base). El resident urbà gasta
+~25% menys llum domèstica (base 916 vs 1.224). El **litoral vacacional NO es deixa arreglar amb
+una base sola** (Cambrils +33% fins i tot centrat): l'estacionalitat domina → cal una covariable
+d'intensitat turística o modelar el flux estival a part. Preliminar: N=2-4 per tipus.
+
 ## Pendent (per decidir amb Bea — «comentem»)
 - **Opció A (ampliar mostra):** afegir més comarques (litoral sencer + AMB sencera + interior) per
   tenir N≥~10 per tipus → llavors recalibrar base per tipus i/o regressió amb covariables. Cal
