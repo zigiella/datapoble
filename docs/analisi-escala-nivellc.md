@@ -87,10 +87,16 @@ Afegida la renda neta mitjana per persona (INE ADRH 2023, municipi; `tools/extra
   litoral_metropolita 100%, corona 88%, metropolita_dens 81%, litoral_vacacional 75%, interior 72%.
 - L'altitud segueix sense aportar (R² 0,60→0,62, pitjor cobertura) → model **densitat + renda**.
 
+**Validació HELD-OUT (leave-one-out, 2026-06-15):** held-out = in-sample (|err| medià 8,5% vs 8,4%;
+cobertura **77% = 77%**; banda [−14,+17] idèntica; caiguda 0 pts) → el model **NO és sobreajust**,
+el 77% és real. Amb 2 covariables i 91 punts, generalitza. (Era el requisit del disseny abans del
+go/no-go.)
+
 **Conclusió de l'estat:** el camí del disseny (covariables contínues + banda) es confirma amb força.
-Densitat + renda donen R²=0,60 i cobertura 77% (vs 45% de la base única). Per arribar a publicable
-(≈≥85% dins ±15%) queda: més covariables (mix de calefacció/gas, grandària de la llar), validació
-held-out, i tractar l'estacionalitat del litoral vacacional a part (dada de pic).
+Densitat + renda donen R²=0,60 i cobertura 77% (vs 45% de la base única), **robust en held-out**. Per
+arribar a publicable (≈≥85% dins ±15%) queda: 1-2 covariables més (mix de calefacció/gas, grandària
+de la llar) i tractar l'estacionalitat del litoral vacacional a part (dada de pic). La banda p10–p90
+(±15%) ja és publicable com a RANG des d'ara (no com a xifra absoluta).
 
 ---
 
@@ -127,8 +133,8 @@ held-out, i tractar l'estacionalitat del litoral vacacional a part (dada de pic)
 ## 5. Pendents / següents passos
 
 1. **Més covariables** per estrènyer la banda: ✅ **renda FETA** (INE ADRH 2023, obert; R² 0,29→0,60,
-   cobertura 77%); pendents: mix de calefacció / gas natural (ICAEN), grandària de la llar. Validació
-   **held-out** (no només in-sample) abans del go/no-go.
+   cobertura 77%); ✅ **held-out FET** (LOO = in-sample, no sobreajust); pendents: mix de calefacció /
+   gas natural (ICAEN), grandària de la llar.
 2. **Estacionalitat del litoral vacacional**: l'elèctric domèstic anual no veu el pic estival; cal
    dada de pic (consum trimestral, ocupació turística) o modelar el flux a part.
 3. **Completar les llistes** del classificador (AMB 36 / costaners / corona oficials) perquè els
