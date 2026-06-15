@@ -241,7 +241,7 @@ def main() -> int:
         print(f"  {r['municipi']:26} {r['tipus_territorial']:22} {str(r['etca'] or '—'):>7} "
               f"{str(r['pernocta_est'] or '—'):>9} {str(r['err_pernocta_pct'] or '—'):>7}")
 
-    # Per tipus territorial: go/no-go
+    # Per tipus territorial: go/no-go amb la base ÚNICA
     print("\nPer tipus territorial (base única Berguedà → error vs ETCA):")
     tipus: dict[str, list[dict]] = {}
     for r in rows:
@@ -255,6 +255,37 @@ def main() -> int:
         verdict = ("—" if med is None or rho is None
                    else "GO" if (abs(rho) >= GO_RHO and med <= GO_ERR) else "NO-GO")
         print(f"  {t:22} n={len(rs):2}  err_medià={_fmt(med)}%  ρ={_fmt(rho)}  → {verdict}")
+
+    # RECALIBRACIÓ RÀPIDA (provisional, N petita): base per tipus = base_electric / factor,
+    # on factor = mediana(ETCA / pernocta_est). Residual = error que queda DESPRÉS de centrar.
+    # Criteri honest amb base per tipus: el residual MÀXIM ≤ 15% (que cap muni del tipus se'n
+    # vagi), no només la mediana (que per construcció va a ~0).
+    print("\nRecalibració ràpida — base per tipus (provisional, N petita):")
+    base_rows = []
+    for t, rs in sorted(tipus.items()):
+        ratios = [r["etca"] / r["pernocta_est"] for r in rs if r["pernocta_est"] and r["etca"]]
+        if not ratios:
+            continue
+        factor = _median(ratios)
+        base_t = round(BASE_ELECTRIC / factor)
+        resid = [abs((r["pernocta_est"] * factor - r["etca"]) / r["etca"] * 100)
+                 for r in rs if r["pernocta_est"] and r["etca"]]
+        med_res, max_res = _median(resid), max(resid)
+        verdict = "GO" if max_res <= GO_ERR else "NO-GO"
+        base_rows.append({"tipus_territorial": t, "n": len(ratios),
+                          "base_electric_tipus": base_t, "factor": round(factor, 3),
+                          "residual_medianpct": round(med_res, 1) if med_res is not None else "",
+                          "residual_maxpct": round(max_res, 1), "go_nogo": verdict})
+        print(f"  {t:22} base={base_t:5} (×{factor:.2f})  residual medià={_fmt(med_res)}% "
+              f"màx={_fmt(max_res)}%  → {verdict}")
+
+    base_out = OUT.parent / "nivellc_bases_tipus.csv"
+    with base_out.open("w", encoding="utf-8", newline="\n") as fh:
+        w = csv.DictWriter(fh, fieldnames=list(base_rows[0].keys()))
+        w.writeheader()
+        w.writerows(base_rows)
+    print(f"\nBases per tipus → {base_out.relative_to(REPO).as_posix()} (provisional, intern)")
+    print("Nota: base ÚNICA Berguedà = 1224. Comparació de referència, no publicat.")
     return 0
 
 
