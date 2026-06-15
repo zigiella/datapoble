@@ -141,12 +141,33 @@ def main() -> int:
         print(f"  {t:22} n={len(g):3}  |err| medià={np.median(np.abs(e)):5.1f}%  "
               f"cobertura±15%={cov:4.0f}%  banda=[{np.percentile(e,10):+.0f},{np.percentile(e,90):+.0f}]%")
 
+    # --- Validació HELD-OUT (leave-one-out) del model triat: que el 77% no sigui sobreajust ---
+    Xb = np.column_stack([ones, ld, rk])  # densitat + renda
+    loo = np.empty(n)
+    for i in range(n):
+        mask = np.ones(n, dtype=bool)
+        mask[i] = False
+        beta_i, *_ = np.linalg.lstsq(Xb[mask], y[mask], rcond=None)
+        loo[i] = Xb[i] @ beta_i
+    df["err_loo_pct"] = (y - loo) / loo * 100
+    b_loo = _band(df["err_loo_pct"].to_numpy())
+    ib = best["band"]
+    print("\nValidació held-out (leave-one-out) — model densitat + renda:")
+    print(f"  in-sample : |err| medià={ib['median_abs']:5.1f}%  cobertura±15%={ib['coverage_15']:4.0f}%  "
+          f"banda=[{ib['p10']:+.0f},{ib['p90']:+.0f}]%")
+    print(f"  held-out  : |err| medià={b_loo['median_abs']:5.1f}%  cobertura±15%={b_loo['coverage_15']:4.0f}%  "
+          f"banda=[{b_loo['p10']:+.0f},{b_loo['p90']:+.0f}]%")
+    gap = ib["coverage_15"] - b_loo["coverage_15"]
+    print(f"  → caiguda de cobertura in-sample→held-out: {gap:.0f} pts "
+          f"({'robust' if gap <= 8 else 'atenció: possible sobreajust'})")
+
     cols = ["ine5", "municipi", "tipus_territorial", "etca", "densitat_hab_km2", "altitud_m",
-            "base_implied", "base_pred", "err_pernocta_pct", "err_regressio_pct"]
+            "base_implied", "base_pred", "err_pernocta_pct", "err_regressio_pct", "err_loo_pct"]
     df_out = df[cols].copy()
     df_out["base_implied"] = df_out["base_implied"].round(0)
     df_out["base_pred"] = df_out["base_pred"].round(0)
     df_out["err_regressio_pct"] = df_out["err_regressio_pct"].round(1)
+    df_out["err_loo_pct"] = df_out["err_loo_pct"].round(1)
     df_out.sort_values(["tipus_territorial", "ine5"]).to_csv(OUT, index=False, lineterminator="\n")
     print(f"\nEscrit {OUT.relative_to(REPO).as_posix()} · {n} munis (provisional, intern)")
     return 0
