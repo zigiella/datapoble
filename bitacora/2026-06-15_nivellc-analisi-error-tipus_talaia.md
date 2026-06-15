@@ -62,6 +62,34 @@ publicables després de recalibrar, pendent de més N per fixar la base). El res
 una base sola** (Cambrils +33% fins i tot centrat): l'estacionalitat domina → cal una covariable
 d'intensitat turística o modelar el flux estival a part. Preliminar: N=2-4 per tipus.
 
+## AMPLIACIÓ a N~80 + covariable RTC (2026-06-15, decisió Bea «1 i 2»)
+`tools/nivellc_analisi.py` reescrit **dirigit per comarca** (munis i codis surten de les dades,
+no a mà): + Baix Llobregat + Maresme → 84 munis amb ETCA. Afegida la covariable d'estacionalitat
+**RTC places/resident** (`t2h3-cgys`) i el tipus **`corona_metropolitana`** (AMB no densa =
+residencial perifèric; abans l'AMB forçava `metropolita_dens` i barrejava pisos petits amb cases
+grans). Artefactes interns actualitzats (`nivellc_analisi.csv`, `nivellc_bases_tipus.csv`).
+
+| tipus | n | base/tipus | residual màx | ρ(resid,RTC) | recalibrat |
+|---|--:|--:|--:|--:|---|
+| litoral_metropolita | 7 | 1.103 (×1,11) | 21,5% | 0,02 | NO-GO |
+| metropolita_dens | 16 | 1.095 (×1,12) | 48,4% | 0,25 | NO-GO |
+| corona_metropolitana | 8 | 1.630 (×0,75) | 19,6% | 0,43 | NO-GO |
+| litoral_vacacional | 20 | 1.277 (×0,96) | 47,5% | −0,28 | NO-GO |
+| interior_rural | 39 | 1.617 (×0,76) | 34,3% | 0,33 | NO-GO |
+
+**Lectura (revisa la conclusió del lot petit):** a escala, el tipus CORRELACIONA amb el biaix
+(ρ 0,92–1,0, direcció consistent) i la base per tipus **centra** cada grup (l'error medià baixa
+molt), però **queda molta dispersió DINS del tipus** (residual màx 20–48%) → una base sola per
+tipus NO posa tothom sota el 15%. Confirma el disseny: cal la **regressió amb covariables
+CONTÍNUES** (densitat la primera) + publicar en **rang p10–p90**, no un punt. Amb el lot petit
+(9 munis tots «nets») semblava que la base per tipus n'hi havia prou; el N gran ho desmenteix.
+
+**Dos avisos del N gran:** (1) **RTC places/resident NO explica net el residual del vacacional**
+(ρ feble/negatiu): l'elèctric domèstic no veu hostes d'hotel i l'ETCA és mitjana anual →
+l'estacionalitat vol dada de PIC, no aquest proxy. (2) **`interior_rural` (n=39) contaminat** amb
+exurbis metropolitans (cases grans, molt elèctric) → el classificador encara necessita les
+llistes oficials senceres (AMB/costaners/corona) per no barrejar.
+
 ## Pendent (per decidir amb Bea — «comentem»)
 - **Opció A (ampliar mostra):** afegir més comarques (litoral sencer + AMB sencera + interior) per
   tenir N≥~10 per tipus → llavors recalibrar base per tipus i/o regressió amb covariables. Cal

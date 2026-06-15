@@ -1,10 +1,119 @@
-ine5,municipi,tipus_territorial,resident,etca,kwh_dom_total,kg_hab_any,pernocta_est,carrega_est,err_pernocta_pct
-08019,Barcelona,litoral_metropolita,1686208,1784335,1914308836,,1563978,,-12.3
-08101,l'Hospitalet de Llobregat,metropolita_dens,282299,262223,241595709,,197382,,-24.7
-08015,Badalona,litoral_metropolita,226219,208549,217710786,,177868,,-14.7
-08245,Santa Coloma de Gramenet,metropolita_dens,120903,106565,97127559,,79353,,-25.5
-08194,Sant Adrià de Besòs,litoral_metropolita,38672,36627,37286319,,30463,,-16.8
-43905,Salou,litoral_vacacional,30442,62220,63002027,90254.0,51472,6701249,-17.3
-43148,Tarragona,litoral_vacacional,141018,156109,164559120,4534.0,134444,1559453,-13.9
-43038,Cambrils,litoral_vacacional,36686,49656,71880723,72346.0,58726,6473379,18.3
-43171,Vila-seca,litoral_vacacional,24061,30960,34851147,70562.0,28473,4140957,-8.0
+ine5,municipi,tipus_territorial,resident,etca,pernocta_est,err_pernocta_pct,rtc_places,rtc_places_per_resident,altitud_m,densitat_hab_km2
+08001,Abrera,interior_rural,12981,12852,13599,5.8,45,0.003,105,662.3
+08003,Alella,interior_rural,10200,9291,15009,61.5,506,0.05,90,1070.0
+08006,Arenys de Mar,litoral_vacacional,16513,16436,17135,4.3,1854,0.112,10,2515.9
+08007,Arenys de Munt,interior_rural,9444,8297,10884,31.2,218,0.023,121,447.5
+08009,Argentona,interior_rural,12850,12035,14416,19.8,263,0.02,88,507.5
+08011,Avià,interior_rural,2242,1990,2684,34.9,292,0.13,677,83.1
+08015,Badalona,litoral_metropolita,226219,208549,177868,-14.7,1756,0.008,6,10889.6
+08016,Bagà,interior_rural,2181,2305,2780,20.6,521,0.239,785,50.2
+08019,Barcelona,litoral_metropolita,1686208,1784335,1563978,-12.3,92602,0.055,13,16904.3
+08020,Begues,corona_metropolitana,7439,6418,9465,47.5,147,0.02,399,149.6
+08022,Berga,interior_rural,17195,17057,17173,0.7,2143,0.125,704,777.1
+08024,Borredà,interior_rural,,,619,,1628,,,
+08029,Cabrera de Mar,litoral_vacacional,5014,5484,7174,30.8,81,0.016,104,562.7
+08030,Cabrils,interior_rural,7764,6930,11236,62.1,629,0.081,147,1100.0
+08032,Caldes d'Estrac,litoral_vacacional,3241,3447,4350,26.2,576,0.178,33,3804.5
+08035,Calella,litoral_vacacional,20207,26662,22090,-17.1,15080,0.746,5,2596.9
+08040,Canet de Mar,litoral_vacacional,15135,14774,15423,4.4,3170,0.209,15,2732.2
+08045,Capolat,interior_rural,,,131,,88,,,
+08049,Casserres,interior_rural,1675,1571,2225,41.6,310,0.185,611,56.5
+08050,Castellar del Riu,interior_rural,,,188,,1130,,,
+08052,Castellar de n'Hug,interior_rural,,,218,,188,,,
+08056,Castelldefels,litoral_metropolita,69196,65880,72054,9.4,6993,0.101,3,5414.8
+08057,Castell de l'Areny,interior_rural,,,92,,58,,,
+08066,Castellví de Rosanes,interior_rural,2098,2077,2742,32.0,29,0.014,178,132.2
+08068,Cervelló,corona_metropolitana,9633,8601,11545,34.2,147,0.015,122,403.6
+08069,Collbató,interior_rural,4847,4442,6213,39.9,336,0.069,388,266.7
+08072,Corbera de Llobregat,corona_metropolitana,15783,13781,19492,41.4,299,0.019,342,871.5
+08073,Cornellà de Llobregat,metropolita_dens,91196,88494,69989,-20.9,1311,0.014,27,13198.1
+08075,Dosrius,interior_rural,6152,5753,7697,33.8,140,0.023,147,154.8
+08076,Esparreguera,interior_rural,22499,20435,21805,6.7,64,0.003,187,826.2
+08077,Esplugues de Llobregat,metropolita_dens,47700,45165,40379,-10.6,1320,0.028,110,10527.0
+08078,"Espunyola, l'",interior_rural,,,391,,142,,,
+08080,Fígols,interior_rural,,,34,,8,,,
+08089,Gavà,litoral_metropolita,47961,46334,46455,0.3,2135,0.045,9,1566.9
+08092,Gironella,interior_rural,5072,4760,5245,10.2,664,0.131,469,749.6
+08093,Gisclareny,interior_rural,,,55,,23,,,
+08099,Guardiola de Berguedà,interior_rural,951,1005,1125,11.9,427,0.449,720,15.6
+08101,"Hospitalet de Llobregat, l'",metropolita_dens,282299,262223,197382,-24.7,7653,0.027,8,23561.4
+08110,Malgrat de Mar,litoral_vacacional,19270,23866,18734,-21.5,11780,0.611,4,2225.6
+08114,Martorell,metropolita_dens,28483,31609,22829,-27.8,298,0.01,56,2271.9
+08118,"Masnou, el",metropolita_dens,24444,22368,24043,7.5,436,0.018,27,7294.1
+08121,Mataró,litoral_vacacional,130887,126691,115911,-8.5,1961,0.015,28,5830.9
+08123,Molins de Rei,metropolita_dens,26930,24398,26733,9.6,501,0.019,37,1712.1
+08126,Montgat,litoral_metropolita,12646,11250,12316,9.5,263,0.021,20,4410.7
+08130,Montclar,interior_rural,,,204,,81,,,
+08132,Montmajor,interior_rural,,,766,,119,,,
+08142,"Nou de Berguedà, la",interior_rural,,,259,,89,,,
+08144,Olvan,interior_rural,,,1118,,105,,,
+08147,Olesa de Montserrat,metropolita_dens,24703,22270,22699,1.9,0,0.0,124,1503.3
+08153,Òrrius,interior_rural,,,1167,,35,,,
+08155,Palafolls,interior_rural,9933,9734,10072,3.5,410,0.041,16,605.4
+08157,Pallejà,corona_metropolitana,11811,10612,12677,19.5,232,0.02,41,1442.9
+08158,"Papiol, el",interior_rural,4358,4034,4210,4.4,47,0.011,135,492.1
+08163,Pineda de Mar,litoral_vacacional,29415,32566,29833,-8.4,10044,0.341,10,2799.9
+08166,"Pobla de Lillet, la",pirineu_alta_muntanya,1107,1121,1243,10.9,657,0.593,843,21.5
+08169,"Prat de Llobregat, el",metropolita_dens,65910,72498,53936,-25.6,1641,0.025,8,2109.2
+08172,Premià de Mar,litoral_vacacional,28928,25055,25233,0.7,331,0.011,8,13909.0
+08175,Puig-reig,interior_rural,4482,4313,4343,0.7,374,0.083,455,99.6
+08177,"Quar, la",interior_rural,,,127,,16,,,
+08188,Sagàs,interior_rural,,,394,,245,,,
+08190,Saldes,interior_rural,,,560,,1155,,,
+08193,Sant Iscle de Vallalta,interior_rural,1463,1373,1936,41.0,88,0.06,129,83.4
+08194,Sant Adrià de Besòs,litoral_metropolita,38672,36627,30463,-16.8,2530,0.065,14,10204.2
+08196,Sant Andreu de la Barca,metropolita_dens,27039,25713,22323,-13.2,252,0.009,42,4921.6
+08197,Sant Andreu de Llavaneres,litoral_vacacional,11942,11119,17107,53.9,833,0.07,114,1006.8
+08200,Sant Boi de Llobregat,metropolita_dens,84588,78896,69592,-11.8,922,0.011,30,3973.8
+08203,Sant Cebrià de Vallalta,interior_rural,3812,3941,5612,42.4,978,0.257,71,244.0
+08204,Sant Climent de Llobregat,corona_metropolitana,4181,3419,4285,25.3,0,0.0,87,387.3
+08208,Sant Esteve Sesrovires,interior_rural,8039,9211,9395,2.0,446,0.055,183,437.1
+08211,Sant Feliu de Llobregat,metropolita_dens,46381,43297,39269,-9.3,473,0.01,25,3949.9
+08214,Vilassar de Dalt,interior_rural,9299,8947,10021,12.0,266,0.029,142,1064.7
+08216,Sant Jaume de Frontanyà,interior_rural,,,47,,34,,,
+08217,Sant Joan Despí,metropolita_dens,35012,33933,30353,-10.6,790,0.023,10,5804.1
+08219,Vilassar de Mar,litoral_vacacional,21169,19992,21659,8.3,532,0.025,10,5308.5
+08221,Sant Just Desvern,metropolita_dens,20815,20004,23483,17.4,881,0.042,122,2694.6
+08230,Premià de Dalt,metropolita_dens,10574,9356,12415,32.7,358,0.034,142,1613.5
+08235,Sant Pol de Mar,litoral_vacacional,5810,6578,8362,27.1,2271,0.391,15,767.3
+08244,Santa Coloma de Cervelló,corona_metropolitana,8334,7069,7570,7.1,54,0.006,73,1104.8
+08245,Santa Coloma de Gramenet,metropolita_dens,120903,106565,79353,-25.5,602,0.005,56,17607.1
+08255,Santa Maria de Merlès,interior_rural,,,398,,418,,,
+08261,Santa Susanna,litoral_vacacional,3999,10576,5867,-44.5,14150,3.538,10,320.6
+08263,Sant Vicenç dels Horts,metropolita_dens,28595,26264,24626,-6.2,6,0.0,22,3153.5
+08264,Sant Vicenç de Montalt,interior_rural,6725,6887,11846,72.0,985,0.146,143,848.3
+08268,Cercs,interior_rural,1193,1130,1652,46.2,163,0.137,650,26.1
+08281,Teià,interior_rural,6812,5915,8561,44.7,250,0.037,128,1039.8
+08282,Tiana,corona_metropolitana,9323,7834,10582,35.1,124,0.013,136,1177.6
+08284,Tordera,interior_rural,18795,18652,20233,8.5,797,0.042,34,226.8
+08289,Torrelles de Llobregat,corona_metropolitana,6136,5139,6788,32.1,100,0.016,126,454.4
+08293,Vallcebre,interior_rural,,,326,,109,,,
+08295,Vallirana,interior_rural,15952,14117,18707,32.5,55,0.003,177,680.0
+08299,Vilada,interior_rural,,,554,,54,,,
+08301,Viladecans,litoral_metropolita,67179,62051,55902,-9.9,1381,0.021,18,3310.6
+08308,Viver i Serrateix,interior_rural,,,311,,438,,,
+08903,Sant Julià de Cerdanyola,interior_rural,,,412,,37,,,
+08905,"Palma de Cervelló, la",interior_rural,3048,2594,3687,42.1,0,0.0,100,560.3
+25100,Gósol,interior_rural,,,386,,418,,,
+43012,Altafulla,litoral_vacacional,5809,7638,9212,20.6,2425,0.417,52,842.6
+43043,"Catllar, el",interior_rural,5215,4619,7573,64.0,217,0.042,59,203.8
+43047,Constantí,interior_rural,6921,7725,6711,-13.1,14,0.002,81,231.8
+43050,Creixell,litoral_vacacional,4169,6341,7151,12.8,6592,1.581,48,405.7
+43095,"Morell, el",interior_rural,3851,4125,4448,7.8,194,0.05,104,641.6
+43097,"Nou de Gaià, la",interior_rural,,,714,,19,,,
+43100,"Pallaresos, els",interior_rural,5018,4433,5858,32.1,25,0.005,120,983.0
+43103,Perafort,interior_rural,1319,1132,1590,40.5,40,0.03,125,141.8
+43109,"Pobla de Mafumet, la",interior_rural,4127,4237,3747,-11.6,25,0.006,98,674.2
+43111,"Pobla de Montornès, la",interior_rural,3357,3562,4858,36.4,222,0.066,56,282.3
+43122,Renau,interior_rural,,,165,,36,,,
+43126,"Riera de Gaià, la",interior_rural,1806,1616,2283,41.3,126,0.07,28,209.0
+43131,Roda de Berà,litoral_vacacional,8027,11725,15960,36.1,7008,0.873,57,499.4
+43135,Salomó,interior_rural,,,687,,40,,,
+43144,"Secuita, la",interior_rural,1828,1556,2337,50.2,78,0.043,169,104.0
+43148,Tarragona,litoral_vacacional,141018,156109,134444,-13.9,13675,0.097,68,2474.7
+43153,Torredembarra,litoral_vacacional,17953,21801,25967,19.1,4125,0.23,15,2088.4
+43164,Vespella de Gaià,litoral_vacacional,,,906,,105,,,
+43166,Vilallonga del Camp,interior_rural,2462,2214,2990,35.0,17,0.007,124,275.9
+43171,Vila-seca,litoral_vacacional,24061,30960,28473,-8.0,11005,0.457,45,1116.4
+43905,Salou,litoral_vacacional,30442,62220,51472,-17.3,42461,1.395,2,2050.1
+43907,"Canonja, la",interior_rural,5936,6189,5743,-7.2,32,0.005,50,818.7

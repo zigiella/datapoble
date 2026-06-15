@@ -1,4 +1,7 @@
-tipus_territorial,n,base_electric_tipus,factor,residual_medianpct,residual_maxpct,go_nogo
-litoral_metropolita,3,1044,1.172,2.5,2.8,GO
-litoral_vacacional,4,1089,1.124,5.2,33.0,NO-GO
-metropolita_dens,2,916,1.336,0.5,0.5,GO
+tipus_territorial,n,base_electric_tipus,factor,residual_medianpct,residual_maxpct,rho_residual_rtc,go_nogo
+corona_metropolitana,8,1630,0.751,6.1,19.6,0.43,NO-GO
+interior_rural,39,1617,0.757,13.7,34.3,0.33,NO-GO
+litoral_metropolita,7,1103,1.11,7.7,21.5,0.02,NO-GO
+litoral_vacacional,20,1277,0.959,16.5,47.5,-0.28,NO-GO
+metropolita_dens,16,1095,1.118,14.9,48.4,0.25,NO-GO
+pirineu_alta_muntanya,1,1357,0.902,0.0,0.0,,GO
