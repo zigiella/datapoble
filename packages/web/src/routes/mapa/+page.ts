@@ -20,12 +20,14 @@ import type { FeatureCollection } from 'geojson';
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ fetch }) => {
-	const [dataset, munRes, comRes] = await Promise.all([
+	const [dataset, munRes, comRes, vegRes] = await Promise.all([
 		loadMunicipisDataset(fetch),
 		fetch('/geo/catalunya-municipis.geojson'),
-		fetch('/geo/catalunya-comarques.geojson')
+		fetch('/geo/catalunya-comarques.geojson'),
+		fetch('/geo/catalunya-vegueries.geojson')
 	]);
 	const geojson = (await munRes.json()) as FeatureCollection;
 	const comarques = (await comRes.json()) as FeatureCollection;
-	return { dataset, geojson, comarques };
+	const vegueries = (await vegRes.json()) as FeatureCollection;
+	return { dataset, geojson, comarques, vegueries };
 };

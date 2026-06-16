@@ -41,12 +41,25 @@
 	const dataset = $derived(data.dataset);
 	const geojson = $derived(data.geojson);
 	const comarques = $derived(data.comarques);
+	const vegueries = $derived(data.vegueries);
 	const locale = $derived(currentLocale());
+
+	// Granularitat del mapa (municipi = coroplètic per indicador; comarca/vegueria = cobertura).
+	type Granularity = 'municipi' | 'comarca' | 'vegueria';
+	let granularity = $state<Granularity>('municipi');
+	const coverageMode = $derived(granularity !== 'municipi');
+	const GRAN_OPTS: { key: Granularity; label: () => string }[] = [
+		{ key: 'municipi', label: () => m.map_granularity_municipi() },
+		{ key: 'comarca', label: () => m.map_granularity_comarca() },
+		{ key: 'vegueria', label: () => m.map_granularity_vegueria() }
+	];
 	// Tàctil (pointer coarse): a mòbil el hover no existeix → el tap mostra la targeta i NO navega;
 	// la targeta es fa tocable i el seu CTA «obrir fitxa» és qui obre la fitxa del municipi.
 	const coarse = browser && typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches;
 
 	let indicator = $state<MetricKey>(DEFAULT_INDICATOR);
+	// Color «amb dades» de la llegenda de cobertura (mirall de COVERAGE_FILL del ChoroplethMap).
+	const COVERAGE_FILL = '#4FA8A0';
 
 	// Etiqueta editorial de cada indicador del mapa (clau del contracte → text localitzat).
 	// Només per a les claus de MAP_INDICATORS; `labelFor` cau a l'etiqueta del contracte si cal.
@@ -239,23 +252,39 @@
 
 	<div class="ds-main">
 		<section class="ds-sec" style="border-top:none">
-			<!-- Barra d'eines: selector d'indicador -->
+			<!-- Barra d'eines: commutador de granularitat + selector d'indicador (només a municipi) -->
 			<div class="map-toolbar">
 				<div class="field">
-					<label for="indicator">{m.map_indicator_label()}</label>
-					<select id="indicator" class="select" bind:value={indicator}>
-						{#each MAP_INDICATORS as key (key)}
-							<option value={key}>{labelFor(key)}</option>
+					<span class="gran-label" id="gran-label">{m.map_granularity_label()}</span>
+					<div class="gran-seg" role="group" aria-labelledby="gran-label">
+						{#each GRAN_OPTS as o (o.key)}
+							<button
+								type="button"
+								class="gran-seg__btn"
+								aria-pressed={granularity === o.key}
+								onclick={() => (granularity = o.key)}>{o.label()}</button
+							>
 						{/each}
-					</select>
+					</div>
 				</div>
+				{#if !coverageMode}
+					<div class="field">
+						<label for="indicator">{m.map_indicator_label()}</label>
+						<select id="indicator" class="select" bind:value={indicator}>
+							{#each MAP_INDICATORS as key (key)}
+								<option value={key}>{labelFor(key)}</option>
+							{/each}
+						</select>
+					</div>
+				{/if}
 			</div>
 
 			<!-- Graella: mapa real (esquerra) + lectura del color i llegenda (dreta).
 			     Presentacio simple (pre-Fase 2): SENSE marc de paper ni corbes; el MapLibre
 			     omple net el seu contenidor i .map-canvaswrap deixa overflow visible perque
 			     les targetes/tooltips de municipi no es retallin (decisio Bea). -->
-			<div class="map-tablebar">
+			{#if !coverageMode}
+				<div class="map-tablebar">
 					<button
 						type="button"
 						class="map-table-toggle"
@@ -265,7 +294,8 @@
 						{showTable ? m.viz_as_map() : m.viz_as_table()}
 					</button>
 				</div>
-				{#if !showTable}
+				{/if}
+				{#if !showTable || coverageMode}
 				<div class="map-wrap">
 				<div class="map-canvaswrap">
 					{#if browser}
@@ -273,8 +303,10 @@
 							{dataset}
 							{geojson}
 							{comarques}
+							{vegueries}
 							{indicator}
 							{classification}
+							{granularity}
 							onhover={(p) => (hover = p)}
 							onselect={onMuniSelect}
 						/>
@@ -318,11 +350,31 @@
 					<div class="map-read">
 						<p class="map-read__h">{m.map_read_h()}</p>
 						<p class="read">
-							{#if catMode}{m.map_read_cat()}{:else if divMode}{m.map_read_gap()}{:else}{m.map_read_seq()}{/if}
+							{#if coverageMode}{m.map_legend_coverage_caveat()}{:else if catMode}{m.map_read_cat()}{:else if divMode}{m.map_read_gap()}{:else}{m.map_read_seq()}{/if}
 						</p>
 					</div>
 					<div class="map-legend">
-						{#if catMode}
+						{#if coverageMode}
+							<!-- Llegenda de COBERTURA honesta (comarca/vegueria): no l'indicador, sinó on hi ha
+							     dades. Comarca: Berguedà = completes. Vegueria: Comarques Centrals = parcials. -->
+							<div>
+								<p class="legend__hd"><span>{m.map_legend_coverage_title()}</span></p>
+								<div class="map-cls">
+									{#if granularity === 'comarca'}
+										<div class="r">
+											<i style="background:{COVERAGE_FILL}"></i><span>{m.map_legend_coverage_complete()}</span>
+										</div>
+									{:else}
+										<div class="r">
+											<span style="width:26px;height:14px;border-radius:2px;display:inline-block;background-color:{COVERAGE_FILL};background-image:repeating-linear-gradient(45deg,rgba(36,40,46,0.45) 0 1.5px,transparent 1.5px 5px);box-shadow:inset 0 0 0 1px var(--dp-border-strong)"></span><span>{m.map_legend_coverage_partial()}</span>
+										</div>
+									{/if}
+									<div class="r">
+										<i style="background:var(--dp-map-land,#F2F1EC);opacity:0.7;box-shadow:inset 0 0 0 1px var(--dp-border)"></i><span>{m.map_legend_coverage_none()}</span>
+									</div>
+								</div>
+							</div>
+						{:else if catMode}
 							<!-- llegenda CATEGÒRICA (tipologia): un color per arquetip + etiqueta + frase curta.
 							     NO és una rampa: el color comunica QUIN TIPUS de pressió, no «més/menys». -->
 							<div>
@@ -393,22 +445,24 @@
 							</div>
 						{/if}
 
-						<div class="legend__nodata" style="margin-top:13px">
-							<span class="hatch-cell" style="width:26px;height:14px"></span><span
-								>{m.map_legend_lowconf()}</span
-							>
-						</div>
-						<div class="legend__nodata" style="margin-top:8px">
-							<span
-								style="width:26px;height:14px;border-radius:2px;display:inline-block;background:#E3E3DE;background-image:repeating-linear-gradient(45deg,#94A0AF 0 1.5px,transparent 1.5px 5px);border:1px solid var(--dp-border-strong)"
-							></span><span>{m.map_legend_nodata()}</span>
-						</div>
-						<!-- Catalunya de context: municipis atenuats fora del Berguedà («sense dades encara»). -->
-						<div class="legend__nodata" style="margin-top:8px">
-							<span
-								style="width:26px;height:14px;border-radius:2px;display:inline-block;background:var(--dp-map-land,#F2F1EC);opacity:0.7;border:1px solid var(--dp-border)"
-							></span><span>{m.map_legend_dimmed()}</span>
-						</div>
+						{#if !coverageMode}
+							<div class="legend__nodata" style="margin-top:13px">
+								<span class="hatch-cell" style="width:26px;height:14px"></span><span
+									>{m.map_legend_lowconf()}</span
+								>
+							</div>
+							<div class="legend__nodata" style="margin-top:8px">
+								<span
+									style="width:26px;height:14px;border-radius:2px;display:inline-block;background:#E3E3DE;background-image:repeating-linear-gradient(45deg,#94A0AF 0 1.5px,transparent 1.5px 5px);border:1px solid var(--dp-border-strong)"
+								></span><span>{m.map_legend_nodata()}</span>
+							</div>
+							<!-- Catalunya de context: municipis atenuats fora del Berguedà («sense dades encara»). -->
+							<div class="legend__nodata" style="margin-top:8px">
+								<span
+									style="width:26px;height:14px;border-radius:2px;display:inline-block;background:var(--dp-map-land,#F2F1EC);opacity:0.7;border:1px solid var(--dp-border)"
+								></span><span>{m.map_legend_dimmed()}</span>
+							</div>
+						{/if}
 					</div>
 				</aside>
 			</div>
@@ -464,6 +518,40 @@
 	}
 	@media (max-width: 880px) {
 		.map-wrap { grid-template-columns: 1fr; }
+	}
+
+	/* Commutador de granularitat (municipi/comarca/vegueria): control segmentat. */
+	.gran-label {
+		display: block;
+		font-family: var(--dp-font-mono);
+		font-size: 0.66rem;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--dp-text-subtle);
+		margin-bottom: 5px;
+	}
+	.gran-seg {
+		display: inline-flex;
+		border: 1px solid var(--dp-border-strong);
+		border-radius: var(--dp-radius-full);
+		overflow: hidden;
+	}
+	.gran-seg__btn {
+		font-family: var(--dp-font-mono);
+		font-size: 0.72rem;
+		letter-spacing: 0.02em;
+		padding: 6px 14px;
+		border: none;
+		background: var(--dp-surface);
+		color: var(--dp-text-muted);
+		cursor: pointer;
+	}
+	.gran-seg__btn + .gran-seg__btn {
+		border-left: 1px solid var(--dp-border);
+	}
+	.gran-seg__btn[aria-pressed='true'] {
+		background: var(--dp-text);
+		color: var(--dp-bg);
 	}
 
 	/* Llegenda CATEGÒRICA (tipologia): files amb swatch + etiqueta humana + frase curta.
