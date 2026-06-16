@@ -1,6 +1,11 @@
 # Contribuir a datapoble — manual operativo del equipo
 
-Método de coordinación multiagente (adoptado del oficio Cambium / TRANSFER_KIT). Detalle ampliado en `docs/team-method.md`.
+> **Mètode canònic: Cambium Charter, vendoritzat a [`.cambium/CHARTER.md`](.cambium/CHARTER.md)** (sello a
+> [`.cambium/VERSION`](.cambium/VERSION) → **v0.3.1**) · innegociables a [`.cambium/REGLAS.md`](.cambium/REGLAS.md) ·
+> rols a `docs/equipo/`. Aquest document és la **capa específica de datapoble** (zones, decisions);
+> la doctrina viu al Charter, no es duplica aquí.
+
+Método de coordinación multiagente (Cambium Charter v0.3.1). Detalle de zonas y decisiones abajo; método en `.cambium/`.
 
 ## 1. Roles y jurisdicción
 Cada agente decide **en su frente** y escala lo que cruza frentes. Nadie edita código fuera de su zona sin *handoff*. Talaia coordina e integra; **Bea tiene el voto narrativo final** (marca, copy, qué se publica).
