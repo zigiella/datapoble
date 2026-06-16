@@ -26,6 +26,17 @@
 	const dataset = $derived(data.dataset);
 	const geojson = $derived(data.geojson);
 	const comarques = $derived(data.comarques);
+	const vegueries = $derived(data.vegueries);
+
+	// Granularitat del mapa de la home. Per defecte COMARCA (decisió Bea): la home dona el cop
+	// d'ull de cobertura a tot Catalunya; municipi mostra el detall del Berguedà.
+	type Granularity = 'municipi' | 'comarca' | 'vegueria';
+	let granularity = $state<Granularity>('comarca');
+	const GRAN_OPTS: { key: Granularity; label: () => string }[] = [
+		{ key: 'comarca', label: () => m.map_granularity_comarca() },
+		{ key: 'vegueria', label: () => m.map_granularity_vegueria() },
+		{ key: 'municipi', label: () => m.map_granularity_municipi() }
+	];
 
 	const troballes = $derived(buildTroballes(dataset, data.licitacions));
 
@@ -120,8 +131,27 @@
 		<section class="ds-sec">
 			<div class="ds-sec__hd"><span class="ref">◵</span><h2>{m.home_map_title()}</h2></div>
 			<p class="lead">{m.home_map_hint()}</p>
+			<div class="home-gran" role="group" aria-label={m.map_granularity_label()}>
+				{#each GRAN_OPTS as o (o.key)}
+					<button
+						type="button"
+						class="home-gran__btn"
+						aria-pressed={granularity === o.key}
+						onclick={() => (granularity = o.key)}>{o.label()}</button
+					>
+				{/each}
+			</div>
 			<div class="home-map">
-				<ChoroplethMap {dataset} {geojson} {comarques} {indicator} {classification} onselect={navTo} />
+				<ChoroplethMap
+					{dataset}
+					{geojson}
+					{comarques}
+					{vegueries}
+					{indicator}
+					{classification}
+					{granularity}
+					onselect={navTo}
+				/>
 			</div>
 			<p class="home-map__more"><a href={localizeHref('/mapa')}>{m.home_map_more()} →</a></p>
 		</section>
@@ -144,3 +174,31 @@
 		</section>
 	</div>
 </section>
+
+<style>
+	/* Commutador de granularitat del mapa de la home (comarca/vegueria/municipi). */
+	.home-gran {
+		display: inline-flex;
+		margin: 0 0 12px;
+		border: 1px solid var(--dp-border-strong);
+		border-radius: var(--dp-radius-full);
+		overflow: hidden;
+	}
+	.home-gran__btn {
+		font-family: var(--dp-font-mono);
+		font-size: 0.72rem;
+		letter-spacing: 0.02em;
+		padding: 6px 14px;
+		border: none;
+		background: var(--dp-surface);
+		color: var(--dp-text-muted);
+		cursor: pointer;
+	}
+	.home-gran__btn + .home-gran__btn {
+		border-left: 1px solid var(--dp-border);
+	}
+	.home-gran__btn[aria-pressed='true'] {
+		background: var(--dp-text);
+		color: var(--dp-bg);
+	}
+</style>

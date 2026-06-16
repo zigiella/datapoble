@@ -14,14 +14,16 @@ import type { PageLoad } from './$types';
 export const prerender = true;
 
 export const load: PageLoad = async ({ fetch }) => {
-	const [dataset, munRes, comRes, licRes] = await Promise.all([
+	const [dataset, munRes, comRes, vegRes, licRes] = await Promise.all([
 		loadMunicipisDataset(fetch),
 		fetch('/geo/catalunya-municipis.geojson'),
 		fetch('/geo/catalunya-comarques.geojson'),
+		fetch('/geo/catalunya-vegueries.geojson'),
 		fetch('/data/licitacions-bergueda.json')
 	]);
 	const geojson = (await munRes.json()) as FeatureCollection;
 	const comarques = (await comRes.json()) as FeatureCollection;
+	const vegueries = (await vegRes.json()) as FeatureCollection;
 	const licitacions = licRes.ok ? ((await licRes.json()) as LicitacionsPayload) : null;
-	return { dataset, geojson, comarques, licitacions };
+	return { dataset, geojson, comarques, vegueries, licitacions };
 };

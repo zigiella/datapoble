@@ -29,7 +29,7 @@
 	 */
 	import { onMount, onDestroy } from 'svelte';
 	import type { Map as MlMap, GeoJSONSource, MapGeoJSONFeature } from 'maplibre-gl';
-	import type { FeatureCollection } from 'geojson';
+	import type { FeatureCollection, Feature, Polygon, MultiPolygon } from 'geojson';
 	import type { MunicipisDataset, MetricKey } from '$lib/contract/types';
 	import { type Classification } from '$lib/map/classify';
 	import { mapValue } from '$lib/map/indicators';
@@ -53,21 +53,37 @@
 		y: number;
 	}
 
+	/** Granularitat del mapa: municipi (coroplètic per indicador) o comarca/vegueria (cobertura). */
+	type Granularity = 'municipi' | 'comarca' | 'vegueria';
+
 	interface Props {
 		dataset: MunicipisDataset;
 		/** GeoJSON de TOTS els municipis de Catalunya (947; properties.ine5 = join key). */
 		geojson: FeatureCollection;
-		/** GeoJSON de les 43 comarques (límits suaus d'orientació). */
+		/** GeoJSON de les 43 comarques (límits suaus d'orientació + capa de cobertura). */
 		comarques: FeatureCollection;
+		/** GeoJSON de les 8 vegueries (capa de cobertura; opcional). */
+		vegueries?: FeatureCollection;
 		indicator: MetricKey;
 		/** Classificació calculada a fora (la pàgina), per compartir-la amb la llegenda. */
 		classification: Classification;
+		/** Nivell de granularitat actiu (per defecte municipi). */
+		granularity?: Granularity;
 		onhover?: (p: HoverPayload | null) => void;
 		onselect?: (ine5: string | null) => void;
 	}
 
-	let { dataset, geojson, comarques, indicator, classification, onhover, onselect }: Props =
-		$props();
+	let {
+		dataset,
+		geojson,
+		comarques,
+		vegueries,
+		indicator,
+		classification,
+		granularity = 'municipi',
+		onhover,
+		onselect
+	}: Props = $props();
 
 	let container: HTMLDivElement;
 	let map: MlMap | null = null;
@@ -86,6 +102,7 @@
 
 	const SRC = 'municipis'; // tots els municipis de Catalunya (947)
 	const SRC_COM = 'comarques'; // límits comarcals
+	const SRC_VEG = 'vegueries'; // 8 àmbits (capa de cobertura)
 	const BASE = 'mun-base'; // atenuat: municipis sense dades (no Berguedà)
 	const BASELINE = 'mun-baseline'; // contorn tènue de tot Catalunya
 	const FILL = 'mun-fill'; // coroplètic: Berguedà amb dada
@@ -95,6 +112,24 @@
 	const COMLINE = 'com-line'; // límits de comarca (suaus)
 	const HOVER = 'mun-hover';
 	const SELECT = 'mun-select';
+	// Capes de COBERTURA (granularitat comarca/vegueria): cobertura honesta, no l'indicador.
+	const COV_COM_FILL = 'cov-com-fill';
+	const COV_COM_LINE = 'cov-com-line';
+	const COV_VEG_FILL = 'cov-veg-fill';
+	const COV_VEG_HATCH = 'cov-veg-hatch'; // tramat «dades parcials» (vegueria amb només el Berguedà dins)
+	const COV_VEG_LINE = 'cov-veg-line';
+	// Capes municipals (es mostren a 'municipi', s'amaguen a comarca/vegueria). COMLINE es gestiona a part.
+	const MUN_LAYERS = [BASE, BASELINE, HATCH, FILL, LOWCONF, LINE, HOVER, SELECT];
+
+	// Color «amb dades del projecte» (teal calmat, espill de --dp-div2-1; distint de les rampes
+	// d'indicador perquè a cobertura no es mostra cap rampa). Hex literal: el canvas no resol CSS vars.
+	const COVERAGE_FILL = '#4FA8A0';
+	// Quines features tenen dades a cada nivell (constants: tots els 31 munis del dataset són del
+	// Berguedà → comarca «Berguedà»; vegueria «Comarques Centrals», PARCIAL perquè només el Berguedà hi és).
+	const COV_COMARCA = 'Berguedà';
+	const COV_VEGUERIA = 'Comarques Centrals';
+
+	let mlgl: typeof import('maplibre-gl') | null = null; // ref per re-enquadrar en canviar de nivell
 
 	/**
 	 * Conjunt de codis INE5 amb dades = els municipis del Berguedà (les claus del dataset són
@@ -251,6 +286,7 @@
 	async function init() {
 		// maplibre-gl v5 no té default export: usem el namespace (Map, NavigationControl…).
 		const maplibregl = await import('maplibre-gl');
+		mlgl = maplibregl;
 		await import('maplibre-gl/dist/maplibre-gl.css');
 
 		map = new maplibregl.Map({
@@ -309,6 +345,7 @@
 
 			map.addSource(SRC, { type: 'geojson', data: buildData(indicator), promoteId: 'ine5' });
 			map.addSource(SRC_COM, { type: 'geojson', data: comarques });
+			if (vegueries) map.addSource(SRC_VEG, { type: 'geojson', data: vegueries });
 
 			// Capa BASE atenuada: tots els municipis SENSE dades (no Berguedà) amb fill neutre clar.
 			// «Sense dades encara»: visible però apagat, mai acolorit per l'indicador.
@@ -399,37 +436,110 @@
 				}
 			});
 
+			// ── Capes de COBERTURA (granularitat comarca/vegueria) ──────────────────────────────
+			// Cobertura HONESTA, no l'indicador: «amb dades» (Berguedà) en color sòlid; vegueria
+			// «Comarques Centrals» en tramat (PARCIAL: només el Berguedà hi és dins); resta atenuada
+			// «sense dades encara». Es creen amb visibility 'none'; applyGranularity les commuta.
+			const covExpr = (nom: string) => ['==', ['get', 'nom'], nom];
+			map.addLayer({
+				id: COV_COM_FILL,
+				type: 'fill',
+				source: SRC_COM,
+				layout: { visibility: 'none' },
+				paint: {
+					'fill-color': ['case', covExpr(COV_COMARCA), COVERAGE_FILL, MAP.land] as never,
+					'fill-opacity': ['case', covExpr(COV_COMARCA), 0.8, 0.5] as never
+				}
+			});
+			map.addLayer({
+				id: COV_COM_LINE,
+				type: 'line',
+				source: SRC_COM,
+				layout: { visibility: 'none' },
+				paint: { 'line-color': MAP.boundary, 'line-width': 0.9 }
+			});
+			if (vegueries) {
+				map.addLayer({
+					id: COV_VEG_FILL,
+					type: 'fill',
+					source: SRC_VEG,
+					layout: { visibility: 'none' },
+					paint: {
+						'fill-color': ['case', covExpr(COV_VEGUERIA), COVERAGE_FILL, MAP.land] as never,
+						'fill-opacity': ['case', covExpr(COV_VEGUERIA), 0.6, 0.5] as never
+					}
+				});
+				// Tramat «parcial» NOMÉS sobre la vegueria amb dades (només el Berguedà hi és dins).
+				map.addLayer({
+					id: COV_VEG_HATCH,
+					type: 'fill',
+					source: SRC_VEG,
+					layout: { visibility: 'none' },
+					filter: covExpr(COV_VEGUERIA) as never,
+					paint: { 'fill-pattern': 'hatch' }
+				});
+				map.addLayer({
+					id: COV_VEG_LINE,
+					type: 'line',
+					source: SRC_VEG,
+					layout: { visibility: 'none' },
+					paint: { 'line-color': MAP.boundary, 'line-width': 1.1 }
+				});
+			}
+
 			// Salvaguarda: assegura que el canvas té la mida del contenidor abans d'enquadrar
 			// (per si el `load` ha arribat amb una mida intermèdia). Vegeu `resizeObs`.
 			map.resize();
-			// Enquadra a la bbox del BERGUEDÀ (no a tot Catalunya): el país queda de context.
-			fitToBergueda(maplibregl);
+			// Aplica la granularitat inicial (municipi per defecte) + enquadrament corresponent.
+			applyGranularity(granularity);
 			wireInteractions();
 			ready = true;
 		});
 	}
 
-	/**
-	 * Enquadra a la bbox dels municipis del BERGUEDÀ (els que tenen dades), no a tot Catalunya:
-	 * el zoom inicial mostra el Berguedà acolorit amb el país atenuat al voltant; el zoom-out
-	 * revela la resta de Catalunya.
-	 */
-	function fitToBergueda(maplibregl: typeof import('maplibre-gl')) {
-		if (!map) return;
-		const berg = bergSet;
-		const b = new maplibregl.LngLatBounds();
-		for (const f of geojson.features) {
-			const ine5 = (f.properties?.ine5 as string) ?? '';
-			if (!berg.has(ine5)) continue;
+	/** Enquadra a la bbox de les features que passen el predicat (o totes). */
+	function fitToFeatures(fc: FeatureCollection, keep?: (f: Feature) => boolean) {
+		if (!map || !mlgl) return;
+		const b = new mlgl.LngLatBounds();
+		for (const f of fc.features) {
+			if (keep && !keep(f)) continue;
 			const g = f.geometry;
 			const eat = (coords: number[]) => b.extend(coords as [number, number]);
 			const walk = (arr: unknown): void => {
 				if (Array.isArray(arr) && typeof arr[0] === 'number') eat(arr as number[]);
 				else if (Array.isArray(arr)) arr.forEach(walk);
 			};
-			if (g && 'coordinates' in g) walk(g.coordinates);
+			if (g && 'coordinates' in g) walk((g as Polygon | MultiPolygon).coordinates);
 		}
-		if (!b.isEmpty()) map.fitBounds(b, { padding: 36, duration: 0 });
+		if (!b.isEmpty()) map.fitBounds(b, { padding: 36, duration: 300 });
+	}
+
+	/** Enquadra a la bbox dels municipis del BERGUEDÀ (els que tenen dades) — vista municipi. */
+	function fitToBergueda() {
+		fitToFeatures(geojson, (f) => bergSet.has((f.properties?.ine5 as string) ?? ''));
+	}
+
+	/**
+	 * Commuta la granularitat: mostra/amaga capes per `visibility` (cap re-join; tornar a municipi
+	 * és instantani). A municipi → capes municipals + COMLINE; a comarca/vegueria → capes de
+	 * cobertura (l'indicador NO es pinta, només cobertura honesta). Re-enquadra segons el nivell.
+	 */
+	function applyGranularity(g: Granularity) {
+		if (!map) return;
+		const show = (id: string, on: boolean) => {
+			if (map!.getLayer(id)) map!.setLayoutProperty(id, 'visibility', on ? 'visible' : 'none');
+		};
+		const isMun = g === 'municipi';
+		for (const id of MUN_LAYERS) show(id, isMun);
+		show(COMLINE, isMun); // a cobertura, les línies pròpies de cada nivell orienten
+		show(COV_COM_FILL, g === 'comarca');
+		show(COV_COM_LINE, g === 'comarca');
+		show(COV_VEG_FILL, g === 'vegueria');
+		show(COV_VEG_HATCH, g === 'vegueria');
+		show(COV_VEG_LINE, g === 'vegueria');
+		// Enquadrament: municipi → Berguedà (context); cobertura → tot Catalunya.
+		if (isMun) fitToBergueda();
+		else fitToFeatures(comarques);
 	}
 
 	let hoverId: string | null = null;
@@ -465,7 +575,7 @@
 
 		for (const layer of interactive) {
 			map.on('mousemove', layer, (e) => {
-				if (!map) return;
+				if (!map || granularity !== 'municipi') return; // a cobertura no hi ha tooltip de municipi
 				const feat = e.features?.[0] as MapGeoJSONFeature | undefined;
 				if (!feat) return;
 				const ine5 = (feat.properties?.ine5 as string) ?? '';
@@ -487,7 +597,7 @@
 			});
 
 			map.on('click', layer, (e) => {
-				if (!map) return;
+				if (!map || granularity !== 'municipi') return;
 				const feat = e.features?.[0] as MapGeoJSONFeature | undefined;
 				const ine5 = (feat?.properties?.ine5 as string) ?? '';
 				if (selected) map.setFeatureState({ source: SRC, id: selected }, { selected: false });
@@ -528,6 +638,13 @@
 		if (map.getLayer(FILL)) {
 			map.setPaintProperty(FILL, 'fill-color', fillColorExpression(c, key) as never);
 		}
+	});
+
+	// Reactiu: en canviar de granularitat, commuta visibilitat de capes + re-enquadra.
+	$effect(() => {
+		const g = granularity;
+		if (!map || !ready) return;
+		applyGranularity(g);
 	});
 
 	onMount(() => {
