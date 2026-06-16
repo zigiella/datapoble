@@ -1,5 +1,10 @@
 # datapoble · Método de equipo v1
 
+> **Actualitzat (2026-06-16):** el mètode canònic és ara **Cambium Charter v0.3.1**, vendoritzat a
+> [`.cambium/CHARTER.md`](../.cambium/CHARTER.md) (sello a `.cambium/VERSION`). Aquest document queda
+> com a **registre històric** de l'adopció inicial (TRANSFER_KIT) + decisions pròpies; per a la
+> doctrina vigent, vegeu el Charter i `.cambium/REGLAS.md`.
+
 Oficio de coordinación adoptado del **TRANSFER_KIT** (proyectos Sprout/Savia, rol Cambium) + decisiones propias de datapoble (idiomas, IA). Semilla del futuro `CONTRIBUTING.md`.
 
 > Crédito: la metodología multiagente viene del kit de Bea. Aquí queda lo que **adopto tal cual**, lo que **adapto** y lo que **descarto**.
