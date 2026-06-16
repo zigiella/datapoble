@@ -5,6 +5,24 @@ l'estat real del producte. Veredicte: **l'estratègia es manté i l'estem execut
 mínima. Falten DOS nuclis grans (lectures de fitxa §3 i bases Nivell C / Catalunya §2) i un grapat de
 peces de l'spec que NO són als teus 7 fronts (cal decidir si entren al llançament o a Fase 2).*
 
+## 0 · Progrés des d'aquesta revisió (2026-06-15/16)
+
+Dos nuclis grans avançats + el mapa multinivell:
+
+- **§3 · Fitxa-IA · lectures — FET i EN VIU** (#125-129). Generades les lectures dels 31 munis
+  (escriptor opus-4.8 es → traductor sonnet-4.6 ca, verificador de xifres; 31/31 del model, 0
+  reserves després del fix del verificador) i servides a la fitxa: veredicte (P1), lectures per
+  perfil (ciutadania/visitant) amb naturalesa+evidència, contra-lectura i preguntes → Pregunta-li.
+  El toggle de perfils es va passar a **CSS pur** (el de $state no commutava).
+- **§4/§2 · Nivell C — MODEL VALIDAT (carril dades, en silenci)** (#130-136). De «la base única
+  del Berguedà no encaixa» a un model robust: `base elèctrica/persona ~ log10(densitat) + renda`
+  (INE ADRH 2023), **R²=0,60, 77% dins ±15%, held-out = in-sample (no sobreajust)**. Document
+  d'analista viu `docs/analisi-escala-nivellc.md`. **Encara NO publicat** (cal ~≥85% per a xifra
+  absoluta; la banda ±15% ja és publicable com a rang). Geometria de vegueries derivada (#134).
+- **§10/§5 · Mapa multinivell — FET** (#137). Commutador comarca/vegueria/municipi als dos mapes
+  amb **cobertura honesta** (Berguedà completes · Comarques Centrals parcials · resta sense dades);
+  home per defecte comarca. *Pendent: confirmació visual de Bea en navegador real.*
+
 ## 1 · On som vs l'ordre d'execució de l'spec (§13)
 
 | §13 | Peça | Estat | Evidència |
@@ -12,14 +30,14 @@ peces de l'spec que NO són als teus 7 fronts (cal decidir si entren al llançam
 | 0 | Accessibilitat AA + alternativa en taula + confiança visual | 🟡 parcial | «veure com a taula» (#97) ✅; **axe-core CI + teclat (mapa/slider/scatter) ⬜** |
 | 1 | Prerender/SSR + URLs slug + sitemap + hreflang | ✅ **fet** | slug #98 · /ca+SEO+sitemap+hreflang #120 |
 | 2 | Renoms semàntics + taula de còpies §1.4 | ✅ majoritari | Pas 2 #94-95 (IETR→Exposició, capacitat/impacte, «gent que el padró no veu») · **revisió de còpies ⬜ (front teu)** |
-| 3 | **Fitxa P1/P2 + lectures pre-generades + xifra citable + emblema doble corrent** | 🟡 **motor llest, no servit** | pipeline validat #108-114; la fitxa avui és NOMÉS P3 (blocs de dada). Lectures/veredicte/5 números/preguntes ⬜ · xifra citable ⬜ · doble corrent ⬜ |
-| 4 | **Bases per tipus + validació triple + règims (Barcelonès intern)** | 🟡 **Nivell B fet, C no** | Nivell B `tipus_territorial` #103 ✅ · ETCA validació Berguedà #100-102 ✅ · **Nivell C (esperats per regressió + calibratge coef) ⬜** · règims a la guia ✅, com a camp+evals ⬜ |
-| 5 | Home nova + espina + breadcrumb | 🟡 **home feta, espina no** | Home «La Llera» #119 ✅ (frase-mare ⬜, hallazgos≈troballes 🟡) · **espina/breadcrumb territorial ⬜** |
+| 3 | **Fitxa P1/P2 + lectures pre-generades + xifra citable + emblema doble corrent** | ✅ **lectures fetes** | veredicte+lectures+preguntes en viu #125-129; 5 números (P2) #124. Pendent: **xifra citable ⬜ · doble corrent ⬜** |
+| 4 | **Bases per tipus + validació triple + règims (Barcelonès intern)** | 🟡 **Nivell C VALIDAT, no publicat** | Nivell B #103 · ETCA #100-102 · **Nivell C regressió densitat+renda R²0,60, held-out OK #130-136** ✅ (carril en silenci). Pendent: ≥85% (gas/calefacció) → **publicar** · règims com a camp+evals ⬜ |
+| 5 | Home nova + espina + breadcrumb | 🟡 **home + mapa multinivell, espina no** | Home «La Llera» #119 · mapa default comarca #137 ✅ (frase-mare ⬜, hallazgos≈troballes 🟡) · **espina/breadcrumb ⬜** |
 | 6 | Dorling-fantasma + slider + el riu + beeswarm + pols | ⬜ pendent | (el «wow», va després de la base sana) |
 | 7 | Embeds + pàgines de dada + kit de premsa (§9) | ⬜ pendent | dades obertes/descàrrega/cita ⬜ |
 | 8 | Catàleg de components + HUD genUI + resposta-com-UI a Pregunta-li | ⬜ pendent | **= el teu «segon pregunta-li (super beta)»** |
 | 9 | `oc-aranés` + `en` | ⬜ pendent (ara amb recursos) | SOP + scripts Apertium/AINA rebuts · terreny /ca obert #120 |
-| 10 | Tarragonès públic → resta de Catalunya | 🟡 stress-test fet #107 | càrrega incremental (Barcelonès+Salou) decidida |
+| 10 | Tarragonès públic → resta de Catalunya | 🟡 **mapa multinivell + Nivell C validat** | mapa comarca/vegueria/municipi #137 · Nivell C N=91 (Berguedà+Barcelonès+Tarragonès+Baix Llobregat+Maresme) #130-136. Pendent: publicar (go/no-go) |
 
 **Licitacions** (els dos pilars): Fase 1 viva #118; majors/diputació → Fase 2 (decidit).
 
@@ -44,21 +62,25 @@ peces de l'spec que NO són als teus 7 fronts (cal decidir si entren al llançam
 ## 4 · Ordre reconciliat (CONFIRMAT amb Bea, 2026-06-14)
 
 0. **Aquesta revisió** ✅.
-1. **Caveat Licitacions «només menors»** (quick) · alinear troballes amb els 4 *hallazgos* (rècord honest · contrast · nul honest · contradicció).
-2. **Fitxa-IA · lectures** (§3): generar+servir veredicte + 5 números + 4 lectures + preguntes per als 31. **← SEGÜENT NUCLI (decidit).**
-3. **Bases Nivell C + Catalunya incremental** (§2/§11): Barcelonès intern + Salou/Tarragonès, go/no-go, càrrega «poc a poc verificant». **Pal de paller.**
+1. ✅ **Caveat Licitacions «només menors»** (#123) · 🟡 alinear troballes amb els 4 *hallazgos* (rècord honest fet; falta contrast/nul honest/contradicció).
+2. ✅ **Fitxa-IA · lectures** (§3) — generades i servides per als 31 (#125-129).
+3. 🟡 **Bases Nivell C + Catalunya incremental** (§2/§11) — **MODEL VALIDAT** (densitat+renda, R²0,60, held-out; #130-136), carril en silenci. **SEGÜENT:** (a) 1-2 covariables més (gas/calefacció, grandària llar) per creuar el go/no-go (~≥85%) → (b) **publicar** rangs/xifra a la fitxa i al mapa, comarca a comarca; (c) replicar per residus (L2); (d) completar llistes del classificador.
+   - En paral·lel: ⬜ **confirmació visual del mapa multinivell** (Bea) · ⬜ frase-mare a la home.
 4. **Pàgines de comarca + millorar /resum** (§5) — depèn de 3.
-5. **3 profunditats a cada pàgina + test CI** (§1) · **accessibilitat AA / axe-core / teclat** (§13.0, l'spec la vol aviat).
+5. **3 profunditats a cada pàgina + test CI** (§1) · **accessibilitat AA / axe-core / teclat** (§13.0).
 6. **Espina territorial + breadcrumb** (§7) — al llançament.
 7. **Dades obertes + xifra citable + embeds + kit premsa** (§9) — al llançament.
-8. **Visualitzacions noves** (§4): Dorling-fantasma, slider, «el riu», beeswarm, emblema doble corrent — al llançament.
+8. **Visualitzacions noves** (§4): Dorling-fantasma, slider, «el riu», beeswarm, emblema doble corrent — al llançament. *(el commutador de granularitat del mapa, #137, ja és un primer pas de viz territorial.)*
 9. **Pregunta-li: millorar + segon «super beta»** (genUI/resposta-com-UI, §7.3).
 10. **Revisió de còpies** (§1.4) → abans de traduir.
-11. **Llengües: aranés (Apertium/AINA) + anglès** (§1.5/§13.9).
+11. **Llengües: aranés (AINA) + anglès** (§1.5/§13.9).
 12. **DA externa** (poliment).
 13. **Llançament**: treure noindex · og:image.
 
 **Diferit a Fase 2:** Licitacions majors/diputació · **fonts noves §12** (INE-mòbils, VUT plataformes, autocaravanes; tret del mínim per a Nivell C) · genUI HUD complet.
+
+---
+*Actualitzat 2026-06-16 (Talaia): vegeu §0 per al progrés recent i `docs/analisi-escala-nivellc.md` per al detall del Nivell C.*
 
 ---
 *Convicció de l'spec que adopto com a filtre: «si una peça no pot explicar d'on surt, no es publica». El mètode és el producte també a la UI.*
