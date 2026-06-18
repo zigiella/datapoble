@@ -15,7 +15,7 @@
 	import MuniSearch from '$lib/components/MuniSearch.svelte';
 	import { classify, methodFor } from '$lib/map/classify';
 	import { mapValue } from '$lib/map/indicators';
-	import { slugForIne5 } from '$lib/contract/slug';
+	import { slugForIne5, toSlug } from '$lib/contract/slug';
 	import { buildTroballes, type Troballa } from '$lib/analysis/troballes';
 	import { localizeHref } from '$lib/i18n';
 	import { m } from '$lib/paraglide/messages';
@@ -27,6 +27,9 @@
 	const geojson = $derived(data.geojson);
 	const comarques = $derived(data.comarques);
 	const vegueries = $derived(data.vegueries);
+	// Presència estimada EN RANG (Nivell C): munis coberts fora del Berguedà (clau ine5). Pinten al
+	// mapa a granularitat municipi i el clic hi navega (la fitxa mostra el rang).
+	const pernocta = $derived(data.pernocta?.munis);
 
 	// Granularitat del mapa de la home. Per defecte COMARCA (decisió Bea): la home dona el cop
 	// d'ull de cobertura a tot Catalunya; municipi mostra el detall del Berguedà.
@@ -51,7 +54,14 @@
 	const classification = $derived(classify(series, method));
 
 	function navTo(ine5: string | null) {
-		if (ine5 && dataset.municipis[ine5]) goto(localizeHref(`/municipi/${slugForIne5(ine5, dataset)}`));
+		if (!ine5) return;
+		if (dataset.municipis[ine5]) {
+			goto(localizeHref(`/municipi/${slugForIne5(ine5, dataset)}`));
+			return;
+		}
+		// Muni cobert en rang (Nivell C): la fitxa existeix amb la banda → hi naveguem també.
+		const cov = pernocta?.[ine5];
+		if (cov) goto(localizeHref(`/municipi/${toSlug(cov.nom)}`));
 	}
 
 	function troballaText(t: Troballa): string {
@@ -150,6 +160,7 @@
 					{indicator}
 					{classification}
 					{granularity}
+					{pernocta}
 					onselect={navTo}
 				/>
 			</div>

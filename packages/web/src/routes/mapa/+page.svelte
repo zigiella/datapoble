@@ -33,7 +33,9 @@
 	import { TIPOLOGIA_ORDER, isCategorical, tipologiaLabel } from '$lib/map/tipologia';
 	import { slugForIne5, toSlug } from '$lib/contract/slug';
 	import { currentLocale, localizeHref } from '$lib/i18n';
+	import { formatInteger } from '$lib/format';
 	import type { MetricKey } from '$lib/contract/types';
+	import type { PernoctaMuni } from '$lib/contract/pernocta';
 	import { m } from '$lib/paraglide/messages';
 	import type { PageData } from './$types';
 
@@ -42,6 +44,8 @@
 	const geojson = $derived(data.geojson);
 	const comarques = $derived(data.comarques);
 	const vegueries = $derived(data.vegueries);
+	// Presència estimada EN RANG (Nivell C): munis coberts de fora del Berguedà, keyed per ine5.
+	const pernocta = $derived(data.pernocta?.munis);
 	const locale = $derived(currentLocale());
 
 	// Granularitat del mapa (municipi = coroplètic per indicador; comarca/vegueria = cobertura).
@@ -206,18 +210,24 @@
 		confScore: number | null;
 		/** True si el municipi és del Berguedà (té dades); fals → «sense dades encara». */
 		inBergueda: boolean;
+		/** Presència estimada EN RANG (Nivell C) si és un muni cobert de fora del Berguedà; si no, null. */
+		pernocta?: PernoctaMuni | null;
 		x: number;
 		y: number;
 	}
 	let hover = $state<Hover | null>(null);
 
-	// Clic a un municipi → navega a la seva FITXA completa (`/municipi/[ine5]`). Només per als del
-	// Berguedà (els que tenen dades): per als de fora, el clic no navega (la fitxa diria «sense
-	// dades» i el hover ja ho comunica al mapa). El conjunt amb dades són les claus del dataset.
+	// Clic a un municipi → navega a la seva FITXA completa (`/municipi/[slug]`). Navega per als del
+	// Berguedà (dades completes) I per als coberts en rang (Nivell C, la fitxa mostra el rang). Per a
+	// la resta de fora, el clic no navega (la fitxa diria «sense dades» i el hover ja ho comunica).
 	function onMuniSelect(ine5: string | null) {
 		if (!ine5) return;
-		if (!dataset.municipis[ine5]) return;
-		goto(localizeHref(`/municipi/${slugForIne5(ine5, dataset)}`));
+		if (dataset.municipis[ine5]) {
+			goto(localizeHref(`/municipi/${slugForIne5(ine5, dataset)}`));
+			return;
+		}
+		const cov = pernocta?.[ine5];
+		if (cov) goto(localizeHref(`/municipi/${toSlug(cov.nom)}`));
 	}
 
 	// Paletes de l'especificació: quina queda destacada (.on) segons l'indicador actiu.
@@ -307,6 +317,7 @@
 							{indicator}
 							{classification}
 							{granularity}
+							{pernocta}
 							onhover={(p) => (hover = p)}
 							onselect={onMuniSelect}
 						/>
@@ -325,8 +336,41 @@
 									touchMode={coarse}
 									href={localizeHref(`/municipi/${toSlug(hover.nom)}`)}
 								/>
+							{:else if hover.pernocta}
+								<!-- Municipi COBERT EN RANG (Nivell C, fora del Berguedà): presència estimada
+								     com a BANDA (rang_baix–rang_alt), ETCA oficial com a validació si n'hi ha, i
+								     caveat d'inferència. Reusa l'embolcall `.tip--outside` (to amable, clar). -->
+								<div
+									class="tip card tip--outside tip--range"
+									class:tip--touch={coarse}
+									style="left:{hover.x}px; top:{hover.y}px"
+									role="tooltip"
+									aria-live="polite"
+								>
+									<div class="tip__place">{hover.nom}</div>
+									<div class="tip__out">{m.map_range_eyebrow()}</div>
+									<div class="tip__range tnum">
+										{formatInteger(hover.pernocta.rang_baix, locale)}<span class="tip__range-dash"
+											>–</span
+										>{formatInteger(hover.pernocta.rang_alt, locale)}
+										<span class="tip__range-unit">{m.map_range_unit()}</span>
+									</div>
+									{#if hover.pernocta.etca_oficial != null}
+										<div class="tip__range-etca">
+											{m.map_range_etca()}: <b class="tnum"
+												>{formatInteger(hover.pernocta.etca_oficial, locale)}</b
+											>
+										</div>
+									{/if}
+									<p class="tip__out-scope">{m.map_range_caveat()}</p>
+									{#if coarse}
+										<a class="tip__hint tip__hint--link" href={localizeHref(`/municipi/${toSlug(hover.pernocta.nom)}`)}>{m.map_open_fitxa_touch()}</a>
+									{:else}
+										<p class="tip__hint">{m.map_open_fitxa()}</p>
+									{/if}
+								</div>
 							{:else}
-								<!-- Municipi de FORA del Berguedà: estat amable «sense dades encara»
+								<!-- Municipi de FORA del Berguedà SENSE cobertura: estat amable «sense dades encara»
 								     (NO un tooltip de dada buida; honestedat: no fingim dada). -->
 								<div
 									class="tip card tip--outside"
@@ -682,6 +726,66 @@
 		font-size: 0.56rem;
 		line-height: 1.4;
 		color: var(--dp-text-subtle);
+	}
+
+	/* Tooltip de PRESÈNCIA EN RANG (munis coberts pel Nivell C). Reusa .tip--outside (clar/amable)
+	   però destaca la BANDA com a valor protagonista i hi afegeix l'ETCA de validació + el CTA. */
+	.tip--range {
+		min-width: 184px;
+		max-width: 248px;
+	}
+	.tip__range {
+		margin: 5px 0 0;
+		font-family: var(--dp-font-display);
+		font-weight: 700;
+		font-size: 1.18rem;
+		line-height: 1.12;
+		color: var(--dp-text);
+	}
+	.tip__range-dash {
+		margin: 0 2px;
+		color: var(--dp-text-muted);
+		font-weight: 600;
+	}
+	.tip__range-unit {
+		font-family: var(--dp-font-sans);
+		font-size: 0.7rem;
+		font-weight: 600;
+		color: var(--dp-text-subtle);
+	}
+	.tip__range-etca {
+		margin: 5px 0 0;
+		font-family: var(--dp-font-mono);
+		font-size: 0.64rem;
+		color: var(--dp-text-muted);
+	}
+	.tip__range-etca b {
+		color: var(--dp-text);
+		font-weight: 700;
+	}
+	/* Pista d'acció (clicable) — mirall de la de MapTooltip, redefinida aquí (estil scoped). */
+	.tip__hint {
+		margin: 7px 0 0;
+		padding-top: 6px;
+		border-top: 1px solid var(--dp-border);
+		font-family: var(--dp-font-mono);
+		font-size: 0.58rem;
+		letter-spacing: 0.03em;
+		line-height: 1.35;
+		color: var(--dp-brand, #b5612a);
+		font-weight: 600;
+	}
+	.tip__hint--link {
+		display: block;
+		text-decoration: none;
+		cursor: pointer;
+	}
+	.tip--touch {
+		pointer-events: auto;
+	}
+	.tip--touch .tip__hint--link {
+		margin-top: 9px;
+		padding: 8px 0 2px;
 	}
 
 	/* Accessibilitat (spec §1.5): toggle + taula alternativa del mapa per a l'indicador actiu. */

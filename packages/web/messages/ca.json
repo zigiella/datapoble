@@ -304,6 +304,10 @@
   "map_open_fitxa": "Clica per obrir la fitxa →",
   "map_open_fitxa_touch": "Obrir fitxa →",
   "resum_open_fitxa": "Fitxa completa →",
+  "map_range_eyebrow": "Presència estimada · en rang",
+  "map_range_unit": "persones",
+  "map_range_etca": "ETCA oficial (Idescat)",
+  "map_range_caveat": "Estimació pròpia en rang (model densitat + renda + gas), no cens.",
 
   "foot_link_method_to": "Metodologia",
   "nav_metodologia": "Metodologia",
