@@ -20,6 +20,11 @@ export function toSlug(nom: string): string {
 	let s = nom.trim();
 	const m = s.match(ARTICLE);
 	if (m) s = `${m[2]} ${m[1]}`; // "Nom, la" → "la Nom"
+	// Article INICIAL amb apòstrof sense espai ("l'Hospitalet", forma inline del geojson oficial):
+	// hi inserim un separador perquè doni el MATEIX slug que la forma "Nom, l'" ("l-hospitalet",
+	// no "lhospitalet"). Només l'article inicial; un apòstrof intern ("Castellar de n'Hug") es
+	// manté i cau a "nhug" com fins ara. La forma "l' Nom" (ja amb espai) hi passa idempotent.
+	s = s.replace(/^(l)['’]\s*/i, '$1 ');
 	return s
 		.replace(/l·l/gi, 'll') // ela geminada (l·l) → ll, no l-l
 		.normalize('NFD')

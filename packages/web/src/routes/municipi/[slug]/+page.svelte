@@ -393,8 +393,9 @@
 		return { stock: s, impact: i, name: q.name, help: q.help };
 	});
 
-	// Nom del municipi (topònim, igual en ambdós locales) o, sense dada, el codi.
-	const muniNom = $derived(row?.nom ?? pernocta?.nom ?? ine5 ?? '');
+	// Nom del municipi (topònim, igual en ambdós locales): del dataset (Berguedà), del rang (cobert)
+	// o del CATÀLEG de tota Catalunya (`data.nom`, qualsevol poble); en últim cas, el codi.
+	const muniNom = $derived(row?.nom ?? pernocta?.nom ?? data.nom ?? ine5 ?? '');
 	// Enter localitzat per a les xifres del rang.
 	const fNum = (v: number) => formatInteger(v, locale);
 

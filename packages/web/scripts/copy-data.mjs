@@ -19,7 +19,7 @@
  * Ús:  node scripts/copy-data.mjs       (l'invoca `prebuild`/`predev` via npm)
  */
 
-import { copyFileSync, existsSync, mkdirSync, statSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -40,6 +40,36 @@ const FILES = [
 ];
 
 mkdirSync(DEST_DIR, { recursive: true });
+
+/**
+ * Catàleg de TOTS els municipis de Catalunya (947) derivat de la geometria oficial
+ * `static/geo/catalunya-municipis.geojson` (props `{ine5, nom}`). És la base de «tota
+ * Catalunya»: el cercador hi cerca i la fitxa hi resol QUALSEVOL slug → ine5 + nom (perquè
+ * cada poble tingui pàgina, amb dada/rang on n'hi ha o un «sense dades encara» digne).
+ *
+ * Frontera honesta: NO és una dada de població ni cap xifra — només el cens de noms+codis,
+ * la columna vertebral de navegació. La geometria SEMPRE és al repo (no depèn dels marts), així
+ * que això és determinista i segur a CI. El slug es deriva del nom en RUNTIME (toSlug), no aquí,
+ * perquè la lògica d'slug visqui en un sol lloc (`$lib/contract/slug`).
+ */
+function buildCataleg() {
+	const geoPath = resolve(__dirname, '../static/geo/catalunya-municipis.geojson');
+	if (!existsSync(geoPath)) {
+		console.warn(`[copy-data] AVÍS: no s'ha trobat ${geoPath}; no es genera el catàleg de municipis.`);
+		return;
+	}
+	const geo = JSON.parse(readFileSync(geoPath, 'utf8'));
+	const cataleg = geo.features
+		.map((f) => ({ ine5: String(f.properties.ine5), nom: String(f.properties.nom) }))
+		.filter((m) => m.ine5 && m.nom)
+		.sort((a, b) => a.nom.localeCompare(b.nom, 'ca'));
+	const dest = resolve(DEST_DIR, 'municipis-cataleg.json');
+	writeFileSync(dest, JSON.stringify(cataleg));
+	const kb = (statSync(dest).size / 1024).toFixed(1);
+	console.log(`[copy-data] OK: municipis-cataleg.json → static/data/ (${cataleg.length} munis, ${kb} kB)`);
+}
+
+buildCataleg();
 
 for (const f of FILES) {
 	if (!existsSync(f.src)) {
