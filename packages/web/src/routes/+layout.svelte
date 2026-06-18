@@ -90,10 +90,8 @@
 		<a href={localizeHref('/mapa')} class:on={isActive('/mapa')} aria-current={isActive('/mapa') ? 'page' : undefined}>
 			<span>{m.nav_mapa()}</span>
 		</a>
-		<a href={localizeHref('/licitacions')} class:on={isActive('/licitacions')} aria-current={isActive('/licitacions') ? 'page' : undefined}>
-			<span>{m.nav_licitacions()}</span>
-		</a>
-		<!-- Metodologia i Glossari NO van a la capçalera (decisió de Bea): viuen al peu (secció Explora). -->
+		<!-- Licitacions FORA de la nav principal (decisió Bea): «en construcció», només al peu.
+		     Metodologia i Glossari tampoc van a la capçalera: viuen al peu (secció Explora). -->
 		<a href={localizeHref('/pregunta-li')} class:on={isActive('/pregunta-li')} aria-current={isActive('/pregunta-li') ? 'page' : undefined}>
 			<span>{m.nav_preguntale()}</span>
 		</a>
@@ -122,9 +120,7 @@
 		<div id="ds-drawer" class="ds-drawer">
 			<a href={localizeHref('/')} class:on={isActive('/')} onclick={() => (menuOpen = false)}>{m.nav_inici()}</a>
 			<a href={localizeHref('/resum')} class:on={isActive('/resum')} onclick={() => (menuOpen = false)}>{m.nav_resum()}</a>
-			<a href={localizeHref('/mapa')} class:on={isActive('/mapa')} onclick={() => (menuOpen = false)}>{m.nav_mapa()}</a>
-			<a href={localizeHref('/licitacions')} class:on={isActive('/licitacions')} onclick={() => (menuOpen = false)}>{m.nav_licitacions()}</a>
-			<a href={localizeHref('/pregunta-li')} class:on={isActive('/pregunta-li')} onclick={() => (menuOpen = false)}>{m.nav_preguntale()}</a>
+			<a href={localizeHref('/mapa')} class:on={isActive('/mapa')} onclick={() => (menuOpen = false)}>{m.nav_mapa()}</a>			<a href={localizeHref('/pregunta-li')} class:on={isActive('/pregunta-li')} onclick={() => (menuOpen = false)}>{m.nav_preguntale()}</a>
 			<a href={localizeHref('/metodologia')} class:on={isActive('/metodologia')} onclick={() => (menuOpen = false)}>{m.foot_link_method_to()}</a>
 			<a href={localizeHref('/glossari')} class:on={isActive('/glossari')} onclick={() => (menuOpen = false)}>{m.foot_link_glossary()}</a>
 			<div class="ds-drawer__ctl"><LangSwitcher /><ThemeSwitcher /></div>

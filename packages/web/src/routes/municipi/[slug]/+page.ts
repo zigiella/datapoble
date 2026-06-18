@@ -19,7 +19,6 @@
  */
 import { loadMunicipisDataset } from '$lib/data/dataset';
 import { buildSlugIndex, toSlug } from '$lib/contract/slug';
-import type { LicitacionsData, LicitacionsMuni } from '$lib/contract/licitacions';
 import type { LecturesData, LecturaEntry } from '$lib/contract/lectures';
 import type { PernoctaData, PernoctaMuni } from '$lib/contract/pernocta';
 import type { CatalegData } from '$lib/contract/cataleg';
@@ -109,20 +108,11 @@ export const load: PageLoad = async ({ fetch, params }) => {
 		}
 	}
 
-	// Licitacions i lectura-IA són artefactes del BERGUEDÀ: només es carreguen si el muni hi és
-	// (`row`). Així la resta de Catalunya no fa fetches inútils en prerender. Prerender-safe.
-	let lic: LicitacionsMuni | null = null;
+	// Lectura-IA és un artefacte del BERGUEDÀ: només es carrega si el muni hi és (`row`). Així la
+	// resta de Catalunya no fa fetches inútils en prerender. Prerender-safe.
+	// (Licitacions aparcades per al llançament —decisió Bea—: la fitxa no en mostra secció.)
 	let lectura: LecturaEntry | null = null;
 	if (row) {
-		try {
-			const res = await fetch('/data/licitacions-bergueda.json');
-			if (res.ok) {
-				const data = (await res.json()) as LicitacionsData;
-				lic = data.municipis.find((mu) => mu.ine5 === ine5) ?? null;
-			}
-		} catch {
-			lic = null;
-		}
 		try {
 			const res = await fetch('/data/lectures.bergueda.json');
 			if (res.ok) {
@@ -134,5 +124,5 @@ export const load: PageLoad = async ({ fetch, params }) => {
 		}
 	}
 
-	return { dataset, ine5, nom, row, lic, lectura, pernocta };
+	return { dataset, ine5, nom, row, lectura, pernocta };
 };

@@ -309,6 +309,13 @@
   "map_range_etca": "ETCA oficial (Idescat)",
   "map_range_caveat": "Estimación propia en rango (modelo densidad + renta + gas), no censo.",
 
+  "lic_wip_eyebrow": "El cabal · en construcción",
+  "lic_wip_h1": "Licitaciones",
+  "lic_wip_lead": "Estamos construyendo una lectura honesta de la contratación pública: quién contrata sus propios servicios y quién depende del Consell Comarcal o de entes supramunicipales.",
+  "lic_wip_body": "Todavía no lo publicamos porque queremos cubrir todas las fases (no solo los contratos menores) y cruzar las fuentes. Fieles al método: ninguna cifra sin procedencia. Cuando la base sea sólida, lo abriremos aquí.",
+  "lic_wip_back": "← Volver al inicio",
+  "lic_wip_method": "Cómo trabajamos →",
+
   "foot_link_method_to": "Metodología",
   "nav_metodologia": "Metodología",
   "nav_glossari": "Glosario",
