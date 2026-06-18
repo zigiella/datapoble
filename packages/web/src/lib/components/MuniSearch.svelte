@@ -2,33 +2,35 @@
 	/**
 	 * Buscador de municipis — el cor de la Home «La Llera» (cercador primer).
 	 *
-	 * Cerca client-side sobre els municipis del dataset (avui els 31 del Berguedà; el mateix
-	 * component escala a 947 sense canviar la UX). Insensible a accents/apòstrofs via `toSlug`.
-	 * Triar un resultat (clic o Enter) navega a la fitxa /municipi/<slug>. Cada resultat porta
-	 * el nom + el xip de TIPOLOGIA (color categòric del design-system). Estil: classes
-	 * `.home-search*` de design-system/aplicacio.css (Llegenda). Accessible: combobox amb
-	 * aria-activedescendant i navegació amb fletxes.
+	 * Cerca client-side sobre el CATÀLEG de TOTS els municipis de Catalunya (~947), no només els
+	 * del dataset: qualsevol poble es pot trobar i la seva fitxa mostra dada/rang o un «sense dades
+	 * encara» digne. Insensible a accents/apòstrofs via `toSlug`. Triar un resultat (clic o Enter)
+	 * navega a /municipi/<slug>. Els municipis amb dades del Berguedà porten el xip de TIPOLOGIA.
+	 * Estil: classes `.home-search*` (Llegenda). Accessible: combobox amb fletxes + activedescendant.
 	 */
 	import { goto } from '$app/navigation';
-	import { slugForIne5, toSlug } from '$lib/contract/slug';
+	import { toSlug } from '$lib/contract/slug';
 	import { tipologiaLabel, tipologiaColor } from '$lib/map/tipologia';
 	import { localizeHref } from '$lib/i18n';
 	import { m } from '$lib/paraglide/messages';
 	import type { MunicipisDataset } from '$lib/contract/types';
+	import type { MuniCataleg } from '$lib/contract/cataleg';
 
-	let { dataset }: { dataset: MunicipisDataset } = $props();
+	// `cataleg` = tots els munis (cens de noms+codis); `dataset` = els que tenen dades (xip tipologia).
+	let { cataleg, dataset }: { cataleg: MuniCataleg[]; dataset: MunicipisDataset } = $props();
 
 	const norm = (s: string) => toSlug(s).replace(/-/g, ' ');
 
-	// Índex de cerca (estable): nom + forma normalitzada + slug + tipologia.
+	// Índex de cerca (estable): tot el catàleg. El slug es deriva del nom (toSlug); coincideix amb
+	// el dels enllaços del Berguedà i dels coberts (convergeixen, vegeu `contract/slug`).
 	const index = $derived(
-		Object.entries(dataset.municipis)
-			.map(([ine5, row]) => ({
-				ine5,
-				nom: row.nom,
-				slug: slugForIne5(ine5, dataset),
-				norm: norm(row.nom),
-				tipologia: row.values?.tipologia
+		cataleg
+			.map((muni) => ({
+				ine5: muni.ine5,
+				nom: muni.nom,
+				slug: toSlug(muni.nom),
+				norm: norm(muni.nom),
+				tipologia: dataset.municipis[muni.ine5]?.values?.tipologia
 			}))
 			.sort((a, b) => a.nom.localeCompare(b.nom, 'ca'))
 	);

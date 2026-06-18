@@ -30,6 +30,8 @@
 	// Presència estimada EN RANG (Nivell C): munis coberts fora del Berguedà (clau ine5). Pinten al
 	// mapa a granularitat municipi i el clic hi navega (la fitxa mostra el rang).
 	const pernocta = $derived(data.pernocta?.munis);
+	// Catàleg de tots els munis de Catalunya (cerca a tot el país).
+	const cataleg = $derived(data.cataleg);
 
 	// Granularitat del mapa de la home. Per defecte COMARCA (decisió Bea): la home dona el cop
 	// d'ull de cobertura a tot Catalunya; municipi mostra el detall del Berguedà.
@@ -111,7 +113,7 @@
 			<p class="ap-eyebrow"><span>{m.home_eyebrow()}</span></p>
 			<h1>{m.home_h1()}</h1>
 			<p class="lede">{m.home_lede()}</p>
-			<MuniSearch {dataset} />
+			<MuniSearch {cataleg} {dataset} />
 		</div>
 	</div>
 

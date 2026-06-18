@@ -11,10 +11,10 @@ límit de despesa; les tasques marcades **(IA)** sí (esperen que es reposi).*
    `export_pernocta_catalunya.py`; afegir munis <1.000 hab (`est = consum/base_pred`, marcats «sense
    validació oficial», banda ampla). Re-validar held-out per comarca/tipus; no publicar el que no
    aguanti. Actualitzar `docs/analisi-escala-nivellc.md`. *(Python/dades obertes, spend-safe.)*
-2. **[web] Cercador a tota Catalunya** (Mirador) — `MuniSearch` indexa els ~947 munis del geojson,
-   no `dataset.municipis`. Cada resultat → `/municipi/[slug]`.
-3. **[web] Prerenderitzar tots els munis** (Mirador) — ampliar `entries()` de
-   `municipi/[slug]/+page.ts` a tot el geojson; rang on n'hi ha, «sense dades encara» digne a la resta.
+2. ~~**[web] Cercador a tota Catalunya**~~ ✅ FET (#146, 2026-06-18) — catàleg de 947 munis;
+   `MuniSearch` hi cerca; `toSlug` arregla l'article inline `l'`.
+3. ~~**[web] Prerenderitzar tots els munis**~~ ✅ FET (#146) — `entries()` a 947 (×2 locales),
+   `load()` resol qualsevol slug → ine5+nom; «sense dades encara» amb nom real. Build 1m46s.
 4. **[web] Licitacions → «en construcció» al peu** (Mirador) — pàgina digna; treure de la nav
    principal, mantenir al peu; home deixa de carregar l'artefacte (la troballa cau sola); amagar
    secció a la fitxa; sitemap. Maquinària conservada.
