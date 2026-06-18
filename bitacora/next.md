@@ -17,8 +17,8 @@ límit de despesa; les tasques marcades **(IA)** sí (esperen que es reposi).*
    `load()` resol qualsevol slug → ine5+nom; «sense dades encara» amb nom real. Build 1m46s.
 4. ~~**[web] Licitacions → «en construcció» al peu**~~ ✅ FET (#147, 2026-06-18) — pàgina digna
    `lic_wip_*`; fora de la nav, manté al peu; home i fitxa netes; maquinària conservada.
-5. **[web/disseny] Missatge d'abast «tota Catalunya»** (Talaia+Llegenda) — frase a home i mapa: què
-   cobrim i per què; repàs que cap estimació sembli cens.
+5. ~~**[web/disseny] Missatge d'abast «tota Catalunya»**~~ ✅ FET (#148, 2026-06-18) — línia d'abast
+   a la home (`home_map_scope`) + `map_outside_scope` revisat (3 nivells). Còpia afinable per Bea.
 6. **[ops] Ritual de llançament** (Talaia+Mirador) — treure noindex ×3 (`app.html`, `robots.txt`,
    `_headers`); `og:image`; sitemap complet; deploy verd al domini; comprovació final.
 
