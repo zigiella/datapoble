@@ -15,9 +15,8 @@ límit de despesa; les tasques marcades **(IA)** sí (esperen que es reposi).*
    `MuniSearch` hi cerca; `toSlug` arregla l'article inline `l'`.
 3. ~~**[web] Prerenderitzar tots els munis**~~ ✅ FET (#146) — `entries()` a 947 (×2 locales),
    `load()` resol qualsevol slug → ine5+nom; «sense dades encara» amb nom real. Build 1m46s.
-4. **[web] Licitacions → «en construcció» al peu** (Mirador) — pàgina digna; treure de la nav
-   principal, mantenir al peu; home deixa de carregar l'artefacte (la troballa cau sola); amagar
-   secció a la fitxa; sitemap. Maquinària conservada.
+4. ~~**[web] Licitacions → «en construcció» al peu**~~ ✅ FET (#147, 2026-06-18) — pàgina digna
+   `lic_wip_*`; fora de la nav, manté al peu; home i fitxa netes; maquinària conservada.
 5. **[web/disseny] Missatge d'abast «tota Catalunya»** (Talaia+Llegenda) — frase a home i mapa: què
    cobrim i per què; repàs que cap estimació sembli cens.
 6. **[ops] Ritual de llançament** (Talaia+Mirador) — treure noindex ×3 (`app.html`, `robots.txt`,

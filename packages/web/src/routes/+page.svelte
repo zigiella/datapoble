@@ -43,7 +43,9 @@
 		{ key: 'municipi', label: () => m.map_granularity_municipi() }
 	];
 
-	const troballes = $derived(buildTroballes(dataset, data.licitacions));
+	// Licitacions aparcades per al llançament (decisió Bea): sense l'artefacte, la troballa 'lic'
+	// no apareix (buildTroballes ja la condiciona). La maquinària es conserva per a la Fase 2.
+	const troballes = $derived(buildTroballes(dataset));
 
 	// Mapa de suport: coloració per TIPOLOGIA (categòric: quin TIPUS de pressió, no «més/menys»).
 	const indicator = 'tipologia' as MetricKey;
