@@ -81,6 +81,8 @@ def main() -> int:
     df["log_dens"] = np.log10(df["densitat_hab_km2"].astype(float))
     df["alt"] = pd.to_numeric(df["altitud_m"], errors="coerce").fillna(0.0)
     df["renda_k"] = df["renda_neta_persona_2023"].astype(float) / 1000.0  # milers € (coef llegible)
+    # Covariable de calefacció: fracció de gas del consum domèstic (0 = sense gas canalitzat).
+    df["gas_frac"] = pd.to_numeric(df.get("gas_fraction"), errors="coerce").fillna(0.0)
     n = len(df)
     y = df["base_implied"].to_numpy()
     print(f"N (munis amb ETCA + densitat + renda) = {n}  (descartats sense renda: {n_sense_renda})\n")
@@ -98,12 +100,14 @@ def main() -> int:
     ones = np.ones(n)
     ld = df["log_dens"].to_numpy()
     rk = df["renda_k"].to_numpy()
+    gf = df["gas_frac"].to_numpy()
     models = {
         "base ~ const (mitjana)": np.column_stack([ones]),
         "base ~ log10(densitat)": np.column_stack([ones, ld]),
         "base ~ renda": np.column_stack([ones, rk]),
         "base ~ log10(densitat) + renda": np.column_stack([ones, ld, rk]),
-        "base ~ log10(densitat) + renda + altitud": np.column_stack([ones, ld, rk, df["alt"].to_numpy()]),
+        "base ~ log10(densitat) + renda + gas": np.column_stack([ones, ld, rk, gf]),
+        "base ~ log10(densitat) + renda + gas + altitud": np.column_stack([ones, ld, rk, gf, df["alt"].to_numpy()]),
     }
     results = {}
     for name, X in models.items():
@@ -111,8 +115,8 @@ def main() -> int:
         err = (y - pred) / pred * 100  # err de població equivalent
         results[name] = {"beta": beta, "pred": pred, "r2": r2, "band": _band(err)}
 
-    # Model triat: densitat + renda (les dues covariables disponibles que aporten).
-    best_name = "base ~ log10(densitat) + renda"
+    # Model triat: densitat + renda + gas (les covariables no-presència que aporten).
+    best_name = "base ~ log10(densitat) + renda + gas"
     best = results[best_name]
     df["base_pred"] = best["pred"]
     df["err_regressio_pct"] = (df["base_implied"] - df["base_pred"]) / df["base_pred"] * 100
@@ -131,8 +135,8 @@ def main() -> int:
 
     print(f"\nModel triat: {best_name}")
     bb = best["beta"]
-    print(f"  base_pred = {bb[0]:.0f} {bb[1]:+.0f}·log10(dens) {bb[2]:+.0f}·renda_k€   (R²={best['r2']:.2f})")
-    print(f"  → densitat ×10 ⇒ {bb[1]:+.0f} kWh/persona; +1.000 € renda ⇒ {bb[2]:+.0f} kWh/persona")
+    print(f"  base_pred = {bb[0]:.0f} {bb[1]:+.0f}·log10(dens) {bb[2]:+.0f}·renda_k€ {bb[3]:+.0f}·gas_frac   (R²={best['r2']:.2f})")
+    print(f"  → densitat ×10 ⇒ {bb[1]:+.0f}; +1.000 € ⇒ {bb[2]:+.0f}; gas 0→100% ⇒ {bb[3]:+.0f} kWh/persona")
 
     print("\nResidual del model triat per tipus territorial:")
     for t, g in df.groupby("tipus_territorial"):
@@ -142,7 +146,7 @@ def main() -> int:
               f"cobertura±15%={cov:4.0f}%  banda=[{np.percentile(e,10):+.0f},{np.percentile(e,90):+.0f}]%")
 
     # --- Validació HELD-OUT (leave-one-out) del model triat: que el 77% no sigui sobreajust ---
-    Xb = np.column_stack([ones, ld, rk])  # densitat + renda
+    Xb = np.column_stack([ones, ld, rk, gf])  # densitat + renda + gas
     loo = np.empty(n)
     for i in range(n):
         mask = np.ones(n, dtype=bool)
