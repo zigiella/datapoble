@@ -1,25 +1,34 @@
 # Pla de llançament — sortida online amb un producte bo
 
-*Talaia, 2026-06-18. Encàrrec de Bea: «sortida online amb un producte bo · tota Catalunya · web
-sòlida · probablement licitacions com a pàgina en construcció». Aquest pla TANCA la línia de
-llançament: tria què surt al dia 1 i què queda per després. Reconcilia (i en alguns punts retalla)
-la llista «al llançament» de `revisio-estrategia-consultora2-2026-06.md`. El **vot narratiu final és
-de la Bea** (§0 són les decisions que només pot prendre ella).*
+*Talaia, 2026-06-18 (v2, decisions de Bea resoltes). Encàrrec: «sortida online amb un producte bo ·
+tota Catalunya · web sòlida · licitacions com a pàgina en construcció». Aquest pla TANCA la línia de
+llançament. El **vot narratiu és de la Bea**; el §0 recull les decisions que ha pres.*
 
-> **Nota de mètode:** aquesta auditoria s'havia de fer amb un workflow de 7 agents; va fallar tot
-> (límit de despesa mensual del compte). L'he fet jo, inline, sobre el repo real. Cada afirmació
-> està ancorada en fitxers. El que NO he pogut verificar ho marco com a tal.
+> **Nota de mètode:** l'auditoria s'havia de fer amb un workflow de 7 agents; va fallar tot (límit de
+> despesa mensual del compte). L'he fet inline sobre el repo real, amb cada troballa ancorada en
+> fitxers. El que NO he pogut verificar ho marco com a tal.
 
 ## Principi rector
-Per a «un producte bo» amb aquestes restriccions, **la solidesa i l'honestedat pesen més que les
-features**. «Tota Catalunya» NO vol dir tenir dades de 947 municipis el dia 1 —no les tindrem—; vol
-dir que la web sigui **digna a escala Catalunya**: que qualsevol veí trobi el seu poble, amb un
-«sense dades encara» ben explicat, sense puntes trencades. Aquesta és la barra.
+Per a «un producte bo», **la solidesa i l'honestedat pesen més que cap feature**. «Tota Catalunya» no
+és tenir-ho tot el dia 1; és que la web sigui **digna a tota escala**: que qualsevol veí trobi el seu
+poble amb dada (rang) o amb un «sense dades encara» ben explicat, sense puntes trencades.
 
-**Re-tall proposat (per validar amb Bea):** la revisió estratègica posava «al llançament» moltes
-peces grans (dades obertes §9, visualitzacions noves §4, espina territorial §7). Per sortir SÒLIDS i
-aviat, **proposo moure-les a post-llançament** i que el dia 1 sigui: web sòlida + tota Catalunya
-honesta + licitacions aparcades. Menys superfície, més ferma.
+**Decisió d'abast (Bea):** *tot l'spec al llançament* + *cobertura de dades a tot Catalunya (tots els
+munis)* + *4 llengües*. És un llançament RIC i, per tant, GRAN: aquest pla el fa visible i el seqüencia.
+**`P0` = bloqueja el llançament; `P1` = al llançament però no bloqueja el dia exacte.**
+
+---
+
+## §0 · Decisions de la Bea (2026-06-18) — RESOLTES
+
+1. **Abast:** *tot l'spec al llançament* (dades obertes §9, visualitzacions noves §4, espina §7,
+   pregunta-li super beta… entren al dia 1, no es retallen).
+2. **Cobertura de dades:** *tot Catalunya, tots els munis* — estendre Nivell C a les 43 comarques i
+   baixar el llindar dels 1.000 hab (Palanca 1 + 2, §1).
+3. **Fitxes:** *prerenderitzar TOTS els munis* (conseqüència de 2: la majoria portaran rang; la resta,
+   buit honest).
+4. **Licitacions:** *al PEU, com a «en construcció»* (fora de la nav principal; §3).
+5. **Llengües:** *ca/es + aranès + anglès al dia 1* (§6).
 
 ---
 
@@ -27,152 +36,115 @@ honesta + licitacions aparcades. Menys superfície, més ferma.
 
 | Capa | Estat | Evidència |
 |---|---|---|
-| Dades Berguedà (31) | ✅ completes | `data/web/municipis.bergueda.json`, fitxes amb lectures-IA |
-| Presència en RANG (82 munis nous) | ✅ publicada | Nivell C; fitxa + `/metodologia` + mapa (capa COVERED) |
-| Resta de Catalunya (~834) | 🟡 geometria sí, dades no | mapa «sense dades»; fitxa degrada a «sense dades encara» |
-| Cercador | 🔴 només 31 munis | `MuniSearch.svelte` cerca `dataset.municipis` (Berguedà) |
-| Prerender de fitxes | 🟡 113 de ~947 | `municipi/[slug]/+page.ts` `entries()`; la resta = fallback SPA (404) |
-| Licitacions | 🟢 viu (cal aparcar) | `/licitacions`, troballa a la home, secció a la fitxa |
-| Stubs | 🟡 inerts | `/index`, `/day-tripper`, `/politica` (`StubScreen`, segell «stub») |
-| SEO/indexació | 🔴 noindex a 3 llocs | `app.html`, `static/robots.txt`, `static/_headers` |
-| og:image | 🔴 no n'hi ha | `+layout.svelte` té og:* menys imatge |
-| i18n ca/es | ✅ | hreflang + canonical + LangSwitcher |
-| Analytics | ✅ sense cookies | Simple Analytics a `app.html` |
-| Deploy/CI | 🟢 a verificar | `.github/workflows/{ci,deploy-web}.yml` |
+| Dades Berguedà (31) | ✅ completes | `data/web/municipis.bergueda.json` + lectures-IA |
+| Presència en RANG | 🟡 82 munis, 5 comarques | Nivell C; cal estendre a 43 comarques + <1.000 hab |
+| Cercador | 🔴 només 31 munis | `MuniSearch.svelte` cerca `dataset.municipis` |
+| Prerender fitxes | 🟡 113 de ~947 | `municipi/[slug]/+page.ts` `entries()`; resta = fallback SPA (404) |
+| Licitacions | 🟢 viu (cal aparcar al peu) | `/licitacions`, troballa home, secció fitxa, nav+peu |
+| Stubs | 🟡 inerts | `/index`,`/day-tripper`,`/politica` (`StubScreen`) |
+| SEO/indexació | 🔴 noindex a 3 llocs | `app.html:15`, `static/robots.txt`, `static/_headers` |
+| og:image | 🔴 no n'hi ha | `+layout.svelte` (og:* sense imatge) |
+| i18n | 🟡 ca/es ok; oc/en no | hreflang+canonical+LangSwitcher; falten aranès/anglès |
+| Spec ric (dades obertes, viz, espina) | ⬜ pendent | §13.6-9 de la revisió estratègica |
+| Analytics | ✅ sense cookies | Simple Analytics |
+| Deploy/CI | 🟢 verd | `.github/workflows/{ci,deploy-web}.yml` |
 
 ---
 
-## §0 · Decisions de la Bea (desbloquegen el pla)
+## §1 · Cobertura de dades «tota Catalunya» (P0) — Sondeig
+*Carril dades. Pur Python + dades obertes (numpy + Socrata/INE), ZERO IA → **NO bloquejat pel límit
+de despesa**.*
 
-1. **Abast del re-tall.** Confirmes sortir LEAN (web sòlida + tota Catalunya + licitacions
-   aparcades) i moure dades obertes / viz noves / espina a post-llançament? (recomanat) O vols
-   alguna d'aquestes peces SÍ al dia 1?
-2. **Fitxes de tota Catalunya.** Per als ~834 munis sense dades, dues opcions:
-   (a) **prerenderitzar-los tots** amb un «sense dades encara» digne (URL real per a cada poble,
-   bo per a SEO i enllaços directes) — recomanat; o (b) deixar-los al fallback SPA (404) i polir
-   només el fallback. (a) és més sòlid; (b) és menys feina.
-3. **Licitacions: enllaç o invisible?** La pàgina «en construcció» queda enllaçada a la nav/peu
-   (honest: «això vindrà») o la treiem del tot fins que estigui? (recomano enllaçada a una pàgina
-   digna «en construcció», no un grisat mort).
-4. **Llengües al dia 1.** Sortim només ca/es (recomanat) i deixem aranès/anglès per a Fase 2?
+Per què avui falten ~834: el model Nivell C només s'ha corregut sobre **5 comarques**
+(`nivellc_analisi.py:47`) i només per a munis amb **ETCA** (≥1.000 hab). Les fonts són de tot
+Catalunya; només cal ampliar l'abast.
 
----
+- **Palanca 1 — 43 comarques.** Ampliar `COMARQUES`, re-fetch (`fetch_electric`/`fetch_gas`/…),
+  re-córrer `nivellc_analisi.py` → `nivellc_regressio.py` → `export_pernocta_catalunya.py`.
+- **Palanca 2 — sota 1.000 hab.** L'estimació és `est = consum / base_pred` (l'ETCA s'anul·la, només
+  valida; verificat a `export_pernocta_catalunya.py:91`). Cal calcular `est` directe del consum per
+  als munis sense ETCA, marcats **«sense validació oficial»** i amb **banda més ampla**.
+- **Honestedat (innegociable):** cada comarca/tipus nou es **re-valida held-out abans de publicar**;
+  el sostre de l'estacionalitat del litoral fa que alguns munis de costa quedin amb banda ampla o
+  **sense publicar** (mai una xifra que no aguanti). Documentar a `docs/analisi-escala-nivellc.md`.
 
-## §1 · Aparcar licitacions net (P0) — Mirador
+**Criteri de sortida:** `pernocta-catalunya.json` cobreix la gran majoria de munis de Catalunya en
+rang, cada tipus validat o marcat; cap rang publicat sense aguantar la validació.
 
-Objectiu: zero càlculs de licitacions a la vista, zero enllaços morts, zero xifres penjades. La
-maquinària (`tools/export_licitacions.py`, artefacte, contracte, format) es CONSERVA per a Fase 2;
-només es desconnecta del consum a la UI.
+## §2 · Solidesa de la web (P0/P1) — Mirador
+1. **Cercador tota Catalunya (P0).** `MuniSearch` indexa els ~947 munis (geojson `{ine5,nom}`), no
+   els 31. Cada resultat → `/municipi/[slug]`.
+2. **Prerender de tots els munis (P0).** Ampliar `entries()` a tot el geojson; rang on n'hi ha,
+   «sense dades encara» digne a la resta. URL real per a cada poble (SEO + enllaços).
+3. **Stubs fora (P1).** Treure `/index`,`/day-tripper`,`/politica` del build (o resoldre'ls dins
+   l'spec ric); cap segell «stub» visible.
+4. **Estats buits/errors + mòbil + rendiment (P1).** Dataset buit/muni desconegut/sense JS dignes;
+   pes del geojson de 947 munis a home i `/mapa`.
 
-Superfície exacta (tots verificats):
-- `packages/web/src/routes/licitacions/+page.svelte` (~289 l.) + `+page.ts` → **substituir per una
-  pàgina «en construcció»** digna (no el `StubScreen` de segell «stub»; una pàgina que expliqui què
-  vindrà i per què encara no hi és — coherent amb «cap xifra sense procedència»).
-- Home: `src/routes/+page.ts` deixa de carregar `licitacions-bergueda.json`; `buildTroballes` rep
-  `null` → la troballa `'lic'` **desapareix sola** (ja està condicionada a `lic?.municipis?.length`,
-  `troballes.ts:92`). Cap codi mort.
-- Fitxa: `src/routes/municipi/[slug]/+page.ts` deixa de carregar l'artefacte; `+page.svelte` amaga
-  la secció de licitacions (condicional ja existent).
-- Nav + peu (`+layout.svelte:93,126,162`): segons §0.3 — enllaç a «en construcció» o fora.
-- `sitemap.xml/+server.ts`: que apunti la pàgina «en construcció» (o l'exclogui).
-- CI: cap workflow ha de petar per l'artefacte (segueix al repo). Verificar `deploy-web.yml`.
+## §3 · Licitacions → «en construcció» al peu (P0) — Mirador
+Zero càlculs a la vista, zero enllaços morts. Maquinària conservada per a Fase 2.
+- `/licitacions/{+page.svelte,+page.ts}` → pàgina **«en construcció»** digna (no el segell «stub»).
+- **Treure de la nav principal** (`+layout.svelte:93,126`); **mantenir al PEU** (`:162`) cap a la
+  pàgina en construcció.
+- Home: `+page.ts` deixa de carregar l'artefacte → la troballa `'lic'` desapareix sola
+  (`troballes.ts:92`, ja condicionada).
+- Fitxa: `municipi/[slug]/+page.ts` deixa de carregar; `+page.svelte` amaga la secció.
+- `sitemap.xml/+server.ts`: apuntar la pàgina en construcció (o excloure-la).
 
-**Criteri de sortida:** `grep -ri licitac` a la UI només troba la pàgina «en construcció» i la
-maquinària desconnectada; build verd; cap enllaç a buit.
+## §4 · Honestedat «tota Catalunya» (P0) — Talaia + Llegenda
+- **Missatge d'abast** a home i mapa: què cobrim (rang vs context) i per què; que «sense dades» es
+  llegeixi com a honestedat, no com a producte incomplet.
+- **Coherència del rang:** repàs global que enlloc una estimació sembli cens (mapa/tooltip/fitxa/
+  `/metodologia`).
 
----
+## §5 · Spec ric al llançament (P1) — Mirador + Llegenda + Brúixola
+Per decisió de Bea, entren al dia 1 (seqüenciar després dels P0):
+- **Dades obertes de veritat (§9):** `/dades`, descàrrega CSV/JSON/Parquet/SQLite, **xifra citable**
+  (cada número una URL), embeds, kit de premsa.
+- **Visualitzacions noves (§4):** Dorling-fantasma, slider de denominador, «el riu», beeswarm,
+  emblema doble corrent, glif balança.
+- **Espina territorial + breadcrumb (§7).**
+- **Pregunta-li «super beta»** (genUI / resposta-com-UI). *⚠️ depèn d'IA → límit de despesa.*
+- **3 profunditats a cada pàgina + test CI** (§1) que falli amb jerga «above the fold».
 
-## §2 · Solidesa de la web (P0/P1)
+## §6 · Llengües: ca/es/oc/en (P1) — Brúixola + Talaia
+- **Aranès** (Apertium cat→oci + AINA) i **anglès**; terreny /ca ja obert (hreflang preparat).
+- Repàs de **còpia ca/es** (font) abans de traduir.
+- *⚠️ La traducció usa IA → subjecta al límit de despesa; planificar quan es reposi.*
 
-1. **Cercador tota Catalunya (P0) — Mirador.** `MuniSearch` ha d'indexar els ~947 munis (del
-   geojson `{ine5, nom}`), no els 31. Cada resultat porta a `/municipi/[slug]`, que ja degrada a
-   «sense dades»/rang. *És el forat més greu de la promesa «tota Catalunya».*
-2. **Fitxes de tots els munis (P0, depèn de §0.2) — Mirador.** Si (a): ampliar `entries()` a tots
-   els munis del geojson; l'estat «sense dades encara» ja existeix. Si (b): garantir que el fallback
-   retorna 200 i és digne.
-3. **Stubs (P1) — Mirador.** `/index`, `/day-tripper`, `/politica`: o es treuen del build, o
-   s'amaguen del tot (ja són inerts a la nav). Que ningú hi caigui i vegi un segell «stub».
-4. **Estats buits i errors (P1) — Mirador + Llegenda.** Revisar cada pàgina amb dataset buit / muni
-   desconegut / sense JS: que res sembli trencat.
-5. **Mòbil (P1) — Mirador.** Mapa (MapLibre) i fitxes a pantalla petita; el drawer ja hi és.
-6. **Rendiment (P1) — Mirador.** Pes del geojson de 947 munis a la home i `/mapa`; lazy/simplificar
-   si cal.
+## §7 · Accessibilitat (P1) — Llegenda + Mirador
+Teclat al mapa (alternativa en taula ja hi és), contrast, `aria`, **`axe-core` a CI** (`ci.yml`).
 
-**Criteri de sortida:** un usuari pot buscar qualsevol poble de Catalunya i arribar a una pàgina
-digna; cap ruta visible mostra «stub»; build i navegació sòlids a mòbil i escriptori.
-
----
-
-## §3 · «Tota Catalunya» honesta (P0/P1) — Talaia + Llegenda
-
-1. **Missatge d'abast (P0).** Una frase clara, a la home i al mapa, que digui QUÈ cobrim avui
-   (Berguedà complet · 82 munis en rang · la resta, context) i per què — perquè «sense dades» es
-   llegeixi com a honestedat, no com a producte incomplet. *El mètode és el producte també aquí.*
-2. **Coherència del rang (P1) — Brúixola/Talaia.** Repàs que enlloc una estimació sembli cens
-   (mapa, tooltip, fitxa, `/metodologia`). Ja revisat al tram del mapa (#143); confirmar global.
-3. **(Opcional, no bloqueja) estendre Nivell C** a més comarques abans del dia 1 si surt barat
-   (Sondeig). No és requisit: la promesa «tota Catalunya» la compleix la web digna, no la cobertura
-   de dades.
-
-**Criteri de sortida:** la promesa «tota Catalunya» és honesta i ben comunicada; cap xifra es pot
-llegir com a cens.
+## §8 · Ops de llançament (P0) — Talaia + Mirador
+- **Treure noindex als 3 llocs:** `app.html:15`, `static/robots.txt` (→ `Allow: /` + `Sitemap:`),
+  `static/_headers` (treure `X-Robots-Tag`).
+- **og:image** (crear + afegir a `+layout.svelte`).
+- **Sitemap complet** (totes les pàgines + tots els munis) · **deploy verd** a Cloudflare Pages,
+  domini `riusdegent.cat` · comprovació final (links, 404, mòbil, fosc/clar, 4 llengües).
 
 ---
 
-## §4 · Accessibilitat + còpia (P1) — Llegenda + Mirador
-
-L'spec marca l'accessibilitat com a «barata d'inici, caríssima a posteriori». Mínim de dignitat:
-- Teclat al mapa (i alternativa en taula ja existeix); contrast; `aria` dels controls.
-- `axe-core` a CI (a `ci.yml`) com a xarxa de seguretat.
-- Repàs de còpia ca/es (cap clau sense traduir; to coherent; sense jerga «above the fold»).
-
-**Criteri de sortida:** navegable amb teclat; `axe-core` sense errors greus; còpia revisada.
-
----
-
-## §5 · Ops de llançament (P0) — Talaia + Mirador
-
-Checklist del dia D (tot ancorat, comentaris «treure al llançament» ja al codi):
-- **Treure noindex als 3 llocs:** `app.html:15` (meta robots), `static/robots.txt` (→ `Allow: /` +
-  `Sitemap:`), `static/_headers` (treure `X-Robots-Tag`).
-- **og:image (P0):** crear la imatge de marca i afegir-la a `+layout.svelte` (avui no n'hi ha) →
-  compartir a xarxes mostra targeta.
-- **Sitemap complet:** que `sitemap.xml` inclogui totes les pàgines + munis publicats (i, si §0.2(a),
-  tots els munis). hreflang ja hi és.
-- **Deploy verd reproduïble:** `deploy-web.yml` a Cloudflare Pages; domini `riusdegent.cat`
-  configurat; `_redirects`/`_headers` correctes.
-- **Comprovació final:** build net, links, 404, mòbil, fosc/clar, ca/es.
-
-**Criteri de sortida:** el lloc és indexable, comparteix bé, desplega verd al domini.
-
----
-
-## Go / No-Go de llançament (tot ha de ser verd)
-- [ ] Licitacions aparcades net (cap enllaç mort, cap xifra penjada).
-- [ ] Cercador troba qualsevol municipi de Catalunya.
-- [ ] Cap ruta visible mostra «stub»; estats buits dignes.
-- [ ] Missatge d'abast «tota Catalunya» honest i clar.
-- [ ] Cap xifra llegible com a cens; tota xifra amb procedència.
-- [ ] noindex tret als 3 llocs; og:image; sitemap + robots de producció.
-- [ ] Deploy verd al domini; ca/es; mòbil; a11y mínima.
+## Go / No-Go de llançament (tot verd)
+- [ ] Cobertura de dades a tot Catalunya, cada tipus validat o marcat; cap rang sense aguantar.
+- [ ] Cercador troba qualsevol municipi; totes les fitxes prerenderitzades.
+- [ ] Licitacions al peu «en construcció»; cap enllaç mort ni xifra penjada.
+- [ ] Missatge d'abast honest; cap xifra llegible com a cens.
+- [ ] Spec ric servit (dades obertes, viz, espina, 3 profunditats).
+- [ ] 4 llengües (ca/es/oc/en); còpia revisada.
+- [ ] noindex tret ×3; og:image; sitemap+robots de producció; deploy verd al domini; a11y mínima.
 
 ## Riscos
-- **Límit de despesa del compte** (actiu avui): bloqueja workflows multi-agent i tasques de dades
-  amb IA (gen-fitxa, eval-writer, estendre Nivell C). Operatiu, no de codi; cal tenir-lo en compte
-  per a qualsevol pas que depengui d'IA abans del dia D.
-- **Fitxes thin** (si §0.2(a)): 834 pàgines «sense dades» són primes per a SEO; mitigació: contingut
-  contextual honest + `noindex` selectiu si cal.
-- **Rendiment del geojson** a escala Catalunya a mòbil.
-- **Expectativa** : «tota Catalunya» pot fer esperar dades de tot arreu; el missatge d'abast ho ha de
-  desactivar des del primer cop d'ull.
+- **Límit de despesa del compte** (viu): bloqueja tot el que depèn d'IA — lectures (gen-fitxa),
+  pregunta-li super beta, **traducció oc/en**. NO bloqueja el carril de dades (§1) ni la web (§2,3).
+  Cal reposar-lo per als P1 dependents d'IA abans del dia D.
+- **Abast gran:** «tot l'spec + tot CAT + 4 llengües» és un llançament gran → més llarg. P0 primer.
+- **Estacionalitat del litoral:** sostre del model; alguns munis de costa, banda ampla o sense.
+- **Rendiment** del geojson de 947 munis a mòbil.
 
-## Fora de llançament (post — Fase 2 de producte)
-Dades obertes / xifra citable / embeds / kit premsa (§9) · visualitzacions noves (Dorling, slider,
-«el riu», beeswarm, emblema doble corrent) (§4) · espina territorial + breadcrumb (§7) · pregunta-li
-«super beta» genUI · llengües aranès/anglès · **licitacions de veritat** (menors → majors/diputació)
-· estendre Nivell C a tot Catalunya + residus L2.
+## Fora de llançament (Fase 2)
+Licitacions de veritat (menors → majors/diputació) · fondària completa de fitxa (tipologia +
+lectures-IA) per a tot Catalunya, no només Berguedà · fonts noves §12 (INE-mòbils, VUT, autocaravanes).
 
 ---
-*Aquest pla és viu. Quan la Bea voti el §0, el converteixo en tasques a `bitacora/next.md` i obro els
-PRs per fases (P0 primer). Filtre de l'spec que mantinc: «si una peça no pot explicar d'on surt, no
-es publica».*
+*Pla viu. La cua operativa (P0 primer) viu a `bitacora/next.md`. Filtre de l'spec: «si una peça no
+pot explicar d'on surt, no es publica».*
