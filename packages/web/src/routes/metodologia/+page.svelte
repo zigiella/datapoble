@@ -282,6 +282,19 @@
 			</section>
 		{/if}
 
+		<!-- Nivell C · presència estimada a Catalunya, EN RANG (escala més enllà del Berguedà). -->
+		<section class="ds-sec">
+			<div class="ds-sec__hd">
+				<span class="ref">I</span><h2>{m.met_rang_title()}</h2>
+			</div>
+			<p class="lead">{m.met_rang_1()}</p>
+			<p class="lead">{m.met_rang_2()}</p>
+			<p class="lead">{m.met_rang_3()}</p>
+			<div class="caveats">
+				<div class="alert"><span class="bar"></span><div>{m.met_rang_caveat()}</div></div>
+			</div>
+		</section>
+
 		<section class="ds-sec">
 			<div class="ds-sec__hd">
 				<span class="ref">★</span><h2>{m.met_honesty_title()}</h2>

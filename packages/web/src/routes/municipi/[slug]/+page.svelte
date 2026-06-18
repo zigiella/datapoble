@@ -41,6 +41,7 @@
 	const row = $derived(data.row);
 	const ine5 = $derived(data.ine5);
 	const lic = $derived(data.lic);
+	const pernocta = $derived(data.pernocta); // presència estimada EN RANG (munis coberts fora del Berguedà)
 	const locale = $derived(currentLocale());
 	const eurLic = (v: number | null) => eurCurt(v, locale === 'es' ? 'es-ES' : 'ca-ES');
 
@@ -393,7 +394,9 @@
 	});
 
 	// Nom del municipi (topònim, igual en ambdós locales) o, sense dada, el codi.
-	const muniNom = $derived(row?.nom ?? ine5 ?? '');
+	const muniNom = $derived(row?.nom ?? pernocta?.nom ?? ine5 ?? '');
+	// Enter localitzat per a les xifres del rang.
+	const fNum = (v: number) => formatInteger(v, locale);
 
 	// ── Selector de municipi: salta a un altre dels 31 (ordenat per nom, localitzat) ──────────
 	// Es deriva del dataset (no llista codificada). El canvi navega a la fitxa corresponent.
@@ -784,6 +787,47 @@
 					<div class="alert"><span class="bar"></span><div>{m.muni_honesty()}</div></div>
 				</div>
 				<p class="srcline">{m.muni_srcline()}</p>
+			</section>
+		{:else if pernocta}
+			<!-- Municipi COBERT pel Nivell C (fora del Berguedà): encara no té la fitxa completa, però
+			     sí una PRESÈNCIA ESTIMADA EN RANG. Honestedat: el rang és la dada, no la xifra; l'ETCA
+			     oficial es mostra com a validació; tot enllaça a la metodologia. -->
+			<section class="ds-sec">
+				<div class="muni-rang">
+					<p class="muni-rang__badge">{m.muni_rang_badge()}</p>
+					<p class="muni-rang__lede">{m.muni_rang_lede()}</p>
+					<div class="muni-rang__big tnum">
+						{#if pernocta.etca_oficial != null}
+							<!-- On hi ha ETCA oficial (≥1.000 hab), ella és el titular (presència real oficial);
+							     la nostra estimació en rang va com a mètode propi validat. -->
+							<span class="muni-rang__k">{m.muni_rang_etca_label()}</span>
+							<span class="muni-rang__range">{fNum(pernocta.etca_oficial)}</span>
+							<span class="muni-rang__central"
+								>{m.muni_rang_model()}: {fNum(pernocta.rang_baix)} – {fNum(pernocta.rang_alt)}</span
+							>
+						{:else}
+							<!-- Sense ETCA (munis <1.000 hab): el nostre rang és l'estimació de presència. -->
+							<span class="muni-rang__k">{m.muni_rang_label()}</span>
+							<span class="muni-rang__range">{fNum(pernocta.rang_baix)} – {fNum(pernocta.rang_alt)}</span>
+							<span class="muni-rang__central">{m.muni_rang_central()} {fNum(pernocta.estimacio)}</span>
+						{/if}
+					</div>
+					{#if pernocta.padro != null}
+						<dl class="muni-serv">
+							<div class="muni-serv__row">
+								<dt>{m.muni_num_padro()}</dt>
+								<dd class="tnum">{fNum(pernocta.padro)}</dd>
+							</div>
+						</dl>
+					{/if}
+					<div class="alert" style="margin-top:12px">
+						<span class="bar"></span><div>{m.muni_rang_caveat()}</div>
+					</div>
+					<div class="muni-empty__actions" style="margin-top:14px">
+						<a class="muni-empty__link" href={localizeHref('/metodologia')}>{m.muni_rang_method_link()}</a>
+						<a class="muni-empty__link muni-empty__link--alt" href={localizeHref('/mapa')}>{m.muni_pick_map()}</a>
+					</div>
+				</div>
 			</section>
 		{:else}
 			<!-- Municipi de FORA del Berguedà: estat AMABLE «sense dades encara» (mateixa honestedat que
@@ -1358,6 +1402,54 @@
 		font-family: var(--dp-font-mono);
 		font-size: 0.7rem;
 		line-height: 1.5;
+		color: var(--dp-text-subtle);
+	}
+
+	/* Targeta de PRESÈNCIA ESTIMADA EN RANG (munis coberts pel Nivell C, fora del Berguedà). */
+	.muni-rang {
+		max-width: 60ch;
+	}
+	.muni-rang__badge {
+		display: inline-block;
+		margin: 0 0 10px;
+		font-family: var(--dp-font-mono);
+		font-size: 0.66rem;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--dp-text-muted);
+		border: 1px solid var(--dp-border-strong);
+		border-radius: var(--dp-radius-sm);
+		padding: 3px 9px;
+	}
+	.muni-rang__lede {
+		margin: 0 0 16px;
+		font-size: 0.95rem;
+		line-height: 1.55;
+		color: var(--dp-text-muted);
+	}
+	.muni-rang__big {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		margin: 0 0 16px;
+	}
+	.muni-rang__k {
+		font-family: var(--dp-font-mono);
+		font-size: 0.66rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: var(--dp-text-subtle);
+	}
+	.muni-rang__range {
+		font-family: 'Archivo', var(--dp-font-display);
+		font-weight: 800;
+		font-size: 2rem;
+		line-height: 1.05;
+		color: var(--dp-text);
+	}
+	.muni-rang__central {
+		font-family: var(--dp-font-mono);
+		font-size: 0.74rem;
 		color: var(--dp-text-subtle);
 	}
 	.muni-empty__actions {
