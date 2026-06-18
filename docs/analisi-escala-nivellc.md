@@ -131,6 +131,7 @@ ABSOLUTA (≈≥85%) cal tractar l'estacionalitat del litoral a part (dada de pi
 | D7 | 2026-06-15 | Model Nivell C = densitat sola (altitud no aporta; parsimònia) | Talaia |
 | D8 | 2026-06-15 | Baixar la renda de l'INE ADRH (obert) i afegir-la al model → densitat+renda | Bea + Talaia |
 | D9 | 2026-06-16 | Afegir el gas (ICAEN qvqg-zag8) com a fracció de calefacció → model densitat+renda+gas (R²0,65). Cobertura fa sostre al 77%: el següent lever és dada de PIC per al litoral, no més covariables anuals | Talaia |
+| D10 | 2026-06-16 | **PUBLICAR en RANG** (treure el carril del silenci): l'estimació del model com a interval p10–p90 per tipus, amb l'ETCA com a validació; xifra absoluta diferida fins ≥85%. Metodologia pública documentada | Bea |
 
 ---
 
@@ -144,6 +145,9 @@ ABSOLUTA (≈≥85%) cal tractar l'estacionalitat del litoral a part (dada de pi
   → `data/territorial/nivellc_regressio.csv`.
 - `tools/extract_renda.py` — extreu la renda municipal catalana de l'INE ADRH (taula 30824, ~335 MB
   a OneDrive) → `data/territorial/renda_municipi_cat.csv` (948 munis, renda neta/persona 2023).
+- `tools/export_pernocta_catalunya.py` — genera l'artefacte PUBLICABLE en rang
+  `data/web/pernocta-catalunya.json` (91 munis ≥1.000 hab de les 5 comarques; estimació + banda
+  p10–p90 per tipus + ETCA de validació). Metodologia pública: `docs/metodologia-presencia-catalunya.md`.
 - Bitàcola de detall: `bitacora/2026-06-15_nivellc-analisi-error-tipus_talaia.md`.
 - Comarques cobertes (N=91 amb ETCA): Berguedà, Barcelonès, Tarragonès, Baix Llobregat, Maresme.
 

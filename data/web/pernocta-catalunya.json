@@ -1,0 +1,926 @@
+{
+ "metode": "Nivell C · presència estimada (qui dorm) = consum elèctric domèstic / base, amb base ~ log10(densitat) + renda + fracció de gas, calibrada amb l'ETCA. Inferència, no cens: es publica EN RANG (banda p10–p90 del residual per tipus).",
+ "model": {
+  "r2": 0.65,
+  "covariables": [
+   "densitat",
+   "renda",
+   "gas"
+  ],
+  "n_calibracio": 91,
+  "validacio": "ETCA oficial (Idescat EPE) als municipis ≥1.000 hab; held-out robust"
+ },
+ "nota_abast": "Primera tanda: municipis amb ETCA (≥1.000 hab) de Berguedà, Barcelonès, Tarragonès, Baix Llobregat i Maresme. Els <1.000 (petits turístics) i la resta de Catalunya s'incorporen poc a poc, verificant.",
+ "munis": {
+  "08001": {
+   "nom": "Abrera",
+   "tipus": "interior_rural",
+   "padro": 12981,
+   "estimacio": 12238,
+   "rang_baix": 10357,
+   "rang_alt": 13791,
+   "etca_oficial": 12852,
+   "dins_banda": true
+  },
+  "08003": {
+   "nom": "Alella",
+   "tipus": "interior_rural",
+   "padro": 10200,
+   "estimacio": 9760,
+   "rang_baix": 8260,
+   "rang_alt": 10998,
+   "etca_oficial": 9291,
+   "dins_banda": true
+  },
+  "08006": {
+   "nom": "Arenys de Mar",
+   "tipus": "litoral_vacacional",
+   "padro": 16513,
+   "estimacio": 17092,
+   "rang_baix": 13996,
+   "rang_alt": 20128,
+   "etca_oficial": 16436,
+   "dins_banda": true
+  },
+  "08007": {
+   "nom": "Arenys de Munt",
+   "tipus": "interior_rural",
+   "padro": 9444,
+   "estimacio": 9698,
+   "rang_baix": 8207,
+   "rang_alt": 10928,
+   "etca_oficial": 8297,
+   "dins_banda": false
+  },
+  "08009": {
+   "nom": "Argentona",
+   "tipus": "interior_rural",
+   "padro": 12850,
+   "estimacio": 12295,
+   "rang_baix": 10405,
+   "rang_alt": 13855,
+   "etca_oficial": 12035,
+   "dins_banda": true
+  },
+  "08011": {
+   "nom": "Avià",
+   "tipus": "interior_rural",
+   "padro": 2242,
+   "estimacio": 2153,
+   "rang_baix": 1822,
+   "rang_alt": 2426,
+   "etca_oficial": 1990,
+   "dins_banda": true
+  },
+  "08015": {
+   "nom": "Badalona",
+   "tipus": "litoral_metropolita",
+   "padro": 226219,
+   "estimacio": 214508,
+   "rang_baix": 204839,
+   "rang_alt": 245208,
+   "etca_oficial": 208549,
+   "dins_banda": true
+  },
+  "08016": {
+   "nom": "Bagà",
+   "tipus": "interior_rural",
+   "padro": 2181,
+   "estimacio": 2117,
+   "rang_baix": 1792,
+   "rang_alt": 2386,
+   "etca_oficial": 2305,
+   "dins_banda": true
+  },
+  "08019": {
+   "nom": "Barcelona",
+   "tipus": "litoral_metropolita",
+   "padro": 1686208,
+   "estimacio": 1450448,
+   "rang_baix": 1385073,
+   "rang_alt": 1658034,
+   "etca_oficial": 1784335,
+   "dins_banda": false
+  },
+  "08020": {
+   "nom": "Begues",
+   "tipus": "corona_metropolitana",
+   "padro": 7439,
+   "estimacio": 6195,
+   "rang_baix": 5582,
+   "rang_alt": 6511,
+   "etca_oficial": 6418,
+   "dins_banda": true
+  },
+  "08022": {
+   "nom": "Berga",
+   "tipus": "interior_rural",
+   "padro": 17195,
+   "estimacio": 17946,
+   "rang_baix": 15187,
+   "rang_alt": 20223,
+   "etca_oficial": 17057,
+   "dins_banda": true
+  },
+  "08029": {
+   "nom": "Cabrera de Mar",
+   "tipus": "litoral_vacacional",
+   "padro": 5014,
+   "estimacio": 4994,
+   "rang_baix": 4090,
+   "rang_alt": 5881,
+   "etca_oficial": 5484,
+   "dins_banda": true
+  },
+  "08030": {
+   "nom": "Cabrils",
+   "tipus": "interior_rural",
+   "padro": 7764,
+   "estimacio": 7785,
+   "rang_baix": 6589,
+   "rang_alt": 8773,
+   "etca_oficial": 6930,
+   "dins_banda": true
+  },
+  "08032": {
+   "nom": "Caldes d'Estrac",
+   "tipus": "litoral_vacacional",
+   "padro": 3241,
+   "estimacio": 3884,
+   "rang_baix": 3181,
+   "rang_alt": 4574,
+   "etca_oficial": 3447,
+   "dins_banda": true
+  },
+  "08035": {
+   "nom": "Calella",
+   "tipus": "litoral_vacacional",
+   "padro": 20207,
+   "estimacio": 24780,
+   "rang_baix": 20292,
+   "rang_alt": 29181,
+   "etca_oficial": 26662,
+   "dins_banda": true
+  },
+  "08040": {
+   "nom": "Canet de Mar",
+   "tipus": "litoral_vacacional",
+   "padro": 15135,
+   "estimacio": 16179,
+   "rang_baix": 13249,
+   "rang_alt": 19052,
+   "etca_oficial": 14774,
+   "dins_banda": true
+  },
+  "08049": {
+   "nom": "Casserres",
+   "tipus": "interior_rural",
+   "padro": 1675,
+   "estimacio": 1612,
+   "rang_baix": 1364,
+   "rang_alt": 1816,
+   "etca_oficial": 1571,
+   "dins_banda": true
+  },
+  "08056": {
+   "nom": "Castelldefels",
+   "tipus": "litoral_metropolita",
+   "padro": 69196,
+   "estimacio": 65537,
+   "rang_baix": 62583,
+   "rang_alt": 74917,
+   "etca_oficial": 65880,
+   "dins_banda": true
+  },
+  "08066": {
+   "nom": "Castellví de Rosanes",
+   "tipus": "interior_rural",
+   "padro": 2098,
+   "estimacio": 1850,
+   "rang_baix": 1566,
+   "rang_alt": 2085,
+   "etca_oficial": 2077,
+   "dins_banda": true
+  },
+  "08068": {
+   "nom": "Cervelló",
+   "tipus": "corona_metropolitana",
+   "padro": 9633,
+   "estimacio": 9334,
+   "rang_baix": 8410,
+   "rang_alt": 9810,
+   "etca_oficial": 8601,
+   "dins_banda": true
+  },
+  "08069": {
+   "nom": "Collbató",
+   "tipus": "interior_rural",
+   "padro": 4847,
+   "estimacio": 4601,
+   "rang_baix": 3893,
+   "rang_alt": 5184,
+   "etca_oficial": 4442,
+   "dins_banda": true
+  },
+  "08072": {
+   "nom": "Corbera de Llobregat",
+   "tipus": "corona_metropolitana",
+   "padro": 15783,
+   "estimacio": 15978,
+   "rang_baix": 14397,
+   "rang_alt": 16792,
+   "etca_oficial": 13781,
+   "dins_banda": false
+  },
+  "08073": {
+   "nom": "Cornellà de Llobregat",
+   "tipus": "metropolita_dens",
+   "padro": 91196,
+   "estimacio": 82765,
+   "rang_baix": 76812,
+   "rang_alt": 105299,
+   "etca_oficial": 88494,
+   "dins_banda": true
+  },
+  "08075": {
+   "nom": "Dosrius",
+   "tipus": "interior_rural",
+   "padro": 6152,
+   "estimacio": 5930,
+   "rang_baix": 5019,
+   "rang_alt": 6683,
+   "etca_oficial": 5753,
+   "dins_banda": true
+  },
+  "08076": {
+   "nom": "Esparreguera",
+   "tipus": "interior_rural",
+   "padro": 22499,
+   "estimacio": 20899,
+   "rang_baix": 17687,
+   "rang_alt": 23551,
+   "etca_oficial": 20435,
+   "dins_banda": true
+  },
+  "08077": {
+   "nom": "Esplugues de Llobregat",
+   "tipus": "metropolita_dens",
+   "padro": 47700,
+   "estimacio": 40869,
+   "rang_baix": 37929,
+   "rang_alt": 51996,
+   "etca_oficial": 45165,
+   "dins_banda": true
+  },
+  "08089": {
+   "nom": "Gavà",
+   "tipus": "litoral_metropolita",
+   "padro": 47961,
+   "estimacio": 42842,
+   "rang_baix": 40911,
+   "rang_alt": 48974,
+   "etca_oficial": 46334,
+   "dins_banda": true
+  },
+  "08092": {
+   "nom": "Gironella",
+   "tipus": "interior_rural",
+   "padro": 5072,
+   "estimacio": 5628,
+   "rang_baix": 4763,
+   "rang_alt": 6342,
+   "etca_oficial": 4760,
+   "dins_banda": false
+  },
+  "08099": {
+   "nom": "Guardiola de Berguedà",
+   "tipus": "interior_rural",
+   "padro": 951,
+   "estimacio": 856,
+   "rang_baix": 724,
+   "rang_alt": 964,
+   "etca_oficial": 1005,
+   "dins_banda": true
+  },
+  "08101": {
+   "nom": "Hospitalet de Llobregat, l'",
+   "tipus": "metropolita_dens",
+   "padro": 282299,
+   "estimacio": 269841,
+   "rang_baix": 250432,
+   "rang_alt": 343309,
+   "etca_oficial": 262223,
+   "dins_banda": true
+  },
+  "08110": {
+   "nom": "Malgrat de Mar",
+   "tipus": "litoral_vacacional",
+   "padro": 19270,
+   "estimacio": 21197,
+   "rang_baix": 17358,
+   "rang_alt": 24961,
+   "etca_oficial": 23866,
+   "dins_banda": true
+  },
+  "08114": {
+   "nom": "Martorell",
+   "tipus": "metropolita_dens",
+   "padro": 28483,
+   "estimacio": 25706,
+   "rang_baix": 23857,
+   "rang_alt": 32705,
+   "etca_oficial": 31609,
+   "dins_banda": false
+  },
+  "08118": {
+   "nom": "Masnou, el",
+   "tipus": "metropolita_dens",
+   "padro": 24444,
+   "estimacio": 22083,
+   "rang_baix": 20494,
+   "rang_alt": 28095,
+   "etca_oficial": 22368,
+   "dins_banda": true
+  },
+  "08121": {
+   "nom": "Mataró",
+   "tipus": "litoral_vacacional",
+   "padro": 130887,
+   "estimacio": 133234,
+   "rang_baix": 109101,
+   "rang_alt": 156893,
+   "etca_oficial": 126691,
+   "dins_banda": true
+  },
+  "08123": {
+   "nom": "Molins de Rei",
+   "tipus": "metropolita_dens",
+   "padro": 26930,
+   "estimacio": 23420,
+   "rang_baix": 21735,
+   "rang_alt": 29796,
+   "etca_oficial": 24398,
+   "dins_banda": true
+  },
+  "08126": {
+   "nom": "Montgat",
+   "tipus": "litoral_metropolita",
+   "padro": 12646,
+   "estimacio": 11352,
+   "rang_baix": 10840,
+   "rang_alt": 12976,
+   "etca_oficial": 11250,
+   "dins_banda": true
+  },
+  "08147": {
+   "nom": "Olesa de Montserrat",
+   "tipus": "metropolita_dens",
+   "padro": 24703,
+   "estimacio": 23514,
+   "rang_baix": 21822,
+   "rang_alt": 29915,
+   "etca_oficial": 22270,
+   "dins_banda": true
+  },
+  "08155": {
+   "nom": "Palafolls",
+   "tipus": "interior_rural",
+   "padro": 9933,
+   "estimacio": 10193,
+   "rang_baix": 8626,
+   "rang_alt": 11486,
+   "etca_oficial": 9734,
+   "dins_banda": true
+  },
+  "08157": {
+   "nom": "Pallejà",
+   "tipus": "corona_metropolitana",
+   "padro": 11811,
+   "estimacio": 11226,
+   "rang_baix": 10116,
+   "rang_alt": 11799,
+   "etca_oficial": 10612,
+   "dins_banda": true
+  },
+  "08158": {
+   "nom": "Papiol, el",
+   "tipus": "interior_rural",
+   "padro": 4358,
+   "estimacio": 3777,
+   "rang_baix": 3196,
+   "rang_alt": 4256,
+   "etca_oficial": 4034,
+   "dins_banda": true
+  },
+  "08163": {
+   "nom": "Pineda de Mar",
+   "tipus": "litoral_vacacional",
+   "padro": 29415,
+   "estimacio": 34118,
+   "rang_baix": 27938,
+   "rang_alt": 40177,
+   "etca_oficial": 32566,
+   "dins_banda": true
+  },
+  "08166": {
+   "nom": "Pobla de Lillet, la",
+   "tipus": "pirineu_alta_muntanya",
+   "padro": 1107,
+   "estimacio": 834,
+   "rang_baix": 1153,
+   "rang_alt": 1153,
+   "etca_oficial": 1121,
+   "dins_banda": false
+  },
+  "08169": {
+   "nom": "Prat de Llobregat, el",
+   "tipus": "metropolita_dens",
+   "padro": 65910,
+   "estimacio": 54448,
+   "rang_baix": 50532,
+   "rang_alt": 69273,
+   "etca_oficial": 72498,
+   "dins_banda": false
+  },
+  "08172": {
+   "nom": "Premià de Mar",
+   "tipus": "litoral_vacacional",
+   "padro": 28928,
+   "estimacio": 28110,
+   "rang_baix": 23018,
+   "rang_alt": 33102,
+   "etca_oficial": 25055,
+   "dins_banda": true
+  },
+  "08175": {
+   "nom": "Puig-reig",
+   "tipus": "interior_rural",
+   "padro": 4482,
+   "estimacio": 4151,
+   "rang_baix": 3513,
+   "rang_alt": 4678,
+   "etca_oficial": 4313,
+   "dins_banda": true
+  },
+  "08193": {
+   "nom": "Sant Iscle de Vallalta",
+   "tipus": "interior_rural",
+   "padro": 1463,
+   "estimacio": 1363,
+   "rang_baix": 1153,
+   "rang_alt": 1536,
+   "etca_oficial": 1373,
+   "dins_banda": true
+  },
+  "08194": {
+   "nom": "Sant Adrià de Besòs",
+   "tipus": "litoral_metropolita",
+   "padro": 38672,
+   "estimacio": 39125,
+   "rang_baix": 37362,
+   "rang_alt": 44725,
+   "etca_oficial": 36627,
+   "dins_banda": true
+  },
+  "08196": {
+   "nom": "Sant Andreu de la Barca",
+   "tipus": "metropolita_dens",
+   "padro": 27039,
+   "estimacio": 24781,
+   "rang_baix": 22998,
+   "rang_alt": 31527,
+   "etca_oficial": 25713,
+   "dins_banda": true
+  },
+  "08197": {
+   "nom": "Sant Andreu de Llavaneres",
+   "tipus": "litoral_vacacional",
+   "padro": 11942,
+   "estimacio": 13702,
+   "rang_baix": 11220,
+   "rang_alt": 16136,
+   "etca_oficial": 11119,
+   "dins_banda": false
+  },
+  "08200": {
+   "nom": "Sant Boi de Llobregat",
+   "tipus": "metropolita_dens",
+   "padro": 84588,
+   "estimacio": 75073,
+   "rang_baix": 69673,
+   "rang_alt": 95513,
+   "etca_oficial": 78896,
+   "dins_banda": true
+  },
+  "08203": {
+   "nom": "Sant Cebrià de Vallalta",
+   "tipus": "interior_rural",
+   "padro": 3812,
+   "estimacio": 4616,
+   "rang_baix": 3907,
+   "rang_alt": 5202,
+   "etca_oficial": 3941,
+   "dins_banda": false
+  },
+  "08204": {
+   "nom": "Sant Climent de Llobregat",
+   "tipus": "corona_metropolitana",
+   "padro": 4181,
+   "estimacio": 3360,
+   "rang_baix": 3027,
+   "rang_alt": 3531,
+   "etca_oficial": 3419,
+   "dins_banda": true
+  },
+  "08208": {
+   "nom": "Sant Esteve Sesrovires",
+   "tipus": "interior_rural",
+   "padro": 8039,
+   "estimacio": 7392,
+   "rang_baix": 6256,
+   "rang_alt": 8331,
+   "etca_oficial": 9211,
+   "dins_banda": false
+  },
+  "08211": {
+   "nom": "Sant Feliu de Llobregat",
+   "tipus": "metropolita_dens",
+   "padro": 46381,
+   "estimacio": 37371,
+   "rang_baix": 34683,
+   "rang_alt": 47546,
+   "etca_oficial": 43297,
+   "dins_banda": true
+  },
+  "08214": {
+   "nom": "Vilassar de Dalt",
+   "tipus": "interior_rural",
+   "padro": 9299,
+   "estimacio": 8465,
+   "rang_baix": 7164,
+   "rang_alt": 9540,
+   "etca_oficial": 8947,
+   "dins_banda": true
+  },
+  "08217": {
+   "nom": "Sant Joan Despí",
+   "tipus": "metropolita_dens",
+   "padro": 35012,
+   "estimacio": 28407,
+   "rang_baix": 26364,
+   "rang_alt": 36141,
+   "etca_oficial": 33933,
+   "dins_banda": false
+  },
+  "08219": {
+   "nom": "Vilassar de Mar",
+   "tipus": "litoral_vacacional",
+   "padro": 21169,
+   "estimacio": 19308,
+   "rang_baix": 15810,
+   "rang_alt": 22736,
+   "etca_oficial": 19992,
+   "dins_banda": true
+  },
+  "08221": {
+   "nom": "Sant Just Desvern",
+   "tipus": "metropolita_dens",
+   "padro": 20815,
+   "estimacio": 15717,
+   "rang_baix": 14586,
+   "rang_alt": 19996,
+   "etca_oficial": 20004,
+   "dins_banda": false
+  },
+  "08230": {
+   "nom": "Premià de Dalt",
+   "tipus": "metropolita_dens",
+   "padro": 10574,
+   "estimacio": 10246,
+   "rang_baix": 9509,
+   "rang_alt": 13035,
+   "etca_oficial": 9356,
+   "dins_banda": true
+  },
+  "08235": {
+   "nom": "Sant Pol de Mar",
+   "tipus": "litoral_vacacional",
+   "padro": 5810,
+   "estimacio": 6582,
+   "rang_baix": 5390,
+   "rang_alt": 7751,
+   "etca_oficial": 6578,
+   "dins_banda": true
+  },
+  "08244": {
+   "nom": "Santa Coloma de Cervelló",
+   "tipus": "corona_metropolitana",
+   "padro": 8334,
+   "estimacio": 6706,
+   "rang_baix": 6042,
+   "rang_alt": 7048,
+   "etca_oficial": 7069,
+   "dins_banda": true
+  },
+  "08245": {
+   "nom": "Santa Coloma de Gramenet",
+   "tipus": "metropolita_dens",
+   "padro": 120903,
+   "estimacio": 116404,
+   "rang_baix": 108031,
+   "rang_alt": 148096,
+   "etca_oficial": 106565,
+   "dins_banda": true
+  },
+  "08261": {
+   "nom": "Santa Susanna",
+   "tipus": "litoral_vacacional",
+   "padro": 3999,
+   "estimacio": 5163,
+   "rang_baix": 4227,
+   "rang_alt": 6079,
+   "etca_oficial": 10576,
+   "dins_banda": false
+  },
+  "08263": {
+   "nom": "Sant Vicenç dels Horts",
+   "tipus": "metropolita_dens",
+   "padro": 28595,
+   "estimacio": 26495,
+   "rang_baix": 24589,
+   "rang_alt": 33708,
+   "etca_oficial": 26264,
+   "dins_banda": true
+  },
+  "08264": {
+   "nom": "Sant Vicenç de Montalt",
+   "tipus": "interior_rural",
+   "padro": 6725,
+   "estimacio": 8149,
+   "rang_baix": 6897,
+   "rang_alt": 9183,
+   "etca_oficial": 6887,
+   "dins_banda": false
+  },
+  "08268": {
+   "nom": "Cercs",
+   "tipus": "interior_rural",
+   "padro": 1193,
+   "estimacio": 1124,
+   "rang_baix": 951,
+   "rang_alt": 1266,
+   "etca_oficial": 1130,
+   "dins_banda": true
+  },
+  "08281": {
+   "nom": "Teià",
+   "tipus": "interior_rural",
+   "padro": 6812,
+   "estimacio": 6055,
+   "rang_baix": 5124,
+   "rang_alt": 6823,
+   "etca_oficial": 5915,
+   "dins_banda": true
+  },
+  "08282": {
+   "nom": "Tiana",
+   "tipus": "corona_metropolitana",
+   "padro": 9323,
+   "estimacio": 7485,
+   "rang_baix": 6745,
+   "rang_alt": 7867,
+   "etca_oficial": 7834,
+   "dins_banda": true
+  },
+  "08284": {
+   "nom": "Tordera",
+   "tipus": "interior_rural",
+   "padro": 18795,
+   "estimacio": 20073,
+   "rang_baix": 16988,
+   "rang_alt": 22620,
+   "etca_oficial": 18652,
+   "dins_banda": true
+  },
+  "08289": {
+   "nom": "Torrelles de Llobregat",
+   "tipus": "corona_metropolitana",
+   "padro": 6136,
+   "estimacio": 5243,
+   "rang_baix": 4724,
+   "rang_alt": 5510,
+   "etca_oficial": 5139,
+   "dins_banda": true
+  },
+  "08295": {
+   "nom": "Vallirana",
+   "tipus": "interior_rural",
+   "padro": 15952,
+   "estimacio": 16286,
+   "rang_baix": 13783,
+   "rang_alt": 18352,
+   "etca_oficial": 14117,
+   "dins_banda": false
+  },
+  "08301": {
+   "nom": "Viladecans",
+   "tipus": "litoral_metropolita",
+   "padro": 67179,
+   "estimacio": 57904,
+   "rang_baix": 55294,
+   "rang_alt": 66191,
+   "etca_oficial": 62051,
+   "dins_banda": true
+  },
+  "08905": {
+   "nom": "Palma de Cervelló, la",
+   "tipus": "interior_rural",
+   "padro": 3048,
+   "estimacio": 2906,
+   "rang_baix": 2460,
+   "rang_alt": 3275,
+   "etca_oficial": 2594,
+   "dins_banda": true
+  },
+  "43012": {
+   "nom": "Altafulla",
+   "tipus": "litoral_vacacional",
+   "padro": 5809,
+   "estimacio": 7364,
+   "rang_baix": 6030,
+   "rang_alt": 8671,
+   "etca_oficial": 7638,
+   "dins_banda": true
+  },
+  "43043": {
+   "nom": "Catllar, el",
+   "tipus": "interior_rural",
+   "padro": 5215,
+   "estimacio": 5380,
+   "rang_baix": 4553,
+   "rang_alt": 6063,
+   "etca_oficial": 4619,
+   "dins_banda": false
+  },
+  "43047": {
+   "nom": "Constantí",
+   "tipus": "interior_rural",
+   "padro": 6921,
+   "estimacio": 6901,
+   "rang_baix": 5840,
+   "rang_alt": 7776,
+   "etca_oficial": 7725,
+   "dins_banda": true
+  },
+  "43050": {
+   "nom": "Creixell",
+   "tipus": "litoral_vacacional",
+   "padro": 4169,
+   "estimacio": 6535,
+   "rang_baix": 5351,
+   "rang_alt": 7696,
+   "etca_oficial": 6341,
+   "dins_banda": true
+  },
+  "43095": {
+   "nom": "Morell, el",
+   "tipus": "interior_rural",
+   "padro": 3851,
+   "estimacio": 4024,
+   "rang_baix": 3406,
+   "rang_alt": 4535,
+   "etca_oficial": 4125,
+   "dins_banda": true
+  },
+  "43100": {
+   "nom": "Pallaresos, els",
+   "tipus": "interior_rural",
+   "padro": 5018,
+   "estimacio": 4710,
+   "rang_baix": 3986,
+   "rang_alt": 5307,
+   "etca_oficial": 4433,
+   "dins_banda": true
+  },
+  "43103": {
+   "nom": "Perafort",
+   "tipus": "interior_rural",
+   "padro": 1319,
+   "estimacio": 1131,
+   "rang_baix": 957,
+   "rang_alt": 1275,
+   "etca_oficial": 1132,
+   "dins_banda": true
+  },
+  "43109": {
+   "nom": "Pobla de Mafumet, la",
+   "tipus": "interior_rural",
+   "padro": 4127,
+   "estimacio": 3659,
+   "rang_baix": 3096,
+   "rang_alt": 4123,
+   "etca_oficial": 4237,
+   "dins_banda": true
+  },
+  "43111": {
+   "nom": "Pobla de Montornès, la",
+   "tipus": "interior_rural",
+   "padro": 3357,
+   "estimacio": 4450,
+   "rang_baix": 3766,
+   "rang_alt": 5014,
+   "etca_oficial": 3562,
+   "dins_banda": false
+  },
+  "43126": {
+   "nom": "Riera de Gaià, la",
+   "tipus": "interior_rural",
+   "padro": 1806,
+   "estimacio": 1773,
+   "rang_baix": 1500,
+   "rang_alt": 1998,
+   "etca_oficial": 1616,
+   "dins_banda": true
+  },
+  "43131": {
+   "nom": "Roda de Berà",
+   "tipus": "litoral_vacacional",
+   "padro": 8027,
+   "estimacio": 14599,
+   "rang_baix": 11955,
+   "rang_alt": 17192,
+   "etca_oficial": 11725,
+   "dins_banda": false
+  },
+  "43144": {
+   "nom": "Secuita, la",
+   "tipus": "interior_rural",
+   "padro": 1828,
+   "estimacio": 1630,
+   "rang_baix": 1379,
+   "rang_alt": 1836,
+   "etca_oficial": 1556,
+   "dins_banda": true
+  },
+  "43148": {
+   "nom": "Tarragona",
+   "tipus": "litoral_vacacional",
+   "padro": 141018,
+   "estimacio": 133230,
+   "rang_baix": 109098,
+   "rang_alt": 156889,
+   "etca_oficial": 156109,
+   "dins_banda": true
+  },
+  "43153": {
+   "nom": "Torredembarra",
+   "tipus": "litoral_vacacional",
+   "padro": 17953,
+   "estimacio": 26378,
+   "rang_baix": 21600,
+   "rang_alt": 31063,
+   "etca_oficial": 21801,
+   "dins_banda": false
+  },
+  "43166": {
+   "nom": "Vilallonga del Camp",
+   "tipus": "interior_rural",
+   "padro": 2462,
+   "estimacio": 2635,
+   "rang_baix": 2230,
+   "rang_alt": 2969,
+   "etca_oficial": 2214,
+   "dins_banda": false
+  },
+  "43171": {
+   "nom": "Vila-seca",
+   "tipus": "litoral_vacacional",
+   "padro": 24061,
+   "estimacio": 28930,
+   "rang_baix": 23690,
+   "rang_alt": 34068,
+   "etca_oficial": 30960,
+   "dins_banda": true
+  },
+  "43905": {
+   "nom": "Salou",
+   "tipus": "litoral_vacacional",
+   "padro": 30442,
+   "estimacio": 52176,
+   "rang_baix": 42725,
+   "rang_alt": 61442,
+   "etca_oficial": 62220,
+   "dins_banda": false
+  },
+  "43907": {
+   "nom": "Canonja, la",
+   "tipus": "interior_rural",
+   "padro": 5936,
+   "estimacio": 5753,
+   "rang_baix": 4869,
+   "rang_alt": 6483,
+   "etca_oficial": 6189,
+   "dins_banda": true
+  }
+ }
+}
