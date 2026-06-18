@@ -145,6 +145,8 @@
 		<section class="ds-sec">
 			<div class="ds-sec__hd"><span class="ref">◵</span><h2>{m.home_map_title()}</h2></div>
 			<p class="lead">{m.home_map_hint()}</p>
+			<!-- Abast honest «tota Catalunya»: què cobrim i per què (no fingim dada on no n'hi ha). -->
+			<p class="home-map__scope">{m.home_map_scope()}</p>
 			<div class="home-gran" role="group" aria-label={m.map_granularity_label()}>
 				{#each GRAN_OPTS as o (o.key)}
 					<button
@@ -191,6 +193,15 @@
 </section>
 
 <style>
+	/* Línia d'abast honest sota el mapa de la home: què cobrim a tota Catalunya i per què. */
+	.home-map__scope {
+		margin: -2px 0 14px;
+		max-width: 64ch;
+		font-size: 0.86rem;
+		line-height: 1.5;
+		color: var(--dp-text-muted);
+	}
+
 	/* Commutador de granularitat del mapa de la home (comarca/vegueria/municipi). */
 	.home-gran {
 		display: inline-flex;
