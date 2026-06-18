@@ -8,6 +8,7 @@
  */
 import { loadMunicipisDataset } from '$lib/data/dataset';
 import type { LicitacionsPayload } from '$lib/analysis/troballes';
+import type { PernoctaData } from '$lib/contract/pernocta';
 import type { FeatureCollection } from 'geojson';
 import type { PageLoad } from './$types';
 
@@ -25,5 +26,16 @@ export const load: PageLoad = async ({ fetch }) => {
 	const comarques = (await comRes.json()) as FeatureCollection;
 	const vegueries = (await vegRes.json()) as FeatureCollection;
 	const licitacions = licRes.ok ? ((await licRes.json()) as LicitacionsPayload) : null;
-	return { dataset, geojson, comarques, vegueries, licitacions };
+
+	// Presència estimada EN RANG (Nivell C): munis coberts fora del Berguedà. Opcional i no-fatal
+	// (el mapa de la home funciona igual sense l'artefacte). Es mostren només a granularitat municipi.
+	let pernocta: PernoctaData | null = null;
+	try {
+		const res = await fetch('/data/pernocta-catalunya.json');
+		if (res.ok) pernocta = (await res.json()) as PernoctaData;
+	} catch {
+		pernocta = null;
+	}
+
+	return { dataset, geojson, comarques, vegueries, licitacions, pernocta };
 };

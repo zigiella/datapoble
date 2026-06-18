@@ -31,6 +31,7 @@
 	import type { Map as MlMap, GeoJSONSource, MapGeoJSONFeature } from 'maplibre-gl';
 	import type { FeatureCollection, Feature, Polygon, MultiPolygon } from 'geojson';
 	import type { MunicipisDataset, MetricKey } from '$lib/contract/types';
+	import type { PernoctaMuni } from '$lib/contract/pernocta';
 	import { type Classification } from '$lib/map/classify';
 	import { mapValue } from '$lib/map/indicators';
 	import { rampColors, divergingColors, NODATA, MAP } from '$lib/map/palette';
@@ -49,6 +50,8 @@
 		confScore: number | null;
 		/** True si el municipi és del Berguedà (té dades); fals → «sense dades encara» (atenuat). */
 		inBergueda: boolean;
+		/** Presència estimada EN RANG (munis coberts pel Nivell C fora del Berguedà); null si no. */
+		pernocta?: PernoctaMuni | null;
 		x: number;
 		y: number;
 	}
@@ -69,6 +72,8 @@
 		classification: Classification;
 		/** Nivell de granularitat actiu (per defecte municipi). */
 		granularity?: Granularity;
+		/** Presència estimada EN RANG dels munis coberts fora del Berguedà (ine5 → dada). Opcional. */
+		pernocta?: Record<string, PernoctaMuni>;
 		onhover?: (p: HoverPayload | null) => void;
 		onselect?: (ine5: string | null) => void;
 	}
@@ -81,6 +86,7 @@
 		indicator,
 		classification,
 		granularity = 'municipi',
+		pernocta,
 		onhover,
 		onselect
 	}: Props = $props();
@@ -112,6 +118,7 @@
 	const COMLINE = 'com-line'; // límits de comarca (suaus)
 	const HOVER = 'mun-hover';
 	const SELECT = 'mun-select';
+	const COVERED = 'mun-covered'; // munis amb presència estimada EN RANG (Nivell C, fora del Berguedà)
 	// Capes de COBERTURA (granularitat comarca/vegueria): cobertura honesta, no l'indicador.
 	const COV_COM_FILL = 'cov-com-fill';
 	const COV_COM_LINE = 'cov-com-line';
@@ -119,7 +126,7 @@
 	const COV_VEG_HATCH = 'cov-veg-hatch'; // tramat «dades parcials» (vegueria amb només el Berguedà dins)
 	const COV_VEG_LINE = 'cov-veg-line';
 	// Capes municipals (es mostren a 'municipi', s'amaguen a comarca/vegueria). COMLINE es gestiona a part.
-	const MUN_LAYERS = [BASE, BASELINE, HATCH, FILL, LOWCONF, LINE, HOVER, SELECT];
+	const MUN_LAYERS = [BASE, BASELINE, COVERED, HATCH, FILL, LOWCONF, LINE, HOVER, SELECT];
 
 	// Color «amb dades del projecte» (teal calmat, espill de --dp-div2-1; distint de les rampes
 	// d'indicador perquè a cobertura no es mostra cap rampa). Hex literal: el canvas no resol CSS vars.
@@ -137,6 +144,11 @@
 	 * la font de dades, no una llista codificada. El dia que entrin més comarques, s'amplia sol.
 	 */
 	const bergSet = $derived(new Set(Object.keys(dataset.municipis)));
+	// Munis amb presència estimada EN RANG fora del Berguedà (Nivell C): es pinten distints de
+	// l'atenuat «sense dades», però NO per l'indicador (no el tenim per a ells) — un tint propi.
+	const coveredSet = $derived(
+		new Set(Object.keys(pernocta ?? {}).filter((i) => !bergSet.has(i)))
+	);
 
 	/** Patró de tramat diagonal per a "sense dada" (canvas → addImage). */
 	function makeHatch(): ImageData {
@@ -224,12 +236,14 @@
 	 */
 	function joinValues(fc: FeatureCollection, key: MetricKey): FeatureCollection {
 		const berg = bergSet;
+		const cov = coveredSet;
 		const categorical = isCategorical(key);
 		return {
 			...fc,
 			features: fc.features.map((f) => {
 				const ine5 = (f.properties?.ine5 as string) ?? '';
 				const inBerg = berg.has(ine5);
+				const covered = !inBerg && cov.has(ine5); // presència estimada en rang (fora del Berguedà)
 				const row = inBerg ? dataset.municipis[ine5] : undefined;
 				const conf = (row?.values?.confianca as string | undefined) ?? null;
 
@@ -246,6 +260,7 @@
 						properties: {
 							...f.properties,
 							__inberg: inBerg,
+							__covered: covered,
 							__val: null,
 							__cat: hasCat ? (catRaw as string) : null,
 							__hasval: hasCat,
@@ -355,6 +370,18 @@
 				source: SRC,
 				filter: ['!', ['get', '__inberg']],
 				paint: { 'fill-color': MAP.land, 'fill-opacity': 0.55 }
+			});
+
+			// Capa COBERTS EN RANG: municipis FORA del Berguedà amb presència estimada (Nivell C,
+			// artefacte pernocta-catalunya.json). Es pinten en el color de cobertura però a MITJA
+			// opacitat — visibles i clicables, però honestament per sota del Berguedà (estimació en
+			// rang, no cens). Només es mostren a granularitat municipi (applyGranularity els commuta).
+			map.addLayer({
+				id: COVERED,
+				type: 'fill',
+				source: SRC,
+				filter: ['all', ['!', ['get', '__inberg']], ['boolean', ['get', '__covered'], false]],
+				paint: { 'fill-color': COVERAGE_FILL, 'fill-opacity': 0.5 }
 			});
 
 			// Contorn tènue de TOTS els municipis (estructura de fons, molt suau).
@@ -561,13 +588,16 @@
 			// El 0 d'OSM de la restauració es mostra «sense dada» (buit de mapejat, no absència real).
 			const value = inBerg ? mapValue(indicator, row?.values?.[indicator]) : null;
 			const cs = row?.values?.confianca_score;
+			// Presència estimada EN RANG per als munis coberts de fora del Berguedà (Nivell C).
+			const cover = !inBerg && coveredSet.has(ine5) ? (pernocta?.[ine5] ?? null) : null;
 			return {
 				ine5,
-				nom: (feat.properties?.nom as string) ?? row?.nom ?? ine5,
+				nom: (feat.properties?.nom as string) ?? row?.nom ?? cover?.nom ?? ine5,
 				value,
 				conf: (row?.values?.confianca as string | undefined) ?? null,
 				confScore: typeof cs === 'number' ? cs : null,
 				inBergueda: inBerg,
+				pernocta: cover,
 				x: point.x,
 				y: point.y
 			};

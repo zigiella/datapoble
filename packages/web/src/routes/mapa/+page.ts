@@ -16,6 +16,7 @@
  * («sense dades encara»), no acolorits per l'indicador (honestedat: no fingim dada).
  */
 import { loadMunicipisDataset } from '$lib/data/dataset';
+import type { PernoctaData } from '$lib/contract/pernocta';
 import type { FeatureCollection } from 'geojson';
 import type { PageLoad } from './$types';
 
@@ -29,5 +30,16 @@ export const load: PageLoad = async ({ fetch }) => {
 	const geojson = (await munRes.json()) as FeatureCollection;
 	const comarques = (await comRes.json()) as FeatureCollection;
 	const vegueries = (await vegRes.json()) as FeatureCollection;
-	return { dataset, geojson, comarques, vegueries };
+
+	// Presència estimada EN RANG (Nivell C) — munis coberts més enllà del Berguedà. Opcional i
+	// no-fatal: si l'artefacte encara no hi és, el mapa funciona igual (cap muni cobert pintat).
+	let pernocta: PernoctaData | null = null;
+	try {
+		const res = await fetch('/data/pernocta-catalunya.json');
+		if (res.ok) pernocta = (await res.json()) as PernoctaData;
+	} catch {
+		pernocta = null;
+	}
+
+	return { dataset, geojson, comarques, vegueries, pernocta };
 };
