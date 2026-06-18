@@ -19,9 +19,10 @@
  * (el `fallback` SPA del 404 els serveix amb l'estat «sense dades»).
  */
 import { loadMunicipisDataset } from '$lib/data/dataset';
-import { buildSlugIndex } from '$lib/contract/slug';
+import { buildSlugIndex, toSlug } from '$lib/contract/slug';
 import type { LicitacionsData, LicitacionsMuni } from '$lib/contract/licitacions';
 import type { LecturesData, LecturaEntry } from '$lib/contract/lectures';
+import type { PernoctaData, PernoctaMuni } from '$lib/contract/pernocta';
 import type { EntryGenerator, PageLoad } from './$types';
 
 export const prerender = true;
@@ -51,7 +52,17 @@ export const entries: EntryGenerator = async () => {
 		// Slug públic per municipi (derivat del nom oficial); buildSlugIndex llança si dos
 		// municipis xoquen → el build falla = test de col·lisió a CI (spec §8.1).
 		const { ine5ToSlug } = buildSlugIndex(dataset.municipis);
-		return Object.values(ine5ToSlug).map((slug) => ({ slug }));
+		const slugs = new Set(Object.values(ine5ToSlug));
+		// + munis coberts pel rang (Nivell C, fora del Berguedà) perquè la seva fitxa també es
+		// prerenderitzi. Degradació no-fatal si l'artefacte encara no hi és.
+		try {
+			const pPath = join(process.cwd(), 'static', 'data', 'pernocta-catalunya.json');
+			const pernocta = JSON.parse(readFileSync(pPath, 'utf8')) as { munis: Record<string, { nom: string }> };
+			for (const m of Object.values(pernocta.munis)) slugs.add(toSlug(m.nom));
+		} catch {
+			/* sense artefacte de rang: només es prerenderitzen els del Berguedà */
+		}
+		return [...slugs].map((slug) => ({ slug }));
 	} catch (err) {
 		// Degradació NO-FATAL (mateix esperit que copy-data): si l'actiu no hi és en un entorn
 		// sense els marts, no prerenderitzem cap fitxa explícita — el fallback SPA del 404 les
@@ -68,9 +79,35 @@ export const load: PageLoad = async ({ fetch, params }) => {
 	const dataset = await loadMunicipisDataset(fetch);
 	// El slug és la cara pública de la URL; l'ine5 (clau interna) es resol del nom oficial.
 	const { slugToIne5 } = buildSlugIndex(dataset.municipis);
-	const ine5 = slugToIne5[params.slug] ?? null;
-	// `row` null = slug desconegut → estat «sense dades encara» (degradació amable, no 404 lleig).
+
+	// Presència estimada EN RANG (Nivell C) — munis coberts MÉS ENLLÀ del Berguedà (artefacte
+	// `pernocta-catalunya.json`). Es carrega aviat perquè també resol el slug d'aquests munis (el
+	// `slugToIne5` només coneix els 31 del Berguedà). Prerender-safe.
+	// El Berguedà ja té dades completes; només cal l'artefacte de rang si el slug NO hi és.
+	let pernoctaAll: PernoctaData | null = null;
+	if (!slugToIne5[params.slug]) {
+		try {
+			const res = await fetch('/data/pernocta-catalunya.json');
+			if (res.ok) pernoctaAll = (await res.json()) as PernoctaData;
+		} catch {
+			pernoctaAll = null;
+		}
+	}
+
+	// Resol l'ine5: primer pel slug del Berguedà; si no, per un muni cobert (slug del nom oficial).
+	let ine5 = slugToIne5[params.slug] ?? null;
+	if (!ine5 && pernoctaAll) {
+		for (const [code, m] of Object.entries(pernoctaAll.munis)) {
+			if (toSlug(m.nom) === params.slug) {
+				ine5 = code;
+				break;
+			}
+		}
+	}
+	// `row` (dades completes del Berguedà) null per a munis coberts/desconeguts → es mostra el rang
+	// (si cobert) o l'estat «sense dades encara».
 	const row = ine5 ? (dataset.municipis[ine5] ?? null) : null;
+	const pernocta: PernoctaMuni | null = ine5 && pernoctaAll ? (pernoctaAll.munis[ine5] ?? null) : null;
 
 	// Licitacions del municipi (el cabal): opcional, de l'artefacte standalone. Prerender-safe.
 	let lic: LicitacionsMuni | null = null;
@@ -103,5 +140,5 @@ export const load: PageLoad = async ({ fetch, params }) => {
 		}
 	}
 
-	return { dataset, ine5, row, lic, lectura };
+	return { dataset, ine5, row, lic, lectura, pernocta };
 };
