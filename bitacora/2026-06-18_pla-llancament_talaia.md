@@ -28,8 +28,16 @@ tota Catalunya i una web sòlida.»
 Abast del re-tall · fitxes de tota Catalunya (prerender tots vs fallback) · licitacions enllaçada o
 no · llengües al dia 1 (ca/es).
 
-## Risc operatiu viu
-El límit de despesa bloqueja workflows multi-agent i tasques de dades amb IA (gen-fitxa, eval-writer,
-estendre Nivell C). A tenir en compte per a qualsevol pas dependent d'IA abans del dia D.
+## Resolució (Bea, 2026-06-18) — decisions del §0
+- **Abast:** tot l'spec al llançament (no es retalla res).
+- **Cobertura:** tot Catalunya, TOTS els munis (estendre Nivell C a 43 comarques + baixar el llindar
+  dels 1.000 hab). Carril dades, **NO bloquejat pel límit de despesa** (és Python + dades obertes).
+- **Fitxes:** prerenderitzar tots els munis.
+- **Licitacions:** al PEU com a «en construcció» (fora de la nav principal).
+- **Llengües:** ca/es + aranès + anglès al dia 1.
+
+Plegat al pla v2 (`docs/pla-llancament-2026-06.md`) i convertit en cua operativa (`bitacora/next.md`,
+P0 primer). **Correcció a un risc abans escrit:** estendre Nivell C NO depèn de l'IA (numpy + Socrata/
+INE); el límit de despesa només frena lectures, pregunta-li super beta i traducció oc/en.
 
 — Talaia 🌊
