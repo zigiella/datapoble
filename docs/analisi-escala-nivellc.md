@@ -92,11 +92,29 @@ cobertura **77% = 77%**; banda [−14,+17] idèntica; caiguda 0 pts) → el mode
 el 77% és real. Amb 2 covariables i 91 punts, generalitza. (Era el requisit del disseny abans del
 go/no-go.)
 
-**Conclusió de l'estat:** el camí del disseny (covariables contínues + banda) es confirma amb força.
-Densitat + renda donen R²=0,60 i cobertura 77% (vs 45% de la base única), **robust en held-out**. Per
-arribar a publicable (≈≥85% dins ±15%) queda: 1-2 covariables més (mix de calefacció/gas, grandària
-de la llar) i tractar l'estacionalitat del litoral vacacional a part (dada de pic). La banda p10–p90
-(±15%) ja és publicable com a RANG des d'ara (no com a xifra absoluta).
+### T5 · El GAS millora el model però la cobertura fa SOSTRE al 77% (2026-06-16, ICAEN qvqg-zag8)
+Afegida la **fracció de gas del consum domèstic** = gas/(gas+elèctric) (proxy de calefacció de gas,
+ràtio → independent de la presència; 0 = sense xarxa de gas). `tools/nivellc_analisi.py` la baixa
+(118 munis: 34 sense gas, 84 amb; mediana 0,39).
+
+| model | R² | \|err\| medià | cobertura ±15% | banda |
+|---|--:|--:|--:|--:|
+| ~ densitat + renda | 0,60 | 8,4% | 77% | [−14,+17] |
+| **~ densitat + renda + gas** | **0,65** | **6,8%** | **77%** | [−15,+16] |
+| ~ densitat + renda + gas + altitud | 0,66 | 7,3% | 77% | [−14,+16] |
+
+`base = 855 − 154·log10(dens) + 72·renda_k€ − 615·gas_frac` (gas 0→100% ⇒ −615 kWh/persona; coherent:
+calefacció de gas → menys elèctric/persona). Held-out: 77%→76% (caiguda 1 pt) → robust.
+
+**El gas millora R² (0,60→0,65) i l'error medià (8,4→6,8%), però la cobertura ±15% es queda al 77%.**
+És una troballa clau: afegir covariables anuals ajuda el muni típic però **no creua el 85%** perquè
+les que queden fora són les **cues estructurals** —litoral vacacional (75%; l'elèctric/gas ANUAL no
+veu el pic estival) i algun metro dens—. **El següent lever NO és una altra covariable anual, sinó
+la dada de PIC** (consum trimestral / ocupació) per al litoral.
+
+**Conclusió de l'estat:** model = **densitat + renda + gas** (R²=0,65, err medià 6,8%, cobertura 77%,
+held-out robust). La banda p10–p90 (±15%) **ja és publicable com a RANG** des d'ara. Per a xifra
+ABSOLUTA (≈≥85%) cal tractar l'estacionalitat del litoral a part (dada de pic) i, probablement, més N.
 
 ---
 
@@ -112,13 +130,14 @@ de la llar) i tractar l'estacionalitat del litoral vacacional a part (dada de pi
 | D6 | 2026-06-15 | Afegir tipus `corona_metropolitana` (AMB no densa ≠ dens urbà) | Talaia |
 | D7 | 2026-06-15 | Model Nivell C = densitat sola (altitud no aporta; parsimònia) | Talaia |
 | D8 | 2026-06-15 | Baixar la renda de l'INE ADRH (obert) i afegir-la al model → densitat+renda | Bea + Talaia |
+| D9 | 2026-06-16 | Afegir el gas (ICAEN qvqg-zag8) com a fracció de calefacció → model densitat+renda+gas (R²0,65). Cobertura fa sostre al 77%: el següent lever és dada de PIC per al litoral, no més covariables anuals | Talaia |
 
 ---
 
 ## 4. Eines i artefactes (interns, no publicats)
 
-- `tools/nivellc_analisi.py` — dirigit per comarca; baixa senyals (ICAEN/ARC) + RTC + ETCA + EMEX,
-  estima amb la base única, mesura error per tipus i recalibra base per tipus.
+- `tools/nivellc_analisi.py` — dirigit per comarca; baixa senyals (ICAEN elèctric+gas / ARC) + RTC +
+  ETCA + EMEX, estima amb la base única, mesura error per tipus i recalibra base per tipus.
   → `data/territorial/nivellc_analisi.csv`, `data/territorial/nivellc_bases_tipus.csv`.
 - `tools/nivellc_regressio.py` — ajusta la base per persona ~ log10(densitat) + renda (OLS numpy),
   compara amb base única i per tipus, dona bandes p10–p90 i residual per tipus.
@@ -132,11 +151,14 @@ de la llar) i tractar l'estacionalitat del litoral vacacional a part (dada de pi
 
 ## 5. Pendents / següents passos
 
-1. **Més covariables** per estrènyer la banda: ✅ **renda FETA** (INE ADRH 2023, obert; R² 0,29→0,60,
-   cobertura 77%); ✅ **held-out FET** (LOO = in-sample, no sobreajust); pendents: mix de calefacció /
-   gas natural (ICAEN), grandària de la llar.
-2. **Estacionalitat del litoral vacacional**: l'elèctric domèstic anual no veu el pic estival; cal
-   dada de pic (consum trimestral, ocupació turística) o modelar el flux a part.
+1. **Més covariables** per estrènyer la banda: ✅ **renda** (R² 0,29→0,60), ✅ **gas/calefacció**
+   (0,60→0,65, ICAEN qvqg-zag8), ✅ **held-out** (no sobreajust). **Sostre detectat: la cobertura
+   ±15% es queda al 77%** amb covariables anuals → més covariables anuals NO creuaran el 85%.
+   (Opcional: grandària de la llar, marginal.)
+2. **Estacionalitat del litoral vacacional — ARA ÉS EL LEVER PRINCIPAL** per creuar el go/no-go:
+   l'elèctric/gas ANUAL no veu el pic estival; cal **dada de PIC** (consum elèctric trimestral
+   d'ICAEN >5.000 hab, ocupació turística, o modelar el flux a part). És el que falta per a xifra
+   absoluta al litoral.
 3. **Completar les llistes** del classificador (AMB 36 / costaners / corona oficials) perquè els
    grups no es contaminin (avui `interior_rural` agafa exurbis).
 4. **Ampliar la mostra** a més comarques (litoral sencer, interior, Pirineu) per estabilitzar els

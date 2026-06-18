@@ -37,6 +37,7 @@ DENSITAT_METRO = 1500.0
 ALTITUD_PIRINEU = 800.0
 
 ICAEN_URL = "https://analisi.transparenciacatalunya.cat/resource/8idm-becu.json"
+GAS_URL = "https://analisi.transparenciacatalunya.cat/resource/qvqg-zag8.json"  # gas natural municipal
 ARC_URL = "https://analisi.transparenciacatalunya.cat/resource/69zu-w48s.json"
 RTC_URL = "https://analisi.transparenciacatalunya.cat/resource/t2h3-cgys.json"
 
@@ -114,6 +115,24 @@ def fetch_electric(comarques: list[str]) -> dict[str, float]:
         ine5 = str(r.get("cdmun", "")).zfill(5)
         any_ = int(_num(r.get("any")) or 0)
         kwh = _num(r.get("consum_kwh"))
+        if kwh is None:
+            continue
+        if ine5 not in latest or any_ > latest[ine5][0]:
+            latest[ine5] = (any_, kwh)
+    return {k: v[1] for k, v in latest.items()}
+
+
+def fetch_gas(comarques: list[str]) -> dict[str, float]:
+    """Consum de gas natural DOMÈSTIC (kWh PCS) de l'any més recent, per ine5 (ICAEN qvqg-zag8).
+    Munis sense gas canalitzat no hi surten → 0 (no és buit: és que no hi ha xarxa)."""
+    noms = [_icaen_norm(c) for c in comarques]
+    where = "sector='DOMÈSTIC' and comarca in (" + ",".join(f"'{n}'" for n in noms) + ")"
+    rows = _socrata(GAS_URL, where, "cdmun,any,consum_kwh_pcs,comarca")
+    latest: dict[str, tuple[int, float]] = {}
+    for r in rows:
+        ine5 = str(r.get("cdmun", "")).zfill(5)
+        any_ = int(_num(r.get("any")) or 0)
+        kwh = _num(r.get("consum_kwh_pcs"))
         if kwh is None:
             continue
         if ine5 not in latest or any_ > latest[ine5][0]:
@@ -260,8 +279,9 @@ def main() -> int:
     except Exception:
         pass
     print(f"Comarques: {', '.join(COMARQUES)}")
-    print("Baixant senyals (ICAEN/ARC), RTC, ETCA i EMEX…")
+    print("Baixant senyals (ICAEN elèctric+gas / ARC), RTC, ETCA i EMEX…")
     electric = fetch_electric(COMARQUES)
+    gas = fetch_gas(COMARQUES)
     residus = fetch_residus(COMARQUES)
     # Conjunt de munis = els que tenen residus (porten nom + codi6) i elèctric.
     ine5s = sorted(set(residus) & set(electric))
@@ -280,11 +300,16 @@ def main() -> int:
         em = fetch_emex(codi6) if e else {"altitud": None, "densitat": None}
         resident, etca_v = e.get("resident"), e.get("etca")
         kwh_dom = electric.get(ine5)
+        gas_dom = gas.get(ine5, 0.0)  # sense gas canalitzat → 0 (no buit)
         kg_hab = residus[ine5]["kg_hab_any"]
         places = rtc.get(ine5, 0)
         pernocta_est = round(kwh_dom / BASE_ELECTRIC) if kwh_dom else None
         err = (round((pernocta_est - etca_v) / etca_v * 100, 1)
                if (pernocta_est and etca_v) else None)
+        # Fracció de gas del consum domèstic = gas/(gas+elèctric): proxy de calefacció de gas
+        # (ràtio → independent de la presència). Alta → menys elèctric/persona esperat.
+        gas_fraction = (round(gas_dom / (gas_dom + kwh_dom), 3)
+                        if (kwh_dom and (gas_dom + kwh_dom) > 0) else None)
         rows.append({
             "ine5": ine5, "municipi": nom,
             "tipus_territorial": classify(nom, em["altitud"], em["densitat"]),
@@ -294,6 +319,8 @@ def main() -> int:
             "err_pernocta_pct": err,
             "rtc_places": places,
             "rtc_places_per_resident": (round(places / resident, 3) if resident else None),
+            "gas_kwh_dom": int(gas_dom) if gas_dom else 0,
+            "gas_fraction": gas_fraction,
             "altitud_m": int(em["altitud"]) if em["altitud"] is not None else "",
             "densitat_hab_km2": em["densitat"] if em["densitat"] is not None else "",
         })
