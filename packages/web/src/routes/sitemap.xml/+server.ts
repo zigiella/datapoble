@@ -5,8 +5,8 @@
  * amb `urlPatterns` (vite.config), sense dependre de quirks de localizeHref. Pre-llançament el
  * lloc va `noindex`; això és la bastida perquè al llançament només calgui treure el noindex.
  */
-import { loadMunicipisDataset } from '$lib/data/dataset';
-import { slugForIne5 } from '$lib/contract/slug';
+import { toSlug } from '$lib/contract/slug';
+import type { CatalegData } from '$lib/contract/cataleg';
 import type { RequestHandler } from './$types';
 
 export const prerender = true;
@@ -26,10 +26,19 @@ const STATIC_ROUTES = [
 const loc = (route: string, locale: string) => `${SITE}/${locale}${route === '/' ? '/' : route}`;
 
 export const GET: RequestHandler = async ({ fetch }) => {
-	const dataset = await loadMunicipisDataset(fetch);
-	const muniRoutes = Object.keys(dataset.municipis).map(
-		(ine5) => `/municipi/${slugForIne5(ine5, dataset)}/`
-	);
+	// TOTS els municipis de Catalunya (catàleg): cada poble té fitxa prerenderitzada → entra al
+	// sitemap (mateixa font que `municipi/[slug]` entries()). No-fatal si falta el catàleg.
+	let muniRoutes: string[] = [];
+	try {
+		const res = await fetch('/data/municipis-cataleg.json');
+		if (res.ok) {
+			const cataleg = (await res.json()) as CatalegData;
+			const slugs = new Set(cataleg.map((m) => toSlug(m.nom)));
+			muniRoutes = [...slugs].map((slug) => `/municipi/${slug}/`);
+		}
+	} catch {
+		muniRoutes = [];
+	}
 	const routes = [...STATIC_ROUTES, ...muniRoutes];
 
 	const urls = routes.flatMap((route) =>
