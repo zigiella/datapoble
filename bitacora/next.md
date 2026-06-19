@@ -27,7 +27,8 @@ límit de despesa; les tasques marcades **(IA)** sí (esperen que es reposi).*
 
 7. **[web/viz] Spec ric** (Mirador+Llegenda+Brúixola) — dades obertes §9 (/dades, descàrrega, xifra
    citable, embeds, kit premsa) · viz noves §4 (Dorling, slider, «el riu», beeswarm, emblema doble
-   corrent) · espina territorial + breadcrumb §7 · 3 profunditats + test CI §1.
+   corrent) · ~~espina territorial + breadcrumb §7~~ ✅ FET (#151: muni→comarca→vegueria exacte +
+   breadcrumb + veïns a tots els munis; bug eyebrow comarca corregit) · 3 profunditats + test CI §1.
 8. **[llengües] Aranès + anglès** (Brúixola+Talaia) **(IA)** — repàs còpia ca/es font → Apertium/AINA
    (oc) + anglès. Espera la reposició del límit.
 9. **[web/IA] Pregunta-li «super beta»** (Brúixola) **(IA)** — genUI / resposta-com-UI.
