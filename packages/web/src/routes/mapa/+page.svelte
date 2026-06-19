@@ -399,20 +399,19 @@
 					</div>
 					<div class="map-legend">
 						{#if coverageMode}
-							<!-- Llegenda de COBERTURA honesta (comarca/vegueria): no l'indicador, sinó on hi ha
-							     dades. Comarca: Berguedà = completes. Vegueria: Comarques Centrals = parcials. -->
+							<!-- Llegenda de COBERTURA honesta (comarca/vegueria): no l'indicador, sinó el nivell
+							     de dada. Berguedà = completes; resta de Catalunya = estimació en rang (Nivell C). -->
 							<div>
 								<p class="legend__hd"><span>{m.map_legend_coverage_title()}</span></p>
 								<div class="map-cls">
 									{#if granularity === 'comarca'}
 										<div class="r">
-											<i style="background:{COVERAGE_FILL}"></i><span>{m.map_legend_coverage_complete()}</span>
-										</div>
-									{:else}
-										<div class="r">
-											<span style="width:26px;height:14px;border-radius:2px;display:inline-block;background-color:{COVERAGE_FILL};background-image:repeating-linear-gradient(45deg,rgba(36,40,46,0.45) 0 1.5px,transparent 1.5px 5px);box-shadow:inset 0 0 0 1px var(--dp-border-strong)"></span><span>{m.map_legend_coverage_partial()}</span>
+											<i style="background:{COVERAGE_FILL};opacity:0.85"></i><span>{m.map_legend_coverage_complete()}</span>
 										</div>
 									{/if}
+									<div class="r">
+										<i style="background:{COVERAGE_FILL};opacity:0.4"></i><span>{m.map_legend_coverage_range()}</span>
+									</div>
 									<div class="r">
 										<i style="background:var(--dp-map-land,#F2F1EC);opacity:0.7;box-shadow:inset 0 0 0 1px var(--dp-border)"></i><span>{m.map_legend_coverage_none()}</span>
 									</div>
