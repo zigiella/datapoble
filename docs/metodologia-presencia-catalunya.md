@@ -64,9 +64,10 @@ Catalunya** amb ETCA. `R² = 0,41` a escala Catalunya — més baix que en el lo
   (artefacte `data/web/pernocta-catalunya.json`). Els **≥1.000 hab** (486) es validen contra l'ETCA;
   els **<1.000 hab** (441) es donen amb banda més ampla i **sense validació oficial**. Els ~20 munis
   sense senyal elèctric/renda queden «sense dades».
-- **Classificació litoral PROVISIONAL**: derivada geomètricament (toca el mar, Natural Earth + INE)
-  fins a incorporar la **llista administrativa oficial** (Territori/PPOL, Llei 8/2020). Afecta només
-  quin tipus de banda hereta cada muni de costa.
+- **Classificació litoral OFICIAL**: els **70 municipis costaners** de la llista de Territori
+  (Generalitat) derivada al perímetre del PPOL (Llei 8/2020). Afecta quin tipus de banda hereta cada
+  muni de costa. (La derivació geomètrica pròpia —Natural Earth + INE— en va fer de cross-check: 0
+  costaners perduts, 13 falsos positius de segona fila, tots corregits per la llista oficial.)
 - **Límit conegut — estacionalitat del litoral**: l'elèctric/gas **anual** no veu el **pic estival**;
   per a la costa cal dada de **pic** (consum trimestral / ocupació) abans de donar-ne xifra absoluta.
   Per això el litoral vacacional és el tipus amb banda més ampla.
@@ -79,7 +80,7 @@ Catalunya** amb ETCA. `R² = 0,41` a escala Catalunya — més baix que en el lo
 | Renda neta per persona 2023 | INE — Atlas de Distribució de Renda (ADRH) | taula 30824 |
 | Població estacional (validació) | Idescat — ETCA/EPE | `epe` (base 2021) |
 | Densitat | població (ARC/EPE) / superfície de la geometria oficial | INE/IGN (equival a EMEX `f262`, r=0,9999) |
-| Classificació litoral (provisional) | derivació geomètrica Natural Earth + INE | → llista oficial Territori/PPOL pendent |
+| Classificació litoral | Territori (Generalitat) · llista de municipis litorals 2023 derivada als 70 costaners (PPOL, Llei 8/2020) | `data/territorial/municipi_litoral.csv` |
 
 ## 8. Reproduïbilitat
 `tools/nivellc_analisi.py` (baixa senyals de tot Catalunya + densitat = població/superfície del

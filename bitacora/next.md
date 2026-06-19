@@ -9,8 +9,8 @@ límit de despesa; les tasques marcades **(IA)** sí (esperen que es reposi).*
 1. ~~**[dades] Estendre Nivell C a tot Catalunya**~~ ✅ FET (#152, 2026-06-18) — **91→927 munis en
    rang** (486 ETCA validats + 441 sub-1000 sense validació). R²=0,41, cobertura 70%, held-out
    robust. Densitat=pop/àrea (r=0,9999 vs EMEX, sense ~900 crides). Costaners PROVISIONALS.
-   **Pendent:** (a) llista costanera oficial (Bea) · ~~(b) vista de cobertura comarca/vegueria~~
-   ✅ reformulada (#153: Berguedà completa · resta en rang) · (c) pic litoral · (d) residus L2.
+   **Pendent:** ~~(a) llista costanera oficial~~ ✅ (#154: 70 oficials Territori/PPOL per ine5;
+   geomètrica = 0 FN / 13 FP) · ~~(b) vista de cobertura~~ ✅ (#153) · (c) pic litoral · (d) residus L2.
 2. ~~**[web] Cercador a tota Catalunya**~~ ✅ FET (#146, 2026-06-18) — catàleg de 947 munis;
    `MuniSearch` hi cerca; `toSlug` arregla l'article inline `l'`.
 3. ~~**[web] Prerenderitzar tots els munis**~~ ✅ FET (#146) — `entries()` a 947 (×2 locales),
