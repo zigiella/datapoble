@@ -13,6 +13,7 @@
 	import ContourField from '$lib/components/ContourField.svelte';
 	import ChoroplethMap from '$lib/components/ChoroplethMap.svelte';
 	import MuniSearch from '$lib/components/MuniSearch.svelte';
+	import Beeswarm from '$lib/components/Beeswarm.svelte';
 	import { classify, methodFor } from '$lib/map/classify';
 	import { mapValue } from '$lib/map/indicators';
 	import { slugForIne5, toSlug } from '$lib/contract/slug';
@@ -172,6 +173,15 @@
 			</div>
 			<p class="home-map__more"><a href={localizeHref('/mapa')}>{m.home_map_more()} →</a></p>
 		</section>
+
+		<!-- BEESWARM · el gap padró↔presència de tota Catalunya, d'un cop d'ull (§4 viz) -->
+		{#if pernocta}
+			<section class="ds-sec">
+				<div class="ds-sec__hd"><span class="ref">∿</span><h2>{m.beeswarm_title()}</h2></div>
+				<p class="lead">{m.beeswarm_lead()}</p>
+				<Beeswarm munis={pernocta} />
+			</section>
+		{/if}
 
 		<!-- PORTES DE COMARCA · /resum és ara la subhome del Berguedà -->
 		<section class="ds-sec">
