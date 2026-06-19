@@ -20,7 +20,8 @@ límit de despesa; les tasques marcades **(IA)** sí (esperen que es reposi).*
 5. ~~**[web/disseny] Missatge d'abast «tota Catalunya»**~~ ✅ FET (#148, 2026-06-18) — línia d'abast
    a la home (`home_map_scope`) + `map_outside_scope` revisat (3 nivells). Còpia afinable per Bea.
 6. **[ops] Ritual de llançament** (Talaia+Mirador) — treure noindex ×3 (`app.html`, `robots.txt`,
-   `_headers`); `og:image`; sitemap complet; deploy verd al domini; comprovació final.
+   `_headers`); `og:image`; ~~sitemap complet~~ ✅ (#150: 947×2 munis, bastida pre-llançament);
+   deploy verd al domini; comprovació final. *(La resta és l'acte de publicar: el dia D.)*
 
 ## P1 — al llançament, no bloquegen el dia exacte
 
