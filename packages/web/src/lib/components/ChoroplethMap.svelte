@@ -123,7 +123,6 @@
 	const COV_COM_FILL = 'cov-com-fill';
 	const COV_COM_LINE = 'cov-com-line';
 	const COV_VEG_FILL = 'cov-veg-fill';
-	const COV_VEG_HATCH = 'cov-veg-hatch'; // tramat «dades parcials» (vegueria amb només el Berguedà dins)
 	const COV_VEG_LINE = 'cov-veg-line';
 	// Capes municipals (es mostren a 'municipi', s'amaguen a comarca/vegueria). COMLINE es gestiona a part.
 	const MUN_LAYERS = [BASE, BASELINE, COVERED, HATCH, FILL, LOWCONF, LINE, HOVER, SELECT];
@@ -464,9 +463,11 @@
 			});
 
 			// ── Capes de COBERTURA (granularitat comarca/vegueria) ──────────────────────────────
-			// Cobertura HONESTA, no l'indicador: «amb dades» (Berguedà) en color sòlid; vegueria
-			// «Comarques Centrals» en tramat (PARCIAL: només el Berguedà hi és dins); resta atenuada
-			// «sense dades encara». Es creen amb visibility 'none'; applyGranularity les commuta.
+			// Cobertura HONESTA, no l'indicador. Amb el Nivell C estès a tota Catalunya (#152), la
+			// cobertura ja NO és «només el Berguedà»: el Berguedà té dades COMPLETES (teal sòlid) i la
+			// RESTA de comarques tenen presència estimada EN RANG (teal més clar). El detall per poble
+			// —i els forats puntuals «sense dades»— es veu a granularitat municipi. visibility 'none';
+			// applyGranularity les commuta.
 			const covExpr = (nom: string) => ['==', ['get', 'nom'], nom];
 			map.addLayer({
 				id: COV_COM_FILL,
@@ -474,8 +475,9 @@
 				source: SRC_COM,
 				layout: { visibility: 'none' },
 				paint: {
-					'fill-color': ['case', covExpr(COV_COMARCA), COVERAGE_FILL, MAP.land] as never,
-					'fill-opacity': ['case', covExpr(COV_COMARCA), 0.8, 0.5] as never
+					// Berguedà = completa (sòlid); resta = en rang (mateix teal, més clar). Cap gris.
+					'fill-color': COVERAGE_FILL,
+					'fill-opacity': ['case', covExpr(COV_COMARCA), 0.85, 0.4] as never
 				}
 			});
 			map.addLayer({
@@ -491,19 +493,8 @@
 					type: 'fill',
 					source: SRC_VEG,
 					layout: { visibility: 'none' },
-					paint: {
-						'fill-color': ['case', covExpr(COV_VEGUERIA), COVERAGE_FILL, MAP.land] as never,
-						'fill-opacity': ['case', covExpr(COV_VEGUERIA), 0.6, 0.5] as never
-					}
-				});
-				// Tramat «parcial» NOMÉS sobre la vegueria amb dades (només el Berguedà hi és dins).
-				map.addLayer({
-					id: COV_VEG_HATCH,
-					type: 'fill',
-					source: SRC_VEG,
-					layout: { visibility: 'none' },
-					filter: covExpr(COV_VEGUERIA) as never,
-					paint: { 'fill-pattern': 'hatch' }
+					// Totes les vegueries tenen presència estimada en rang (el Nivell C cobreix ~tot CAT).
+					paint: { 'fill-color': COVERAGE_FILL, 'fill-opacity': 0.4 }
 				});
 				map.addLayer({
 					id: COV_VEG_LINE,
@@ -562,7 +553,6 @@
 		show(COV_COM_FILL, g === 'comarca');
 		show(COV_COM_LINE, g === 'comarca');
 		show(COV_VEG_FILL, g === 'vegueria');
-		show(COV_VEG_HATCH, g === 'vegueria');
 		show(COV_VEG_LINE, g === 'vegueria');
 		// Enquadrament: municipi → Berguedà (context); cobertura → tot Catalunya.
 		if (isMun) fitToBergueda();
