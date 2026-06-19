@@ -67,32 +67,38 @@ def main() -> int:
     anal = {r["ine5"]: r for r in csv.DictReader(ANAL.open(encoding="utf-8"))}
     regr = list(csv.DictReader(REGR.open(encoding="utf-8")))
 
-    # Banda per tipus: percentils p10/p90 del residual held-out (err_loo_pct).
+    # Banda per tipus: percentils p10/p90 del residual held-out (err_loo_pct) — només munis amb ETCA.
     by_tipus: dict[str, list[float]] = {}
     for r in regr:
         e = _f(r.get("err_loo_pct"))
         if e is not None:
             by_tipus.setdefault(r["tipus_territorial"], []).append(e)
     band = {t: (_pct(v, 10), _pct(v, 90)) for t, v in by_tipus.items()}
+    all_loo = [e for v in by_tipus.values() for e in v]
+    band_global = (_pct(all_loo, 10), _pct(all_loo, 90)) if all_loo else (-GO_ERR, GO_ERR)
+    # Munis SENSE ETCA (<1.000 hab, no validables): banda eixamplada (honestedat: més incertesa).
+    WIDEN = 1.5
 
     munis = {}
-    n_cov = 0
     for r in regr:
         ine5 = r["ine5"]
         tipus = r["tipus_territorial"]
-        etca = _f(r.get("etca"))
-        base_implied = _f(r.get("base_implied"))
         base_pred = _f(r.get("base_pred"))
-        if not (etca and base_implied and base_pred):
+        kwh = _f(r.get("kwh_dom"))
+        etca = _f(r.get("etca"))
+        # Palanca 2: l'estimació és kWh/base_pred — l'ETCA NO hi cal (només valida). Així cobrim
+        # també els <1.000 hab. Cal base_pred i consum vàlids.
+        if not (base_pred and base_pred > 0 and kwh and kwh > 0):
             continue
-        a = anal.get(ine5, {})
-        padro = _f(a.get("resident"))
-        # pernocta del model: kWh/base_pred = (base_implied·etca)/base_pred
-        est = base_implied * etca / base_pred
-        p10, p90 = band.get(tipus, (-GO_ERR, GO_ERR))
+        est = kwh / base_pred
+        p10, p90 = band.get(tipus, band_global)
+        if not etca:
+            p10, p90 = p10 * WIDEN, p90 * WIDEN  # sense validació oficial → banda més ampla
         low = est / (1 + p90 / 100)   # p90 (base més alt) → població més baixa
         high = est / (1 + p10 / 100)  # p10 (base més baix) → població més alta
-        within = abs((est - etca) / etca * 100) <= GO_ERR  # el model cau a prop de l'ETCA?
+        a = anal.get(ine5, {})
+        padro = _f(a.get("poblacio")) or _f(a.get("resident"))
+        within = (abs((est - etca) / etca * 100) <= GO_ERR) if etca else False
         munis[ine5] = {
             "nom": r.get("municipi"),
             "tipus": tipus,
@@ -100,20 +106,24 @@ def main() -> int:
             "estimacio": int(round(est)),
             "rang_baix": int(round(low)),
             "rang_alt": int(round(high)),
-            "etca_oficial": int(etca),  # validació (Idescat EPE); munis ≥1.000 hab
+            "etca_oficial": int(etca) if etca else None,  # validació (Idescat EPE); null si <1.000 hab
             "dins_banda": within,
         }
-        n_cov += 1
+    n_cov = len(munis)
+    n_etca = sum(1 for m in munis.values() if m["etca_oficial"] is not None)
 
     payload = {
         "metode": "Nivell C · presència estimada (qui dorm) = consum elèctric domèstic / base, "
                   "amb base ~ log10(densitat) + renda + fracció de gas, calibrada amb l'ETCA. "
-                  "Inferència, no cens: es publica EN RANG (banda p10–p90 del residual per tipus).",
-        "model": {"r2": 0.65, "covariables": ["densitat", "renda", "gas"], "n_calibracio": len(regr),
-                  "validacio": "ETCA oficial (Idescat EPE) als municipis ≥1.000 hab; held-out robust"},
-        "nota_abast": "Primera tanda: municipis amb ETCA (≥1.000 hab) de Berguedà, Barcelonès, "
-                      "Tarragonès, Baix Llobregat i Maresme. Els <1.000 (petits turístics) i la resta "
-                      "de Catalunya s'incorporen poc a poc, verificant.",
+                  "Inferència, no cens: es publica EN RANG (banda p10–p90 del residual held-out per "
+                  "tipus territorial; eixamplada als municipis sense ETCA oficial).",
+        "model": {"r2": 0.41, "covariables": ["densitat", "renda", "gas"], "n_calibracio": n_etca,
+                  "validacio": "ETCA oficial (Idescat EPE) als municipis ≥1.000 hab; held-out robust "
+                               "(cobertura ±15% ≈ 70%; el litoral vacacional, més feble per l'estacionalitat)"},
+        "nota_abast": "Cobreix tota Catalunya amb senyal elèctric i covariables. Els municipis amb ETCA "
+                      "(≥1.000 hab) es validen contra la dada oficial; els <1.000 hab es donen amb banda "
+                      "més ampla i SENSE validació oficial. Classificació litoral PROVISIONAL (derivació "
+                      "geomètrica) fins a incorporar la llista administrativa oficial.",
         "munis": dict(sorted(munis.items())),
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)

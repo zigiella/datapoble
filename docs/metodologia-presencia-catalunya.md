@@ -32,35 +32,44 @@ fins llavors, **rang**.
 Estimem la **base elèctrica per persona** com a funció de covariables que **NO** depenen de la
 presència (no podem predir la presència amb senyals de presència; seria circular):
 
-    base = 855 − 154·log10(densitat) + 72·(renda en milers €) − 615·(fracció de gas domèstic)
+    base = 1043 − 128·log10(densitat) + 56·(renda en milers €) − 486·(fracció de gas domèstic)
 
-- **Densitat** (Idescat): més densitat → pisos més petits → menys elèctric/persona.
+- **Densitat** = població / superfície: més densitat → pisos més petits → menys elèctric/persona.
 - **Renda** neta per persona (INE ADRH 2023): més renda → més consum/persona.
 - **Fracció de gas** del consum domèstic = gas/(gas+elèctric) (ICAEN): on es calefacta amb gas,
-  l'elèctric per persona baixa molt (−615 kWh de 0% a 100% de gas). És un **ràtio**, independent de
-  la presència.
+  l'elèctric per persona baixa molt. És un **ràtio**, independent de la presència.
 
-El model s'**ajusta (calibra) contra l'ETCA oficial** (vegeu §5). `R² = 0,65`.
+El model s'**ajusta (calibra) contra l'ETCA oficial** (vegeu §5) sobre **486 municipis de tot
+Catalunya** amb ETCA. `R² = 0,41` a escala Catalunya — més baix que en el lot inicial de 5 comarques
+(0,65) perquè el conjunt complet és molt més divers (centenars de munis d'interior). Per això,
+**rang**, no xifra.
 
 ## 5. La banda i la validació
-- **Banda** = els percentils **p10–p90 del residual** del model, calculats **per tipus territorial**
-  (litoral, metropolità dens, corona, interior…). Cada municipi hereta la incertesa del seu tipus
-  (p. ex. el litoral vacacional té banda més ampla: l'estacionalitat hi pesa més).
-- **Validació externa = ETCA** (Idescat, *Estimacions de població ETCA/EPE*), la població estacional
-  equivalent oficial, disponible per a municipis ≥1.000 hab. On hi ha ETCA, la mostrem **al costat
-  de la nostra estimació** com a prova de fiabilitat (no la substituïm: el mètode és el producte).
+- **Banda** = els percentils **p10–p90 del residual held-out** del model, calculats **per tipus
+  territorial**. Cada municipi hereta la incertesa del seu tipus, que varia molt: corona ≈[−10,+9]%,
+  metropolità dens i litoral metropolità estrets, **interior rural** ≈[−18,+17]% i **litoral
+  vacacional** ample ≈[−20,+26]% (l'estacionalitat de platja, que el consum anual no veu).
+- **Municipis sense ETCA (<1.000 hab):** no es poden validar contra la dada oficial → es publiquen
+  amb **banda eixamplada** i marcats com a estimació **sense validació oficial**.
+- **Validació externa = ETCA** (Idescat, *Estimacions de població ETCA/EPE*), disponible per a
+  municipis ≥1.000 hab. On hi ha ETCA, la mostrem **al costat** de la nostra estimació com a prova
+  de fiabilitat (no la substituïm: el mètode és el producte).
 - **Robustesa**: validació *held-out* (leave-one-out) — el model encerta igual en municipis que no
-  ha vist (cobertura 77% dins ±15% in-sample = held-out). **No és sobreajust.**
+  ha vist (cobertura ≈70% dins ±15%, in-sample = held-out, caiguda 0 pts). **No és sobreajust.**
 
 ## 6. Honestedat i abast (go/no-go)
 - **Regla**: presència **absoluta** (xifra) només si el tipus valida amb **ρ≥0,7 i error≤15%**;
   si no, **rang** + «encara no ho mesurem prou bé aquí». Avui: **rang per a tothom**.
-- **Primera tanda publicada**: municipis amb ETCA (**≥1.000 hab**) de **Berguedà, Barcelonès,
-  Tarragonès, Baix Llobregat i Maresme** (artefacte `data/web/pernocta-catalunya.json`).
-- **Pendent (s'incorpora poc a poc, verificant):** els municipis **<1.000 hab** (els petits
-  turístics, el cas que més ho necessita), la resta de comarques, i l'**estacionalitat del litoral**
-  — l'elèctric/gas **anual** no veu el **pic estival**; per a la costa cal dada de **pic** (consum
-  trimestral / ocupació) abans de donar-ne xifra absoluta.
+- **Abast publicat**: **tota Catalunya** — **927 municipis** amb senyal elèctric i covariables
+  (artefacte `data/web/pernocta-catalunya.json`). Els **≥1.000 hab** (486) es validen contra l'ETCA;
+  els **<1.000 hab** (441) es donen amb banda més ampla i **sense validació oficial**. Els ~20 munis
+  sense senyal elèctric/renda queden «sense dades».
+- **Classificació litoral PROVISIONAL**: derivada geomètricament (toca el mar, Natural Earth + INE)
+  fins a incorporar la **llista administrativa oficial** (Territori/PPOL, Llei 8/2020). Afecta només
+  quin tipus de banda hereta cada muni de costa.
+- **Límit conegut — estacionalitat del litoral**: l'elèctric/gas **anual** no veu el **pic estival**;
+  per a la costa cal dada de **pic** (consum trimestral / ocupació) abans de donar-ne xifra absoluta.
+  Per això el litoral vacacional és el tipus amb banda més ampla.
 
 ## 7. Fonts (cap número sense procedència)
 | Dada | Font | Dataset |
@@ -69,11 +78,14 @@ El model s'**ajusta (calibra) contra l'ETCA oficial** (vegeu §5). `R² = 0,65`.
 | Consum de gas natural domèstic | ICAEN (Transparència) | `qvqg-zag8` (sector domèstic) |
 | Renda neta per persona 2023 | INE — Atlas de Distribució de Renda (ADRH) | taula 30824 |
 | Població estacional (validació) | Idescat — ETCA/EPE | `epe` (base 2021) |
-| Densitat / altitud | Idescat — EMEX | `f262` / `f258` |
+| Densitat | població (ARC/EPE) / superfície de la geometria oficial | INE/IGN (equival a EMEX `f262`, r=0,9999) |
+| Classificació litoral (provisional) | derivació geomètrica Natural Earth + INE | → llista oficial Territori/PPOL pendent |
 
 ## 8. Reproduïbilitat
-`tools/nivellc_analisi.py` (baixa senyals + covariables per comarca) → `tools/nivellc_regressio.py`
-(ajusta el model + held-out) → `tools/export_pernocta_catalunya.py` (genera l'artefacte publicable
-en rang). Carril de dades fet en silenci fins ara; aquesta és la primera publicació, en rang.
+`tools/nivellc_analisi.py` (baixa senyals de tot Catalunya + densitat = població/superfície del
+geojson, sense crides per-muni) → `tools/nivellc_regressio.py` (ajusta el model sobre els munis amb
+ETCA + predicció per a tots + held-out) → `tools/export_pernocta_catalunya.py` (genera l'artefacte
+publicable en rang). Tot bulk/offline, reproduïble. La classificació costanera surt de
+`tools/deriva_costaners.py` (provisional).
 
 — Talaia 🌊

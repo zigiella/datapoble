@@ -6,11 +6,11 @@ límit de despesa; les tasques marcades **(IA)** sí (esperen que es reposi).*
 
 ## P0 — bloquegen el llançament
 
-1. **[dades] Estendre Nivell C a tot Catalunya** (Sondeig) — Palanca 1+2 del §1: ampliar `COMARQUES`
-   a les 43, re-fetch + re-córrer `nivellc_analisi.py`→`nivellc_regressio.py`→
-   `export_pernocta_catalunya.py`; afegir munis <1.000 hab (`est = consum/base_pred`, marcats «sense
-   validació oficial», banda ampla). Re-validar held-out per comarca/tipus; no publicar el que no
-   aguanti. Actualitzar `docs/analisi-escala-nivellc.md`. *(Python/dades obertes, spend-safe.)*
+1. ~~**[dades] Estendre Nivell C a tot Catalunya**~~ ✅ FET (#152, 2026-06-18) — **91→927 munis en
+   rang** (486 ETCA validats + 441 sub-1000 sense validació). R²=0,41, cobertura 70%, held-out
+   robust. Densitat=pop/àrea (r=0,9999 vs EMEX, sense ~900 crides). Costaners PROVISIONALS.
+   **Pendent:** (a) llista costanera oficial (Bea) · (b) **vista de cobertura comarca/vegueria del
+   mapa OBSOLETA** → actualitzar (deia «només Berguedà») · (c) pic litoral · (d) residus L2.
 2. ~~**[web] Cercador a tota Catalunya**~~ ✅ FET (#146, 2026-06-18) — catàleg de 947 munis;
    `MuniSearch` hi cerca; `toSlug` arregla l'article inline `l'`.
 3. ~~**[web] Prerenderitzar tots els munis**~~ ✅ FET (#146) — `entries()` a 947 (×2 locales),
