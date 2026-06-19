@@ -170,4 +170,28 @@ ABSOLUTA (≈≥85%) cal tractar l'estacionalitat del litoral a part (dada de pi
 5. **Replicar per a residus** (base 410) el mateix exercici (L2 càrrega), i pensar el go/no-go
    conjunt L1+L2.
 
+## T6 · Escala a TOTA Catalunya (2026-06-18) — de 91 a 927 munis
+
+Reprès #1 del pla de llançament («tira amb la provisional» — Bea). Tres canvis al pipeline, tots
+**bulk/offline** (cap crida per-muni):
+- **COMARQUES = tot Catalunya**: els fetches d'ICAEN/ARC/RTC ja són només de Catalunya → trec el
+  filtre de comarca (a més evitava el 400 per apòstrofs com «Pla d'Urgell»). Conjunt = residus∩elèctric.
+- **Densitat = població/superfície** (àrea del geojson, equirectangular; població ARC/EPE) en lloc
+  de l'EMEX per-muni. **Validat: r=0,9999 vs EMEX f262** als 91 → estalvia ~900 crides Idescat.
+- **Costaners** de `municipis_costaners.csv` (derivació geomètrica PROVISIONAL). **Altitud fora** en
+  aquesta versió (els munis de muntanya cauen a interior_rural; la validació held-out ja els filtra).
+- **Palanca 2 (<1.000 hab)**: `est = kWh/base_pred` (l'ETCA s'anul·la, només valida) → es cobreixen
+  també els munis sense ETCA, amb banda eixamplada ×1,5 i marcats «sense validació oficial».
+
+**Resultat (D11):** fit sobre **486 munis amb ETCA** (abans 91); **R²=0,41**, cobertura ±15% **70%**,
+**held-out = in-sample (caiguda 0 → robust)**. R² baixa (0,65→0,41) perquè el conjunt complet és molt
+més divers (353 interior_rural). Banda per tipus: corona [−10,+9], litoral_metro [−16,−3], metro_dens
+[−19,+4], interior [−18,+17], **litoral_vacacional [−20,+26]** (l'estacionalitat, conegut). **927
+munis publicats en rang** (486 validats + 441 sub-1000 sense validació); 20 sense senyal → «sense dades».
+
+**Pendents després d'això:** (a) llista costanera OFICIAL (Bea la configura) → reemplaçar la
+provisional; (b) **vista de cobertura per COMARCA/VEGUERIA del mapa quedà OBSOLETA** (deia «només
+Berguedà»; ara cobrim ~tot CAT en rang) → cal actualitzar-la; (c) dada de pic per al litoral; (d)
+residus L2.
+
 — Talaia 🌊

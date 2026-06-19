@@ -1,19 +1,27 @@
 #!/usr/bin/env python3
-"""Nivell C · anàlisi exploratòria de l'error del model base per tipus territorial (escala).
+"""Nivell C · senyals per municipi a escala CATALUNYA (base de la regressió i l'export).
 
-DIRIGIT PER COMARCA: baixa en viu els senyals (elèctric ICAEN `8idm-becu` sector 7 + residus
-ARC `69zu-w48s`) de les comarques configurades — els municipis i els codis surten de les DADES,
-no d'una llista a mà. Per a cada muni hi afegeix l'estimació del model de 3 capes amb les bases
-endògenes del Berguedà i mesura l'error vs l'ETCA oficial, agregat per `tipus_territorial`.
+DIRIGIT PER COMARCA (totes 43 de `comarca_vegueria.csv`): baixa en viu els senyals
+(elèctric ICAEN `8idm-becu` sector 7, gas ICAEN `qvqg-zag8` domèstic, residus ARC `69zu-w48s`),
+les places RTC `t2h3-cgys` i l'ETCA oficial (Idescat EPE) — els municipis i els codis surten de
+les DADES, no d'una llista a mà.
 
-Model (macro `estimacio_presencia`): presència = padró × (senyal/hab) / BASE.
-  · L1 pernocta = padró × kwh_hab / base_electric = consum_kwh_domèstic / base_electric
-Recalibració ràpida: base/tipus = base_electric / mediana(ETCA/pernocta_est); residual = error
-després de centrar (criteri honest: màx ≤15%). Covariable d'estacionalitat: RTC places/resident
-(`t2h3-cgys`) — per veure si explica el residual del litoral vacacional.
+Covariables del model (totes NO depenen de la presència):
+  · DENSITAT = població (ARC/EPE) / superfície (derivada del geojson oficial, offline). Equival a
+    la densitat EMEX d'Idescat (r=0,9999 als munis validats) sense ~900 crides per-muni.
+  · RENDA (INE ADRH 2023, via tools/extract_renda.py · l'afegeix la regressió).
+  · GAS (fracció de gas del consum domèstic) — proxy de calefacció.
 
-Carril dades EN SILENCI: artefactes INTERNS (no publicats). Sortida:
-`data/territorial/nivellc_analisi.csv` + `nivellc_bases_tipus.csv` + resum a stdout.
+CLASSIFICACIÓ `tipus_territorial` (per a la banda per tipus):
+  · litoral: municipi a la llista de costaners (`municipis_costaners.csv`, PROVISIONAL geomètrica
+    fins que entri la llista administrativa oficial). litoral_metropolita si també AMB, si no
+    litoral_vacacional.
+  · metropolita_dens (densitat alta) · corona_metropolitana (AMB no densa) · interior_rural (resta).
+    (L'altitud/pirineu queda fora en aquesta versió escalada: la validació held-out per tipus ja
+    filtra els munis de muntanya amb estacionalitat que el model anual no capta.)
+
+Sortida: `data/territorial/nivellc_analisi.csv` (un munis per fila, amb ETCA on n'hi ha) + resum.
+Tot bulk/offline: cap fetch per-muni. Carril dades.
 
 Ús:  python tools/nivellc_analisi.py
 """
@@ -22,40 +30,44 @@ from __future__ import annotations
 import csv
 import io
 import json
+import math
 import sys
 import unicodedata
 import urllib.parse
 import urllib.request
 from pathlib import Path
 
+import numpy as np
+from shapely import transform as shp_transform
+from shapely.geometry import shape
+
 REPO = Path(__file__).resolve().parents[1]
 OUT = REPO / "data" / "territorial" / "nivellc_analisi.csv"
+COSTANERS_CSV = REPO / "data" / "territorial" / "municipis_costaners.csv"
+MUNIS_GEO = REPO / "packages" / "web" / "static" / "geo" / "catalunya-municipis.geojson"
 
-BASE_ELECTRIC = 1224.0
 GO_RHO, GO_ERR = 0.7, 15.0
 DENSITAT_METRO = 1500.0
-ALTITUD_PIRINEU = 800.0
 
 ICAEN_URL = "https://analisi.transparenciacatalunya.cat/resource/8idm-becu.json"
-GAS_URL = "https://analisi.transparenciacatalunya.cat/resource/qvqg-zag8.json"  # gas natural municipal
+GAS_URL = "https://analisi.transparenciacatalunya.cat/resource/qvqg-zag8.json"
 ARC_URL = "https://analisi.transparenciacatalunya.cat/resource/69zu-w48s.json"
 RTC_URL = "https://analisi.transparenciacatalunya.cat/resource/t2h3-cgys.json"
 
-# Comarques a analitzar (nom de visualització). Berguedà = baseline (base endògena → factor ~1,0,
-# sanity check). Barcelonès+Tarragonès = lot inicial. Baix Llobregat (metro + costa AMB) i Maresme
-# (costa vacacional) = ampliació per créixer N. «Poc a poc»: afegir-ne més en increments.
-COMARQUES = ["Berguedà", "Barcelonès", "Tarragonès", "Baix Llobregat", "Maresme"]
+# Projecció equirectangular local (graus → m) per a l'àrea dels municipis.
+_LAT0 = 41.7
+_M_LAT = 111_132.0
+_M_LON = 111_320.0 * math.cos(math.radians(_LAT0))
 
 
 def _norm(s: str) -> str:
-    """Normalitza un nom de municipi per casar (sense accents, articles, minúscules)."""
     s = unicodedata.normalize("NFKD", s or "").encode("ascii", "ignore").decode().lower()
     s = s.replace("'", " ").replace("-", " ")
     parts = [p for p in s.split() if p not in {"el", "la", "els", "les", "l", "de", "del", "d"}]
     return " ".join(parts)
 
 
-# Conjunts per NOM (verificables a ull). AMB = 36 municipis de l'Àrea Metropolitana de Barcelona.
+# AMB = 36 municipis de l'Àrea Metropolitana de Barcelona (llista fixa oficial).
 AMB_NOMS = {_norm(x) for x in [
     "Badalona", "Badia del Vallès", "Barberà del Vallès", "Barcelona", "Begues", "Castellbisbal",
     "Castelldefels", "Cerdanyola del Vallès", "Cervelló", "Corbera de Llobregat",
@@ -68,24 +80,26 @@ AMB_NOMS = {_norm(x) for x in [
     "Viladecans",
 ]}
 
-# Costaners (toquen mar) de les comarques cobertes. Litoral_metropolita si també AMB, si no
-# litoral_vacacional. Llista per nom: revisar amb la sortida per-muni (es marca el tipus).
-COSTANERS_NOMS = {_norm(x) for x in [
-    # Barcelonès + Baix Llobregat (AMB litoral)
-    "Barcelona", "Badalona", "Sant Adrià de Besòs", "Montgat",
-    "el Prat de Llobregat", "Viladecans", "Gavà", "Castelldefels",
-    # Maresme (litoral, no AMB excepte Montgat)
-    "el Masnou", "Premià de Mar", "Vilassar de Mar", "Cabrera de Mar", "Mataró",
-    "Sant Andreu de Llavaneres", "Caldes d'Estrac", "Arenys de Mar", "Canet de Mar",
-    "Sant Pol de Mar", "Calella", "Pineda de Mar", "Santa Susanna", "Malgrat de Mar",
-    # Tarragonès litoral
-    "Tarragona", "Salou", "Cambrils", "Vila-seca", "Torredembarra", "Altafulla", "Creixell",
-    "Roda de Berà", "la Pobla de Montornès", "Vespella de Gaià",
-]}
 
-# ICAEN usa comarca en MAJÚSCULES sense accents; ARC, amb accents.
-def _icaen_comarca(nom: str) -> str:
-    return _norm(nom).upper().replace(" ", " ")  # _norm ja treu accents; recompon sense article
+def load_costaners() -> set[str]:
+    """ine5 dels municipis costaners (PROVISIONAL: derivació geomètrica `municipis_costaners.csv`)."""
+    if not COSTANERS_CSV.exists():
+        return set()
+    with COSTANERS_CSV.open(encoding="utf-8") as fh:
+        return {r["ine5"] for r in csv.DictReader(fh) if r.get("costaner") == "1"}
+
+
+def build_areas() -> dict[str, float]:
+    """Superfície km² per ine5 des de la geometria oficial (equirectangular local)."""
+    gj = json.loads(MUNIS_GEO.read_text(encoding="utf-8"))
+    out: dict[str, float] = {}
+    for f in gj["features"]:
+        gm = shp_transform(
+            shape(f["geometry"]),
+            lambda c: np.column_stack([c[:, 0] * _M_LON, c[:, 1] * _M_LAT]),
+        )
+        out[str(f["properties"]["ine5"])] = gm.area / 1e6
+    return out
 
 
 def _num(s):
@@ -93,23 +107,20 @@ def _num(s):
     return None if s in ("", "..", "(..)", "_", "-") else float(s)
 
 
-def _socrata(url: str, where: str, select: str, limit: int = 100000) -> list[dict]:
-    q = urllib.parse.urlencode({"$where": where, "$select": select, "$limit": limit})
+def _socrata(url: str, where: str | None, select: str, limit: int = 300000) -> list[dict]:
+    params = {"$select": select, "$limit": limit}
+    if where:
+        params["$where"] = where
+    q = urllib.parse.urlencode(params)
     req = urllib.request.Request(f"{url}?{q}", headers={"Accept": "application/json"})
-    with urllib.request.urlopen(req, timeout=120) as r:
+    with urllib.request.urlopen(req, timeout=180) as r:
         return json.load(r)
 
 
-def _icaen_norm(nom: str) -> str:
-    """Comarca tal com la guarda ICAEN: majúscules, sense accents, amb article si en té."""
-    s = unicodedata.normalize("NFKD", nom).encode("ascii", "ignore").decode().upper()
-    return s
-
-
-def fetch_electric(comarques: list[str]) -> dict[str, float]:
-    noms = [_icaen_norm(c) for c in comarques]
-    where = "codi_sector='7' and comarca in (" + ",".join(f"'{n}'" for n in noms) + ")"
-    rows = _socrata(ICAEN_URL, where, "cdmun,any,consum_kwh,comarca")
+def fetch_electric() -> dict[str, float]:
+    # Tot Catalunya (ICAEN és només de Catalunya); sense filtre de comarca (evita problemes de
+    # noms amb apòstrof i la clàusula IN llarga). Sector 7 = domèstic.
+    rows = _socrata(ICAEN_URL, "codi_sector='7'", "cdmun,any,consum_kwh")
     latest: dict[str, tuple[int, float]] = {}
     for r in rows:
         ine5 = str(r.get("cdmun", "")).zfill(5)
@@ -122,12 +133,8 @@ def fetch_electric(comarques: list[str]) -> dict[str, float]:
     return {k: v[1] for k, v in latest.items()}
 
 
-def fetch_gas(comarques: list[str]) -> dict[str, float]:
-    """Consum de gas natural DOMÈSTIC (kWh PCS) de l'any més recent, per ine5 (ICAEN qvqg-zag8).
-    Munis sense gas canalitzat no hi surten → 0 (no és buit: és que no hi ha xarxa)."""
-    noms = [_icaen_norm(c) for c in comarques]
-    where = "sector='DOMÈSTIC' and comarca in (" + ",".join(f"'{n}'" for n in noms) + ")"
-    rows = _socrata(GAS_URL, where, "cdmun,any,consum_kwh_pcs,comarca")
+def fetch_gas() -> dict[str, float]:
+    rows = _socrata(GAS_URL, "sector='DOMÈSTIC'", "cdmun,any,consum_kwh_pcs")
     latest: dict[str, tuple[int, float]] = {}
     for r in rows:
         ine5 = str(r.get("cdmun", "")).zfill(5)
@@ -140,9 +147,8 @@ def fetch_gas(comarques: list[str]) -> dict[str, float]:
     return {k: v[1] for k, v in latest.items()}
 
 
-def fetch_residus(comarques: list[str]) -> dict[str, dict]:
-    where = "comarca in (" + ",".join(f"'{c}'" for c in comarques) + ")"
-    rows = _socrata(ARC_URL, where, "codi_municipi,municipi,any,kg_hab_any,poblaci,comarca")
+def fetch_residus() -> dict[str, dict]:
+    rows = _socrata(ARC_URL, None, "codi_municipi,municipi,any,kg_hab_any,poblaci")
     latest: dict[str, tuple[int, dict]] = {}
     for r in rows:
         codi6 = str(r.get("codi_municipi", "")).zfill(6)
@@ -158,81 +164,43 @@ def fetch_residus(comarques: list[str]) -> dict[str, dict]:
 
 
 def fetch_rtc(codi6s: list[str]) -> dict[str, int]:
-    """Places turístiques totals (tots els tipus d'allotjament) per ine5 (RTC t2h3-cgys)."""
     if not codi6s:
         return {}
-    where = "codi_municipi_idescat in (" + ",".join(f"'{c}'" for c in codi6s) + ")"
-    rows = _socrata(RTC_URL, where, "codi_municipi_idescat,total_places")
     out: dict[str, int] = {}
-    for r in rows:
-        ine5 = str(r.get("codi_municipi_idescat", "")).zfill(6)[:5]
-        out[ine5] = out.get(ine5, 0) + int(_num(r.get("total_places")) or 0)
+    # En blocs (la clàusula IN amb ~950 codis és massa llarga per a una sola URL).
+    for i in range(0, len(codi6s), 200):
+        chunk = codi6s[i:i + 200]
+        where = "codi_municipi_idescat in (" + ",".join(f"'{c}'" for c in chunk) + ")"
+        for r in _socrata(RTC_URL, where, "codi_municipi_idescat,total_places"):
+            ine5 = str(r.get("codi_municipi_idescat", "")).zfill(6)[:5]
+            out[ine5] = out.get(ine5, 0) + int(_num(r.get("total_places")) or 0)
     return out
 
 
 def fetch_etca(codi6s: set[str]) -> dict[str, dict]:
+    """ETCA oficial (Idescat EPE, base 2021) per codi6. La SSV porta TOTS els munis; en filtrem els
+    nostres. Munis sense valor d'ETCA (p. ex. <1.000 hab) queden fora del diccionari."""
     url = "https://www.idescat.cat/pub/?id=epe&n=17886&geo=mun&f=ssv"
-    with urllib.request.urlopen(url, timeout=60) as r:
+    with urllib.request.urlopen(url, timeout=120) as r:
         text = r.read().decode("utf-8-sig")
     lines = text.splitlines()
     h = next(i for i, ln in enumerate(lines) if ln.startswith("Codi;"))
     out: dict[str, dict] = {}
     for row in csv.reader(io.StringIO("\n".join(lines[h:])), delimiter=";"):
         if len(row) >= 8 and row[0].strip() in codi6s:
-            out[row[0].strip()] = {"resident": _num(row[5]), "etca": _num(row[6])}
+            resident, etca = _num(row[5]), _num(row[6])
+            if etca:
+                out[row[0].strip()] = {"resident": resident, "etca": etca}
     return out
 
 
-def fetch_emex(codi6: str) -> dict:
-    url = f"https://api.idescat.cat/emex/v1/dades.json?id={codi6}"
-    d = None
-    for attempt in range(3):  # Idescat fa 502/timeout transitoris; reintenta abans de rendir-se
-        try:
-            with urllib.request.urlopen(url, timeout=40) as r:
-                d = json.load(r)
-            break
-        except Exception:
-            if attempt == 2:
-                return {"altitud": None, "densitat": None}
-    if d is None:
-        return {"altitud": None, "densitat": None}
-
-    def leaves(n):
-        if isinstance(n, dict):
-            if "id" in n and "v" in n:
-                yield n
-            for v in n.values():
-                yield from leaves(v)
-        elif isinstance(n, list):
-            for x in n:
-                yield from leaves(x)
-
-    def emex_num(v):
-        first = str(v).split(",")[0].strip()
-        try:
-            return float(first) if first not in ("", "_", "-") else None
-        except ValueError:
-            return None
-
-    vals: dict[str, float | None] = {}
-    for lf in leaves(d):
-        if lf.get("id") in ("f258", "f262") and lf["id"] not in vals:
-            vals[lf["id"]] = emex_num(lf.get("v"))
-    return {"altitud": vals.get("f258"), "densitat": vals.get("f262")}
-
-
-def classify(nom: str, altitud: float | None, densitat: float | None) -> str:
-    n = _norm(nom)
-    if n in COSTANERS_NOMS:
-        return "litoral_metropolita" if n in AMB_NOMS else "litoral_vacacional"
-    # Densitat (no pertinença AMB) decideix el dens urbà: l'AMB barreja pisos petits (poc
-    # elèctric) amb residencial de cases grans (molt elèctric) → no és bon predictor sol.
+def classify(ine5: str, nom: str, densitat: float | None, costaners: set[str]) -> str:
+    if ine5 in costaners:
+        return "litoral_metropolita" if _norm(nom) in AMB_NOMS else "litoral_vacacional"
     if densitat is not None and densitat >= DENSITAT_METRO:
         return "metropolita_dens"
-    if n in AMB_NOMS:  # AMB però NO densa = corona residencial (perifèria de mobilitat obligada)
+    if _norm(nom) in AMB_NOMS:  # AMB però no densa = corona residencial
         return "corona_metropolitana"
-    if altitud is not None and altitud >= ALTITUD_PIRINEU:
-        return "pirineu_alta_muntanya"
     return "interior_rural"
 
 
@@ -269,120 +237,72 @@ def _median(xs):
     return None if n == 0 else (s[n // 2] if n % 2 else (s[n // 2 - 1] + s[n // 2]) / 2)
 
 
-def _fmt(x):
-    return "—" if x is None else f"{x:.2f}"
-
-
 def main() -> int:
     try:
         sys.stdout.reconfigure(encoding="utf-8")
     except Exception:
         pass
-    print(f"Comarques: {', '.join(COMARQUES)}")
-    print("Baixant senyals (ICAEN elèctric+gas / ARC), RTC, ETCA i EMEX…")
-    electric = fetch_electric(COMARQUES)
-    gas = fetch_gas(COMARQUES)
-    residus = fetch_residus(COMARQUES)
-    # Conjunt de munis = els que tenen residus (porten nom + codi6) i elèctric.
+    costaners = load_costaners()
+    areas = build_areas()
+    print(f"Costaners (provisional): {len(costaners)} · àrees: {len(areas)} · fetch: tot Catalunya")
+    print("Baixant senyals (ICAEN elèctric+gas / ARC residus), RTC i ETCA…")
+    electric = fetch_electric()
+    gas = fetch_gas()
+    residus = fetch_residus()
+    # Conjunt = munis amb residus (nom+codi6) i elèctric (el senyal del model).
     ine5s = sorted(set(residus) & set(electric))
     codi6s = [residus[i]["codi6"] for i in ine5s]
     rtc = fetch_rtc(codi6s)
     etca = fetch_etca(set(codi6s))
-    print(f"Munis amb senyals: {len(ine5s)}")
+    print(f"Munis amb senyals (residus∩elèctric): {len(ine5s)} · amb ETCA: {len(etca)}")
 
     rows = []
+    sense_area = 0
     for ine5 in ine5s:
         codi6 = residus[ine5]["codi6"]
         nom = residus[ine5]["municipi"]
         e = etca.get(codi6, {})
-        # EMEX (altitud/densitat) només per als munis amb ETCA (els que entren a l'anàlisi);
-        # la resta (<1.000 hab, sense ETCA) es classifiquen per nom/residual.
-        em = fetch_emex(codi6) if e else {"altitud": None, "densitat": None}
         resident, etca_v = e.get("resident"), e.get("etca")
         kwh_dom = electric.get(ine5)
-        gas_dom = gas.get(ine5, 0.0)  # sense gas canalitzat → 0 (no buit)
-        kg_hab = residus[ine5]["kg_hab_any"]
+        gas_dom = gas.get(ine5, 0.0)
         places = rtc.get(ine5, 0)
-        pernocta_est = round(kwh_dom / BASE_ELECTRIC) if kwh_dom else None
-        err = (round((pernocta_est - etca_v) / etca_v * 100, 1)
-               if (pernocta_est and etca_v) else None)
-        # Fracció de gas del consum domèstic = gas/(gas+elèctric): proxy de calefacció de gas
-        # (ràtio → independent de la presència). Alta → menys elèctric/persona esperat.
+        # Densitat = població / superfície (offline). Població: ARC (tots) o EPE resident (fallback).
+        pop = residus[ine5].get("poblacio_arc") or resident
+        area = areas.get(ine5)
+        densitat = round(pop / area, 1) if (pop and area and area > 0) else None
         gas_fraction = (round(gas_dom / (gas_dom + kwh_dom), 3)
                         if (kwh_dom and (gas_dom + kwh_dom) > 0) else None)
         rows.append({
             "ine5": ine5, "municipi": nom,
-            "tipus_territorial": classify(nom, em["altitud"], em["densitat"]),
-            "resident": int(resident) if resident else None,
-            "etca": int(etca_v) if etca_v else None,
-            "pernocta_est": pernocta_est,
-            "err_pernocta_pct": err,
+            "tipus_territorial": classify(ine5, nom, densitat, costaners),
+            "resident": int(resident) if resident else "",
+            "poblacio": int(pop) if pop else "",
+            "etca": int(etca_v) if etca_v else "",
+            "kwh_dom": int(kwh_dom) if kwh_dom else "",
             "rtc_places": places,
-            "rtc_places_per_resident": (round(places / resident, 3) if resident else None),
+            "rtc_places_per_resident": (round(places / resident, 3) if resident else ""),
             "gas_kwh_dom": int(gas_dom) if gas_dom else 0,
-            "gas_fraction": gas_fraction,
-            "altitud_m": int(em["altitud"]) if em["altitud"] is not None else "",
-            "densitat_hab_km2": em["densitat"] if em["densitat"] is not None else "",
+            "gas_fraction": gas_fraction if gas_fraction is not None else "",
+            "altitud_m": "",  # fora en aquesta versió escalada (compat. de columna amb la regressió)
+            "densitat_hab_km2": densitat if densitat is not None else "",
         })
+        if densitat is None:
+            sense_area += 1
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     with OUT.open("w", encoding="utf-8", newline="\n") as fh:
         w = csv.DictWriter(fh, fieldnames=list(rows[0].keys()))
         w.writeheader()
         w.writerows(rows)
-    print(f"\nEscrit {OUT.relative_to(REPO).as_posix()} · {len(rows)} munis")
+    print(f"\nEscrit {OUT.relative_to(REPO).as_posix()} · {len(rows)} munis ({sense_area} sense densitat)")
 
-    # Per-muni (per VERIFICAR la classificació a ull) — només els que tenen ETCA.
-    print("\nPer municipi (amb ETCA):")
-    print(f"  {'municipi':26} {'tipus':22} {'ETCA':>8} {'pernoc':>8} {'err%':>6} {'RTC/res':>8}")
-    for r in sorted((x for x in rows if x["etca"]), key=lambda x: (x["tipus_territorial"], x["ine5"])):
-        print(f"  {r['municipi'][:25]:26} {r['tipus_territorial']:22} {r['etca']:>8} "
-              f"{str(r['pernocta_est'] or '—'):>8} {str(r['err_pernocta_pct'] or '—'):>6} "
-              f"{str(r['rtc_places_per_resident'] or '—'):>8}")
-
-    # Per tipus: base única + recalibració + RTC vs residual
-    tipus: dict[str, list[dict]] = {}
-    for r in rows:
-        if r["etca"] and r["pernocta_est"]:
-            tipus.setdefault(r["tipus_territorial"], []).append(r)
-
-    print("\nBase única Berguedà (1224) → error vs ETCA per tipus:")
-    for t, rs in sorted(tipus.items()):
-        med = _median([abs(r["err_pernocta_pct"]) for r in rs])
-        rho = _spearman([(r["pernocta_est"], r["etca"]) for r in rs])
-        v = "—" if med is None or rho is None else ("GO" if abs(rho) >= GO_RHO and med <= GO_ERR else "NO-GO")
-        print(f"  {t:22} n={len(rs):3}  err_medià={_fmt(med)}%  ρ={_fmt(rho)}  → {v}")
-
-    print("\nRecalibració ràpida — base per tipus (provisional):")
-    base_rows = []
-    for t, rs in sorted(tipus.items()):
-        ratios = [r["etca"] / r["pernocta_est"] for r in rs]
-        factor = _median(ratios)
-        base_t = round(BASE_ELECTRIC / factor)
-        resid = [abs((r["pernocta_est"] * factor - r["etca"]) / r["etca"] * 100) for r in rs]
-        med_res, max_res = _median(resid), max(resid)
-        # RTC vs residual signat (per veure si l'estacionalitat explica la dispersió del vacacional)
-        signed = [((r["pernocta_est"] * factor - r["etca"]) / r["etca"] * 100, r["rtc_places_per_resident"])
-                  for r in rs if r["rtc_places_per_resident"] is not None]
-        rho_rtc = _spearman([(s, p) for s, p in signed]) if len(signed) >= 3 else None
-        v = "GO" if max_res <= GO_ERR else "NO-GO"
-        base_rows.append({"tipus_territorial": t, "n": len(rs), "base_electric_tipus": base_t,
-                          "factor": round(factor, 3),
-                          "residual_medianpct": round(med_res, 1) if med_res is not None else "",
-                          "residual_maxpct": round(max_res, 1),
-                          "rho_residual_rtc": round(rho_rtc, 2) if rho_rtc is not None else "",
-                          "go_nogo": v})
-        print(f"  {t:22} n={len(rs):3} base={base_t:5} (×{factor:.2f})  resid medià={_fmt(med_res)}% "
-              f"màx={_fmt(max_res)}%  ρ(resid,RTC)={_fmt(rho_rtc)}  → {v}")
-
-    base_out = OUT.parent / "nivellc_bases_tipus.csv"
-    with base_out.open("w", encoding="utf-8", newline="\n") as fh:
-        w = csv.DictWriter(fh, fieldnames=list(base_rows[0].keys()))
-        w.writeheader()
-        w.writerows(base_rows)
-    print(f"\nBases per tipus → {base_out.relative_to(REPO).as_posix()} (provisional, intern)")
-    print("Nota: base ÚNICA Berguedà = 1224. ρ(resid,RTC) alt al vacacional = l'estacionalitat "
-          "(places/resident) explica el residual → covariable candidata.")
+    # Resum per tipus (munis amb ETCA, per veure cobertura del fit).
+    from collections import Counter
+    per_tipus = Counter(r["tipus_territorial"] for r in rows)
+    amb_etca = Counter(r["tipus_territorial"] for r in rows if r["etca"])
+    print("\nMunis per tipus (total · amb ETCA per al fit):")
+    for t in sorted(per_tipus):
+        print(f"  {t:22} {per_tipus[t]:4}  ·  {amb_etca.get(t, 0):4} amb ETCA")
     return 0
 
 
