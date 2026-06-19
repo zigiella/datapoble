@@ -30,6 +30,7 @@
 	import { tipologiaMeta, tipologiaColor } from '$lib/map/tipologia';
 	import { toSlug, slugForIne5 } from '$lib/contract/slug';
 	import { municipisMirall } from '$lib/analysis/mirall';
+	import Espina from '$lib/components/Espina.svelte';
 	import { m } from '$lib/paraglide/messages';
 	import type { MetricDef, MetricKey, MetricValue, MunicipiRow } from '$lib/contract/types';
 	import type { LectTo } from '$lib/contract/lectures';
@@ -40,6 +41,10 @@
 	const row = $derived(data.row);
 	const ine5 = $derived(data.ine5);
 	const pernocta = $derived(data.pernocta); // presència estimada EN RANG (munis coberts fora del Berguedà)
+	// Espina territorial: comarca/vegueria del muni + municipis veïns de la comarca (navegació).
+	const territori = $derived(data.territori);
+	const veins = $derived(data.veins ?? []);
+	const veinsTotal = $derived(data.veinsTotal ?? 0);
 	const locale = $derived(currentLocale());
 
 	// ── Lectura-IA (§3) ─────────────────────────────────────────────────────────────────────
@@ -473,7 +478,7 @@
 		<div class="ap-hero__in">
 			<p class="ap-eyebrow">
 				<span>{m.muni_eyebrow_a()}</span><span class="sep">/</span><span
-					>{m.muni_eyebrow_b({ comarca: pick(dataset.comarca.label, locale) })}</span
+					>{m.muni_eyebrow_b({ comarca: territori?.comarca ?? pick(dataset.comarca.label, locale) })}</span
 				><span class="sep">/</span><span>INE {ine5}</span>
 			</p>
 			<h1>{muniNom}</h1>
@@ -486,6 +491,9 @@
 	</div>
 
 	<div class="ds-main">
+		<!-- Espina territorial: Catalunya › vegueria › comarca › municipi (context de situació). -->
+		<Espina vegueria={territori?.vegueria} comarca={territori?.comarca} muni={muniNom} />
+
 		<!-- Selector per saltar a un altre municipi del Berguedà (sempre disponible). -->
 		<section class="ds-sec" style="border-top:none">
 			<div class="muni-pick">
@@ -817,6 +825,25 @@
 						>
 					</div>
 				</div>
+			</section>
+		{/if}
+
+		<!-- Municipis VEÏNS de la mateixa comarca (navegació territorial, per a TOTS els munis). -->
+		{#if veins.length}
+			<section class="ds-sec">
+				<div class="ds-sec__hd">
+					<span class="ref">⌖</span><h2>{m.muni_veins_title({ comarca: territori?.comarca ?? '' })}</h2>
+				</div>
+				{#if veinsTotal > veins.length}
+					<p class="muni-sec__sub">
+						{m.muni_veins_count({ shown: String(veins.length), total: String(veinsTotal) })}
+					</p>
+				{/if}
+				<ul class="veins">
+					{#each veins as v (v.slug)}
+						<li><a class="veins__chip" href={localizeHref(`/municipi/${v.slug}`)}>{v.nom}</a></li>
+					{/each}
+				</ul>
 			</section>
 		{/if}
 	</div>
@@ -1242,6 +1269,36 @@
 	.preg__chip:hover {
 		border-color: var(--dp-border-strong);
 		background: var(--dp-accent-weak);
+	}
+
+	/* Municipis veïns de la comarca: llista compacta de xips-enllaç (navegació territorial). */
+	.veins {
+		list-style: none;
+		margin: 10px 0 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 7px;
+	}
+	.veins__chip {
+		display: inline-block;
+		padding: 5px 11px;
+		border: 1px solid var(--dp-border);
+		border-radius: var(--dp-radius-full, 999px);
+		background: var(--dp-surface);
+		text-decoration: none;
+		color: var(--dp-text-muted);
+		font-size: 0.84rem;
+		line-height: 1.3;
+		transition:
+			border-color 0.15s ease,
+			color 0.15s ease,
+			background 0.15s ease;
+	}
+	.veins__chip:hover {
+		border-color: var(--dp-border-strong);
+		background: var(--dp-accent-weak);
+		color: var(--dp-text);
 	}
 
 	/* P3 · capçalera + toggle «mode dades». */

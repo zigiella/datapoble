@@ -22,6 +22,7 @@ import { buildSlugIndex, toSlug } from '$lib/contract/slug';
 import type { LecturesData, LecturaEntry } from '$lib/contract/lectures';
 import type { PernoctaData, PernoctaMuni } from '$lib/contract/pernocta';
 import type { CatalegData } from '$lib/contract/cataleg';
+import type { TerritoriData, MuniTerritori } from '$lib/contract/territori';
 import type { EntryGenerator, PageLoad } from './$types';
 
 export const prerender = true;
@@ -70,23 +71,25 @@ export const load: PageLoad = async ({ fetch, params }) => {
 	// Slugs del Berguedà (clau interna ↔ slug públic) + guarda de col·lisió del pilot.
 	const { slugToIne5 } = buildSlugIndex(dataset.municipis);
 
+	// Catàleg de tota Catalunya (cens de noms+codis): resol qualsevol slug i dona els noms dels
+	// municipis veïns de la comarca (espina). No-fatal. Prerender-safe.
+	let cataleg: CatalegData = [];
+	try {
+		const res = await fetch('/data/municipis-cataleg.json');
+		if (res.ok) cataleg = (await res.json()) as CatalegData;
+	} catch {
+		cataleg = [];
+	}
+
 	// Resol l'ine5 i el NOM del municipi. Camí ràpid: el Berguedà (dataset). Si no, el catàleg de
 	// tota Catalunya (qualsevol poble) — així fins i tot els munis sense dades tenen nom a la pàgina.
 	let ine5 = slugToIne5[params.slug] ?? null;
 	let nom = ine5 ? (dataset.municipis[ine5]?.nom ?? null) : null;
 	if (!ine5) {
-		try {
-			const res = await fetch('/data/municipis-cataleg.json');
-			if (res.ok) {
-				const cataleg = (await res.json()) as CatalegData;
-				const hit = cataleg.find((mn) => toSlug(mn.nom) === params.slug);
-				if (hit) {
-					ine5 = hit.ine5;
-					nom = hit.nom;
-				}
-			}
-		} catch {
-			/* sense catàleg: només es resolen els slugs del Berguedà */
+		const hit = cataleg.find((mn) => toSlug(mn.nom) === params.slug);
+		if (hit) {
+			ine5 = hit.ine5;
+			nom = hit.nom;
 		}
 	}
 
@@ -108,6 +111,32 @@ export const load: PageLoad = async ({ fetch, params }) => {
 		}
 	}
 
+	// Espina territorial (breadcrumb Catalunya › vegueria › comarca › municipi) + municipis VEÏNS de
+	// la mateixa comarca (navegació). El mapatge muni→comarca→vegueria ve de `municipis-territori.json`
+	// (derivat de la geometria); els noms+slugs dels veïns, del catàleg. Prerender-safe.
+	let territori: MuniTerritori | null = null;
+	let veins: { nom: string; slug: string }[] = [];
+	let veinsTotal = 0;
+	if (ine5) {
+		try {
+			const res = await fetch('/data/municipis-territori.json');
+			if (res.ok) {
+				const all = (await res.json()) as TerritoriData;
+				territori = all[ine5] ?? null;
+				if (territori) {
+					const sibs = cataleg
+						.filter((mn) => mn.ine5 !== ine5 && all[mn.ine5]?.comarca === territori!.comarca)
+						.map((mn) => ({ nom: mn.nom, slug: toSlug(mn.nom) }))
+						.sort((a, b) => a.nom.localeCompare(b.nom, 'ca'));
+					veinsTotal = sibs.length;
+					veins = sibs.slice(0, 30); // límit raonable; el títol mostra el total
+				}
+			}
+		} catch {
+			territori = null;
+		}
+	}
+
 	// Lectura-IA és un artefacte del BERGUEDÀ: només es carrega si el muni hi és (`row`). Així la
 	// resta de Catalunya no fa fetches inútils en prerender. Prerender-safe.
 	// (Licitacions aparcades per al llançament —decisió Bea—: la fitxa no en mostra secció.)
@@ -124,5 +153,5 @@ export const load: PageLoad = async ({ fetch, params }) => {
 		}
 	}
 
-	return { dataset, ine5, nom, row, lectura, pernocta };
+	return { dataset, ine5, nom, row, lectura, pernocta, territori, veins, veinsTotal };
 };
