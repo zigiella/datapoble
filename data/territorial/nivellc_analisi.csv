@@ -1,13 +1,13 @@
 ine5,municipi,tipus_territorial,resident,poblacio,etca,kwh_dom,rtc_places,rtc_places_per_resident,gas_kwh_dom,gas_fraction,altitud_m,densitat_hab_km2
 08001,Abrera,interior_rural,12981,12981,12852,16644956,45,0.003,12198080,0.423,,653.0
 08002,Aguilar de Segarra,interior_rural,,291,,495359,40,,0,0.0,,6.8
-08003,Alella,litoral_vacacional,10200,10200,9291,18370738,506,0.05,21477753,0.539,,1062.7
+08003,Alella,interior_rural,10200,10200,9291,18370738,506,0.05,21477753,0.539,,1062.7
 08004,Alpens,interior_rural,,270,,499865,97,,0,0.0,,19.5
 08005,"Ametlla del Vallès, l'",interior_rural,9448,9448,8675,16796751,143,0.015,8995337,0.349,,671.8
 08006,Arenys de Mar,litoral_vacacional,16513,16513,16436,20973346,1854,0.112,20376818,0.493,,2560.7
 08007,Arenys de Munt,interior_rural,9444,9444,8297,13322235,218,0.023,11019119,0.453,,436.4
 08008,Argençola,interior_rural,,241,,387872,47,,0,0.0,,5.1
-08009,Argentona,litoral_vacacional,12850,12850,12035,17645055,263,0.02,16679458,0.486,,509.1
+08009,Argentona,interior_rural,12850,12850,12035,17645055,263,0.02,16679458,0.486,,509.1
 08010,Artés,interior_rural,6051,6051,5723,8049960,36,0.006,6423390,0.444,,339.8
 08011,Avià,interior_rural,2242,2242,1990,3284658,292,0.13,2322208,0.414,,82.3
 08012,Avinyó,interior_rural,2311,2311,2350,3234391,74,0.032,0,0.0,,36.3
@@ -196,7 +196,7 @@ ine5,municipi,tipus_territorial,resident,poblacio,etca,kwh_dom,rtc_places,rtc_pl
 08197,Sant Andreu de Llavaneres,litoral_vacacional,11942,11942,11119,20939272,833,0.07,22177539,0.514,,1010.5
 08198,Sant Antoni de Vilamajor,interior_rural,6654,6654,5897,11169090,109,0.016,7952148,0.416,,480.6
 08199,Sant Bartomeu del Grau,interior_rural,,939,,1364747,75,,0,0.0,,27.0
-08200,Sant Boi de Llobregat,litoral_metropolita,84588,84588,78896,85180781,922,0.011,65739904,0.436,,3949.0
+08200,Sant Boi de Llobregat,metropolita_dens,84588,84588,78896,85180781,922,0.011,65739904,0.436,,3949.0
 08201,Sant Boi de Lluçanès,interior_rural,,574,,793781,82,,0,0.0,,28.4
 08202,Sant Celoni,interior_rural,18708,18708,18407,22307033,241,0.013,23716940,0.515,,286.8
 08203,Sant Cebrià de Vallalta,interior_rural,3812,3812,3941,6868747,978,0.257,3280662,0.323,,243.5
@@ -210,7 +210,7 @@ ine5,municipi,tipus_territorial,resident,poblacio,etca,kwh_dom,rtc_places,rtc_pl
 08211,Sant Feliu de Llobregat,metropolita_dens,46381,46381,43297,48064984,473,0.01,40528564,0.457,,3928.0
 08212,Sant Feliu Sasserra,interior_rural,,629,,1054950,17,,0,0.0,,27.2
 08213,Sant Fruitós de Bages,interior_rural,9225,9225,9572,13807229,199,0.022,15700029,0.532,,414.5
-08214,Vilassar de Dalt,litoral_vacacional,9299,9299,8947,12265317,266,0.029,14788231,0.547,,1035.4
+08214,Vilassar de Dalt,interior_rural,9299,9299,8947,12265317,266,0.029,14788231,0.547,,1035.4
 08215,Sant Hipòlit de Voltregà,metropolita_dens,3684,3684,3197,4131437,4,0.001,5580405,0.575,,3900.7
 08216,Sant Jaume de Frontanyà,interior_rural,,26,,57139,34,,0,0.0,,1.2
 08217,Sant Joan Despí,metropolita_dens,35012,35012,33933,37151985,790,0.023,31180455,0.456,,5675.3
@@ -226,7 +226,7 @@ ine5,municipi,tipus_territorial,resident,poblacio,etca,kwh_dom,rtc_places,rtc_pl
 08227,Sant Martí Sarroca,interior_rural,3385,3385,3051,5654664,182,0.054,0,0.0,,96.8
 08228,Sant Martí Sesgueioles,interior_rural,,360,,527405,12,,552111,0.511,,92.7
 08229,Sant Mateu de Bages,interior_rural,,637,,1260084,248,,0,0.0,,6.2
-08230,Premià de Dalt,litoral_vacacional,10574,10574,9356,15196278,358,0.034,18467207,0.549,,1625.8
+08230,Premià de Dalt,metropolita_dens,10574,10574,9356,15196278,358,0.034,18467207,0.549,,1625.8
 08231,Sant Pere de Ribes,litoral_vacacional,32006,32006,29208,41891352,1426,0.045,36809746,0.468,,789.2
 08232,Sant Pere de Riudebitlles,interior_rural,2495,2495,2310,3190238,18,0.007,3002690,0.485,,452.7
 08233,Sant Pere de Torelló,interior_rural,2596,2596,2443,2773868,162,0.062,0,0.0,,47.0
@@ -277,7 +277,7 @@ ine5,municipi,tipus_territorial,resident,poblacio,etca,kwh_dom,rtc_places,rtc_pl
 08278,Taradell,interior_rural,6828,6828,6218,9365270,838,0.123,11617990,0.554,,257.1
 08279,Terrassa,metropolita_dens,228294,228294,217231,237354292,1547,0.007,261219674,0.524,,3267.7
 08280,Tavertet,interior_rural,,131,,357513,130,,0,0.0,,4.0
-08281,Teià,litoral_vacacional,6812,6812,5915,10478545,250,0.037,12805075,0.55,,1028.5
+08281,Teià,interior_rural,6812,6812,5915,10478545,250,0.037,12805075,0.55,,1028.5
 08282,Tiana,corona_metropolitana,9323,9323,7834,12952153,124,0.013,14977717,0.536,,1182.6
 08283,Tona,interior_rural,8499,8499,7951,10116421,105,0.012,15451222,0.604,,517.5
 08284,Tordera,interior_rural,18795,18795,18652,24765650,797,0.042,16302161,0.397,,222.5
@@ -320,7 +320,7 @@ ine5,municipi,tipus_territorial,resident,poblacio,etca,kwh_dom,rtc_places,rtc_pl
 17008,Anglès,interior_rural,5915,5915,5531,7114455,78,0.013,0,0.0,,359.7
 17009,Arbúcies,interior_rural,6555,6555,6368,9128441,900,0.137,0,0.0,,75.8
 17010,Argelaguer,interior_rural,,451,,563962,26,,684807,0.548,,35.4
-17011,"Armentera, l'",litoral_vacacional,1070,1070,1058,2178856,102,0.095,0,0.0,,180.9
+17011,"Armentera, l'",interior_rural,1070,1070,1058,2178856,102,0.095,0,0.0,,180.9
 17012,Avinyonet de Puigventós,interior_rural,1689,1689,1498,2912256,102,0.06,0,0.0,,135.1
 17013,Begur,litoral_vacacional,4227,4227,7994,20758876,3929,0.93,166453,0.008,,202.4
 17014,"Vajol, la",interior_rural,,98,,178153,22,,0,0.0,,20.4
@@ -484,7 +484,7 @@ ine5,municipi,tipus_territorial,resident,poblacio,etca,kwh_dom,rtc_places,rtc_pl
 17185,Sant Joan les Fonts,interior_rural,3103,3103,3456,3652953,151,0.049,5014232,0.579,,96.1
 17186,Sarrià de Ter,interior_rural,5378,5378,4969,5910165,135,0.025,8036651,0.576,,1264.3
 17187,"Saus, Camallera i Llampaies",interior_rural,908,908,1001,1827262,243,0.268,0,0.0,,78.2
-17188,"Selva de Mar, la",litoral_vacacional,,220,,530989,36,,0,0.0,,29.9
+17188,"Selva de Mar, la",interior_rural,,220,,530989,36,,0,0.0,,29.9
 17189,"Cellera de Ter, la",interior_rural,2013,2013,1923,3000287,61,0.03,0,0.0,,136.8
 17190,Serinyà,interior_rural,1196,1196,1105,1579635,151,0.126,1285203,0.449,,69.1
 17191,Serra de Daró,interior_rural,,231,,728121,83,,380522,0.343,,29.3
@@ -871,7 +871,7 @@ ine5,municipi,tipus_territorial,resident,poblacio,etca,kwh_dom,rtc_places,rtc_pl
 43108,"Pla de Santa Maria, el",interior_rural,2391,2391,2431,2829902,19,0.008,2534422,0.472,,68.6
 43109,"Pobla de Mafumet, la",interior_rural,4127,4127,4237,4586328,25,0.006,2065343,0.31,,681.8
 43110,"Pobla de Massaluca, la",interior_rural,,344,,489209,150,,0,0.0,,8.0
-43111,"Pobla de Montornès, la",litoral_vacacional,3357,3357,3562,5946208,222,0.066,1689650,0.221,,275.4
+43111,"Pobla de Montornès, la",interior_rural,3357,3357,3562,5946208,222,0.066,1689650,0.221,,275.4
 43112,Poboleda,interior_rural,,333,,492136,517,,0,0.0,,24.4
 43113,"Pont d'Armentera, el",interior_rural,,498,,690022,15,,0,0.0,,23.2
 43114,Porrera,interior_rural,,417,,763082,99,,0,0.0,,14.7
@@ -886,7 +886,7 @@ ine5,municipi,tipus_territorial,resident,poblacio,etca,kwh_dom,rtc_places,rtc_pl
 43123,Reus,metropolita_dens,109961,109961,106885,126747691,1420,0.013,85045930,0.402,,2094.2
 43124,"Riba, la",interior_rural,,568,,808824,5,,934324,0.536,,71.1
 43125,Riba-roja d'Ebre,interior_rural,1126,1126,1092,2101666,303,0.269,0,0.0,,11.4
-43126,"Riera de Gaià, la",litoral_vacacional,1806,1806,1616,2794956,126,0.07,0,0.0,,207.9
+43126,"Riera de Gaià, la",interior_rural,1806,1806,1616,2794956,126,0.07,0,0.0,,207.9
 43127,Riudecanyes,interior_rural,1359,1359,1242,1901458,67,0.049,0,0.0,,80.9
 43128,Riudecols,interior_rural,1248,1248,1160,1817051,25,0.02,0,0.0,,64.6
 43129,Riudoms,interior_rural,6954,6954,6586,8654567,147,0.021,2809967,0.245,,217.4
@@ -938,11 +938,11 @@ ine5,municipi,tipus_territorial,resident,poblacio,etca,kwh_dom,rtc_places,rtc_pl
 43175,Vilalba dels Arcs,interior_rural,,614,,950898,72,,0,0.0,,9.2
 43176,Vimbodí i Poblet,interior_rural,,893,,1366827,181,,0,0.0,,13.5
 43177,Vinebre,interior_rural,,426,,728661,87,,0,0.0,,16.2
-43178,Vinyols i els Arcs,litoral_vacacional,2425,2425,2685,4235949,2202,0.908,659763,0.135,,224.3
+43178,Vinyols i els Arcs,interior_rural,2425,2425,2685,4235949,2202,0.908,659763,0.135,,224.3
 43901,Deltebre,litoral_vacacional,11941,11941,12685,21904465,2989,0.25,0,0.0,,114.6
 43902,Sant Jaume d'Enveja,litoral_vacacional,3671,3671,3594,6680027,583,0.159,0,0.0,,62.8
-43903,Camarles,litoral_vacacional,3428,3428,3380,5648174,298,0.087,0,0.0,,116.5
+43903,Camarles,interior_rural,3428,3428,3380,5648174,298,0.087,0,0.0,,116.5
 43904,"Aldea, l'",interior_rural,4554,4554,4580,7272842,199,0.044,580513,0.074,,151.7
 43905,Salou,litoral_vacacional,30442,30442,62220,63002027,42461,1.395,20392459,0.245,,2026.1
 43906,"Ampolla, l'",litoral_vacacional,3692,3692,5364,11084506,2447,0.663,1165968,0.095,,104.9
-43907,"Canonja, la",litoral_vacacional,5936,5936,6189,7029144,32,0.005,4367024,0.383,,817.8
+43907,"Canonja, la",interior_rural,5936,5936,6189,7029144,32,0.005,4367024,0.383,,817.8

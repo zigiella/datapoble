@@ -189,9 +189,23 @@ més divers (353 interior_rural). Banda per tipus: corona [−10,+9], litoral_me
 [−19,+4], interior [−18,+17], **litoral_vacacional [−20,+26]** (l'estacionalitat, conegut). **927
 munis publicats en rang** (486 validats + 441 sub-1000 sense validació); 20 sense senyal → «sense dades».
 
-**Pendents després d'això:** (a) llista costanera OFICIAL (Bea la configura) → reemplaçar la
-provisional; (b) **vista de cobertura per COMARCA/VEGUERIA del mapa quedà OBSOLETA** (deia «només
-Berguedà»; ara cobrim ~tot CAT en rang) → cal actualitzar-la; (c) dada de pic per al litoral; (d)
-residus L2.
+**Pendents després d'això:** ~~(a) llista costanera OFICIAL~~ ✅ FET (D12) · ~~(b) vista de cobertura
+comarca/vegueria~~ ✅ FET (#153) · (c) dada de pic per al litoral; (d) residus L2.
+
+## D12 · Llista costanera OFICIAL (2026-06-18) — Bea
+
+Bea aporta els noms (Territori, llista de municipis litorals 27.06.2023): **76 a Territori → 70
+costaners** (treu 5 sense costa per Llei de costes —Tortosa, Torroella de Fluvià, Vilamacolum,
+Riumors, l'Armentera— + l'Aldea per quadrar amb el **PPOL: 91 = 70 costaners + 21 zona d'influència
+DPMT**, Llei 8/2020). `data/territorial/municipi_litoral.csv` (match per **ine5**, robust als canvis
+de topònim: Castell-Platja d'Aro→«Castell d'Aro…», Sant Carles de la Ràpita→«la Ràpita»).
+
+**Cross-check derivació geomètrica (#149) vs oficial:** **0 falsos negatius** (la geomètrica caçà
+els 70), **13 falsos positius** (segona fila: Alella, Argentona, Sant Boi, els «de Dalt», Vinyols,
+la Canonja, Camarles, la Riera/Pobla de Montornès, la Selva de Mar, l'Armentera) → la geomètrica fou
+un bon control; l'oficial els treu. Re-corregut el pipeline: litoral_metro 7 + litoral_vacacional 63
+= **70**; els 13 FPs passen a interior_rural. Model global igual (R²=0,41, 70%); litoral_vacacional
+ara **49%** cobertura, banda [−20,+29] (costa pura, sense dilució d'interior → més honest). Només
+`zona_influencia` (21) queda pendent com a metadada quan en tinguem els noms; NO entra al tipus litoral.
 
 — Talaia 🌊

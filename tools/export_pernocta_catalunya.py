@@ -122,8 +122,8 @@ def main() -> int:
                                "(cobertura ±15% ≈ 70%; el litoral vacacional, més feble per l'estacionalitat)"},
         "nota_abast": "Cobreix tota Catalunya amb senyal elèctric i covariables. Els municipis amb ETCA "
                       "(≥1.000 hab) es validen contra la dada oficial; els <1.000 hab es donen amb banda "
-                      "més ampla i SENSE validació oficial. Classificació litoral PROVISIONAL (derivació "
-                      "geomètrica) fins a incorporar la llista administrativa oficial.",
+                      "més ampla i SENSE validació oficial. Classificació litoral = llista OFICIAL de 70 "
+                      "municipis costaners (Territori/PPOL, Llei 8/2020).",
         "munis": dict(sorted(munis.items())),
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)

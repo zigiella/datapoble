@@ -13,8 +13,8 @@ Covariables del model (totes NO depenen de la presència):
   · GAS (fracció de gas del consum domèstic) — proxy de calefacció.
 
 CLASSIFICACIÓ `tipus_territorial` (per a la banda per tipus):
-  · litoral: municipi a la llista de costaners (`municipis_costaners.csv`, PROVISIONAL geomètrica
-    fins que entri la llista administrativa oficial). litoral_metropolita si també AMB, si no
+  · litoral: municipi a la llista OFICIAL de costaners (`municipi_litoral.csv`, 70 munis derivats de
+    Territori/PPOL, Llei 8/2020; match per ine5). litoral_metropolita si també AMB, si no
     litoral_vacacional.
   · metropolita_dens (densitat alta) · corona_metropolitana (AMB no densa) · interior_rural (resta).
     (L'altitud/pirineu queda fora en aquesta versió escalada: la validació held-out per tipus ja
@@ -43,7 +43,7 @@ from shapely.geometry import shape
 
 REPO = Path(__file__).resolve().parents[1]
 OUT = REPO / "data" / "territorial" / "nivellc_analisi.csv"
-COSTANERS_CSV = REPO / "data" / "territorial" / "municipis_costaners.csv"
+LITORAL_CSV = REPO / "data" / "territorial" / "municipi_litoral.csv"
 MUNIS_GEO = REPO / "packages" / "web" / "static" / "geo" / "catalunya-municipis.geojson"
 
 GO_RHO, GO_ERR = 0.7, 15.0
@@ -82,11 +82,13 @@ AMB_NOMS = {_norm(x) for x in [
 
 
 def load_costaners() -> set[str]:
-    """ine5 dels municipis costaners (PROVISIONAL: derivació geomètrica `municipis_costaners.csv`)."""
-    if not COSTANERS_CSV.exists():
+    """ine5 dels 70 municipis costaners — llista OFICIAL (Territori/PPOL, Llei 8/2020) a
+    `municipi_litoral.csv`. Match per ine5 (robust als canvis de topònim). La derivació geomètrica
+    (`municipis_costaners.csv`, `tools/deriva_costaners.py`) queda com a cross-check."""
+    if not LITORAL_CSV.exists():
         return set()
-    with COSTANERS_CSV.open(encoding="utf-8") as fh:
-        return {r["ine5"] for r in csv.DictReader(fh) if r.get("costaner") == "1"}
+    with LITORAL_CSV.open(encoding="utf-8") as fh:
+        return {r["ine5"] for r in csv.DictReader(fh, delimiter=";") if r.get("litoral") == "costaner"}
 
 
 def build_areas() -> dict[str, float]:
