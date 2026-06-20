@@ -46,6 +46,18 @@
 	const veins = $derived(data.veins ?? []);
 	const veinsTotal = $derived(data.veinsTotal ?? 0);
 	const locale = $derived(currentLocale());
+	// Breadcrumb navegable: Catalunya › vegueria › comarca › municipi (l'últim és l'actual, sense href).
+	const espinaTrail = $derived.by(() => {
+		const t: { label: string; href?: string }[] = [
+			{ label: m.espina_catalunya(), href: localizeHref('/') }
+		];
+		if (territori?.vegueria)
+			t.push({ label: territori.vegueria, href: localizeHref(`/vegueria/${toSlug(territori.vegueria)}`) });
+		if (territori?.comarca)
+			t.push({ label: territori.comarca, href: localizeHref(`/comarca/${toSlug(territori.comarca)}`) });
+		t.push({ label: muniNom });
+		return t;
+	});
 
 	// ── Lectura-IA (§3) ─────────────────────────────────────────────────────────────────────
 	// Branca del locale actiu de l'artefacte `lectures.bergueda.json` (la genera gen_fitxa.py:
@@ -492,8 +504,8 @@
 	</div>
 
 	<div class="ds-main">
-		<!-- Espina territorial: Catalunya › vegueria › comarca › municipi (context de situació). -->
-		<Espina vegueria={territori?.vegueria} comarca={territori?.comarca} muni={muniNom} />
+		<!-- Espina territorial NAVEGABLE: Catalunya › vegueria › comarca › municipi (el muni és l'actual). -->
+		<Espina trail={espinaTrail} />
 
 		<!-- Selector per saltar a un altre municipi del Berguedà (sempre disponible). -->
 		<section class="ds-sec" style="border-top:none">

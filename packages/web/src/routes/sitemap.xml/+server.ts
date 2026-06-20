@@ -7,6 +7,7 @@
  */
 import { toSlug } from '$lib/contract/slug';
 import type { CatalegData } from '$lib/contract/cataleg';
+import type { ComarquesData } from '$lib/contract/comarques';
 import type { RequestHandler } from './$types';
 
 export const prerender = true;
@@ -39,7 +40,22 @@ export const GET: RequestHandler = async ({ fetch }) => {
 	} catch {
 		muniRoutes = [];
 	}
-	const routes = [...STATIC_ROUTES, ...muniRoutes];
+
+	// Pàgines de comarca (43) i vegueria (8): prerenderitzades, entren al sitemap.
+	let terrRoutes: string[] = [];
+	try {
+		const res = await fetch('/data/comarques.json');
+		if (res.ok) {
+			const data = (await res.json()) as ComarquesData;
+			terrRoutes = [
+				...data.comarques.map((c) => `/comarca/${toSlug(c.nom)}/`),
+				...data.vegueries.map((v) => `/vegueria/${toSlug(v.nom)}/`)
+			];
+		}
+	} catch {
+		terrRoutes = [];
+	}
+	const routes = [...STATIC_ROUTES, ...terrRoutes, ...muniRoutes];
 
 	const urls = routes.flatMap((route) =>
 		LOCALES.map((locale) => {
