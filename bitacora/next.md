@@ -43,6 +43,12 @@ límit de despesa; les tasques marcades **(IA)** sí (esperen que es reposi).*
 9. **[web/IA] Pregunta-li «super beta»** (Brúixola) **(IA)** — genUI / resposta-com-UI.
 10. **[a11y] Accessibilitat AA** (Llegenda+Mirador) — teclat al mapa, contrast, `axe-core` a CI.
 
+12. **[web/viz] Dades als dos mapes (home + /mapa)** (Mirador) — Bea, 3 punts:
+    - ~~vista municipi: pintar els coberts amb la seva dada (gap)~~ ✅ FET (#159; + bug `__covered`
+      del camí numèric arreglat). Cal cop d'ull visual de Bea.
+    - ⏳ vista **comarca**: info per mouse-over (tooltip amb agregats).
+    - ⏳ vista **vegueria**: info per mouse-over.
+
 ## Diferit a Fase 2
 Licitacions de veritat (menors → majors/diputació) · fondària completa de fitxa (tipologia +
 lectures-IA) per a tot CAT · fonts noves §12.

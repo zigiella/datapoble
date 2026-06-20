@@ -243,6 +243,10 @@
 				const ine5 = (f.properties?.ine5 as string) ?? '';
 				const inBerg = berg.has(ine5);
 				const covered = !inBerg && cov.has(ine5); // presència estimada en rang (fora del Berguedà)
+				// Gap padró↔presència del muni cobert (% que la presència s'aparta del padró): pinta el
+				// color del municipi a la vista municipi (la dada que tenim a tot Catalunya). null si no.
+				const cp = covered ? pernocta?.[ine5] : undefined;
+				const gap = cp && cp.padro ? Math.round(((cp.estimacio - cp.padro) / cp.padro) * 100) : null;
 				const row = inBerg ? dataset.municipis[ine5] : undefined;
 				const conf = (row?.values?.confianca as string | undefined) ?? null;
 
@@ -260,6 +264,7 @@
 							...f.properties,
 							__inberg: inBerg,
 							__covered: covered,
+							__gap: gap,
 							__val: null,
 							__cat: hasCat ? (catRaw as string) : null,
 							__hasval: hasCat,
@@ -281,6 +286,8 @@
 					properties: {
 						...f.properties,
 						__inberg: inBerg,
+						__covered: covered,
+						__gap: gap,
 						__val: hasVal ? (raw as number) : null,
 						__cat: null,
 						__hasval: hasVal,
@@ -371,16 +378,28 @@
 				paint: { 'fill-color': MAP.land, 'fill-opacity': 0.55 }
 			});
 
-			// Capa COBERTS EN RANG: municipis FORA del Berguedà amb presència estimada (Nivell C,
-			// artefacte pernocta-catalunya.json). Es pinten en el color de cobertura però a MITJA
-			// opacitat — visibles i clicables, però honestament per sota del Berguedà (estimació en
-			// rang, no cens). Només es mostren a granularitat municipi (applyGranularity els commuta).
+			// Capa COBERTS EN RANG: municipis FORA del Berguedà amb presència estimada (Nivell C). Es
+			// pinten pel seu GAP padró↔presència (paleta divergent: teal = menys gent que el padró ·
+			// porpra = més, població que el padró no veu), la dada que tenim a tot Catalunya. Si no hi
+			// ha gap (sense padró), color de cobertura pla. Només a granularitat municipi.
 			map.addLayer({
 				id: COVERED,
 				type: 'fill',
 				source: SRC,
 				filter: ['all', ['!', ['get', '__inberg']], ['boolean', ['get', '__covered'], false]],
-				paint: { 'fill-color': COVERAGE_FILL, 'fill-opacity': 0.5 }
+				paint: {
+					'fill-color': [
+						'case',
+						['==', ['get', '__gap'], null],
+						COVERAGE_FILL,
+						[
+							'step',
+							['get', '__gap'],
+							'#0F6E66', -30, '#4FA8A0', -12, '#B9DED9', -3, '#EFEEE8', 3, '#CDB3DD', 20, '#9466B6', 60, '#5E3A86'
+						]
+					] as never,
+					'fill-opacity': 0.7
+				}
 			});
 
 			// Contorn tènue de TOTS els municipis (estructura de fons, molt suau).

@@ -505,6 +505,12 @@
 									style="width:26px;height:14px;border-radius:2px;display:inline-block;background:var(--dp-map-land,#F2F1EC);opacity:0.7;border:1px solid var(--dp-border)"
 								></span><span>{m.map_legend_dimmed()}</span>
 							</div>
+							<!-- Municipis estimats (Nivell C, fora del Berguedà): color = gap padró↔presència. -->
+							<div class="legend__nodata" style="margin-top:8px">
+								<span
+									style="width:26px;height:14px;border-radius:2px;display:inline-block;background:linear-gradient(90deg,#0F6E66,#B9DED9,#EFEEE8,#CDB3DD,#5E3A86);border:1px solid var(--dp-border-strong)"
+								></span><span>{m.map_legend_estimat()}</span>
+							</div>
 						{/if}
 					</div>
 				</aside>
