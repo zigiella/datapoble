@@ -2,28 +2,31 @@
 	/**
 	 * Espina territorial (breadcrumb): Catalunya › vegueria › comarca › municipi.
 	 *
-	 * Dona CONTEXT de situació a la fitxa de qualsevol dels ~947 municipis. «Catalunya» enllaça a la
-	 * home; vegueria i comarca són text (encara no tenen pàgina pròpia — vindran amb les pàgines de
-	 * comarca); el municipi és el node actual (`aria-current`). Si no hi ha territori (cas rar), només
-	 * mostra Catalunya › municipi.
+	 * Dona CONTEXT de situació i navegació amunt/avall a les pàgines territorials (fitxa de municipi,
+	 * comarca, vegueria). Rep un `trail` de molles: cadascuna amb `href` (navegable) o sense (el node
+	 * ACTUAL, `aria-current`). Així el mateix component serveix a qualsevol nivell.
 	 */
-	import { localizeHref } from '$lib/i18n';
 	import { m } from '$lib/paraglide/messages';
 
-	interface Props {
-		vegueria?: string | null;
-		comarca?: string | null;
-		muni: string;
+	interface Crumb {
+		label: string;
+		/** Destí; si falta, és el nivell actual (no enllaç). */
+		href?: string;
 	}
-	let { vegueria = null, comarca = null, muni }: Props = $props();
+	let { trail }: { trail: Crumb[] } = $props();
 </script>
 
 <nav class="espina" aria-label={m.espina_aria()}>
 	<ol>
-		<li><a href={localizeHref('/')}>{m.espina_catalunya()}</a></li>
-		{#if vegueria}<li><span>{vegueria}</span></li>{/if}
-		{#if comarca}<li><span>{comarca}</span></li>{/if}
-		<li><span class="espina__cur" aria-current="page">{muni}</span></li>
+		{#each trail as c, i (i)}
+			<li>
+				{#if c.href}
+					<a href={c.href}>{c.label}</a>
+				{:else}
+					<span class="espina__cur" aria-current="page">{c.label}</span>
+				{/if}
+			</li>
+		{/each}
 	</ol>
 </nav>
 

@@ -73,6 +73,49 @@ function buildCataleg() {
 
 buildCataleg();
 
+/**
+ * Agrupació territorial `comarques.json` derivada de `data/web/municipis-territori.json`
+ * (muni→comarca→vegueria, exacte). És la base de les pàgines de comarca/vegueria i del breadcrumb
+ * navegable: per a cada comarca, la seva vegueria i els seus municipis (ine5); per a cada vegueria,
+ * les seves comarques. NO és cap dada de població; només estructura administrativa. El slug es deriva
+ * dels noms en runtime (`toSlug`), no aquí.
+ */
+function buildComarques() {
+	const terrPath = resolve(REPO_ROOT, 'data/web/municipis-territori.json');
+	if (!existsSync(terrPath)) {
+		console.warn(`[copy-data] AVÍS: no s'ha trobat ${terrPath}; no es genera comarques.json.`);
+		return;
+	}
+	const terr = JSON.parse(readFileSync(terrPath, 'utf8'));
+	const com = new Map(); // comarca → { nom, vegueria, ine5s:Set }
+	const veg = new Map(); // vegueria → Set<comarca>
+	for (const [ine5, t] of Object.entries(terr)) {
+		if (!t.comarca) continue;
+		if (!com.has(t.comarca)) com.set(t.comarca, { nom: t.comarca, vegueria: t.vegueria || '', ine5s: [] });
+		com.get(t.comarca).ine5s.push(ine5);
+		if (t.vegueria) {
+			if (!veg.has(t.vegueria)) veg.set(t.vegueria, new Set());
+			veg.get(t.vegueria).add(t.comarca);
+		}
+	}
+	const coll = new Intl.Collator('ca');
+	const out = {
+		comarques: [...com.values()]
+			.map((c) => ({ ...c, ine5s: c.ine5s.sort() }))
+			.sort((a, b) => coll.compare(a.nom, b.nom)),
+		vegueries: [...veg.entries()]
+			.map(([nom, set]) => ({ nom, comarques: [...set].sort((a, b) => coll.compare(a, b)) }))
+			.sort((a, b) => coll.compare(a.nom, b.nom))
+	};
+	const dest = resolve(DEST_DIR, 'comarques.json');
+	writeFileSync(dest, JSON.stringify(out));
+	console.log(
+		`[copy-data] OK: comarques.json → static/data/ (${out.comarques.length} comarques, ${out.vegueries.length} vegueries)`
+	);
+}
+
+buildComarques();
+
 for (const f of FILES) {
 	if (!existsSync(f.src)) {
 		// CI i clons sense els marts no tenen la font generada: no és un error fatal.

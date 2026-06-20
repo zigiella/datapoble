@@ -34,10 +34,10 @@ límit de despesa; les tasques marcades **(IA)** sí (esperen que es reposi).*
      «El bessó del teu poble», 6 bessons cat-escala SVG per a tots els munis). Pendent: **(b) embedding
      2D de secció** (PCA/MDS dels 927, el «mapa mental») + doble escala #5 (afegir bessons de la
      COMARCA reusant `mirall.ts`).
-11. **[web] Breadcrumb territorial SEMPRE present + navegable** (Mirador) — Bea: Catalunya › vegueria ›
-    comarca › municipi visible a tot arreu i **pujant/baixant de nivell sense perdre's**. Amplia
-    l'espina (#151, avui només a la fitxa i sense enllaços a comarca/vegueria) → persistent (layout) +
-    nivells navegables (depèn de tenir pàgines de comarca/vegueria, o filtres del mapa).
+11. ~~**[web] Breadcrumb territorial navegable + pàgines de comarca/vegueria (§5)**~~ ✅ FET (#158):
+    43 `/comarca/[slug]` (beeswarm del gap + munis) + 8 `/vegueria/[slug]` (comarques) + `Espina`
+    refactoritzada a `trail` amb enllaços (Catalunya⇄vegueria⇄comarca⇄municipi). Sitemap ampliat.
+    Notes: redundància `/resum` vs `/comarca/bergueda`; descobribilitat (índex de comarques) pendent.
 8. **[llengües] Aranès + anglès** (Brúixola+Talaia) **(IA)** — repàs còpia ca/es font → Apertium/AINA
    (oc) + anglès. Espera la reposició del límit.
 9. **[web/IA] Pregunta-li «super beta»** (Brúixola) **(IA)** — genUI / resposta-com-UI.
