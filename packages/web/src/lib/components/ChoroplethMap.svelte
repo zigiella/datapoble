@@ -74,6 +74,9 @@
 		granularity?: Granularity;
 		/** Presència estimada EN RANG dels munis coberts fora del Berguedà (ine5 → dada). Opcional. */
 		pernocta?: Record<string, PernoctaMuni>;
+		/** Valors d'indicadors a escala Catalunya (ine5 → {clau → valor}) per pintar els coberts pel
+		 * mateix indicador que el Berguedà, on en tenim (gap, residus). Opcional. */
+		catValues?: Record<string, Partial<Record<MetricKey, number>>>;
 		onhover?: (p: HoverPayload | null) => void;
 		onselect?: (ine5: string | null) => void;
 	}
@@ -87,6 +90,7 @@
 		classification,
 		granularity = 'municipi',
 		pernocta,
+		catValues,
 		onhover,
 		onselect
 	}: Props = $props();
@@ -213,7 +217,7 @@
 	 * mostrejats de la rampa activa. El valor numèric de cada municipi s'injecta com a feature
 	 * property `__val` (join amb el dataset) abans de crear la font.
 	 */
-	function fillColorExpression(c: Classification, key: MetricKey): unknown {
+	function fillColorExpression(c: Classification, key: MetricKey, valExpr: unknown = ['get', '__val']): unknown {
 		if (c.method === 'categorical' || isCategorical(key)) return tipologiaMatchExpression();
 		const colors = classColors(c);
 		if (c.classes <= 1 || c.breaks.length === 0) {
@@ -221,11 +225,25 @@
 			return colors[0] ?? MAP.land;
 		}
 		// ['step', val, color0, b0, color1, b1, color2, ...]
-		const expr: unknown[] = ['step', ['get', '__val'], colors[0]];
+		const expr: unknown[] = ['step', valExpr, colors[0]];
 		for (let i = 0; i < c.breaks.length; i++) {
 			expr.push(c.breaks[i], colors[i + 1]);
 		}
 		return expr;
+	}
+
+	/**
+	 * Color de la capa COBERTS: pel valor de l'indicador a escala Catalunya (`__covval`), amb la
+	 * MATEIXA classificació i colors que el Berguedà (escala compartida → comparables). Si `__covval`
+	 * és null (indicador només-Berguedà), color base atenuat (amb opacitat 0 queda transparent).
+	 */
+	function coveredColorExpr(c: Classification, key: MetricKey): unknown {
+		return [
+			'case',
+			['==', ['get', '__covval'], null],
+			MAP.land,
+			fillColorExpression(c, key, ['get', '__covval'])
+		];
 	}
 
 	/**
@@ -243,10 +261,10 @@
 				const ine5 = (f.properties?.ine5 as string) ?? '';
 				const inBerg = berg.has(ine5);
 				const covered = !inBerg && cov.has(ine5); // presència estimada en rang (fora del Berguedà)
-				// Gap padró↔presència del muni cobert (% que la presència s'aparta del padró): pinta el
-				// color del municipi a la vista municipi (la dada que tenim a tot Catalunya). null si no.
-				const cp = covered ? pernocta?.[ine5] : undefined;
-				const gap = cp && cp.padro ? Math.round(((cp.estimacio - cp.padro) / cp.padro) * 100) : null;
+				// Valor de l'INDICADOR ACTIU per al muni cobert (de catValues, escala Catalunya): pinta
+				// el seu color a la vista municipi pel MATEIX indicador que el Berguedà, on en tenim
+				// (gap, residus). null si l'indicador és només-Berguedà → el muni queda atenuat (honest).
+				const covval = covered ? (catValues?.[ine5]?.[key] ?? null) : null;
 				const row = inBerg ? dataset.municipis[ine5] : undefined;
 				const conf = (row?.values?.confianca as string | undefined) ?? null;
 
@@ -264,7 +282,7 @@
 							...f.properties,
 							__inberg: inBerg,
 							__covered: covered,
-							__gap: gap,
+							__covval: covval,
 							__val: null,
 							__cat: hasCat ? (catRaw as string) : null,
 							__hasval: hasCat,
@@ -287,7 +305,7 @@
 						...f.properties,
 						__inberg: inBerg,
 						__covered: covered,
-						__gap: gap,
+						__covval: covval,
 						__val: hasVal ? (raw as number) : null,
 						__cat: null,
 						__hasval: hasVal,
@@ -378,27 +396,18 @@
 				paint: { 'fill-color': MAP.land, 'fill-opacity': 0.55 }
 			});
 
-			// Capa COBERTS EN RANG: municipis FORA del Berguedà amb presència estimada (Nivell C). Es
-			// pinten pel seu GAP padró↔presència (paleta divergent: teal = menys gent que el padró ·
-			// porpra = més, població que el padró no veu), la dada que tenim a tot Catalunya. Si no hi
-			// ha gap (sense padró), color de cobertura pla. Només a granularitat municipi.
+			// Capa COBERTS: municipis FORA del Berguedà amb dada a escala Catalunya (Nivell C). Es pinten
+			// pel MATEIX indicador actiu que el Berguedà (mateixa classificació i colors), on en tenim
+			// (`__covval`); si l'indicador és només-Berguedà, `__covval` és null → opacitat 0 (queden
+			// atenuats sobre la capa BASE, honest «sense dada»). Només a granularitat municipi.
 			map.addLayer({
 				id: COVERED,
 				type: 'fill',
 				source: SRC,
 				filter: ['all', ['!', ['get', '__inberg']], ['boolean', ['get', '__covered'], false]],
 				paint: {
-					'fill-color': [
-						'case',
-						['==', ['get', '__gap'], null],
-						COVERAGE_FILL,
-						[
-							'step',
-							['get', '__gap'],
-							'#0F6E66', -30, '#4FA8A0', -12, '#B9DED9', -3, '#EFEEE8', 3, '#CDB3DD', 20, '#9466B6', 60, '#5E3A86'
-						]
-					] as never,
-					'fill-opacity': 0.7
+					'fill-color': coveredColorExpr(classification, indicator) as never,
+					'fill-opacity': ['case', ['==', ['get', '__covval'], null], 0, 0.78] as never
 				}
 			});
 
@@ -676,6 +685,10 @@
 		src.setData(buildData(key) as never);
 		if (map.getLayer(FILL)) {
 			map.setPaintProperty(FILL, 'fill-color', fillColorExpression(c, key) as never);
+		}
+		// Els coberts segueixen el MATEIX indicador (mateixa classificació); re-pinta en canviar-lo.
+		if (map.getLayer(COVERED)) {
+			map.setPaintProperty(COVERED, 'fill-color', coveredColorExpr(c, key) as never);
 		}
 	});
 

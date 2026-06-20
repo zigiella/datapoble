@@ -43,11 +43,14 @@ límit de despesa; les tasques marcades **(IA)** sí (esperen que es reposi).*
 9. **[web/IA] Pregunta-li «super beta»** (Brúixola) **(IA)** — genUI / resposta-com-UI.
 10. **[a11y] Accessibilitat AA** (Llegenda+Mirador) — teclat al mapa, contrast, `axe-core` a CI.
 
-12. **[web/viz] Dades als dos mapes (home + /mapa)** (Mirador) — Bea, 3 punts:
-    - ~~vista municipi: pintar els coberts amb la seva dada (gap)~~ ✅ FET (#159; + bug `__covered`
-      del camí numèric arreglat). Cal cop d'ull visual de Bea.
+12. **[web/viz] Secció mapa completa (home + /mapa)** (Mirador) — Bea, fer el mapa complet:
+    - ~~vista municipi: pintar els coberts amb la seva dada~~ ✅ FET: #159 (gap) → **#160** (per
+      l'INDICADOR triat: gap+residus a tot CAT, escala compartida; resta només-Berguedà atenuat;
+      `indicadors-catalunya.json`). Cal cop d'ull visual de Bea.
+    - ⏳ **indicadors cat-escala NOUS** (densitat, renda, gas, turisme RTC/resident) per enriquir.
     - ⏳ vista **comarca**: info per mouse-over (tooltip amb agregats).
     - ⏳ vista **vegueria**: info per mouse-over.
+    - ⏳ **home:** indicador del mapa (tipologia→gap?) perquè mostri dada cat-escala a municipi (vot Bea).
 
 ## Diferit a Fase 2
 Licitacions de veritat (menors → majors/diputació) · fondària completa de fitxa (tipologia +

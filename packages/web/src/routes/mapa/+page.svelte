@@ -46,6 +46,8 @@
 	const vegueries = $derived(data.vegueries);
 	// Presència estimada EN RANG (Nivell C): munis coberts de fora del Berguedà, keyed per ine5.
 	const pernocta = $derived(data.pernocta?.munis);
+	// Indicadors a escala Catalunya (gap, residus) per pintar la vista municipi a tot el país.
+	const catValues = $derived(data.catValues);
 	const locale = $derived(currentLocale());
 
 	// Granularitat del mapa (municipi = coroplètic per indicador; comarca/vegueria = cobertura).
@@ -86,10 +88,16 @@
 	// que els talls són EXACTAMENT els del Berguedà (la classificació és sobre el conjunt amb dada).
 	// Passem pel `mapValue` perquè el 0 d'OSM de la restauració (buit de mapejat, no «sense
 	// hostaleria») es degradi a null i NO ancori el mínim de Jenks ni entri a cap classe.
+	// Sèrie per a la classificació: valor del Berguedà (dataset) O, si no en té i l'indicador és
+	// cat-escala (gap/residus), el valor de catValues. Així els talls/colors abasten TOT Catalunya
+	// (Berguedà + coberts) i les dues capes comparteixen escala. Per als indicadors només-Berguedà,
+	// catValues no en té → la sèrie segueix sent la del Berguedà.
 	const series = $derived(
 		geojson.features.map((f: import('geojson').Feature) => {
 			const ine5 = (f.properties?.ine5 as string) ?? '';
-			return mapValue(indicator, dataset.municipis[ine5]?.values?.[indicator]);
+			const dv = mapValue(indicator, dataset.municipis[ine5]?.values?.[indicator]);
+			if (dv !== null && dv !== undefined) return dv;
+			return catValues?.[ine5]?.[indicator] ?? null;
 		})
 	);
 
@@ -318,6 +326,7 @@
 							{classification}
 							{granularity}
 							{pernocta}
+							{catValues}
 							onhover={(p) => (hover = p)}
 							onselect={onMuniSelect}
 						/>
@@ -505,12 +514,9 @@
 									style="width:26px;height:14px;border-radius:2px;display:inline-block;background:var(--dp-map-land,#F2F1EC);opacity:0.7;border:1px solid var(--dp-border)"
 								></span><span>{m.map_legend_dimmed()}</span>
 							</div>
-							<!-- Municipis estimats (Nivell C, fora del Berguedà): color = gap padró↔presència. -->
-							<div class="legend__nodata" style="margin-top:8px">
-								<span
-									style="width:26px;height:14px;border-radius:2px;display:inline-block;background:linear-gradient(90deg,#0F6E66,#B9DED9,#EFEEE8,#CDB3DD,#5E3A86);border:1px solid var(--dp-border-strong)"
-								></span><span>{m.map_legend_estimat()}</span>
-							</div>
+							<!-- Munis de fora del Berguedà: estimació (Nivell C), pintats pel MATEIX indicador i
+							     escala on en tenim (gap, residus); atenuats per als indicadors només-Berguedà. -->
+							<p class="legend__estimat">{m.map_legend_estimat()}</p>
 						{/if}
 					</div>
 				</aside>
@@ -601,6 +607,15 @@
 	.gran-seg__btn[aria-pressed='true'] {
 		background: var(--dp-text);
 		color: var(--dp-bg);
+	}
+
+	/* Nota d'honestedat de la llegenda: els munis estimats (fora del Berguedà). */
+	.legend__estimat {
+		margin: 13px 0 0;
+		font-family: var(--dp-font-sans);
+		font-size: 0.68rem;
+		line-height: 1.4;
+		color: var(--dp-text-subtle);
 	}
 
 	/* Llegenda CATEGÒRICA (tipologia): files amb swatch + etiqueta humana + frase curta.
