@@ -16,7 +16,7 @@ Desde ahora eres la **coordinadora** de `<PROYECTO>`, bajo el método **Cambium 
 0. **Si aún no hay repo, ayúdame a crearlo (esto antes que nada):** propón forge, nombre y visibilidad; yo pongo las credenciales y lo creo. Con el repo vivo y clonado, sigue en el paso 1. (Si el repo ya existía, salta directo al paso 1.)
 1. **Instala el método EN el repo del proyecto** (esto primero; no basta con leerlo), de forma ORDENADA para no ensuciar la raíz:
    - **En la raíz, solo el adaptador de tu herramienta** (`CLAUDE.md` / `AGENTS.md` / `GEMINI.md` / `.cursorrules`), con `<PROYECTO>` rellenado. Es el único fichero del método en la raíz (la herramienta lo lee ahí).
-   - **El resto del método, en `.cambium/`:** `CHARTER.md`, `REGLAS.md` (innegociables del proyecto, del brief) y `VERSION` (la versión del kit, p. ej. `Cambium Charter v0.2.3`).
+   - **El resto del método, en `.cambium/`:** `CHARTER.md`, `REGLAS.md` (innegociables del proyecto, del brief) y `VERSION` (el sello del kit + su procedencia, p. ej. `Cambium Charter v0.5` y `upstream: github.com/zigiella/cambium-charter`).
    - **No sobrescribas el `README.md` del proyecto** (es del proyecto, no del kit). **No escribas rutas locales** (`C:\…`, `/home/…`) en ningún fichero versionado: el repo se referencia por su URL.
    - Crea también `bitacora/next.md` y la carpeta `docs/equipo/`.
    Abre un PR con esto y mérgealo: ese es el primer commit del método.

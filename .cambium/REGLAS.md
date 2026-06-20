@@ -20,6 +20,10 @@ específic de datapoble.
    **MAI** el trailer d'IA genèric («Co-Authored-By: Claude», «Generated with Claude Code»): l'autoria
    és de l'agent del front, no de l'eina.
 6. **Mai rutes locals** (`C:\…`, `/home/…`) en fitxers versionats; el repo es referencia per URL.
+6b. **Fast-path no-codi** (v0.4): els artefactes de coordinació (`bitacora/next.md`, bitàcoles) es
+   poden committejar **directe** amb identity-inline + verificació anti-secrets/rutes, encara que no hi
+   hagi CI. Tres línies vermelles que SEMPRE van per la porta del PR: **mai codi, mai doctrina
+   (`.cambium/`), mai jurisdicció d'altri**.
 
 ## Honestedat com a feature
 7. **Cap xifra sense procedència.** Estimació ≠ cens: es marca, i si la incertesa mana, es publica
@@ -29,6 +33,10 @@ específic de datapoble.
 9. **Carril dades en silenci:** les dades internes de l'escala (covariables, Nivell C de Catalunya)
    no es publiquen fins que el seu tipus passi el **go/no-go** (ρ≥0,7 i error≤15% per a presència
    absoluta; si no, índexs/rangs relatius).
+9b. **Pressupost = límit, no silenci** (Dial, 3a lectura, v0.5): si s'esgota el crèdit assignat d'un
+   torn/tasca, s'**escala i es reporta** (bitàcola / a Bea); mai es mor en silenci. *Morir per
+   pressupost és fallar en silenci.* (P. ex.: el límit de despesa mensual que va tombar un workflow
+   → es reporta i es busca via alternativa, no es calla.)
 
 ## Seguretat (repo públic)
 10. **Secrets MAI al repo ni a la sortida.** No imprimir, fer eco ni committejar `OPENROUTER_API_KEY`,

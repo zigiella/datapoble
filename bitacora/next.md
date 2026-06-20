@@ -3,6 +3,7 @@
 *Derivada de `docs/pla-llancament-2026-06.md` (v2, decisions de Bea 2026-06-18). Es treballa de dalt
 a baix; cada tasca = un PR. `P0` bloqueja el llançament. El carril de dades i la web NO depenen del
 límit de despesa; les tasques marcades **(IA)** sí (esperen que es reposi).*
+*Mètode: **Cambium Charter v0.5** (adoptat 2026-06-20).*
 
 ## P0 — bloquegen el llançament
 
@@ -26,9 +27,18 @@ límit de despesa; les tasques marcades **(IA)** sí (esperen que es reposi).*
 ## P1 — al llançament, no bloquegen el dia exacte
 
 7. **[web/viz] Spec ric** (Mirador+Llegenda+Brúixola) — dades obertes §9 (/dades, descàrrega, xifra
-   citable, embeds, kit premsa) · viz noves §4: ~~beeswarm del gap~~ ✅ FET (#155, home «El gap d'un
-   cop d'ull», 927 punts SSR) · pendents (Dorling, slider, «el riu», emblema doble corrent) ·
-   ~~espina territorial + breadcrumb §7~~ ✅ FET (#151) · 3 profunditats + test CI §1.
+   citable, embeds, kit premsa) · viz noves §4: ~~beeswarm del gap~~ ✅ (#155) · pendents (Dorling,
+   slider, «el riu», emblema doble corrent) · ~~espina territorial + breadcrumb §7~~ ✅ (#151) ·
+   3 profunditats + test CI §1.
+   - **🔜 ACTIVA — Pobles mirall de tota Catalunya** (greenlit Bea «la teva proposta», millora sobre
+     el concepte d'espejo de la consultora). Vectors cat-escala ja existeixen (Nivell C #152). Dues
+     formes: **(d) constel·lació egocèntrica a la fitxa** (el muni al centre, bessons funcionals de
+     tot CAT en òrbita; amplia el mirall actual, avui només Berguedà) + **(b) embedding 2D** de secció
+     (PCA/MDS dels 927). Precalcular top-k miralls per muni (Python → artefacte) + SVG verificable.
+11. **[web] Breadcrumb territorial SEMPRE present + navegable** (Mirador) — Bea: Catalunya › vegueria ›
+    comarca › municipi visible a tot arreu i **pujant/baixant de nivell sense perdre's**. Amplia
+    l'espina (#151, avui només a la fitxa i sense enllaços a comarca/vegueria) → persistent (layout) +
+    nivells navegables (depèn de tenir pàgines de comarca/vegueria, o filtres del mapa).
 8. **[llengües] Aranès + anglès** (Brúixola+Talaia) **(IA)** — repàs còpia ca/es font → Apertium/AINA
    (oc) + anglès. Espera la reposició del límit.
 9. **[web/IA] Pregunta-li «super beta»** (Brúixola) **(IA)** — genUI / resposta-com-UI.
