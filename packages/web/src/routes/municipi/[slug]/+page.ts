@@ -23,6 +23,7 @@ import type { LecturesData, LecturaEntry } from '$lib/contract/lectures';
 import type { PernoctaData, PernoctaMuni } from '$lib/contract/pernocta';
 import type { CatalegData } from '$lib/contract/cataleg';
 import type { TerritoriData, MuniTerritori } from '$lib/contract/territori';
+import type { MirallData, MirallVei } from '$lib/contract/mirall';
 import type { EntryGenerator, PageLoad } from './$types';
 
 export const prerender = true;
@@ -137,6 +138,25 @@ export const load: PageLoad = async ({ fetch, params }) => {
 		}
 	}
 
+	// Pobles MIRALL a escala Catalunya: els bessons funcionals (no veïns de mapa) de tot el país.
+	// L'artefacte és compacte ([ine5, dist, codi]); resolem nom/slug des del catàleg. Prerender-safe.
+	let miralls: MirallVei[] = [];
+	if (ine5) {
+		try {
+			const res = await fetch('/data/municipis-mirall.json');
+			if (res.ok) {
+				const all = (await res.json()) as MirallData;
+				const nomByIne5 = new Map(cataleg.map((mn) => [mn.ine5, mn.nom]));
+				miralls = (all[ine5] ?? []).map(([tine5, dist, sig]) => {
+					const tnom = nomByIne5.get(tine5) ?? tine5;
+					return { nom: tnom, slug: toSlug(tnom), dist, signal: sig };
+				});
+			}
+		} catch {
+			miralls = [];
+		}
+	}
+
 	// Lectura-IA és un artefacte del BERGUEDÀ: només es carrega si el muni hi és (`row`). Així la
 	// resta de Catalunya no fa fetches inútils en prerender. Prerender-safe.
 	// (Licitacions aparcades per al llançament —decisió Bea—: la fitxa no en mostra secció.)
@@ -153,5 +173,5 @@ export const load: PageLoad = async ({ fetch, params }) => {
 		}
 	}
 
-	return { dataset, ine5, nom, row, lectura, pernocta, territori, veins, veinsTotal };
+	return { dataset, ine5, nom, row, lectura, pernocta, territori, veins, veinsTotal, miralls };
 };
