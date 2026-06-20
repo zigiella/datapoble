@@ -37,7 +37,8 @@ const FILES = [
 	{ src: resolve(REPO_ROOT, 'data/web/licitacions-bergueda.json'), name: 'licitacions-bergueda.json' },
 	{ src: resolve(REPO_ROOT, 'data/web/lectures.bergueda.json'), name: 'lectures.bergueda.json' },
 	{ src: resolve(REPO_ROOT, 'data/web/pernocta-catalunya.json'), name: 'pernocta-catalunya.json' },
-	{ src: resolve(REPO_ROOT, 'data/web/municipis-territori.json'), name: 'municipis-territori.json' }
+	{ src: resolve(REPO_ROOT, 'data/web/municipis-territori.json'), name: 'municipis-territori.json' },
+	{ src: resolve(REPO_ROOT, 'data/web/municipis-mirall.json'), name: 'municipis-mirall.json' }
 ];
 
 mkdirSync(DEST_DIR, { recursive: true });

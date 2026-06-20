@@ -30,11 +30,10 @@ límit de despesa; les tasques marcades **(IA)** sí (esperen que es reposi).*
    citable, embeds, kit premsa) · viz noves §4: ~~beeswarm del gap~~ ✅ (#155) · pendents (Dorling,
    slider, «el riu», emblema doble corrent) · ~~espina territorial + breadcrumb §7~~ ✅ (#151) ·
    3 profunditats + test CI §1.
-   - **🔜 ACTIVA — Pobles mirall de tota Catalunya** (greenlit Bea «la teva proposta», millora sobre
-     el concepte d'espejo de la consultora). Vectors cat-escala ja existeixen (Nivell C #152). Dues
-     formes: **(d) constel·lació egocèntrica a la fitxa** (el muni al centre, bessons funcionals de
-     tot CAT en òrbita; amplia el mirall actual, avui només Berguedà) + **(b) embedding 2D** de secció
-     (PCA/MDS dels 927). Precalcular top-k miralls per muni (Python → artefacte) + SVG verificable.
+   - **Pobles mirall de tota Catalunya**: ~~(d) constel·lació egocèntrica a la fitxa~~ ✅ FET (#157,
+     «El bessó del teu poble», 6 bessons cat-escala SVG per a tots els munis). Pendent: **(b) embedding
+     2D de secció** (PCA/MDS dels 927, el «mapa mental») + doble escala #5 (afegir bessons de la
+     COMARCA reusant `mirall.ts`).
 11. **[web] Breadcrumb territorial SEMPRE present + navegable** (Mirador) — Bea: Catalunya › vegueria ›
     comarca › municipi visible a tot arreu i **pujant/baixant de nivell sense perdre's**. Amplia
     l'espina (#151, avui només a la fitxa i sense enllaços a comarca/vegueria) → persistent (layout) +

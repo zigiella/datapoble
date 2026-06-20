@@ -27,10 +27,10 @@
 	import { formatMetric, formatDecimal, formatInteger } from '$lib/format';
 	import { SIGNED_PCT_KEYS } from '$lib/map/classify';
 	import { provenanceOf } from '$lib/map/provenance';
-	import { tipologiaMeta, tipologiaColor } from '$lib/map/tipologia';
+	import { tipologiaMeta } from '$lib/map/tipologia';
 	import { toSlug, slugForIne5 } from '$lib/contract/slug';
-	import { municipisMirall } from '$lib/analysis/mirall';
 	import Espina from '$lib/components/Espina.svelte';
+	import MirallConstel from '$lib/components/MirallConstel.svelte';
 	import { m } from '$lib/paraglide/messages';
 	import type { MetricDef, MetricKey, MetricValue, MunicipiRow } from '$lib/contract/types';
 	import type { LectTo } from '$lib/contract/lectures';
@@ -337,8 +337,9 @@
 
 	// ── Capçalera del municipi: tipologia + confiança (idèntica lectura que el Resum) ─────────
 	const tipo = $derived(row ? tipologiaMeta(row.values.tipologia) : undefined);
-	// Municipis mirall: els 5 més semblants en COMPORTAMENT (veïns funcionals, no geogràfics).
-	const mirall = $derived(row ? municipisMirall(dataset, ine5, 5) : []);
+	// Pobles mirall a escala Catalunya: bessons funcionals (no geogràfics) de tot el país, resolts al
+	// loader des de l'artefacte `municipis-mirall.json` (Nivell C). Per a QUALSEVOL muni, no només Berguedà.
+	const miralls = $derived(data.miralls ?? []);
 	const score = $derived.by<number | null>(() => {
 		const s = row?.values.confianca_score;
 		return typeof s === 'number' && Number.isFinite(s) ? s : null;
@@ -725,23 +726,8 @@
 				</dl>
 			</section>
 
-			{#if mirall.length}
-				<section class="ds-sec">
-					<div class="ds-sec__hd"><span class="ref">★</span><h2>{m.muni_mirall_title()}</h2></div>
-					<p class="muni-sec__sub">{m.muni_mirall_sub()}</p>
-					<ul class="mirall">
-						{#each mirall as mr (mr.ine5)}
-							<li>
-								<a class="mirall__item" href={localizeHref(`/municipi/${toSlug(mr.nom)}`)}>
-									<span class="mirall__dot" style="background:{tipologiaColor(mr.tipologia)}"></span>
-									<span class="mirall__nom">{mr.nom}</span>
-									<span class="mirall__tipo">{tipologiaMeta(mr.tipologia)?.label() ?? ''}</span>
-								</a>
-							</li>
-						{/each}
-					</ul>
-				</section>
-			{/if}
+			<!-- Pobles mirall: ara és la constel·lació cat-escala, fora del bloc {#if row} (per a TOTS
+			     els munis). Vegeu la secció més avall, després dels veïns de comarca. -->
 
 			<!-- Secció de Licitacions aparcada per al llançament (decisió Bea): /licitacions queda
 			     «en construcció». La maquinària i el markup es conserven a l'historial per a la Fase 2. -->
@@ -844,6 +830,15 @@
 						<li><a class="veins__chip" href={localizeHref(`/municipi/${v.slug}`)}>{v.nom}</a></li>
 					{/each}
 				</ul>
+			</section>
+		{/if}
+
+		<!-- Pobles MIRALL a escala Catalunya: constel·lació egocèntrica (bessons funcionals de tot CAT). -->
+		{#if miralls.length}
+			<section class="ds-sec">
+				<div class="ds-sec__hd"><span class="ref">✦</span><h2>{m.mirall_title()}</h2></div>
+				<p class="muni-sec__sub">{m.mirall_lead()}</p>
+				<MirallConstel center={muniNom} veins={miralls} />
 			</section>
 		{/if}
 	</div>
@@ -1500,47 +1495,5 @@
 	.muni-empty__link:hover {
 		color: var(--dp-forest);
 	}
-	/* Municipis mirall (onada B): veïns funcionals com a pastilles enllaçades. */
-	.mirall {
-		list-style: none;
-		margin: 8px 0 0;
-		padding: 0;
-		display: flex;
-		flex-wrap: wrap;
-		gap: 8px;
-	}
-	.mirall__item {
-		display: inline-flex;
-		align-items: center;
-		gap: 8px;
-		padding: 6px 12px;
-		border: 1px solid var(--dp-border);
-		border-radius: 999px;
-		background: var(--dp-surface);
-		text-decoration: none;
-		color: var(--dp-text);
-		font-size: 0.9rem;
-		transition:
-			border-color 0.15s ease,
-			background 0.15s ease;
-	}
-	.mirall__item:hover {
-		border-color: var(--dp-border-strong);
-		background: var(--dp-accent-weak);
-	}
-	.mirall__dot {
-		width: 9px;
-		height: 9px;
-		border-radius: 50%;
-		flex: none;
-		box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
-	}
-	.mirall__nom {
-		font-weight: 600;
-	}
-	.mirall__tipo {
-		font-family: var(--dp-font-mono);
-		font-size: 0.66rem;
-		color: var(--dp-text-subtle);
-	}
+	/* (El mirall ara és la constel·lació cat-escala —MirallConstel.svelte—, amb estil propi.) */
 </style>
