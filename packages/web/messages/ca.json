@@ -144,7 +144,7 @@
   "map_granularity_comarca": "Comarca",
   "map_granularity_vegueria": "Vegueria",
   "map_legend_coverage_title": "Cobertura",
-  "map_legend_estimat": "Municipis estimats (Nivell C): ← menys / més presència que el padró →",
+  "map_legend_estimat": "Els municipis de fora del Berguedà són estimació (Nivell C), a la mateixa escala. Només es pinten per als indicadors que tenim a tot Catalunya (gent que el padró no veu, residus); per als altres queden atenuats.",
   "map_legend_coverage_complete": "Dades completes (Berguedà)",
   "map_legend_coverage_range": "Estimació en rang (resta de Catalunya)",
   "map_legend_coverage_none": "Forats puntuals sense dades · detall a municipi",

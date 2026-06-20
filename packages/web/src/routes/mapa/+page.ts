@@ -17,6 +17,7 @@
  */
 import { loadMunicipisDataset } from '$lib/data/dataset';
 import type { PernoctaData } from '$lib/contract/pernocta';
+import type { IndicadorsCatData } from '$lib/contract/indicadors';
 import type { FeatureCollection } from 'geojson';
 import type { PageLoad } from './$types';
 
@@ -41,5 +42,14 @@ export const load: PageLoad = async ({ fetch }) => {
 		pernocta = null;
 	}
 
-	return { dataset, geojson, comarques, vegueries, pernocta };
+	// Indicadors a escala Catalunya (gap, residus) per pintar la vista municipi a tot el país. No-fatal.
+	let catValues: IndicadorsCatData = {};
+	try {
+		const res = await fetch('/data/indicadors-catalunya.json');
+		if (res.ok) catValues = (await res.json()) as IndicadorsCatData;
+	} catch {
+		catValues = {};
+	}
+
+	return { dataset, geojson, comarques, vegueries, pernocta, catValues };
 };
