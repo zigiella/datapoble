@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import dlt
 
-from .config import COMARCA_CODI_PILOT, RAW_DIR, SOURCES
+from .config import RAW_DIR, SOURCES
 from .provenance import write_provenance
 from .socrata import fetch_all
 
@@ -20,14 +20,15 @@ TABLE = "rtc_establiments"
 
 
 @dlt.resource(name=TABLE, write_disposition="replace")
-def rtc_resource(where: str):
-    """Files crues de RTC per al filtre donat."""
+def rtc_resource(where: str | None):
+    """Files crues de RTC per al filtre donat (o totes si `where=None`)."""
     yield from fetch_all(SOURCES[SOURCE]["url"], where=where)
 
 
-def run(comarca_codi: str = COMARCA_CODI_PILOT) -> dict:
-    """Executa la ingesta RTC del Berguedà. Idempotent (replace)."""
-    where = f"codi_comarca_idescat='{comarca_codi}'"
+def run(comarca_codi: str | None = None) -> dict:
+    """Ingesta RTC. `comarca_codi=None` → TOT CATALUNYA; passa un codi de comarca Idescat
+    per acotar (p. ex. '14' = Berguedà). Idempotent (replace)."""
+    where = f"codi_comarca_idescat='{comarca_codi}'" if comarca_codi else None
     RAW_DIR.mkdir(parents=True, exist_ok=True)
     out_dir = RAW_DIR / SOURCE  # data/raw/rtc/ — el crea dlt
 

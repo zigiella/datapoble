@@ -18,7 +18,6 @@ from __future__ import annotations
 import dlt
 
 from .config import ELECCIONS_PILOT, RAW_DIR, SOURCES
-from .municipis import BERGUEDA_INE5
 from .provenance import write_provenance
 from .socrata import fetch_all
 
@@ -32,14 +31,13 @@ SELECT = (
 )
 
 
-def _where(eleccions: list[str], ine5: list[str]) -> str:
+def _where(eleccions: list[str], ine5: list[str] | None) -> str:
     elec = ",".join(f"'{e}'" for e in eleccions)
+    base = f"id_eleccio in ({elec}) and nom_nivell_territorial='Municipi'"
+    if not ine5:  # tot Catalunya: tots els municipis d'aquestes convocatòries
+        return base
     codes = ",".join(f"'{c}'" for c in ine5)
-    return (
-        f"id_eleccio in ({elec}) "
-        f"and nom_nivell_territorial='Municipi' "
-        f"and territori_codi in ({codes})"
-    )
+    return f"{base} and territori_codi in ({codes})"
 
 
 @dlt.resource(name=TABLE, write_disposition="replace")
@@ -50,10 +48,11 @@ def electoral_resource(where: str):
 
 def run(
     eleccions: list[str] = ELECCIONS_PILOT,
-    municipis_ine5: dict[str, str] = BERGUEDA_INE5,
+    municipis_ine5: dict[str, str] | None = None,
 ) -> dict:
-    """Executa la ingesta electoral del Berguedà (Parlament 2024 + 2021). Idempotent."""
-    where = _where(eleccions, list(municipis_ine5.keys()))
+    """Ingesta electoral (nivell Municipi). `municipis_ine5=None` → TOTS els munis de Catalunya
+    per a aquestes convocatòries; passa un dict ine5→nom per acotar (p. ex. el Berguedà). Idempotent."""
+    where = _where(eleccions, list(municipis_ine5.keys()) if municipis_ine5 else None)
     RAW_DIR.mkdir(parents=True, exist_ok=True)
     out_dir = RAW_DIR / SOURCE
 
