@@ -1,7 +1,13 @@
-"""Registre dels 31 municipis del Berguedà (pilot).
+"""Registre de municipis: el Berguedà (pilot, 31) i tot Catalunya (947).
 
 Clau: codi Idescat de 6 dígits (= INE5 + dígit de control), tal com l'usen RTC,
 residus i EMEX. ``ine5`` és els 5 primers dígits → clau de join del contracte.
+
+``BERGUEDA`` (hardcoded) és el pilot. ``CATALUNYA`` (carregat del registre
+``data/territorial/municipis-catalunya.csv``, generat per
+``tools/deriva_municipis_catalunya.py``) són els 947, per a l'extensió a tot el país
+(F1 de docs/pla-catalunya-profund.md). Els connectors per-muni (EMEX, demografia/origen)
+prenen un d'aquests dos diccionaris ``codi6 -> nom``.
 
 Avís (codi): Gósol és al Berguedà però té prefix de província Lleida (25). El seu
 codi Idescat és 251001 → ine5 derivat = 25100. El codi INE canònic de Gósol és
@@ -59,3 +65,33 @@ BERGUEDA_INE5: dict[str, str] = {codi6[:5]: nom for codi6, nom in BERGUEDA.items
 
 assert len(BERGUEDA_INE5) == 31, "31 ine5 únics"
 assert BERGUEDA_INE5.get("25100") == "Gósol"
+
+
+# --- Tot Catalunya (947) -------------------------------------------------------
+# Registre derivat (codi6 ↔ ine5 ↔ nom canònics) de la geometria ICGC + l'ARC.
+# Carregat de fitxer perquè és dada (947 files), no codi; es regenera amb
+# tools/deriva_municipis_catalunya.py. Càrrega tova: si el fitxer no hi és (clon
+# sense generar-lo), CATALUNYA queda buit i els connectors del pilot (default
+# BERGUEDA) segueixen funcionant — no trenquem el pilot ni el CI.
+def load_catalunya() -> dict[str, str]:
+    """``codi6 -> nom`` dels 947 municipis de Catalunya (registre derivat)."""
+    import csv
+
+    from .config import REPO_ROOT
+
+    path = REPO_ROOT / "data" / "territorial" / "municipis-catalunya.csv"
+    out: dict[str, str] = {}
+    if not path.exists():
+        return out
+    with path.open(encoding="utf-8", newline="") as f:
+        for row in csv.DictReader(f, delimiter=";"):
+            out[row["codi6"]] = row["nom"]
+    return out
+
+
+CATALUNYA: dict[str, str] = load_catalunya()
+CATALUNYA_INE5: dict[str, str] = {codi6[:5]: nom for codi6, nom in CATALUNYA.items()}
+
+# El Berguedà ha de ser un subconjunt exacte del registre de tot CAT (si està carregat).
+if CATALUNYA:
+    assert set(BERGUEDA) <= set(CATALUNYA), "els 31 codi6 del Berguedà han de ser dins del registre CAT"
