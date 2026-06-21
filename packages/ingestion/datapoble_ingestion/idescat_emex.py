@@ -100,9 +100,16 @@ def fetch_municipi(codi6: str, session: requests.Session | None = None) -> list[
     return rows
 
 
-def run(municipis: dict[str, str] = BERGUEDA, pause: float = 0.2) -> dict:
-    """Ingesta EMEX de tots els municipis del pilot. Idempotent (sobreescriu)."""
+def run(municipis: dict[str, str] = BERGUEDA, pause: float = 0.2, accumulate: bool = False) -> dict:
+    """Ingesta EMEX dels municipis donats. Idempotent.
+
+    `accumulate=False` (per defecte): sobreescriu el parquet sencer (pilot Berguedà).
+    `accumulate=True`: baixa a TROSSOS — carrega el parquet existent, en treu els municipis
+    d'aquest tros (els refresca) i hi concatena els nous. Així trossos successius (p. ex. per
+    província) s'acumulen i re-córrer un tros és idempotent. Vegeu docs/pla-catalunya-profund.md F1.2b.
+    """
     out_dir = raw_path(SOURCE)
+    out_file = out_dir / "idescat_emex.parquet"
     session = requests.Session()
     all_rows: list[dict] = []
     for codi6 in municipis:
@@ -111,9 +118,13 @@ def run(municipis: dict[str, str] = BERGUEDA, pause: float = 0.2) -> dict:
             time.sleep(pause)  # cortesia amb l'API pública
 
     df = pd.DataFrame(all_rows)
-    out_file = out_dir / "idescat_emex.parquet"
+    if accumulate and out_file.exists():
+        prev = pd.read_parquet(out_file)
+        prev = prev[~prev["codi6"].astype(str).isin({str(c) for c in municipis})]
+        df = pd.concat([prev, df], ignore_index=True)
     df.to_parquet(out_file, index=False)
 
+    n_total = int(df["codi6"].astype(str).nunique()) if not df.empty else 0
     write_provenance(
         SOURCE,
         out_dir,
@@ -122,7 +133,9 @@ def run(municipis: dict[str, str] = BERGUEDA, pause: float = 0.2) -> dict:
         query={"ids": list(municipis.keys()), "indicators": INDICATORS},
         extra={
             "loader": "requests",
-            "n_municipis": len(municipis),
+            "n_municipis": n_total,
+            "n_municipis_tros": len(municipis),
+            "mode": "accumulate" if accumulate else "replace",
             "format": "long (indicator x municipi)",
         },
     )
