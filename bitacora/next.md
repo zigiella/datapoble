@@ -52,6 +52,17 @@ límit de despesa; les tasques marcades **(IA)** sí (esperen que es reposi).*
     - ⏳ vista **vegueria**: info per mouse-over.
     - ⏳ **home:** indicador del mapa (tipologia→gap?) perquè mostri dada cat-escala a municipi (vot Bea).
 
+13. **[dades] Dataset PROFUND a tot Catalunya** (Sondeig) — Bea «volem fer-ho bé». Pla:
+    `docs/pla-catalunya-profund.md`. Estendre el dataset ric del Berguedà als 947, model unificat, honest.
+    - ~~Prova del model unificat al Berguedà (guardó ETCA)~~ ✅ #161 (PASSA: base Nivell C millora 11,9%→8,2%).
+    - ~~F1.1 registre de municipis CAT (codi6)~~ ✅ #162 · ~~F1.2a connectors bulk~~ ✅ #163 ·
+      ~~F1.2b per-muni a trossos (EMEX/origen)~~ ✅ #164 → **raw dels 947 baixat** (residus/rtc/icaen/
+      electoral/EMEX/origen; OSM diferit a 2a onada).
+    - ⏳ **F2 (cor):** instal·lar dbt · des-acotar `dbt_project.yml` · unificar el model (base Nivell C
+      + z-scores per `tipus_territorial`) · re-materialitzar marts a 947 · **re-validar Berguedà vs ETCA**.
+    - ⏳ F3 exportar l'espina a tot CAT · F4 harmonitzar el web (un tooltip + trames a tot CAT) ·
+      F5 2a onada (OSM + subtipus).
+
 ## Diferit a Fase 2
 Licitacions de veritat (menors → majors/diputació) · fondària completa de fitxa (tipologia +
 lectures-IA) per a tot CAT · fonts noves §12.
