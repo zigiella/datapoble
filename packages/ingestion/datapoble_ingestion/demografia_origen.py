@@ -251,11 +251,15 @@ def fetch_estrangera_serie(codi6: str, session: requests.Session | None = None) 
 # --------------------------------------------------------------------------- #
 # Runner
 # --------------------------------------------------------------------------- #
-def run(municipis: dict[str, str] = BERGUEDA, pause: float = 0.2) -> dict:
-    """Ingesta de composició i arrelament dels 31 municipis del pilot. Idempotent.
+def run(municipis: dict[str, str] = BERGUEDA, pause: float = 0.2, accumulate: bool = False) -> dict:
+    """Ingesta de composició i arrelament dels municipis donats. Idempotent.
 
     Dues vies Idescat: EMEX (foto) + Població estrangera (sèrie). Escriu dos parquets
     i un sidecar de procedència compartit.
+
+    `accumulate=False` (per defecte): sobreescriu (pilot Berguedà). `accumulate=True`: baixa a
+    TROSSOS — carrega els parquets existents, en treu els municipis d'aquest tros (els refresca) i
+    hi concatena els nous, perquè trossos successius s'acumulin. Vegeu docs/pla-catalunya-profund.md F1.2b.
     """
     out_dir = raw_path(SOURCE)
     session = requests.Session()
@@ -275,6 +279,14 @@ def run(municipis: dict[str, str] = BERGUEDA, pause: float = 0.2) -> dict:
 
     snap_file = out_dir / "origen_snapshot.parquet"
     serie_file = out_dir / "estrangera_serie.parquet"
+    if accumulate:
+        chunk = {str(c) for c in municipis}
+        if snap_file.exists():
+            prev = pd.read_parquet(snap_file)
+            snap_df = pd.concat([prev[~prev["codi6"].astype(str).isin(chunk)], snap_df], ignore_index=True)
+        if serie_file.exists():
+            prev = pd.read_parquet(serie_file)
+            serie_df = pd.concat([prev[~prev["codi6"].astype(str).isin(chunk)], serie_df], ignore_index=True)
     snap_df.to_parquet(snap_file, index=False)
     serie_df.to_parquet(serie_file, index=False)
 
@@ -303,7 +315,9 @@ def run(municipis: dict[str, str] = BERGUEDA, pause: float = 0.2) -> dict:
         },
         extra={
             "loader": "requests",
-            "n_municipis": len(municipis),
+            "n_municipis": int(serie_df["codi6"].astype(str).nunique()) if not serie_df.empty else 0,
+            "n_municipis_tros": len(municipis),
+            "mode": "accumulate" if accumulate else "replace",
             "snapshot_rows": len(snap_df),
             "snapshot_year": snap_year,
             "snapshot_format": "long (municipi×nivell×indicador); nivells = municipi/comarca/catalunya",

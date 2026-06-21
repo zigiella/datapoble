@@ -37,11 +37,25 @@ SOURCE_NAMES = [
 
 # OSM encara no està des-acotat a Catalunya (cal bbox CAT + geometria 947 → F1.2b).
 OSM_PENDENT_CAT = {"restauracio_osm", "serveis_osm"}
+# Connectors per-muni (crida lenta): es poden baixar a TROSSOS (--provincia) i acumular.
+PER_MUNI = {"idescat_emex", "demografia_origen"}
+# Codi de província (2 primers dígits del codi6 Idescat).
+PROVINCIES = {"08": "Barcelona", "17": "Girona", "25": "Lleida", "43": "Tarragona"}
 
 
-def _invoke(name: str, scope: str):
+def _per_muni_chunk(scope: str, provincia: str | None) -> tuple[dict, bool]:
+    """(municipis, accumulate) per als connectors per-muni segons abast i tros de província."""
+    if scope == "bergueda":
+        return BERGUEDA, False
+    if provincia:
+        sub = {c: n for c, n in CATALUNYA.items() if c[:2] == provincia}
+        return sub, True  # tros → acumula (no esborra els altres trossos)
+    return CATALUNYA, False  # tot CAT d'un cop → substitueix
+
+
+def _invoke(name: str, scope: str, provincia: str | None = None):
     """Crida el connector amb l'abast triat. `bergueda` = pilot (comportament previ);
-    `catalunya` = sense filtre / registre dels 947."""
+    `catalunya` = sense filtre / registre dels 947 (per-muni: opcionalment per `--provincia`)."""
     berg = scope == "bergueda"
     if name == "rtc":
         return rtc.run(COMARCA_CODI_PILOT if berg else None)
@@ -51,10 +65,10 @@ def _invoke(name: str, scope: str):
         return icaen_consum.run(COMARCA_PILOT if berg else None)
     if name == "electoral":
         return electoral.run(municipis_ine5=BERGUEDA_INE5 if berg else None)
-    if name == "idescat_emex":
-        return idescat_emex.run(municipis=BERGUEDA if berg else CATALUNYA)
-    if name == "demografia_origen":
-        return demografia_origen.run(municipis=BERGUEDA if berg else CATALUNYA)
+    if name in PER_MUNI:
+        munis, accumulate = _per_muni_chunk(scope, provincia)
+        mod = idescat_emex if name == "idescat_emex" else demografia_origen
+        return mod.run(municipis=munis, accumulate=accumulate)
     if name in OSM_PENDENT_CAT:
         if not berg:
             raise NotImplementedError(
@@ -73,16 +87,29 @@ def main(argv: list[str] | None = None) -> int:
         "--scope", choices=["bergueda", "catalunya"], default="bergueda",
         help="abast territorial: 'bergueda' (pilot, per defecte) o 'catalunya' (947 munis)",
     )
+    parser.add_argument(
+        "--provincia", choices=sorted(PROVINCIES), default=None,
+        help="baixa NOMÉS aquesta província (per-muni, a trossos acumulables): "
+             "08=Barcelona, 17=Girona, 25=Lleida, 43=Tarragona. Requereix --scope catalunya.",
+    )
     args = parser.parse_args(argv)
+
+    if args.provincia and args.scope != "catalunya":
+        parser.error("--provincia requereix --scope catalunya")
 
     sources = SOURCE_NAMES if args.source == "all" else [args.source]
     results = []
     for name in sources:
-        if args.source == "all" and args.scope == "catalunya" and name in OSM_PENDENT_CAT:
+        if args.scope == "catalunya" and name in OSM_PENDENT_CAT and args.source == "all":
             print(f"[ingestion] {name} … OMÈS (OSM a CAT pendent de F1.2b)", file=sys.stderr)
             continue
-        print(f"[ingestion] {name} ({args.scope}) …", file=sys.stderr)
-        results.append(_invoke(name, args.scope))
+        if args.provincia and name not in PER_MUNI:
+            print(f"[ingestion] {name} … OMÈS (--provincia només aplica als per-muni: {sorted(PER_MUNI)})",
+                  file=sys.stderr)
+            continue
+        chunk = f" {PROVINCIES[args.provincia]}" if args.provincia and name in PER_MUNI else ""
+        print(f"[ingestion] {name} ({args.scope}{chunk}) …", file=sys.stderr)
+        results.append(_invoke(name, args.scope, args.provincia))
 
     print(json.dumps(results, ensure_ascii=False, indent=2))
     return 0
