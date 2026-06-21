@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import dlt
 
-from .config import COMARCA_PILOT, RAW_DIR, SOURCES
+from .config import RAW_DIR, SOURCES
 from .provenance import write_provenance
 from .socrata import fetch_all
 
@@ -18,13 +18,14 @@ TABLE = "residus_municipals"
 
 
 @dlt.resource(name=TABLE, write_disposition="replace")
-def residus_resource(where: str):
+def residus_resource(where: str | None):
     yield from fetch_all(SOURCES[SOURCE]["url"], where=where)
 
 
-def run(comarca: str = COMARCA_PILOT) -> dict:
-    """Executa la ingesta de residus del Berguedà (sèrie completa). Idempotent."""
-    where = f"comarca='{comarca}'"
+def run(comarca: str | None = None) -> dict:
+    """Ingesta de residus (sèrie completa). `comarca=None` → TOT CATALUNYA (sense filtre);
+    passa un nom de comarca per acotar (p. ex. el pilot del Berguedà). Idempotent."""
+    where = f"comarca='{comarca}'" if comarca else None
     RAW_DIR.mkdir(parents=True, exist_ok=True)
     out_dir = RAW_DIR / SOURCE
 

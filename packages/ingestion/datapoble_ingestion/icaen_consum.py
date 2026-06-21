@@ -23,7 +23,7 @@ from __future__ import annotations
 
 import dlt
 
-from .config import COMARCA_PILOT, RAW_DIR, SOURCES
+from .config import RAW_DIR, SOURCES
 from .provenance import write_provenance
 from .socrata import fetch_all
 
@@ -32,23 +32,27 @@ TABLE = "consum_electric_municipal"
 
 
 @dlt.resource(name=TABLE, write_disposition="replace")
-def icaen_consum_resource(where: str):
-    """Files crues de consum elèctric per al filtre donat (tots els sectors)."""
+def icaen_consum_resource(where: str | None):
+    """Files crues de consum elèctric per al filtre donat (tots els sectors; o totes si None)."""
     yield from fetch_all(SOURCES[SOURCE]["url"], where=where)
 
 
-def run(comarca: str = COMARCA_PILOT) -> dict:
-    """Executa la ingesta de consum elèctric del Berguedà. Idempotent (replace).
+def run(comarca: str | None = None) -> dict:
+    """Ingesta de consum elèctric. `comarca=None` → TOT CATALUNYA; passa un nom de comarca per
+    acotar (p. ex. el Berguedà). Idempotent (replace).
 
     El camp ``comarca`` al dataset ``8idm-becu`` ve en MAJÚSCULES i sense accents
     (``BERGUEDA``), a diferència d'altres datasets — per això normalitzem aquí.
     """
-    comarca_norm = (
-        comarca.upper()
-        .replace("À", "A").replace("Á", "A").replace("È", "E").replace("É", "E")
-        .replace("Í", "I").replace("Ò", "O").replace("Ó", "O").replace("Ú", "U")
-    )
-    where = f"comarca='{comarca_norm}'"
+    if comarca:
+        comarca_norm = (
+            comarca.upper()
+            .replace("À", "A").replace("Á", "A").replace("È", "E").replace("É", "E")
+            .replace("Í", "I").replace("Ò", "O").replace("Ó", "O").replace("Ú", "U")
+        )
+        where = f"comarca='{comarca_norm}'"
+    else:
+        where = None
     RAW_DIR.mkdir(parents=True, exist_ok=True)
     out_dir = RAW_DIR / SOURCE
 
