@@ -64,9 +64,20 @@ Si simplement correm el mateix SQL amb 947, comparem Barcelona amb Gósol → so
 - **F1 · Des-acotar la ingesta (risc baix).** Connectors + llista + geometria + `dbt_project.yml` a
   tot CAT → `data/raw` amb els 947. **No toca encara la sortida del Berguedà.** Verificació: recompte
   de files per font ≈ 947; mostres puntuals.
-- **F2 · Unificar el model (mart).** Base Nivell C, z-scores per `tipus_territorial`, bases per tipus,
-  confiança graduada. Materialitzar `mart_municipi` per als 947. Verificació: **re-validació ETCA del
-  Berguedà** (guardó §3.1) + sanity per tipus.
+- **F2 · Unificar el model (mart).** *Diagnòstic fet (2026-06-22): dbt corre a 947; els únics
+  blocatges eren el `seed` electoral (trivial) i l'acoblament dur a l'OSM (2a onada).* Disseny concret:
+  - **Pont Nivell C → dbt:** `data/territorial/nivellc_regressio.csv` (JA existeix, 927 munis amb
+    `base_pred` + `tipus_territorial`) entra com a staging `stg_nivellc`. El mart el consumeix.
+  - **Base de presència (L1):** el macro `estimacio_presencia(padró, kwh_hab, base)` ja pren la base
+    com a paràmetre → passar-li `base_pred` per-muni en lloc de `var('base_electric')` (1224).
+  - **Stats per `tipus_territorial`:** med/vstats/sstats/q passen de globals (31) a **per tipus**
+    (z-scores i confiança comparant iguals amb iguals).
+  - **`comarca` per muni:** substituir el literal `'{{ var("comarca") }}'` per un join (territori).
+  - **OSM-opcional (espina):** `stg_restauracio_osm`/`stg_serveis_osm` toleren l'absència de raw;
+    `tipologia` + restauració/serveis queden **pendents** (NULL) fora del Berguedà → 2a onada (F5).
+  - **Quirk d'entorn:** dbt a Windows necessita `PYTHONUTF8=1` (accents als fitxers del projecte).
+  - Materialitzar `mart_municipi` per als ~927. Verificació: **re-validació ETCA del Berguedà**
+    (guardó §3.1) + sanity per tipus.
 - **F3 · Exportar l'espina a tot CAT.** `municipis.catalunya.json` (o estendre el dataset) amb
   l'espina §3.4 per als 947, rang + confiança. Verificació: l'artefacte cobreix ~927 amb confiança.
 - **F4 · Harmonitzar el web.** Un sol tooltip + fitxa + **trames a tot CAT** (segons confiança, no
