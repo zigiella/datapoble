@@ -22,6 +22,8 @@ vars:
   # arrel de la raw, relativa a packages/transform (on s'invoca dbt)
   raw_root: "../../data/raw"
   marts_root: "../../data/marts"
+  # arrel de dades territorials versionades (registre, Nivell C): pont Python→dbt (F2)
+  territorial_root: "../../data/territorial"
   # --- Indicador estrella: MODEL DE 3 CAPES (mètode de Talaia, validat sobre dades) ---
   # Tres senyals físics independents per municipi, cadascun amb la seva BASE = la
   # generació d'un resident "normal" (viles de vall poc turístiques, IETR<5: Avià,
