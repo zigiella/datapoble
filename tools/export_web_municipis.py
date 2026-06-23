@@ -48,7 +48,10 @@ MART_MUNI = REPO / "data" / "marts" / "mart_municipi.parquet"
 MART_ELEC = REPO / "data" / "marts" / "mart_electoral.parquet"
 MART_DEMOG = REPO / "data" / "marts" / "mart_demografia.parquet"
 METRICS_YML = REPO / "semantic" / "metrics.yml"
-OUT = REPO / "data" / "web" / "municipis.bergueda.json"
+# Sortida per abast (F3): el pilot profund del Berguedà (31, amb política/origen/OSM) i l'espina de
+# tot Catalunya (947 — presència/residus/IETR/confiança per a tots; els extres només al Berguedà).
+OUT_BERGUEDA = REPO / "data" / "web" / "municipis.bergueda.json"
+OUT_CATALUNYA = REPO / "data" / "web" / "municipis.catalunya.json"
 
 # Convocatòria electoral vigent per a les columnes polítiques del web.
 ELEC = "A20241"
@@ -306,9 +309,10 @@ def build_municipis(muni: pd.DataFrame, elec: pd.DataFrame, demog: pd.DataFrame)
     return out
 
 
-def build_comarca(muni: pd.DataFrame, contract: dict) -> dict:
-    """KPIs comarcals REALS: suma per a recomptes; mitjana ponderada per població
-    per a ràtios per càpita; mitjana simple per a percentatges/índex."""
+def build_comarca(muni: pd.DataFrame, contract: dict, label: str | None = None) -> dict:
+    """KPIs agregats REALS: suma per a recomptes; mitjana ponderada per població
+    per a ràtios per càpita; mitjana simple per a percentatges/índex. `label` força el
+    nom del resum (p. ex. «Catalunya» per a l'abast tot-CAT); si no, el topònim del pilot."""
     pop = muni["poblacio"].astype(float)
     tot_pop = float(pop.sum())
     tot_viv = float(muni["hab_total"].astype(float).sum())
@@ -337,9 +341,8 @@ def build_comarca(muni: pd.DataFrame, contract: dict) -> dict:
         # IETR comarcal: mediana de la distribució normalitzada (definició del contracte).
         "IETR": round(float(muni["IETR"].astype(float).median()), 1),
     }
-    # Nom de la comarca: és el topònim del pilot (igual en ca/es), no una mètrica
-    # del contracte. Coherent amb el mock (`comarca.label`).
-    comarca_nom = str(muni["comarca"].iloc[0]) if "comarca" in muni.columns else "Berguedà"
+    # Nom del resum: forçat (`label`, p. ex. «Catalunya») o el topònim del pilot. Igual en ca/es.
+    comarca_nom = label or (str(muni["comarca"].iloc[0]) if "comarca" in muni.columns else "Berguedà")
     return {
         "label": {"ca": comarca_nom, "es": comarca_nom},
         "num_municipis": int(len(muni)),
@@ -347,27 +350,42 @@ def build_comarca(muni: pd.DataFrame, contract: dict) -> dict:
     }
 
 
-def build_dataset() -> dict:
+def build_dataset(scope: str = "bergueda") -> dict:
     contract = yaml.safe_load(METRICS_YML.read_text(encoding="utf-8"))
     muni = pd.read_parquet(MART_MUNI)
     elec = pd.read_parquet(MART_ELEC)
     demog = pd.read_parquet(MART_DEMOG)
 
-    n = len(muni)
-    if n != 31:
-        print(f"AVÍS: mart_municipi té {n} files (s'esperaven 31).", file=sys.stderr)
+    if scope == "bergueda":
+        # Pilot profund: es cenyeix al Berguedà (per comarca real del mart). Manté el resum comarcal.
+        muni = muni[muni["comarca"] == "Berguedà"].copy()
+        n = len(muni)
+        if n != 31:
+            print(f"AVÍS: el Berguedà té {n} files (s'esperaven 31).", file=sys.stderr)
+        scope_label = "Berguedà (31 municipis)"
+        comarca = build_comarca(muni, contract)
+    else:  # catalunya: tots els munis; resum agregat a escala «Catalunya».
+        n = len(muni)
+        if n < 900:
+            print(f"AVÍS: tot CAT té {n} files (s'esperaven ~947).", file=sys.stderr)
+        scope_label = f"Catalunya ({n} municipis)"
+        comarca = build_comarca(muni, contract, label="Catalunya")
 
     return {
         "contractVersion": str(contract["meta"]["version"]),
-        "scope": str(contract["meta"]["scope"]),
+        "scope": scope_label,
         "metrics": build_metrics(contract),
         "municipis": build_municipis(muni, elec, demog),
-        "comarca": build_comarca(muni, contract),
+        "comarca": comarca,
     }
 
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="export_web_municipis")
+    ap.add_argument(
+        "--scope", choices=["bergueda", "catalunya"], default="bergueda",
+        help="abast: 'bergueda' (pilot profund, 31) o 'catalunya' (espina, 947)",
+    )
     ap.add_argument(
         "--check", action="store_true",
         help="no escriu; falla (codi 1) si el JSON al disc no coincideix amb el generat",
@@ -379,31 +397,32 @@ def main(argv: list[str] | None = None) -> int:
             print(f"FALLA: no existeix {p} (executa abans el pipeline transform)", file=sys.stderr)
             return 2
 
-    dataset = build_dataset()
+    out = OUT_BERGUEDA if args.scope == "bergueda" else OUT_CATALUNYA
+    dataset = build_dataset(args.scope)
     payload = json.dumps(dataset, ensure_ascii=False, indent=2) + "\n"
 
     if args.check:
-        if not OUT.exists():
-            print(f"FALLA (--check): no existeix {OUT}", file=sys.stderr)
+        if not out.exists():
+            print(f"FALLA (--check): no existeix {out}", file=sys.stderr)
             return 1
         # Llegim SENSE traducció de finals de línia (newline="") perquè la
         # comparació sigui estable a Windows/Linux: el fitxer sempre s'escriu amb
         # LF (coherent amb `.gitattributes` eol=lf).
-        with OUT.open("r", encoding="utf-8", newline="") as fh:
+        with out.open("r", encoding="utf-8", newline="") as fh:
             on_disk = fh.read()
         if on_disk != payload:
-            print(f"FALLA (--check): {OUT} està desactualitzat (re-executa sense --check)", file=sys.stderr)
+            print(f"FALLA (--check): {out} està desactualitzat (re-executa sense --check)", file=sys.stderr)
             return 1
-        print(f"OK (--check): {OUT} al dia ({len(dataset['municipis'])} municipis).")
+        print(f"OK (--check): {out} al dia ({len(dataset['municipis'])} municipis).")
         return 0
 
-    OUT.parent.mkdir(parents=True, exist_ok=True)
+    out.parent.mkdir(parents=True, exist_ok=True)
     # newline="\n": LF explícit (no CRLF a Windows) → byte-estable amb eol=lf.
-    with OUT.open("w", encoding="utf-8", newline="\n") as fh:
+    with out.open("w", encoding="utf-8", newline="\n") as fh:
         fh.write(payload)
     n_muni = len(dataset["municipis"])
     n_metrics = len(dataset["metrics"])
-    print(f"Escrit {OUT.relative_to(REPO).as_posix()} · {n_muni} municipis · {n_metrics} mètriques.")
+    print(f"Escrit {out.relative_to(REPO).as_posix()} · {n_muni} municipis · {n_metrics} mètriques.")
     return 0
 
 

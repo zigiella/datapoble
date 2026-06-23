@@ -33,6 +33,7 @@ const DEST_DIR = resolve(__dirname, '../static/data');
 // la validació ETCA és opcional (la genera `tools/validacio_etca.py`).
 const FILES = [
 	{ src: resolve(REPO_ROOT, 'data/web/municipis.bergueda.json'), name: 'municipis.bergueda.json' },
+	{ src: resolve(REPO_ROOT, 'data/web/municipis.catalunya.json'), name: 'municipis.catalunya.json' },
 	{ src: resolve(REPO_ROOT, 'data/web/etca-validacio.json'), name: 'etca-validacio.json' },
 	{ src: resolve(REPO_ROOT, 'data/web/licitacions-bergueda.json'), name: 'licitacions-bergueda.json' },
 	{ src: resolve(REPO_ROOT, 'data/web/lectures.bergueda.json'), name: 'lectures.bergueda.json' },
