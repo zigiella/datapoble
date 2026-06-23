@@ -58,10 +58,13 @@ límit de despesa; les tasques marcades **(IA)** sí (esperen que es reposi).*
     - ~~F1.1 registre de municipis CAT (codi6)~~ ✅ #162 · ~~F1.2a connectors bulk~~ ✅ #163 ·
       ~~F1.2b per-muni a trossos (EMEX/origen)~~ ✅ #164 → **raw dels 947 baixat** (residus/rtc/icaen/
       electoral/EMEX/origen; OSM diferit a 2a onada).
-    - ⏳ **F2 (cor):** instal·lar dbt · des-acotar `dbt_project.yml` · unificar el model (base Nivell C
-      + z-scores per `tipus_territorial`) · re-materialitzar marts a 947 · **re-validar Berguedà vs ETCA**.
-    - ⏳ F3 exportar l'espina a tot CAT · F4 harmonitzar el web (un tooltip + trames a tot CAT) ·
-      F5 2a onada (OSM + subtipus).
+    - ~~**F2.1** dbt + pont stg_nivellc~~ ✅ #166 · ~~**F2.2** unificar mart_municipi a 947~~ ✅ #167:
+      base L1 = base_pred per muni · confiança per tipus_territorial · comarca per muni · OSM 2a onada
+      (tipologia/restauració Berguedà, resta `pendent`). **Guardó ETCA Berguedà 8,2%/ρ=0,967** (= #161).
+      947 munis, 927 amb presència. Verificadors del CI (verify_marts/derive_fase1/etca/tipus) al dia.
+    - ⏳ **F3** exportar l'espina a tot CAT (`export_web_municipis` → dataset 927 amb presència+confiança;
+      altres marts —electoral/demografia— encara Berguedà) · **F4** harmonitzar el web (un tooltip +
+      trames a tot CAT) · **F5** 2a onada (OSM + subtipus).
 
 ## Diferit a Fase 2
 Licitacions de veritat (menors → majors/diputació) · fondària completa de fitxa (tipologia +
