@@ -118,6 +118,32 @@ function buildComarques() {
 
 buildComarques();
 
+/**
+ * Parteix `municipis.catalunya.json` (947 munis) en un fitxer PER MUNICIPI a `static/data/muni/<ine5>.json`
+ * (només la fila `MunicipiRow`: ine5+nom+idescat6+values). Per què: la fitxa es prerenderitza per muni
+ * (947×2) i, si carregués el dataset sencer (1,8 MB), cada pàgina l'incrustaria. Amb un fitxer per muni,
+ * cada fitxa només incrusta el SEU (~2 kB) → client lleuger i build ràpid. Build-only (static/ és
+ * gitignored). El catàleg de `metrics` segueix venint del dataset del Berguedà (mateix per a tots).
+ */
+function buildMuniSplit() {
+	const src = resolve(REPO_ROOT, 'data/web/municipis.catalunya.json');
+	if (!existsSync(src)) {
+		console.warn(`[copy-data] AVÍS: no s'ha trobat ${src}; no es parteixen les fitxes per municipi.`);
+		return;
+	}
+	const data = JSON.parse(readFileSync(src, 'utf8'));
+	const muniDir = resolve(DEST_DIR, 'muni');
+	mkdirSync(muniDir, { recursive: true });
+	let n = 0;
+	for (const [ine5, row] of Object.entries(data.municipis)) {
+		writeFileSync(resolve(muniDir, `${ine5}.json`), JSON.stringify(row));
+		n++;
+	}
+	console.log(`[copy-data] OK: ${n} fitxes per municipi → static/data/muni/ (de municipis.catalunya.json)`);
+}
+
+buildMuniSplit();
+
 for (const f of FILES) {
 	if (!existsSync(f.src)) {
 		// CI i clons sense els marts no tenen la font generada: no és un error fatal.

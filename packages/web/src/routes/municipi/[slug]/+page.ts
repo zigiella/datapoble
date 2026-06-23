@@ -18,6 +18,7 @@
  * cada poble (SEO + enllaços directes), sense servidor en runtime.
  */
 import { loadMunicipisDataset } from '$lib/data/dataset';
+import type { MunicipiRow } from '$lib/contract/types';
 import { buildSlugIndex, toSlug } from '$lib/contract/slug';
 import type { LecturesData, LecturaEntry } from '$lib/contract/lectures';
 import type { PernoctaData, PernoctaMuni } from '$lib/contract/pernocta';
@@ -94,8 +95,19 @@ export const load: PageLoad = async ({ fetch, params }) => {
 		}
 	}
 
-	// `row` (dades completes del Berguedà): null per a la resta de Catalunya.
-	const row = ine5 ? (dataset.municipis[ine5] ?? null) : null;
+	// `row` (MunicipiRow): ESPINA per a TOTS els municipis. El Berguedà ja és al dataset carregat (camí
+	// ràpid, amb tots els extres); la resta de Catalunya ve del fitxer per muni que el prebuild parteix
+	// de `municipis.catalunya.json` (espina + extres en NULL/`pendent` honest). Prerender-safe, no-fatal.
+	const isBergueda = !!(ine5 && dataset.municipis[ine5]);
+	let row: MunicipiRow | null = isBergueda ? dataset.municipis[ine5 as string] : null;
+	if (ine5 && !row) {
+		try {
+			const res = await fetch(`/data/muni/${ine5}.json`);
+			if (res.ok) row = (await res.json()) as MunicipiRow;
+		} catch {
+			row = null;
+		}
+	}
 
 	// Presència estimada EN RANG (Nivell C) per als munis coberts FORA del Berguedà. Prerender-safe.
 	let pernocta: PernoctaMuni | null = null;
@@ -161,7 +173,7 @@ export const load: PageLoad = async ({ fetch, params }) => {
 	// resta de Catalunya no fa fetches inútils en prerender. Prerender-safe.
 	// (Licitacions aparcades per al llançament —decisió Bea—: la fitxa no en mostra secció.)
 	let lectura: LecturaEntry | null = null;
-	if (row) {
+	if (isBergueda) {
 		try {
 			const res = await fetch('/data/lectures.bergueda.json');
 			if (res.ok) {
