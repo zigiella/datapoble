@@ -37,10 +37,10 @@ MART = REPO / "data" / "marts" / "mart_municipi.parquet"
 # normal un cop materialitzades, perquè el parquet és l'artefacte versionat).
 SERVEIS_RAW = REPO / "data" / "raw" / "serveis_osm" / "serveis_osm.parquet"
 
-# Vars del model (dbt_project.yml). Han de coincidir amb les del pipeline.
+# Vars del model (dbt_project.yml). Han de coincidir amb les del pipeline. (La base elèctrica L1 ja
+# NO és fixa: és base_pred per muni, columna del mart — vegeu kwh_base_ratio.)
 POBLACIO_MIN_CONFIANCA = 75
 BASE_RESIDENCIAL = 410
-BASE_ELECTRIC = 1224
 BASE_VIDRE = 26.5
 
 # Columnes noves de la Fase 1 (ordre d'inserció just després de IETR_rank).
@@ -81,58 +81,27 @@ nrm as (
     select ine5, (n_np+n_hh)/2.0 as A_resid, (n_r1+n_r2)/2.0 as B_turis from norm
 ),
 
--- sstats / zsig / zsig2 / tipo / conf : còpia literal de mart_municipi.sql.
+-- CONFIANÇA per tipus_territorial (z de kg/kwh/%no-principal) — espina, tots els munis.
+-- Mirall EXACTE de les CTEs sstats/zconf/conf de mart_municipi.sql (escala Catalunya, F2).
 sstats as (
-    select
-        avg(gap_pernocta_pct) gap_avg, stddev_pop(gap_pernocta_pct) gap_sd,
-        avg(index_turisme) tur_avg, stddev_pop(index_turisme) tur_sd,
-        avg(pct_noprincipal) np_avg, stddev_pop(pct_noprincipal) np_sd,
+    select tipus_territorial,
         avg(kg_hab_any) kg_avg, stddev_pop(kg_hab_any) kg_sd,
         avg(kwh_hab) kwh_avg, stddev_pop(kwh_hab) kwh_sd,
-        avg(vidre_hab) vid_avg, stddev_pop(vidre_hab) vid_sd,
-        avg(restauracio_per_1000hab) rest_avg, stddev_pop(restauracio_per_1000hab) rest_sd,
-        avg(ln(serveis_estab + 1)) lserv_avg, stddev_pop(ln(serveis_estab + 1)) lserv_sd,
-        avg(ln(poblacio)) lpop_avg, stddev_pop(ln(poblacio)) lpop_sd,
-        avg(ln(carrega_total_est)) lcar_avg, stddev_pop(ln(carrega_total_est)) lcar_sd
-    from m
+        avg(pct_noprincipal) np_avg, stddev_pop(pct_noprincipal) np_sd
+    from m where tipus_territorial is not null group by tipus_territorial
 ),
-zsig as (
+zconf as (
     select m.ine5,
-        (m.gap_pernocta_pct - s.gap_avg)/nullif(s.gap_sd,0) z_gap,
-        (m.index_turisme - s.tur_avg)/nullif(s.tur_sd,0) z_tur,
-        (m.pct_noprincipal - s.np_avg)/nullif(s.np_sd,0) z_np,
         (m.kg_hab_any - s.kg_avg)/nullif(s.kg_sd,0) z_kg,
         (m.kwh_hab - s.kwh_avg)/nullif(s.kwh_sd,0) z_kwh,
-        (m.vidre_hab - s.vid_avg)/nullif(s.vid_sd,0) z_vid,
-        (m.restauracio_per_1000hab - s.rest_avg)/nullif(s.rest_sd,0) z_rest,
-        (ln(m.serveis_estab + 1) - s.lserv_avg)/nullif(s.lserv_sd,0) z_serv,
-        (ln(m.poblacio) - s.lpop_avg)/nullif(s.lpop_sd,0) z_pop,
-        (ln(m.carrega_total_est) - s.lcar_avg)/nullif(s.lcar_sd,0) z_carr
-    from m cross join sstats s
-),
-zsig2 as (select *, (z_kg+z_vid+z_rest)/3.0 as z_act from zsig),
-tipo as (
-    select ine5,
-        case
-            -- capital_serveis = CENTRE de serveis real (no «muni gran»): dotació de
-            -- comerç/serveis per sobre de la comarca (z_serv) + càrrega humana real
-            -- (z_carr) + turisme NO dominant + SÒL de 2000 hab (capçalera = massa
-            -- crítica; sota el sòl, dotació alta = cas aïllat de vall, p.ex. la Pobla
-            -- de Lillet → es calibra per comarca a Catalunya). Definidor: z_serv.
-            when m.poblacio >= 2000 and z_serv >= 0.8 and z_carr >= 0.5 and z_tur <= 0.3 then 'capital_serveis'
-            when z_pop <= -0.5 and z_tur <= -0.3 and z_act <= -0.2 and z_gap <= 0.2 then 'buit_administratiu'
-            when z_tur >= 0.6 and z_act >= 0.4 and z_gap <= 0.4 then 'excursio'
-            when z_gap >= 0.5 and (z_np >= 0.5 or z_tur >= 0.7) then 'segona_residencia'
-            when z_gap >= 0.4 and z_tur <= 0.0 then 'dormitori_invisible'
-            else 'indeterminat'
-        end as tipologia
-    from zsig2 join m using (ine5)
+        (m.pct_noprincipal - s.np_avg)/nullif(s.np_sd,0) z_np
+    from m join sstats s using (tipus_territorial)
 ),
 conf as (
     select z.ine5,
         least(100.0, greatest(0.0,
             40.0 * least(1.0, greatest(0.0,
-                (ln(m.poblacio) - ln({POBLACIO_MIN_CONFIANCA}))
+                (ln(nullif(m.poblacio,0)) - ln({POBLACIO_MIN_CONFIANCA}))
                 / (ln({BASE_RESIDENCIAL}) - ln({POBLACIO_MIN_CONFIANCA}))))
             + 35.0 * greatest(0.0, 1.0 -
                 (greatest(z.z_kg, z.z_kwh, z.z_np) - least(z.z_kg, z.z_kwh, z.z_np)) / 3.0)
@@ -145,32 +114,71 @@ conf as (
             - 10.0 * least(1.0, greatest(0.0,
                 (greatest(abs(z.z_kg), abs(z.z_kwh), abs(z.z_np)) - 2.0) / 1.0))
         )) as confianca_score,
-        -- DIVERGÈNCIA DELS SENYALS (0-100): el spread dels 3 z de presència (z_kg/z_kwh/z_np),
-        -- exactament el component (b) de confianca_score però exposat tot sol i llegible:
-        -- 0 = concordants · 100 = màxima discrepància. Fa auditable el «per què» de la confiança.
         round(100.0 * least(1.0, greatest(0.0,
             (greatest(z.z_kg, z.z_kwh, z.z_np) - least(z.z_kg, z.z_kwh, z.z_np)) / 3.0)), 0) as divergencia_senyals
-    from zsig2 z join m using (ine5)
+    from zconf z join m using (ine5)
+),
+
+-- TIPOLOGIA (2a onada): NOMÉS munis amb OSM (serveis_estab not null = Berguedà). Referència = els
+-- coberts (preserva la classificació provada). Mirall de bstats/btipo/tipo de mart_municipi.sql.
+bstats as (
+    select
+        avg(gap_pernocta_pct) gap_avg, stddev_pop(gap_pernocta_pct) gap_sd,
+        avg(index_turisme) tur_avg, stddev_pop(index_turisme) tur_sd,
+        avg(pct_noprincipal) np_avg, stddev_pop(pct_noprincipal) np_sd,
+        avg(kg_hab_any) kg_avg, stddev_pop(kg_hab_any) kg_sd,
+        avg(vidre_hab) vid_avg, stddev_pop(vidre_hab) vid_sd,
+        avg(restauracio_per_1000hab) rest_avg, stddev_pop(restauracio_per_1000hab) rest_sd,
+        avg(ln(serveis_estab + 1)) lserv_avg, stddev_pop(ln(serveis_estab + 1)) lserv_sd,
+        avg(ln(poblacio)) lpop_avg, stddev_pop(ln(poblacio)) lpop_sd,
+        avg(ln(carrega_total_est)) lcar_avg, stddev_pop(ln(carrega_total_est)) lcar_sd
+    from m where serveis_estab is not null
+),
+btipo as (
+    select m.ine5,
+        (m.gap_pernocta_pct - b.gap_avg)/nullif(b.gap_sd,0) z_gap,
+        (m.index_turisme - b.tur_avg)/nullif(b.tur_sd,0) z_tur,
+        (m.pct_noprincipal - b.np_avg)/nullif(b.np_sd,0) z_np,
+        ((m.kg_hab_any - b.kg_avg)/nullif(b.kg_sd,0)
+         + (m.vidre_hab - b.vid_avg)/nullif(b.vid_sd,0)
+         + (m.restauracio_per_1000hab - b.rest_avg)/nullif(b.rest_sd,0)) / 3.0 z_act,
+        (ln(m.serveis_estab + 1) - b.lserv_avg)/nullif(b.lserv_sd,0) z_serv,
+        (ln(m.poblacio) - b.lpop_avg)/nullif(b.lpop_sd,0) z_pop,
+        (ln(m.carrega_total_est) - b.lcar_avg)/nullif(b.lcar_sd,0) z_carr,
+        m.poblacio
+    from m cross join bstats b
+    where m.serveis_estab is not null
+),
+tipo as (
+    select ine5,
+        case
+            when poblacio >= 2000 and z_serv >= 0.8 and z_carr >= 0.5 and z_tur <= 0.3 then 'capital_serveis'
+            when z_pop <= -0.5 and z_tur <= -0.3 and z_act <= -0.2 and z_gap <= 0.2 then 'buit_administratiu'
+            when z_tur >= 0.6 and z_act >= 0.4 and z_gap <= 0.4 then 'excursio'
+            when z_gap >= 0.5 and (z_np >= 0.5 or z_tur >= 0.7) then 'segona_residencia'
+            when z_gap >= 0.4 and z_tur <= 0.0 then 'dormitori_invisible'
+            else 'indeterminat'
+        end as tipologia
+    from btipo
 )
 
 select m.*,
     round(nrm.A_resid, 2) as IETR_stock,
     round(nrm.B_turis, 2) as IETR_impact,
-    tipo.tipologia,
+    coalesce(tipo.tipologia, 'pendent') as tipologia,
     round(conf.confianca_score, 1) as confianca_score,
     conf.divergencia_senyals,
-    -- DENOMINADOR FUNCIONAL: max(padró, pernocta L1, càrrega per residus L2). El padró és el
-    -- SÒL (mai per sota dels residents registrats); resol també L2<L1.
-    greatest(m.poblacio, m.poblacio_pernocta_est, m.carrega_total_est) as carrega_funcional_est,
-    -- BASE-RATIOS: pressió ABSOLUTA vs base residencial (no z-score comarcal). >1 = per
-    -- sobre del que genera una vila de vall poc turística; comparable entre comarques.
+    -- DENOMINADOR FUNCIONAL: max(padró, pernocta L1, càrrega L2). coalesce a 0 (pernocta NULL
+    -- on no hi ha base_pred); el padró és el SÒL. Mirall del CTE pres de mart_municipi.sql.
+    cast(greatest(m.poblacio, coalesce(m.poblacio_pernocta_est,0), coalesce(m.carrega_total_est,0)) as integer) as carrega_funcional_est,
+    -- BASE-RATIOS: residus/vidre vs base fixa; elèctric vs base_pred per muni (base unificada L1).
     round(m.kg_hab_any / {BASE_RESIDENCIAL}, 2) as residu_base_ratio,
-    round(m.kwh_hab / {BASE_ELECTRIC}, 2) as kwh_base_ratio,
+    round(m.kwh_hab / nullif(m.base_pred,0), 2) as kwh_base_ratio,
     round(m.vidre_hab / {BASE_VIDRE}, 2) as vidre_base_ratio
 from m
-join nrm  using (ine5)
-join tipo using (ine5)
-join conf using (ine5)
+left join nrm  using (ine5)
+left join tipo using (ine5)
+left join conf using (ine5)
 order by m.ine5
 """
 

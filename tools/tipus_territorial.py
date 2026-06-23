@@ -74,6 +74,9 @@ def build() -> pd.DataFrame:
     inp = pd.read_csv(INPUTS, dtype={"ine5": str})
     mart = pd.read_parquet(MART)[["ine5", "municipi", "poblacio"]]
     mart["ine5"] = mart["ine5"].astype(str).str.zfill(5)
+    # Artefacte INTERN del pilot (Nivell B): es cenyeix al Berguedà (els munis d'INPUTS), encara que
+    # el mart ara cobreixi tot Catalunya. El tipus de tot CAT viu al Nivell C (nivellc_regressio.csv).
+    mart = mart[mart["ine5"].isin(set(inp["ine5"]))]
     df = mart.merge(inp[["ine5", "altitud_m", "densitat_hab_km2"]], on="ine5", how="left")
 
     out_rows = []

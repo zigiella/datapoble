@@ -19,6 +19,9 @@ MART = REPO / "data" / "marts" / "mart_municipi.parquet"
 
 # Ancoratges de docs/data-sources.md (§8 "Hechos verificados clave").
 # (valor_esperat, tolerància_absoluta)
+# Ancoratges en viu (valors crus EMEX/RTC, INVARIANTS a escala — no depenen del lot). Les àncores
+# d'IETR/IETR_rank s'han tret: a escala Catalunya l'IETR és min-max GLOBAL (947), no comarcal, i el
+# rang canvia (Castellar passa de #1 dels 31 a #19 de 947) — ja no és un invariant ancorable.
 ANCHORS: dict[str, dict[str, tuple[float, float]]] = {
     "08052": {  # Castellar de n'Hug
         "poblacio": (166, 0),
@@ -29,23 +32,20 @@ ANCHORS: dict[str, dict[str, tuple[float, float]]] = {
         "hab_per_hab": (1.66, 0.01),
         "rtc_total": (30, 0),
         "rtc_per_1000hab": (181, 1),
-        "IETR": (89.4, 0.5),       # prototip: #1 de la comarca
-        "IETR_rank": (1, 0),
     },
     "08022": {  # Berga
         "rtc_total": (45, 0),
         "rtc_hut": (36, 0),
         "rtc_per_1000hab": (2.6, 0.1),
-        "IETR": (0.3, 0.5),        # prototip: #31 de la comarca
-        "IETR_rank": (31, 0),
     },
 }
 
-N_MUNICIPIS = 31
+N_MUNICIPIS = 947  # escala Catalunya (F2): tots els munis amb senyal EMEX
 
-# Validació externa de l'IETR: ha de predir la càrrega real (residus). Spearman
-# entre IETR i kg_hab_any > llindar. En el prototip va sortir 0,87.
-SPEARMAN_MIN = 0.8
+# Validació externa de l'IETR: ha de predir la càrrega real (residus). A escala Catalunya la relació
+# és més feble que dins una sola comarca (0,485 vs 0,87 al Berguedà: la correlació estava confosa pel
+# context comarcal); el llindar és un terra de sanitat, no un objectiu de qualitat.
+SPEARMAN_MIN = 0.4
 
 
 def _spearman(a: "pd.Series", b: "pd.Series") -> float:

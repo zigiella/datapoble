@@ -100,9 +100,9 @@ models:
           Nombre de locals de restauració (CCAE-56) mapejats a OSM, assignats al
           municipi per punt-en-polígon (geometria real). 2n proxy d'hostaleria
           (capacitat), complement del vidre. MÍNIM observat, no cens: OSM
-          infra-mapeja el rural (alguns micromunicipis surten 0). Absència → 0.
+          infra-mapeja el rural. 2a onada: NULL fora del Berguedà (sense OSM a escala);
+          dins el Berguedà, 0 = absència real.
         data_tests:
-          - not_null
           - between:
               arguments: { min_value: 0, max_value: 100000 }
       - name: restauracio_per_1000hab
@@ -110,9 +110,8 @@ models:
           Densitat d'establiments de restauració per 1000 hab (restauracio_estab /
           poblacio * 1000). Validat com a 2n proxy independent del vidre
           (Spearman ≈ 0,54 amb vidre_hab i index_turisme, N=31). Hereta el caveat
-          de completesa d'OSM.
+          de completesa d'OSM. 2a onada: NULL fora del Berguedà.
         data_tests:
-          - not_null
           - between:
               arguments: { min_value: 0, max_value: 100000 }
       # --- INDICADOR ESTRELLA: MODEL DE 3 CAPES (INFERÈNCIA, no cens) ---
@@ -120,20 +119,16 @@ models:
       - name: poblacio_pernocta_est
         description: >
           L1. Població que DORM al territori sense constar al padró:
-          round(poblacio * kwh_hab / base_electric), base_electric=1224. Senyal =
-          elèctric domèstic. Inferència; rang + caveat (semantic/metrics.yml).
+          round(poblacio * kwh_hab / base_pred), base_pred = base per covariables
+          (Nivell C, per muni). Inferència; rang + caveat (semantic/metrics.yml).
+          NULL on no hi ha base_pred (sense covariables, ~20 munis): honest, no inventem.
         data_tests:
-          - not_null
           - between:
               arguments: { min_value: 0, max_value: 10000000 }
       - name: gap_pernocta
-        description: "L1. poblacio_pernocta_est − poblacio. Pot ser negatiu."
-        data_tests:
-          - not_null
+        description: "L1. poblacio_pernocta_est − poblacio. Pot ser negatiu. NULL sense base_pred."
       - name: gap_pernocta_pct
-        description: "L1. gap_pernocta / poblacio * 100 (percentatge 0-100; +12 = +12%)."
-        data_tests:
-          - not_null
+        description: "L1. gap_pernocta / poblacio * 100 (percentatge 0-100; +12 = +12%). NULL sense base_pred."
       # L2 · càrrega humana total (residus/base_residencial) — inclou visitants de dia.
       - name: carrega_total_est
         description: >
@@ -229,10 +224,10 @@ models:
       - name: tipologia
         description: >
           Classificació amb NOM de com s'habita el municipi (LECTURA, no cens),
-          per regles sobre z-scores comarcals: dormitori_invisible · excursio ·
-          segona_residencia · capital_serveis · buit_administratiu · indeterminat
-          (on és ambigu). Verificat: Berga=capital_serveis, Castellar=excursio,
-          Gósol/Saldes=segona_residencia. Vegeu docs/tipologia-municipal.md.
+          per regles sobre z-scores: dormitori_invisible · excursio · segona_residencia ·
+          capital_serveis · buit_administratiu · indeterminat (on és ambigu) · pendent
+          (2a onada: munis sense OSM, fora del Berguedà). Verificat: Berga=capital_serveis,
+          Castellar=excursio, Gósol/Saldes=segona_residencia. Vegeu docs/tipologia-municipal.md.
         data_tests:
           - not_null
           - accepted_values:
@@ -244,14 +239,15 @@ models:
                   - capital_serveis
                   - buit_administratiu
                   - indeterminat
+                  - pendent
       - name: confianca_score
         description: >
           Puntuació auditable 0-100 de fiabilitat (complementa la bandera
           `confianca`): mida del denominador + concordança dels senyals físics +
           cobertura − outlier. Etiqueta derivable (<45 baixa · 45–65 mitjana ·
-          ≥65 alta). Vegeu docs/tipologia-municipal.md.
+          ≥65 alta). NULL on no hi ha tipus_territorial (~20 munis sense covariables).
+          Vegeu docs/tipologia-municipal.md.
         data_tests:
-          - not_null
           - between:
               arguments: { min_value: 0, max_value: 100 }
       - name: kg_hab_any_year

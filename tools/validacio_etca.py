@@ -70,6 +70,9 @@ def build() -> dict:
         ["ine5", "municipi", "poblacio", "poblacio_pernocta_est", "carrega_funcional_est"]
     ]
     mart["ine5"] = mart["ine5"].astype(str).str.zfill(5)
+    # Validació publicada del PILOT (Berguedà): es cenyeix als munis de l'snapshot ETCA, encara que el
+    # mart cobreixi tot CAT. La validació ETCA a escala viu al Nivell C (tools/nivellc_regressio.py).
+    mart = mart[mart["ine5"].isin(set(etca["ine5"]))]
     df = mart.merge(etca[["ine5", "poblacio_etca", "etca_resident"]], on="ine5", how="left")
 
     per_muni: list[dict] = []
