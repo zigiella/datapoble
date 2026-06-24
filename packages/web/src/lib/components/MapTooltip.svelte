@@ -9,10 +9,11 @@
 	 *  - un recordatori que és INFERÈNCIA (no cens), reforçant la procedència morada.
 	 */
 	import type { MetricDef, MetricKey } from '$lib/contract/types';
+	import type { PernoctaMuni } from '$lib/contract/pernocta';
 	import { makeMetricFormatter } from '$lib/map/classify';
 	import { provenanceOf } from '$lib/map/provenance';
 	import { isCategorical, tipologiaLabel, tipologiaBlurb } from '$lib/map/tipologia';
-	import { formatDecimal } from '$lib/format';
+	import { formatDecimal, formatInteger } from '$lib/format';
 	import { pick, currentLocale } from '$lib/i18n';
 	import { m } from '$lib/paraglide/messages';
 
@@ -35,6 +36,9 @@
 		href?: string | null;
 		/** Tàctil: la targeta capta el toc (pointer-events) perquè el CTA «obrir fitxa» sigui tocable. */
 		touchMode?: boolean;
+		/** Presència estimada EN RANG (Nivell C) dels munis coberts fora del Berguedà: si hi és, el
+		 * tooltip hi afegeix la banda rang_baix–rang_alt + ETCA (la presència és inferència, no cens). */
+		pernocta?: PernoctaMuni | null;
 	}
 	let {
 		nom,
@@ -47,7 +51,8 @@
 		y,
 		hint = null,
 		href = null,
-		touchMode = false
+		touchMode = false,
+		pernocta = null
 	}: Props = $props();
 
 	const locale = $derived(currentLocale());
@@ -149,6 +154,27 @@
 					>· {formatDecimal(confScore as number, locale, 0)}<span class="tip__conf-score-scale"
 						>/100</span
 					></span
+				>
+			{/if}
+		</div>
+	{/if}
+
+	{#if pernocta}
+		<!-- Presència estimada EN RANG (Nivell C) per als munis coberts: la inferència es comunica com a
+		     BANDA (mai punt), amb l'ETCA oficial al costat com a validació quan n'hi ha. Mateix tooltip
+		     que el Berguedà (indicador + confiança), amb aquest afegit honest de presència. -->
+		<div class="tip__range-block">
+			<span class="tip__range-lbl">{m.map_range_eyebrow()}</span>
+			<span class="tip__range tnum"
+				>{formatInteger(pernocta.rang_baix, locale)}–{formatInteger(pernocta.rang_alt, locale)}<span
+					class="tip__range-unit"
+				>
+					{m.map_range_unit()}</span
+				></span
+			>
+			{#if pernocta.etca_oficial != null}
+				<span class="tip__range-etca"
+					>{m.map_range_etca()}: <b class="tnum">{formatInteger(pernocta.etca_oficial, locale)}</b></span
 				>
 			{/if}
 		</div>
@@ -280,6 +306,38 @@
 	}
 	.tip__conf--alta .tip__conf-val {
 		color: var(--dp-success, #2f6b4f);
+	}
+	/* Bloc de presència en rang (munis coberts, Nivell C): banda + ETCA, discret sota el valor. */
+	.tip__range-block {
+		display: flex;
+		flex-direction: column;
+		gap: 1px;
+		margin: 0 0 6px;
+	}
+	.tip__range-lbl {
+		font-family: var(--dp-font-mono);
+		font-size: 0.56rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: var(--dp-text-subtle);
+	}
+	.tip__range {
+		font-family: var(--dp-font-display);
+		font-weight: 700;
+		font-size: 0.98rem;
+		color: var(--dp-text);
+		line-height: 1.1;
+	}
+	.tip__range-unit {
+		font-family: var(--dp-font-sans);
+		font-size: 0.62rem;
+		font-weight: 600;
+		color: var(--dp-text-subtle);
+	}
+	.tip__range-etca {
+		font-family: var(--dp-font-mono);
+		font-size: 0.58rem;
+		color: var(--dp-text-subtle);
 	}
 	.tip__caveat {
 		margin: 7px 0 0;
