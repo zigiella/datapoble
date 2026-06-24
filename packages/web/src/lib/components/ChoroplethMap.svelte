@@ -36,6 +36,7 @@
 	import { mapValue } from '$lib/map/indicators';
 	import { rampColors, divergingColors, NODATA, MAP } from '$lib/map/palette';
 	import { isCategorical, tipologiaMeta, tipologiaMatchExpression } from '$lib/map/tipologia';
+	import type { IndicadorsCatData } from '$lib/contract/indicadors';
 
 	/** Nivell de confiança de l'estimació que rep tractament d'honestedat (no es pinta sòlid). */
 	const LOW_CONFIDENCE = 'baixa';
@@ -74,9 +75,9 @@
 		granularity?: Granularity;
 		/** Presència estimada EN RANG dels munis coberts fora del Berguedà (ine5 → dada). Opcional. */
 		pernocta?: Record<string, PernoctaMuni>;
-		/** Valors d'indicadors a escala Catalunya (ine5 → {clau → valor}) per pintar els coberts pel
-		 * mateix indicador que el Berguedà, on en tenim (gap, residus). Opcional. */
-		catValues?: Record<string, Partial<Record<MetricKey, number>>>;
+		/** Valors d'indicadors a escala Catalunya (ine5 → {clau → valor} + `conf`) per pintar i TRAMAR
+		 * els coberts pel mateix indicador i tractament de confiança que el Berguedà. Opcional. */
+		catValues?: IndicadorsCatData;
 		onhover?: (p: HoverPayload | null) => void;
 		onselect?: (ine5: string | null) => void;
 	}
@@ -266,7 +267,13 @@
 				// (gap, residus). null si l'indicador és només-Berguedà → el muni queda atenuat (honest).
 				const covval = covered ? (catValues?.[ine5]?.[key] ?? null) : null;
 				const row = inBerg ? dataset.municipis[ine5] : undefined;
-				const conf = (row?.values?.confianca as string | undefined) ?? null;
+				// Confiança: del Berguedà (dataset) o, per als coberts, de l'artefacte compacte (catValues.conf).
+				// Així la TRAMA de confiança baixa s'aplica a tot Catalunya, no només al Berguedà.
+				const conf = inBerg
+					? ((row?.values?.confianca as string | undefined) ?? null)
+					: covered
+						? (catValues?.[ine5]?.conf ?? null)
+						: null;
 
 				if (categorical) {
 					// CATEGÒRIC (tipologia): el valor és una cadena d'arquetip. __cat la transporta
@@ -310,8 +317,9 @@
 						__cat: null,
 						__hasval: hasVal,
 						__conf: conf,
-						// confiança baixa NOMÉS és rellevant quan hi ha valor a pintar (gap/estimació).
-						__lowconf: hasVal && conf === LOW_CONFIDENCE
+						// confiança baixa NOMÉS és rellevant quan hi ha valor a pintar: al Berguedà (hasVal)
+						// o a un muni cobert amb valor de l'indicador (covval) → trama a tot Catalunya.
+						__lowconf: (hasVal || (covered && covval !== null)) && conf === LOW_CONFIDENCE
 					}
 				};
 			})
@@ -407,7 +415,14 @@
 				filter: ['all', ['!', ['get', '__inberg']], ['boolean', ['get', '__covered'], false]],
 				paint: {
 					'fill-color': coveredColorExpr(classification, indicator) as never,
-					'fill-opacity': ['case', ['==', ['get', '__covval'], null], 0, 0.78] as never
+					// Sense valor → invisible; confiança baixa → opacitat reduïda (la trama hatch-lowconf s'hi
+					// apila a sobre, mateix gest d'honestedat que al Berguedà); altrament, ple.
+					'fill-opacity': [
+						'case',
+						['==', ['get', '__covval'], null], 0,
+						['boolean', ['get', '__lowconf'], false], 0.55,
+						0.78
+					] as never
 				}
 			});
 
@@ -447,7 +462,7 @@
 				id: LOWCONF,
 				type: 'fill',
 				source: SRC,
-				filter: ['all', ['get', '__inberg'], ['boolean', ['get', '__lowconf'], false]],
+				filter: ['boolean', ['get', '__lowconf'], false],
 				paint: { 'fill-pattern': 'hatch-lowconf' }
 			});
 
@@ -603,16 +618,27 @@
 			const ine5 = (feat.properties?.ine5 as string) ?? '';
 			const inBerg = bergSet.has(ine5);
 			const row = inBerg ? dataset.municipis[ine5] : undefined;
+			const covered = !inBerg && coveredSet.has(ine5);
+			// Valor de l'indicador actiu: del Berguedà (dataset) o, per als coberts, de catValues (escala
+			// CAT) → el tooltip dels coberts mostra el MATEIX indicador que el Berguedà (tooltip uniforme).
 			// El 0 d'OSM de la restauració es mostra «sense dada» (buit de mapejat, no absència real).
-			const value = inBerg ? mapValue(indicator, row?.values?.[indicator]) : null;
+			const value = inBerg
+				? mapValue(indicator, row?.values?.[indicator])
+				: covered
+					? (catValues?.[ine5]?.[indicator] ?? null)
+					: null;
 			const cs = row?.values?.confianca_score;
 			// Presència estimada EN RANG per als munis coberts de fora del Berguedà (Nivell C).
-			const cover = !inBerg && coveredSet.has(ine5) ? (pernocta?.[ine5] ?? null) : null;
+			const cover = covered ? (pernocta?.[ine5] ?? null) : null;
 			return {
 				ine5,
 				nom: (feat.properties?.nom as string) ?? row?.nom ?? cover?.nom ?? ine5,
 				value,
-				conf: (row?.values?.confianca as string | undefined) ?? null,
+				conf: inBerg
+					? ((row?.values?.confianca as string | undefined) ?? null)
+					: covered
+						? (catValues?.[ine5]?.conf ?? null)
+						: null,
 				confScore: typeof cs === 'number' ? cs : null,
 				inBergueda: inBerg,
 				pernocta: cover,
