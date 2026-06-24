@@ -62,9 +62,13 @@ límit de despesa; les tasques marcades **(IA)** sí (esperen que es reposi).*
       base L1 = base_pred per muni · confiança per tipus_territorial · comarca per muni · OSM 2a onada
       (tipologia/restauració Berguedà, resta `pendent`). **Guardó ETCA Berguedà 8,2%/ρ=0,967** (= #161).
       947 munis, 927 amb presència. Verificadors del CI (verify_marts/derive_fase1/etca/tipus) al dia.
-    - ⏳ **F3** exportar l'espina a tot CAT (`export_web_municipis` → dataset 927 amb presència+confiança;
-      altres marts —electoral/demografia— encara Berguedà) · **F4** harmonitzar el web (un tooltip +
-      trames a tot CAT) · **F5** 2a onada (OSM + subtipus).
+    - ~~**F3** exportar l'espina a tot CAT~~ ✅ #169 (`municipis.catalunya.json`, 947; bergueda regenerat).
+    - ~~**F4.1** fitxa uniforme~~ ✅ #170 (row per a tots, fitxa partida per muni; resol «fitxes diferents»).
+    - ~~**F4.2** mapa harmonitzat~~ ✅ #172 (trames a tot CAT segons confiança + un sol tooltip; `conf` a
+      l'artefacte compacte). **Cal cop d'ull visual de Bea** (canvas WebGL).
+    - ⏳ **F5** 2a onada (no bloquejant): OSM a tot CAT (restauració/serveis) + subtipus de tipologia +
+      indicadors cat-escala nous (densitat/renda/gas) + altres marts (electoral/demografia) a tot CAT.
+    - **L'arc «fer-ho bé» (F1–F4) és complet i a `main`.**
 
 ## Diferit a Fase 2
 Licitacions de veritat (menors → majors/diputació) · fondària completa de fitxa (tipologia +
