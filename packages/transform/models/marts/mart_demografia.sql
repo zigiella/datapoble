@@ -37,8 +37,11 @@ ctx as (
 ),
 
 noms as (
-    -- nom oficial net: residus té els 31 amb nom
-    select distinct ine5, municipi from {{ ref('stg_residus') }}
+    -- nom + comarca oficials per muni (stg_residus cobreix tot CAT). 1 fila/muni (any_value evita
+    -- el fan-out si el nom de comarca té variants entre anys).
+    select ine5, any_value(municipi) as municipi, any_value(comarca) as comarca
+    from {{ ref('stg_residus') }}
+    group by ine5
 ),
 
 calc as (
@@ -46,7 +49,7 @@ calc as (
         o.ine5,
         o.codi6,
         noms.municipi,
-        '{{ var("comarca") }}'                                          as comarca,
+        noms.comarca                                                    as comarca,
         o.any_referencia                                                as any_referencia,
 
         -- Recomptes bruts (directe EMEX). Públics fins i tot als micromunicipis
@@ -80,7 +83,7 @@ calc as (
     from origen o
     left join deltes d on o.ine5 = d.ine5
     left join noms      on o.ine5 = noms.ine5
-    cross join ctx
+    left join ctx       on o.ine5 = ctx.ine5   -- context de la SEVA comarca (per-muni) + CAT (broadcast)
 )
 
 select
