@@ -42,6 +42,7 @@ export type MetricKey =
 	| 'hab_per_hab'
 	| 'index_envelliment'
 	| 'densitat_hab_km2'
+	| 'renda_neta_persona'
 	// Origen: composició i arrelament (capa sensible; lectura ecològica, mai individual)
 	| 'poblacio_nascuda_catalunya'
 	| 'poblacio_nascuda_resta_espanya'

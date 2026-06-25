@@ -63,6 +63,11 @@ sources:
     acces: "https://overpass-api.de/api/interpreter (POST Overpass QL; sense auth)"
     llicencia: "ODbL (OpenStreetMap) — atribució + compartir-igual"
     nota: "2n proxy d'hostaleria de la capa L3 (complement del vidre). POIs assignats al municipi per PUNT-EN-POLÍGON amb la geometria real (ine5). OSM INFRA-MAPEJA el rural → el compte és un MÍNIM observat, NO un cens. Idescat (ee, CCAE-56) oficial NO és municipal per API oberta (secret estadístic; l'EMEX només dóna 'serveis' agregat)."
+  ine_adrh:
+    organisme: INE — Instituto Nacional de Estadística
+    producte: Atlas de distribución de renta de los hogares (ADRH) — renda neta per persona
+    acces: "https://www.ine.es/ (ADRH, taula municipal)"
+    llicencia: "INE, reutilització amb atribució"
   datapoble:
     organisme: indicador derivat
     producte: vegeu la metodologia
@@ -195,6 +200,20 @@ metrics:
     date: "2025"
     table: mart_municipi
     column: densitat_hab_km2
+    visibility: public
+
+  renda_neta_persona:
+    label: {ca: Renda neta per persona, es: Renta neta por persona}
+    definicio:
+      ca: "Renda neta mitjana per persona (INE, Atlas de distribució de renda 2023). Indicador de benestar i covariable de la base del model de presència."
+      es: "Renta neta media por persona (INE, Atlas de distribución de renta 2023). Indicador de bienestar y covariable de la base del modelo de presencia."
+    dimension: demografia
+    unit: {ca: €/persona, es: €/persona}
+    formula: directe
+    source: ine_adrh
+    date: "2023"
+    table: mart_municipi
+    column: renda_neta_persona
     visibility: public
 
   # --- Origen: composició i arrelament (TRANSFORMACIÓ DEMOGRÀFICA, no «extranjería») ---

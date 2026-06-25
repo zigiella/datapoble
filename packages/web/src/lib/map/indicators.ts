@@ -48,6 +48,8 @@ export const MAP_INDICATORS: MetricKey[] = [
 	// Densitat de població (hab/km², EMEX) — covariable estructural i driver de la base del model;
 	// pintable a TOT CAT (F5). Magnitud positiva de rang ampli → seqüencial terra (Jenks).
 	'densitat_hab_km2',
+	// Renda neta per persona (INE ADRH) — benestar i covariable del model; pintable a TOT CAT (F5).
+	'renda_neta_persona',
 	// Atles de contradiccions: divergència dels 3 senyals de presència (0-100). Fosc = els
 	// senyals físics es contradiuen → llegir amb prudència. Converteix la incertesa en producte.
 	'divergencia_senyals'
