@@ -184,6 +184,7 @@
   "map_ind_nop": "% vivienda no principal",
   "map_ind_res": "Residuos kg/hab/año",
   "map_ind_densitat": "Densidad de población",
+  "map_ind_renda": "Renta neta por persona",
   "map_ind_divergencia": "Contradicciones de señales",
   "map_ind_tipologia": "Tipología de habitación del territorio",
   "map_read_cat": "Cada color es un TIPO de presión, no «más/menos»: la lectura narrativa del municipio. El gris neutro es «indeterminado» —territorio mixto, señales ambiguas—, un estado honesto, no un vacío.",

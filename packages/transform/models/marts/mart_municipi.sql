@@ -63,6 +63,11 @@ nivellc as (
     select ine5, tipus_territorial, base_pred from {{ ref('stg_nivellc') }}
 ),
 
+-- Renda neta per persona (INE ADRH 2023): indicador territorial + covariable del model. Per ine5.
+renda as (
+    select ine5, renda_neta_persona from {{ ref('stg_renda') }}
+),
+
 -- ind: una fila per municipi amb els ràtios base + la base unificada + el tipus.
 ind as (
     select
@@ -80,6 +85,7 @@ ind as (
         round(emex.hab_total / nullif(emex.poblacio, 0), 3)             as hab_per_hab,
         round(emex.pob_65_mes / nullif(emex.pob_0_14, 0) * 100, 1)      as index_envelliment,
         cast(emex.densitat_hab_km2 as double)                       as densitat_hab_km2,
+        renda.renda_neta_persona                                    as renda_neta_persona,
         coalesce(rtc.rtc_total, 0)                                  as rtc_total,
         coalesce(rtc.rtc_hut, 0)                                    as rtc_hut,
         round(coalesce(rtc.rtc_total, 0) / nullif(emex.poblacio, 0) * 1000, 2) as rtc_per_1000hab,
@@ -101,6 +107,7 @@ ind as (
     left join serveis     on emex.ine5 = serveis.ine5
     left join noms        on emex.ine5 = noms.ine5
     left join nivellc     on emex.ine5 = nivellc.ine5
+    left join renda       on emex.ine5 = renda.ine5
 ),
 
 -- pres: derivats de presència per muni. Es calculen AQUÍ (no a la SELECT final) perquè els stats
@@ -291,6 +298,7 @@ select
     ind.hab_per_hab,
     ind.index_envelliment,
     round(ind.densitat_hab_km2, 1)                              as densitat_hab_km2,
+    round(ind.renda_neta_persona, 0)                           as renda_neta_persona,
 
     -- Turisme (RTC)
     ind.rtc_total,

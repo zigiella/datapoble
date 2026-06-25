@@ -184,6 +184,7 @@
   "map_ind_nop": "% habitatge no principal",
   "map_ind_res": "Residus kg/hab/any",
   "map_ind_densitat": "Densitat de població",
+  "map_ind_renda": "Renda neta per persona",
   "map_ind_divergencia": "Contradiccions de senyals",
   "map_ind_tipologia": "Tipologia d'habitança",
   "map_read_cat": "Cada color és un TIPUS de pressió, no «més/menys»: la lectura narrativa del municipi. El gris neutre és «indeterminat» —territori mixt, senyals ambigus—, un estat honest, no un buit.",

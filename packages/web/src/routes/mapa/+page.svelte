@@ -79,6 +79,7 @@
 		pct_noprincipal: () => m.map_ind_nop(),
 		kg_hab_any: () => m.map_ind_res(),
 		densitat_hab_km2: () => m.map_ind_densitat(),
+		renda_neta_persona: () => m.map_ind_renda(),
 		divergencia_senyals: () => m.map_ind_divergencia()
 	};
 	const labelFor = (key: MetricKey): string => INDICATOR_LABEL[key]?.() ?? key;
