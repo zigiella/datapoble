@@ -160,7 +160,7 @@
         "ca": "Habitants per km² (EMEX). Covariable estructural: a més densitat, pisos més petits i menys consum elèctric per persona — driver principal de la base del model de presència.",
         "es": "Habitantes por km² (EMEX). Covariable estructural: a más densidad, pisos más pequeños y menos consumo eléctrico por persona — driver principal de la base del modelo de presencia."
       },
-      "status": "planned"
+      "status": "public"
     },
     "poblacio_nascuda_catalunya": {
       "key": "poblacio_nascuda_catalunya",

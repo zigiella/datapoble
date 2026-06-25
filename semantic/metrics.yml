@@ -180,6 +180,8 @@ metrics:
     date: "2025"
     table: mart_municipi
     column: index_envelliment
+    visibility: public
+    status: planned
 
   densitat_hab_km2:
     label: {ca: Densitat de població, es: Densidad de población}
@@ -194,7 +196,6 @@ metrics:
     table: mart_municipi
     column: densitat_hab_km2
     visibility: public
-    status: planned
 
   # --- Origen: composició i arrelament (TRANSFORMACIÓ DEMOGRÀFICA, no «extranjería») ---
   # Capa SENSIBLE. Tres lents que la gent confon: nacionalitat (passaport) ≠ lloc de
