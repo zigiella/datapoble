@@ -183,6 +183,20 @@ metrics:
     visibility: public
     status: planned
 
+  densitat_hab_km2:
+    label: {ca: Densitat de població, es: Densidad de población}
+    definicio:
+      ca: "Habitants per km² (EMEX). Covariable estructural: a més densitat, pisos més petits i menys consum elèctric per persona — driver principal de la base del model de presència."
+      es: "Habitantes por km² (EMEX). Covariable estructural: a más densidad, pisos más pequeños y menos consumo eléctrico por persona — driver principal de la base del modelo de presencia."
+    dimension: demografia
+    unit: {ca: hab/km², es: hab/km²}
+    formula: directe
+    source: idescat_emex
+    date: "2025"
+    table: mart_municipi
+    column: densitat_hab_km2
+    visibility: public
+
   # --- Origen: composició i arrelament (TRANSFORMACIÓ DEMOGRÀFICA, no «extranjería») ---
   # Capa SENSIBLE. Tres lents que la gent confon: nacionalitat (passaport) ≠ lloc de
   # naixement (biografia) ≠ evolució (el delta). Lectura ECOLÒGICA (sobre el municipi,

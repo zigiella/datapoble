@@ -26,7 +26,7 @@ SRC = REPO / "data" / "web" / "municipis.catalunya.json"
 OUT = REPO / "data" / "web" / "indicadors-catalunya.json"
 
 # Indicadors numèrics que el mapa pinta a escala Catalunya (clau de mètrica → s'hi accedeix igual).
-NUM_KEYS = ("gap_pernocta_pct", "kg_hab_any")
+NUM_KEYS = ("gap_pernocta_pct", "kg_hab_any", "densitat_hab_km2")
 
 
 def main() -> int:

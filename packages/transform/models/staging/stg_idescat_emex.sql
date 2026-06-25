@@ -17,7 +17,10 @@ pivoted as (
         max(case when indicator = 'hab_noprincipal' then try_cast(value_municipi as double) end) as hab_noprincipal,
         max(case when indicator = 'pob_0_14'        then try_cast(value_municipi as double) end) as pob_0_14,
         max(case when indicator = 'pob_65_84'       then try_cast(value_municipi as double) end) as pob_65_84,
-        max(case when indicator = 'pob_85_mes'      then try_cast(value_municipi as double) end) as pob_85_mes
+        max(case when indicator = 'pob_85_mes'      then try_cast(value_municipi as double) end) as pob_85_mes,
+        -- Densitat de població (hab/km², EMEX f262): covariable estructural i indicador de mapa a tot
+        -- CAT (F5). ≡ població/superfície de la geometria (r=0,9999 vs el Nivell C).
+        max(case when indicator = 'densitat_hab_km2' then try_cast(value_municipi as double) end) as densitat_hab_km2
     from src
     group by codi6, ine5
 )

@@ -41,6 +41,7 @@ export type MetricKey =
 	| 'pct_noprincipal'
 	| 'hab_per_hab'
 	| 'index_envelliment'
+	| 'densitat_hab_km2'
 	// Origen: composició i arrelament (capa sensible; lectura ecològica, mai individual)
 	| 'poblacio_nascuda_catalunya'
 	| 'poblacio_nascuda_resta_espanya'

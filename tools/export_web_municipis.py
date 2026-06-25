@@ -60,7 +60,7 @@ ELEC = "A20241"
 # l'ordre del catàleg `metrics` al JSON (estable → diffs nets).
 METRIC_KEYS = [
     "poblacio", "hab_total", "hab_principal", "hab_noprincipal",
-    "pct_noprincipal", "hab_per_hab", "index_envelliment",
+    "pct_noprincipal", "hab_per_hab", "index_envelliment", "densitat_hab_km2",
     # Origen: composició i arrelament (capa sensible; lectura ecològica, mai individual).
     "poblacio_nascuda_catalunya", "poblacio_nascuda_resta_espanya",
     "poblacio_nascuda_estranger", "pct_nascuda_estranger",
@@ -94,7 +94,7 @@ METRIC_KEYS = [
 FORMAT_BY_KEY = {
     "poblacio": "integer", "hab_total": "integer", "hab_principal": "integer",
     "hab_noprincipal": "integer", "pct_noprincipal": "percent",
-    "hab_per_hab": "ratio", "index_envelliment": "decimal",
+    "hab_per_hab": "ratio", "index_envelliment": "decimal", "densitat_hab_km2": "decimal",
     # Origen (composició i arrelament): comptes enters, %s en 0-100, bretxa/delta en punts.
     "poblacio_nascuda_catalunya": "integer", "poblacio_nascuda_resta_espanya": "integer",
     "poblacio_nascuda_estranger": "integer", "pct_nascuda_estranger": "percent",
@@ -131,7 +131,8 @@ COL_MUNI = {
     "poblacio": "poblacio", "hab_total": "hab_total",
     "hab_principal": "hab_principal", "hab_noprincipal": "hab_noprincipal",
     "pct_noprincipal": "pct_noprincipal", "hab_per_hab": "hab_per_hab",
-    "index_envelliment": "index_envelliment", "rtc_total": "rtc_total",
+    "index_envelliment": "index_envelliment", "densitat_hab_km2": "densitat_hab_km2",
+    "rtc_total": "rtc_total",
     "rtc_hut": "rtc_hut", "rtc_per_1000hab": "rtc_per_1000hab",
     "rtc_per_100hab_viv": "rtc_per_100hab_viv", "kg_hab_any": "kg_hab_any",
     # Senyals per càpita.
