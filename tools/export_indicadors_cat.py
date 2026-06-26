@@ -26,7 +26,13 @@ SRC = REPO / "data" / "web" / "municipis.catalunya.json"
 OUT = REPO / "data" / "web" / "indicadors-catalunya.json"
 
 # Indicadors numèrics que el mapa pinta a escala Catalunya (clau de mètrica → s'hi accedeix igual).
-NUM_KEYS = ("gap_pernocta_pct", "kg_hab_any", "densitat_hab_km2", "renda_neta_persona")
+# Tots tenen valor calculat al mart per a tot CAT (deriven de senyals que ja cobreixen el país:
+# residus, EMEX, RTC). Els únics indicadors del mapa que NO hi són són tipologia i restauració
+# (depenen d'OSM, encara només-Berguedà → 2a onada).
+NUM_KEYS = (
+    "gap_pernocta_pct", "kg_hab_any", "densitat_hab_km2", "renda_neta_persona",
+    "carrega_total_est", "index_turisme", "IETR", "pct_noprincipal", "divergencia_senyals",
+)
 
 
 def main() -> int:
