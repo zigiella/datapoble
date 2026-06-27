@@ -239,6 +239,15 @@
 	 * és null (indicador només-Berguedà), color base atenuat (amb opacitat 0 queda transparent).
 	 */
 	function coveredColorExpr(c: Classification, key: MetricKey): unknown {
+		// CATEGÒRIC (tipologia): match sobre l'arquetip del cobert (`__covcat`); null → transparent.
+		if (c.method === 'categorical' || isCategorical(key)) {
+			return [
+				'case',
+				['==', ['get', '__covcat'], null],
+				MAP.land,
+				tipologiaMatchExpression(['get', '__covcat'])
+			];
+		}
 		return [
 			'case',
 			['==', ['get', '__covval'], null],
@@ -265,7 +274,8 @@
 				// Valor de l'INDICADOR ACTIU per al muni cobert (de catValues, escala Catalunya): pinta
 				// el seu color a la vista municipi pel MATEIX indicador que el Berguedà, on en tenim
 				// (gap, residus). null si l'indicador és només-Berguedà → el muni queda atenuat (honest).
-				const covval = covered ? (catValues?.[ine5]?.[key] ?? null) : null;
+				// `mapValue` degrada el 0 d'OSM de la restauració a «sense dada» també per als coberts.
+				const covval = covered ? mapValue(key, catValues?.[ine5]?.[key] ?? null) : null;
 				const row = inBerg ? dataset.municipis[ine5] : undefined;
 				// Confiança: del Berguedà (dataset) o, per als coberts, de l'artefacte compacte (catValues.conf).
 				// Així la TRAMA de confiança baixa s'aplica a tot Catalunya, no només al Berguedà.
@@ -290,6 +300,8 @@
 							__inberg: inBerg,
 							__covered: covered,
 							__covval: covval,
+							// __covcat: arquetip de tipologia del cobert (catValues.tip) → la capa COVERED el pinta.
+							__covcat: covered ? (catValues?.[ine5]?.tip ?? null) : null,
 							__val: null,
 							__cat: hasCat ? (catRaw as string) : null,
 							__hasval: hasCat,
@@ -313,6 +325,7 @@
 						__inberg: inBerg,
 						__covered: covered,
 						__covval: covval,
+						__covcat: null, // indicador numèric → cap arquetip categòric per al cobert
 						__val: hasVal ? (raw as number) : null,
 						__cat: null,
 						__hasval: hasVal,
@@ -419,7 +432,7 @@
 					// apila a sobre, mateix gest d'honestedat que al Berguedà); altrament, ple.
 					'fill-opacity': [
 						'case',
-						['==', ['get', '__covval'], null], 0,
+						['all', ['==', ['get', '__covval'], null], ['==', ['get', '__covcat'], null]], 0,
 						['boolean', ['get', '__lowconf'], false], 0.55,
 						0.78
 					] as never
@@ -625,7 +638,9 @@
 			const value = inBerg
 				? mapValue(indicator, row?.values?.[indicator])
 				: covered
-					? (catValues?.[ine5]?.[indicator] ?? null)
+					? isCategorical(indicator)
+							? (catValues?.[ine5]?.tip ?? null)
+							: mapValue(indicator, catValues?.[ine5]?.[indicator] ?? null)
 					: null;
 			const cs = row?.values?.confianca_score;
 			// Presència estimada EN RANG per als munis coberts de fora del Berguedà (Nivell C).
