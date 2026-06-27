@@ -37,8 +37,7 @@
 		'serveis',
 		'pressio',
 		'index',
-		'energia',
-		'politica'
+		'energia'
 	] as const;
 	type Dim = (typeof DIM_ORDER)[number];
 	const DIM_LABEL: Record<Dim, () => string> = {
@@ -48,8 +47,7 @@
 		serveis: () => m.glo_dim_serveis(),
 		pressio: () => m.glo_dim_pressio(),
 		index: () => m.glo_dim_index(),
-		energia: () => m.glo_dim_energia(),
-		politica: () => m.glo_dim_politica()
+		energia: () => m.glo_dim_energia()
 	};
 
 	// Vocabulari humà del `format` del contracte (presentació, com els noms de mètode del mapa;
