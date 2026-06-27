@@ -5,6 +5,13 @@ a baix; cada tasca = un PR. `P0` bloqueja el llançament. El carril de dades i l
 límit de despesa; les tasques marcades **(IA)** sí (esperen que es reposi).*
 *Mètode: **Cambium Charter v0.5** (adoptat 2026-06-20).*
 
+> **⏸️ FASE DE REFLEXIÓ/CURACIÓ (2026-06-27).** Acabat l'arc «fer-ho bé» (F1–F5, dada honesta a tot
+> CAT), el projecte para a **triar i orientar** abans de seguir. Dossier de consultoria a
+> `docs/dossier-consultoria-2026-06/`. **No obrir feina nova d'indicadors** fins decidir el concepte
+> (Bea + consultoria). Sí que valen, sigui quin sigui el concepte: els **guanys estructurals** (mapa
+> vertical, home=mapa+cercador, treure política/menú, zoom CAT — dossier §6) i el **redisseny de la
+> fitxa de municipi** (§5). El **gap** com a secció pròpia és la direcció probable.
+
 ## P0 — bloquegen el llançament
 
 1. ~~**[dades] Estendre Nivell C a tot Catalunya**~~ ✅ FET (#152, 2026-06-18) — **91→927 munis en
