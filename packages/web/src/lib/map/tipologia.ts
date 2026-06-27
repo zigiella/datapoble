@@ -143,7 +143,7 @@ export function tipologiaBlurb(value: unknown): string {
  * sobre la feature property `__cat` (la cadena de tipologia injectada al join). El fallback és
  * el neutre desconegut. Es construeix amb l'ordre editorial perquè sigui determinista.
  */
-export function tipologiaMatchExpression(): unknown {
+export function tipologiaMatchExpression(valExpr: unknown = ['get', '__cat']): unknown {
 	const pairs: unknown[] = [];
 	for (const t of TIPOLOGIA_ORDER) {
 		pairs.push(t.value, t.color);
@@ -153,5 +153,6 @@ export function tipologiaMatchExpression(): unknown {
 		const meta = BY_VALUE.get(target);
 		if (meta) pairs.push(alias, meta.color);
 	}
-	return ['match', ['get', '__cat'], ...pairs, TIPOLOGIA_UNKNOWN_COLOR];
+	// `valExpr` = on llegir l'arquetip: `__cat` (Berguedà, capa FILL) o `__covcat` (coberts, capa COVERED).
+	return ['match', valExpr, ...pairs, TIPOLOGIA_UNKNOWN_COLOR];
 }

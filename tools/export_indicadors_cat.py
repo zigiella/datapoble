@@ -32,6 +32,7 @@ OUT = REPO / "data" / "web" / "indicadors-catalunya.json"
 NUM_KEYS = (
     "gap_pernocta_pct", "kg_hab_any", "densitat_hab_km2", "renda_neta_persona",
     "carrega_total_est", "index_turisme", "IETR", "pct_noprincipal", "divergencia_senyals",
+    "restauracio_per_1000hab",
 )
 
 
@@ -56,6 +57,10 @@ def main() -> int:
         conf = v.get("confianca")
         if isinstance(conf, str):
             rec["conf"] = conf
+        # tipologia (categòrica): clau `tip` per pintar els coberts al mapa (capa categòrica).
+        tip = v.get("tipologia")
+        if isinstance(tip, str) and tip != "pendent":
+            rec["tip"] = tip
         if rec:
             out[ine5] = rec
 

@@ -16,5 +16,5 @@ import type { MetricKey } from './types';
 
 export type IndicadorsCatData = Record<
 	string,
-	Partial<Record<MetricKey, number>> & { conf?: string }
+	Partial<Record<MetricKey, number>> & { conf?: string; tip?: string }
 >;
