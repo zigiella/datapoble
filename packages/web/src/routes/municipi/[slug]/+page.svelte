@@ -187,12 +187,6 @@
 			title: () => m.muni_blk_ietr(),
 			sub: () => m.muni_blk_ietr_sub(),
 			keys: ['IETR', 'IETR_rank', 'IETR_stock', 'IETR_impact', 'pct_icaen_EFG']
-		},
-		{
-			ref: 'G',
-			title: () => m.muni_blk_politica(),
-			sub: () => m.muni_blk_politica_sub(),
-			keys: ['guanya', 'pct_indep', 'pct_esquerra', 'pct_extrema_dreta']
 		}
 	];
 
