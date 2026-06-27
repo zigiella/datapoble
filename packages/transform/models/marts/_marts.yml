@@ -224,10 +224,12 @@ models:
       - name: tipologia
         description: >
           Classificació amb NOM de com s'habita el municipi (LECTURA, no cens),
-          per regles sobre z-scores: dormitori_invisible · excursio · segona_residencia ·
-          capital_serveis · buit_administratiu · indeterminat (on és ambigu) · pendent
-          (2a onada: munis sense OSM, fora del Berguedà). Verificat: Berga=capital_serveis,
-          Castellar=excursio, Gósol/Saldes=segona_residencia. Vegeu docs/tipologia-municipal.md.
+          per regles sobre z-scores PER TIPUS TERRITORIAL (iguals amb iguals), a TOT Catalunya:
+          dormitori_invisible · excursio · segona_residencia · capital_serveis · buit_administratiu ·
+          indeterminat (on és ambigu) · pendent (munis sense covariables/tipus, ~20). Verificat:
+          Berga=capital_serveis, Castellar=excursio, Gósol=segona_residencia. OSM infra-mapa el rural →
+          els z de serveis/restauració són un mínim observat (el grup per tipus ho atenua).
+          Vegeu docs/tipologia-municipal.md.
         data_tests:
           - not_null
           - accepted_values:

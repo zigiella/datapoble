@@ -119,10 +119,11 @@ conf as (
     from zconf z join m using (ine5)
 ),
 
--- TIPOLOGIA (2a onada): NOMÉS munis amb OSM (serveis_estab not null = Berguedà). Referència = els
--- coberts (preserva la classificació provada). Mirall de bstats/btipo/tipo de mart_municipi.sql.
+-- TIPOLOGIA (F5, OSM a tot CAT): z-scores PER TIPUS_TERRITORIAL (iguals amb iguals). Mirall de
+-- bstats/btipo/tipo de mart_municipi.sql. Munis sense tipus → 'pendent'.
 bstats as (
     select
+        tipus_territorial,
         avg(gap_pernocta_pct) gap_avg, stddev_pop(gap_pernocta_pct) gap_sd,
         avg(index_turisme) tur_avg, stddev_pop(index_turisme) tur_sd,
         avg(pct_noprincipal) np_avg, stddev_pop(pct_noprincipal) np_sd,
@@ -132,7 +133,7 @@ bstats as (
         avg(ln(serveis_estab + 1)) lserv_avg, stddev_pop(ln(serveis_estab + 1)) lserv_sd,
         avg(ln(poblacio)) lpop_avg, stddev_pop(ln(poblacio)) lpop_sd,
         avg(ln(carrega_total_est)) lcar_avg, stddev_pop(ln(carrega_total_est)) lcar_sd
-    from m where serveis_estab is not null
+    from m where tipus_territorial is not null group by tipus_territorial
 ),
 btipo as (
     select m.ine5,
@@ -146,8 +147,8 @@ btipo as (
         (ln(m.poblacio) - b.lpop_avg)/nullif(b.lpop_sd,0) z_pop,
         (ln(m.carrega_total_est) - b.lcar_avg)/nullif(b.lcar_sd,0) z_carr,
         m.poblacio
-    from m cross join bstats b
-    where m.serveis_estab is not null
+    from m join bstats b using (tipus_territorial)
+    where m.tipus_territorial is not null
 ),
 tipo as (
     select ine5,
