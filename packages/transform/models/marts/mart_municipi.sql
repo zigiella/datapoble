@@ -228,12 +228,15 @@ conf as (
 ),
 
 -- ========================================================================
--- TIPOLOGIA — 2a onada. NOMÉS munis amb OSM (Berguedà). Referència = els munis coberts (preserva la
--- classificació PROVADA: Berga=capital_serveis, Castellar=excursio, Gósol=segona_residencia). Fora
--- d'allà → 'pendent' (honest: sense OSM no es pot classificar). z-scores sobre el conjunt cobert.
+-- TIPOLOGIA — ara a TOT CATALUNYA (F5, OSM a escala). z-scores PER TIPUS_TERRITORIAL (iguals amb
+-- iguals: rural amb rural, litoral amb litoral), com la confiança. Preserva la classificació provada
+-- del Berguedà (Berga=capital_serveis, Castellar=excursio, Gósol=segona_residencia). Munis sense tipus
+-- (~20, sense covariables) → 'pendent'. Caveat OSM: el rural s'infra-mapa → z de serveis/restauració
+-- són un mínim observat; el grup per tipus i la confiança ho atenuen.
 -- ========================================================================
 bstats as (
     select
+        i.tipus_territorial,
         avg(p.gap_pernocta_pct)        as gap_avg,  stddev_pop(p.gap_pernocta_pct)        as gap_sd,
         avg(t.index_turisme)           as tur_avg,  stddev_pop(t.index_turisme)           as tur_sd,
         avg(i.pct_noprincipal)         as np_avg,   stddev_pop(i.pct_noprincipal)         as np_sd,
@@ -246,7 +249,8 @@ bstats as (
     from ind i
     join pres p using (ine5)
     join tur t using (ine5)
-    where i.serveis_estab is not null          -- = munis amb OSM (Berguedà)
+    where i.tipus_territorial is not null
+    group by i.tipus_territorial
 ),
 
 btipo as (
@@ -264,8 +268,8 @@ btipo as (
     from ind i
     join pres p using (ine5)
     join tur t using (ine5)
-    cross join bstats b
-    where i.serveis_estab is not null
+    join bstats b using (tipus_territorial)
+    where i.tipus_territorial is not null
 ),
 
 tipo as (

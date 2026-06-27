@@ -70,13 +70,11 @@ def _invoke(name: str, scope: str, provincia: str | None = None):
         mod = idescat_emex if name == "idescat_emex" else demografia_origen
         return mod.run(municipis=munis, accumulate=accumulate)
     if name in OSM_PENDENT_CAT:
-        if not berg:
-            raise NotImplementedError(
-                f"{name}: OSM a escala Catalunya encara no des-acotat "
-                "(F1.2b: bbox CAT + geometria dels 947)."
-            )
         mod = restauracio_osm if name == "restauracio_osm" else serveis_osm
-        return mod.run(municipis=BERGUEDA)
+        if berg:
+            return mod.run(municipis=BERGUEDA)
+        # Tot Catalunya (F5): geometria 947 + bbox CAT + mosaic de tiles (Overpass per trossos).
+        return mod.run(municipis=CATALUNYA, geojson=mod.GEOJSON_CAT, bbox=mod.BBOX_CAT, tiles=4)
     raise ValueError(name)
 
 
@@ -101,7 +99,7 @@ def main(argv: list[str] | None = None) -> int:
     results = []
     for name in sources:
         if args.scope == "catalunya" and name in OSM_PENDENT_CAT and args.source == "all":
-            print(f"[ingestion] {name} … OMÈS (OSM a CAT pendent de F1.2b)", file=sys.stderr)
+            print(f"[ingestion] {name} … OMÈS a 'all' (OSM a CAT és pesat: executa'l a part)", file=sys.stderr)
             continue
         if args.provincia and name not in PER_MUNI:
             print(f"[ingestion] {name} … OMÈS (--provincia només aplica als per-muni: {sorted(PER_MUNI)})",

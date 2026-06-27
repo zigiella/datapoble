@@ -34,6 +34,7 @@ variar amb el temps, però la query i l'assignació espacial són reproduïbles.
 """
 from __future__ import annotations
 
+import sys
 import time
 
 import duckdb
@@ -58,15 +59,21 @@ AMENITIES = ("restaurant", "cafe", "bar", "fast_food", "pub", "biergarten", "ice
 # real (envolupant dels 31 polígons, amb marge nul: el punt-en-polígon ja retalla).
 BBOX = (41.89, 1.60, 42.33, 2.08)
 
+# Escala Catalunya (F5): envolupant segur de tot el país + geometria dels 947. Una query Overpass
+# CAT sencera és massa gran → es baixa per MOSAIC (tiles×tiles sub-bboxes); el punt-en-polígon
+# retalla als 947 polígons reals i descarta el que cau fora.
+BBOX_CAT = (40.50, 0.15, 42.92, 3.35)
+GEOJSON_CAT = REPO_ROOT / "packages" / "web" / "static" / "geo" / "catalunya-municipis.geojson"
+
 # Capçalera obligatòria: Overpass principal respon 406 sense User-Agent.
 USER_AGENT = "datapoble-riusdegent/1.0 (observatori territorial; sondeig@datapoble.local)"
 TIMEOUT = 190
 RETRIES = 4
 
 
-def build_query() -> str:
+def build_query(bbox: tuple = BBOX) -> str:
     """Query Overpass QL: tots els POIs de restauració dins el bbox (node/way/rel)."""
-    south, west, north, east = BBOX
+    south, west, north, east = bbox
     amenity_re = "|".join(AMENITIES)
     return (
         "[out:json][timeout:180];\n"
@@ -100,6 +107,37 @@ def fetch_overpass(query: str, session: requests.Session | None = None) -> list[
     raise RuntimeError(f"Overpass ha fallat a tots els miralls: {last_err!r}")
 
 
+def _tiles(bbox: tuple, n: int) -> list[tuple]:
+    """Divideix un bbox en n×n sub-bboxes (mosaic), per no rebentar Overpass a escala Catalunya."""
+    south, west, north, east = bbox
+    dlat, dlon = (north - south) / n, (east - west) / n
+    return [
+        (south + i * dlat, west + j * dlon, south + (i + 1) * dlat, west + (j + 1) * dlon)
+        for i in range(n)
+        for j in range(n)
+    ]
+
+
+def fetch_pois(bbox: tuple = BBOX, tiles: int = 1, session: requests.Session | None = None) -> list[dict]:
+    """Baixa els POIs de restauració del bbox. Si `tiles>1`, per MOSAIC (tiles×tiles), combinant i
+    deduplicant per (type, id) — les fronteres de tile poden repetir un POI."""
+    sess = session or requests.Session()
+    boxes = _tiles(bbox, tiles) if tiles > 1 else [bbox]
+    seen: set = set()
+    elements: list[dict] = []
+    for k, box in enumerate(boxes):
+        els = fetch_overpass(build_query(box), session=sess)
+        for el in els:
+            key = (el.get("type"), el.get("id"))
+            if key not in seen:
+                seen.add(key)
+                elements.append(el)
+        if tiles > 1:
+            print(f"  [restauracio] tile {k + 1}/{len(boxes)}: {len(els)} POIs (acum {len(elements)})",
+                  file=sys.stderr)
+    return elements
+
+
 def _poi_points(elements: list[dict]) -> list[dict]:
     """Extreu lon/lat + amenity de cada element (node: lat/lon; way/rel: center)."""
     pts: list[dict] = []
@@ -127,17 +165,17 @@ def _poi_points(elements: list[dict]) -> list[dict]:
     return pts
 
 
-def assign_to_municipis(points: list[dict]) -> pd.DataFrame:
+def assign_to_municipis(points: list[dict], geojson=GEOJSON) -> pd.DataFrame:
     """Assigna cada POI al seu municipi per punt-en-polígon (DuckDB spatial).
 
-    Retorna **una fila per municipi** (els 31, fins i tot amb compte 0) amb el total
-    i el desglossament per amenity. Els POIs fora dels 31 polígons (municipis veïns
-    capturats pel bbox) es **descarten** silenciosament — és el retall a la frontera.
+    Retorna **una fila per municipi** de `geojson` (fins i tot amb compte 0) amb el total i el
+    desglossament per amenity. Els POIs fora dels polígons (veïns capturats pel bbox) es **descarten**
+    silenciosament — és el retall a la frontera.
     """
     con = duckdb.connect()
     con.execute("INSTALL spatial")
     con.execute("LOAD spatial")
-    geo = GEOJSON.resolve().as_posix()
+    geo = geojson.resolve().as_posix()
 
     # Registra els POIs com a taula (buida si no n'hi ha cap, p. ex. snapshot buit).
     poi_df = pd.DataFrame(points, columns=["osm_type", "osm_id", "amenity", "lon", "lat"])
@@ -173,17 +211,18 @@ def assign_to_municipis(points: list[dict]) -> pd.DataFrame:
     return df
 
 
-def run(municipis: dict[str, str] = BERGUEDA) -> dict:
-    """Ingesta OSM de restauració per als 31 municipis del pilot. Idempotent.
+def run(municipis: dict[str, str] = BERGUEDA, geojson=GEOJSON, bbox: tuple = BBOX, tiles: int = 1) -> dict:
+    """Ingesta OSM de restauració per municipi. Idempotent. `geojson`+`bbox`+`tiles` parametritzen
+    l'abast: pilot Berguedà (defecte) o tot Catalunya (geometria 947 + bbox CAT + mosaic de tiles).
 
-    Determinista quant a query i assignació; l'snapshot d'OSM pot variar amb el temps
-    (és un mínim observat, no un cens).
+    Determinista quant a query i assignació; l'snapshot d'OSM pot variar amb el temps (és un mínim
+    observat, no un cens).
     """
     out_dir = raw_path(SOURCE)
 
-    elements = fetch_overpass(build_query())
+    elements = fetch_pois(bbox, tiles)
     points = _poi_points(elements)
-    counts = assign_to_municipis(points)
+    counts = assign_to_municipis(points, geojson)
 
     # codi6 + nom oficial des del registre de municipis (no del nom d'OSM).
     ine5_to_codi6 = {codi6[:5]: codi6 for codi6 in municipis}
@@ -204,8 +243,9 @@ def run(municipis: dict[str, str] = BERGUEDA) -> dict:
         row_count=len(counts),
         files=[out_file.name],
         query={
-            "overpass_ql": build_query(),
-            "bbox_south_west_north_east": list(BBOX),
+            "overpass_ql": build_query(bbox),
+            "bbox_south_west_north_east": list(bbox),
+            "tiles": tiles,
             "amenities": list(AMENITIES),
             "endpoints": list(OVERPASS_ENDPOINTS),
         },
@@ -216,7 +256,7 @@ def run(municipis: dict[str, str] = BERGUEDA) -> dict:
             "pois_fetched_in_bbox": fetched,
             "pois_assigned_to_31_munis": assigned,
             "pois_dropped_outside": fetched - assigned,
-            "geometry": str(GEOJSON.relative_to(REPO_ROOT).as_posix()),
+            "geometry": str(geojson.relative_to(REPO_ROOT).as_posix()),
             "note": (
                 "OSM INFRA-MAPEJA zones rurals → compte = MÍNIM observat, no cens. "
                 "Assignació per punt-en-polígon amb geometria real (ine5). POIs fora "
