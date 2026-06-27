@@ -66,9 +66,12 @@ límit de despesa; les tasques marcades **(IA)** sí (esperen que es reposi).*
     - ~~**F4.1** fitxa uniforme~~ ✅ #170 (row per a tots, fitxa partida per muni; resol «fitxes diferents»).
     - ~~**F4.2** mapa harmonitzat~~ ✅ #172 (trames a tot CAT segons confiança + un sol tooltip; `conf` a
       l'artefacte compacte). **Cal cop d'ull visual de Bea** (canvas WebGL).
-    - ⏳ **F5** 2a onada (no bloquejant): OSM a tot CAT (restauració/serveis) + subtipus de tipologia +
-      indicadors cat-escala nous (densitat/renda/gas) + altres marts (electoral/demografia) a tot CAT.
-    - **L'arc «fer-ho bé» (F1–F4) és complet i a `main`.**
+    - ~~**F5** 2a onada~~ ✅: ~~origen/demografia a tot CAT~~ (#174) · ~~densitat~~ (#175) · ~~renda~~ (#176) ·
+      ~~5 indicadors més al mapa~~ (#177) · ~~OSM a tot CAT → tipologia/restauració/serveis~~ (#178) ·
+      ~~tipologia+restauració al mapa~~ (#179). **Els 11 indicadors del mapa es pinten a tot CAT.**
+    - **L'arc «fer-ho bé» (F1–F5) és COMPLET i a `main`.** Pendents menors (no bloquejants): electoral
+      a tot CAT (aparcat per publicació) · fracció de gas com a indicador · validació fina de la
+      tipologia a escala (els llindars per tipus es poden afinar). Tot necessita cop d'ull visual de Bea.
 
 ## Diferit a Fase 2
 Licitacions de veritat (menors → majors/diputació) · fondària completa de fitxa (tipologia +
