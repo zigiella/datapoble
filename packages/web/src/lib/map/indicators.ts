@@ -25,35 +25,30 @@
 import type { MetricKey } from '$lib/contract/types';
 
 /**
- * Claus de mètrica pintables al mapa, en ordre editorial.
- * Encapçala el gap de pernocta (L1, «població invisible»): és la nova signatura del projecte
- * i el que es veu primer en obrir el mapa. Després les altres dues capes (càrrega, pressió
- * turística) i la lectura territorial estructural.
+ * Claus de mètrica pintables al MAPA PÚBLIC DE CATALUNYA, en ordre editorial.
+ *
+ * RECONDUCCIÓ · FASE 0 (2026-06, `docs/dossier-consultoria-2026-06/01-reconduccio.md` §4): el mapa
+ * públic NOMÉS mostra el que aguanta **sense llegenda defensiva**. Dels 11 indicadors que es
+ * pintaven a tot CAT en queden TRES:
+ *   1. `gap_pernocta_pct` — la població invisible (l'estrella, reenquadrada com a hipòtesi). DEFECTE.
+ *   2. `pct_noprincipal` — % habitatge no principal (oficial, llegible d'un cop d'ull).
+ *   3. `kg_hab_any` — residus kg/hab/any (mesura directa ARC, amb caveat).
+ *
+ * RETIRATS del mapa públic CAT (baixen a Berguedà o a context de fitxa en fases posteriors —no es
+ * perden, es curen):
+ *   · `tipologia` — els llindars no generalitzen fora del Berguedà (Barcelona=excursió). → Berguedà.
+ *   · `index_turisme` — el proxy no capta la gran ciutat («Barcelona no té pressió»). → Berguedà/fora.
+ *   · `carrega_total_est` — es confon amb el gap; difícil d'explicar. → fitxa interna/fora.
+ *   · `restauracio_per_1000hab` — OSM infra-mapa el rural: mínim observat, no cens. → context de fitxa.
+ *   · `IETR` — no s'entén a escala Catalunya. → Berguedà/fitxa.
+ *   · `densitat_hab_km2` — Barcelona domina l'escala lineal; tornarà al mapa amb escala log (Fase 3).
+ *   · `renda_neta_persona` — aporta poc al conjunt del mapa; distreu. → fitxa.
+ *   · `divergencia_senyals` — no s'entén com a mapa; reconvertir en bandera interna de confiança.
+ *
+ * Les etiquetes/caveats d'aquests indicadors es conserven a `mapa/+page.svelte` perquè es reutilitzin
+ * quan tornin a la vista Berguedà o a la fitxa; aquí, la llista és l'única font del que s'ofereix.
  */
-export const MAP_INDICATORS: MetricKey[] = [
-	// Encapçala la TIPOLOGIA (Fase 1): la joia narrativa — diu QUIN TIPUS de pressió hi ha
-	// (capital de serveis, segona residència, excursió, dormitori invisible, buit administratiu,
-	// indeterminat), no «més/menys». Coloració CATEGÒRICA (un color per tipus), no rampa.
-	'tipologia',
-	'gap_pernocta_pct',
-	'carrega_total_est',
-	'index_turisme',
-	// 2n proxy de la capa L3 (pressió turística): densitat de restauració d'OSM. Va al costat
-	// d'`index_turisme` perquè el VALIDA (Spearman ≈ 0,54 vs vidre/hab i index_turisme). Densitat
-	// 0+ (més = més hostaleria) → seqüencial terra --dp-exposure, igual que kg_hab_any.
-	'restauracio_per_1000hab',
-	'IETR',
-	'pct_noprincipal',
-	'kg_hab_any',
-	// Densitat de població (hab/km², EMEX) — covariable estructural i driver de la base del model;
-	// pintable a TOT CAT (F5). Magnitud positiva de rang ampli → seqüencial terra (Jenks).
-	'densitat_hab_km2',
-	// Renda neta per persona (INE ADRH) — benestar i covariable del model; pintable a TOT CAT (F5).
-	'renda_neta_persona',
-	// Atles de contradiccions: divergència dels 3 senyals de presència (0-100). Fosc = els
-	// senyals físics es contradiuen → llegir amb prudència. Converteix la incertesa en producte.
-	'divergencia_senyals'
-];
+export const MAP_INDICATORS: MetricKey[] = ['gap_pernocta_pct', 'pct_noprincipal', 'kg_hab_any'];
 
 /** Indicador per defecte en obrir el mapa: la població invisible (gap de pernocta, L1). */
 export const DEFAULT_INDICATOR: MetricKey = 'gap_pernocta_pct';
