@@ -258,6 +258,7 @@
 				<p class="val-llindar">
 					{m.met_val_llindar()} ρ ≥ {dec(etca.go_no_go.rho_min)} · {m.met_val_err()} ≤ {etca.go_no_go.error_max_pct}%
 				</p>
+				<p class="lead">{m.met_valid_canon()}</p>
 				<div class="val-table-wrap">
 					<table class="val-table">
 						<thead>
