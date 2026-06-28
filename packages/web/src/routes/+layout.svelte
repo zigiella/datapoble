@@ -80,6 +80,10 @@
 			<span class="sub">{m.brand_sub()}</span>
 		</span>
 	</a>
+	<!-- Menú principal de CINC entrades (reconducció · brief de home): Inici · Resum · Mapa ·
+	     Pregunta-li · Metodologia. Política i Excursionista de dia (day-tripper) i Exposició (índex)
+	     surten de la nav. Metodologia PUJA a la capçalera: per a l'avaluador tècnic és la peça que
+	     converteix → visible des del primer píxel. Licitacions segueix només al peu. -->
 	<nav class="ds-nav" aria-label="Primary">
 		<a href={localizeHref('/')} class:on={isActive('/')} aria-current={isActive('/') ? 'page' : undefined}>
 			<span>{m.nav_inici()}</span>
@@ -90,14 +94,12 @@
 		<a href={localizeHref('/mapa')} class:on={isActive('/mapa')} aria-current={isActive('/mapa') ? 'page' : undefined}>
 			<span>{m.nav_mapa()}</span>
 		</a>
-		<!-- Licitacions FORA de la nav principal (decisió Bea): «en construcció», només al peu.
-		     Metodologia i Glossari tampoc van a la capçalera: viuen al peu (secció Explora). -->
 		<a href={localizeHref('/pregunta-li')} class:on={isActive('/pregunta-li')} aria-current={isActive('/pregunta-li') ? 'page' : undefined}>
 			<span>{m.nav_preguntale()}</span>
 		</a>
-		<span class="nav-inert" aria-disabled="true">{m.nav_index()}</span>
-		<span class="nav-inert" aria-disabled="true">{m.nav_daytripper()}</span>
-		<span class="nav-inert" aria-disabled="true">{m.nav_politica()}</span>
+		<a href={localizeHref('/metodologia')} class:on={isActive('/metodologia')} aria-current={isActive('/metodologia') ? 'page' : undefined}>
+			<span>{m.foot_link_method_to()}</span>
+		</a>
 	</nav>
 	<div class="ds-top__right">
 		<LangSwitcher />
@@ -164,7 +166,6 @@
 			<h4>{m.foot_about()}</h4>
 			<ul>
 				<li><span class="foot-inert" aria-disabled="true">{m.foot_about_who()}</span></li>
-				<li><span class="foot-inert" aria-disabled="true">{m.foot_about_politica()}</span></li>
 				<li><span class="foot-inert" aria-disabled="true">{m.foot_link_contract()}</span></li>
 				<li><a href={localizeHref('/pregunta-li')}>{m.foot_about_ask()}</a></li>
 			</ul>
@@ -193,21 +194,6 @@
 		display: block;
 		outline: none;
 		min-height: 60vh;
-	}
-
-	/* Ítems de nav inerts (pàgines no construïdes en aquesta fase): es renderitzen com a
-	   <span> (no són enllaços navegables → sense href), però amb el mateix encaix visual
-	   que .ds-nav a, atenuats. */
-	.nav-inert {
-		font-size: 0.9rem;
-		font-weight: 500;
-		color: var(--dp-text-muted);
-		padding: 8px 13px;
-		border-radius: var(--dp-radius-sm);
-		line-height: 1;
-		opacity: 0.5;
-		cursor: not-allowed;
-		user-select: none;
 	}
 
 	/* Enllaços inerts del peu: <span> atenuat amb la mateixa pell que .ap-foot ul a. */
