@@ -136,7 +136,7 @@
 	aria-live="polite"
 >
 	<div class="tip__place">{nom}</div>
-	<div class="tip__metric">{pick(def.label, locale)}</div>
+	<div class="tip__metric">{isGapOverride ? m.map_gap_idescat_metric() : pick(def.label, locale)}</div>
 	{#if hasVal}
 		<div class="tip__val tnum" class:tip__val--cat={isTipologia}>
 			{formatted}{#if showUnit}<span class="tip__unit"> {unit}</span>{/if}
@@ -150,14 +150,13 @@
 	{/if}
 
 	{#if isGapOverride && hasVal}
-		<!-- Costura: el valor de dalt és d'Idescat (oficial); la nostra estimació, com a contrast. -->
+		<!-- La capçalera és Idescat (oficial); la NOSTRA estimació baixa a contrast clarament etiquetat. -->
 		<p class="tip__contrast">
-			<span class="tip__contrast-tag">{m.map_gap_idescat_tag()}</span>
-			· {m.map_gap_nostra_tag()}: <b class="tnum">{gapNostraTxt}</b>
+			{m.map_gap_nostra_tag()} (pernocta): <b class="tnum">{gapNostraTxt}</b>
 		</p>
 	{/if}
 
-	{#if isEstimate && hasVal && (confLabel || hasScore)}
+	{#if isEstimate && hasVal && !isGapOverride && (confLabel || hasScore)}
 		<!-- Confiança: la BANDERA (alta/mitjana/baixa) i el SCORE auditable 0-100 es mostren TOTS
 		     DOS — poden divergir (Castellar: bandera «alta» però score ≈ 33 per senyals que es
 		     contradiuen). Veure els dos és l'honestedat: el score és el costat fi de la tensió. -->
@@ -181,7 +180,7 @@
 		     BANDA (mai punt), amb l'ETCA oficial al costat com a validació quan n'hi ha. Mateix tooltip
 		     que el Berguedà (indicador + confiança), amb aquest afegit honest de presència. -->
 		<div class="tip__range-block">
-			<span class="tip__range-lbl">{m.map_range_eyebrow()}</span>
+			<span class="tip__range-lbl">{isGapOverride ? m.map_range_eyebrow_nostra() : m.map_range_eyebrow()}</span>
 			<span class="tip__range tnum"
 				>{formatInteger(pernocta.rang_baix, locale)}–{formatInteger(pernocta.rang_alt, locale)}<span
 					class="tip__range-unit"
@@ -189,7 +188,7 @@
 					{m.map_range_unit()}</span
 				></span
 			>
-			{#if pernocta.etca_oficial != null}
+			{#if pernocta.etca_oficial != null && !isGapOverride}
 				<span class="tip__range-etca"
 					>{m.map_range_etca()}: <b class="tnum">{formatInteger(pernocta.etca_oficial, locale)}</b></span
 				>
@@ -197,8 +196,8 @@
 		</div>
 	{/if}
 
-	<div class="prov prov--{prov}">
-		<span class="dot"></span>{provLabel}
+	<div class="prov prov--{isGapOverride ? 'measured' : prov}">
+		<span class="dot"></span>{isGapOverride ? m.map_prov_measured() : provLabel}
 	</div>
 
 	{#if hasVal && isTipologia}

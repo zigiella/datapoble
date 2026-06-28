@@ -177,6 +177,8 @@
   "map_gap_tooltip_caveat": "Inferència (no cens): estimació dels tres rastres de presència (pernocta, càrrega o pressió turística) a partir de senyals físics. Lectura a escala municipal.",
   "map_gap_idescat_tag": "Idescat (oficial)",
   "map_gap_nostra_tag": "la nostra estimació",
+  "map_gap_idescat_metric": "Present vs padró · Idescat (oficial)",
+  "map_range_eyebrow_nostra": "La nostra estimació · en rang",
   "map_prov_measured": "dada oficial",
   "map_prov_derived": "índex riusdegent (derivat)",
   "map_prov_nodata": "sense dada",
