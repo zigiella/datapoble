@@ -52,6 +52,8 @@ jobs:
         run: python tools/tipus_territorial.py --check
       - name: Calibració dels intervals al dia (Fase 1 · offline)
         run: python tools/calibracio_intervals.py --check
+      - name: Partició ETCA↔pernocta al dia (Fase 1 · offline)
+        run: python tools/discrepancia_etca_pernocta.py --check
       - name: Export Licitacions al dia (cabal → web · offline)
         run: python tools/export_licitacions.py --check
 
