@@ -53,16 +53,18 @@
 		const pts = Object.values(munis)
 			.filter((mu) => mu.padro && mu.padro > 0)
 			.map((mu) => {
-				// Costura visible: ≥1.000 hab → dada OFICIAL d'Idescat (ETCA); <1.000 → la NOSTRA estimació.
-				// Són mesures diferents (ETCA = vinculació anual en ETC ≠ la nostra pernocta) → s'etiqueta,
-				// no es fon. Per als oficials, el gap és el d'Idescat (p. ex. Barcelona surt en positiu).
+				// Tots els punts ploten la NOSTRA estimació de pernocta (la mètrica distintiva): a l'aparador
+				// no la cedim a la font oficial, la mostrem AL COSTAT. El «ple» NO vol dir «aquí va la xifra
+				// d'Idescat», sinó «aquest municipi (≥1.000 hab) el podem CONTRASTAR amb dada oficial (ETCA)».
+				// Idescat (vinculació anual) ≠ la nostra pernocta → el contrast s'anota, mai substitueix.
+				const padro = mu.padro as number;
 				const oficial = mu.etca_oficial != null;
-				const presencia = oficial ? (mu.etca_oficial as number) : mu.estimacio;
 				return {
 					nom: mu.nom,
 					slug: toSlug(mu.nom),
-					gap: ((presencia - (mu.padro as number)) / (mu.padro as number)) * 100,
+					gap: ((mu.estimacio - padro) / padro) * 100,
 					oficial,
+					etcaGap: oficial ? (((mu.etca_oficial as number) - padro) / padro) * 100 : null,
 					clamped: false
 				};
 			})
@@ -127,9 +129,9 @@
 					<circle cx={d.cx} cy={d.cy} r={R} fill="var(--dp-surface)" stroke={d.color} stroke-width="1.3" />
 				{/if}
 				<title
-					>{d.nom}: {d.gap > 0 ? '+' : ''}{Math.round(d.gap)}% · {d.oficial
-						? m.beeswarm_leg_oficial()
-						: m.beeswarm_leg_estimat()}</title
+					>{d.nom}: {d.gap > 0 ? '+' : ''}{Math.round(d.gap)}%{d.oficial && d.etcaGap != null
+						? ` · ${m.beeswarm_dot_contrast({ v: `${d.etcaGap > 0 ? '+' : ''}${Math.round(d.etcaGap)}%` })}`
+						: ` · ${m.beeswarm_leg_estimat()}`}</title
 				>
 			</a>
 		{/each}
