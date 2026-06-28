@@ -52,12 +52,20 @@
 	const placed = $derived.by(() => {
 		const pts = Object.values(munis)
 			.filter((mu) => mu.padro && mu.padro > 0)
-			.map((mu) => ({
-				nom: mu.nom,
-				slug: toSlug(mu.nom),
-				gap: ((mu.estimacio - (mu.padro as number)) / (mu.padro as number)) * 100,
-				clamped: false
-			}))
+			.map((mu) => {
+				// Costura visible: ≥1.000 hab → dada OFICIAL d'Idescat (ETCA); <1.000 → la NOSTRA estimació.
+				// Són mesures diferents (ETCA = vinculació anual en ETC ≠ la nostra pernocta) → s'etiqueta,
+				// no es fon. Per als oficials, el gap és el d'Idescat (p. ex. Barcelona surt en positiu).
+				const oficial = mu.etca_oficial != null;
+				const presencia = oficial ? (mu.etca_oficial as number) : mu.estimacio;
+				return {
+					nom: mu.nom,
+					slug: toSlug(mu.nom),
+					gap: ((presencia - (mu.padro as number)) / (mu.padro as number)) * 100,
+					oficial,
+					clamped: false
+				};
+			})
 			.map((p) => ({ ...p, clamped: p.gap < GMIN || p.gap > GMAX }))
 			.sort((a, b) => a.gap - b.gap);
 		const bins = new Map<number, number>();
@@ -113,11 +121,31 @@
 		<!-- Punts: un per municipi. Enllaç a la fitxa + title natiu (hover). -->
 		{#each placed.dots as d (d.slug)}
 			<a href={localizeHref(`/municipi/${d.slug}`)} class="bsw__dot">
-				<circle cx={d.cx} cy={d.cy} r={R} fill={d.color} />
-				<title>{d.nom}: {d.gap > 0 ? '+' : ''}{Math.round(d.gap)}%</title>
+				{#if d.oficial}
+					<circle cx={d.cx} cy={d.cy} r={R} fill={d.color} />
+				{:else}
+					<circle cx={d.cx} cy={d.cy} r={R} fill="var(--dp-surface)" stroke={d.color} stroke-width="1.3" />
+				{/if}
+				<title
+					>{d.nom}: {d.gap > 0 ? '+' : ''}{Math.round(d.gap)}% · {d.oficial
+						? m.beeswarm_leg_oficial()
+						: m.beeswarm_leg_estimat()}</title
+				>
 			</a>
 		{/each}
 	</svg>
+	<div class="bsw__leg">
+		<span class="bsw__leg-item">
+			<svg class="bsw__leg-mk" width="13" height="13" viewBox="0 0 13 13" aria-hidden="true"
+				><circle cx="6.5" cy="6.5" r="3.6" fill="var(--dp-div2-5)" /></svg
+			>{m.beeswarm_leg_oficial()}</span
+		>
+		<span class="bsw__leg-item">
+			<svg class="bsw__leg-mk" width="13" height="13" viewBox="0 0 13 13" aria-hidden="true"
+				><circle cx="6.5" cy="6.5" r="3.1" fill="var(--dp-surface)" stroke="var(--dp-div2-5)" stroke-width="1.3" /></svg
+			>{m.beeswarm_leg_estimat()}</span
+		>
+	</div>
 	<figcaption class="bsw__foot">{m.beeswarm_foot()}</figcaption>
 </figure>
 
@@ -153,6 +181,23 @@
 		stroke: var(--dp-text);
 		stroke-width: 1.2;
 		outline: none;
+	}
+	.bsw__leg {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px 18px;
+		margin: 10px 0 0;
+	}
+	.bsw__leg-item {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		font-family: var(--dp-font-mono);
+		font-size: 0.68rem;
+		color: var(--dp-text-muted);
+	}
+	.bsw__leg-mk {
+		flex: none;
 	}
 	.bsw__foot {
 		margin: 8px 0 0;
