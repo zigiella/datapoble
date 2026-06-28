@@ -50,6 +50,8 @@ jobs:
         run: python tools/validacio_etca.py --check
       - name: Tipus territorial al dia (Pas 4 · Nivell B · offline)
         run: python tools/tipus_territorial.py --check
+      - name: Calibració dels intervals al dia (Fase 1 · offline)
+        run: python tools/calibracio_intervals.py --check
       - name: Export Licitacions al dia (cabal → web · offline)
         run: python tools/export_licitacions.py --check
 
