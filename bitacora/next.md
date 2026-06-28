@@ -8,31 +8,31 @@ publicable per si sola.*
 > `docs/dossier-consultoria-2026-06/01-reconduccio.md`. Concepte: **«l'observatori que sap el que no
 > sap»** (Berguedà = nucli validat · Catalunya = context honest i curat, amb la **costura visible**
 > entre Idescat ≥1.000 hab i la nostra estimació <1.000). **El gap és el ganxo; l'epistemologia és el
-> producte.** Es treballa per **fases (0→5)**. **No s'executa cap fase fins que Bea en doni el tret de
-> sortida.** Criteri de parada: si només dues, **Fase 1 + Fase 2**.
+> producte.** Es treballa per **fases (0→5)**. **Fase 0 ✅ completa · Fase 1 EN MARXA** (calibració ✅
+> #187: la banda és honesta, 80%→78,4%). Criteri de parada: si només dues, **Fase 1 + Fase 2**.
 
-> **Vot de Bea pendent** (no el tanca Talaia): enquadrament del *gap* com a hipòtesi (còpia) ·
-> postura política explícita + nota de mètode · portar (o no) el doc verbatim de la consultoria al
-> repo · per quina fase comencem (recomanat: **Fase 0**). Detall a §7 de la reconducció.
+> **Vot de Bea pendent**: la **postura política + nota de mètode** sobre usos i límits del *gap*
+> (l'únic fleco obert de Fase 0). L'enquadrament del *gap* com a hipòtesi el va decidir el brief de home.
 
 ---
 
-## Fase 0 · congelar abast i matar el que trenca · *demostra criteri*
-- [ ] Treure del **mapa públic CAT**: tipologia, pressió turística, IETR, contradiccions, restauració.
-- [ ] Reubicar cada una a **Berguedà** o a **context de fitxa** (segons el contracte d'abast, §4).
-- [ ] Treure **política** de **totes** les pàgines + **nota de mètode** amb postura deliberada.
-- [ ] Escriure el **contracte d'abast** en una pàgina (què es mostra on).
-- [ ] Decidir l'**enquadrament del *gap*** (registre d'**hipòtesi**, no de veredicte) — *vot de Bea*.
+## Fase 0 · congelar abast i matar el que trenca · *demostra criteri* — ✅ COMPLETA
+- [x] Treure del **mapa públic CAT**: tipologia, pressió, IETR, contradiccions, restauració, densitat, renda (#183).
+- [x] Reubicar: ja hi viuen (IETR/renda/restauració a **fitxa**, tipologia al **Berguedà**); n'hi havia prou de no pintar-les al mapa CAT.
+- [x] Treure **política** de tot el web (#184 chrome · #185 ruta/blocs/glossari). *Falta la nota de mètode amb postura deliberada — vot de Bea.*
+- [x] **Contracte d'abast** en una pàgina (#186, `docs/contracte-abast.md`).
+- [x] Enquadrament del *gap* com a **hipòtesi** — decidit pel brief de home (s'aplica a la home, Fase 4).
 
-## Fase 1 · el nucli epistèmic · *el 70% del valor*
-- [ ] Produir **intervals predictius reals** i comprovar-ne la **calibració**.
-- [ ] **Reliability diagram** + taula de **cobertura empírica del p10–p90** en held-out.
-- [ ] **Refer la banda** si la cobertura no coincideix amb el que promet.
+## Fase 1 · el nucli epistèmic · *el 70% del valor* — EN MARXA
+- [x] **Intervals predictius reals + calibració** (#187): banda LOO p10–p90 per tipus.
+- [x] **Reliability diagram + taula** de cobertura empírica del p10–p90 en held-out (#187,
+      `data/territorial/calibracio_intervals.csv`): l'interval del 80% cobreix el **78,4%** real → **ben calibrat**.
+- [ ] **Refer la banda** dels tipus infracoberts (corona/litoral metropolità, n petita) — *en públic ho cobreix la costura* (≥1.000 = Idescat); sobretot afecta l'auditoria interna.
 - [ ] **Cosir la capa CAT**: ETCA oficial (Idescat) a ≥1.000 hab · estimació pròpia només a <1.000
-      (marcada experimental) · **costura visible** + **doble etiqueta** (font + significat: ETCA = net
-      anual ETC ≠ la nostra pernocta).
-- [ ] Verificar que **Barcelona i les ciutats denses les parla Idescat** (desapareix el negatiu absurd).
-- [ ] Documentar el **supòsit causal i els confusors** del residu (R²=0,41) a la metodologia.
+      (marcada experimental) · **costura visible** + **doble etiqueta** (ETCA = net anual ETC ≠ la nostra
+      pernocta). ← **peça gran següent** (desbloqueja el brief de home, Blocs 2 i 5).
+- [ ] Verificar que **Barcelona i les ciutats denses les parla Idescat** (desapareix el negatiu absurd) — part de la costura.
+- [ ] **Treure la calibració a /metodologia** (reliability diagram visible) + documentar el **supòsit causal i els confusors** (R²=0,41).
 
 ## Fase 2 · la vitrina Berguedà · *rigor de punta a punta*
 - [ ] 31 munis, dades completes, model validat i ben narrat.
