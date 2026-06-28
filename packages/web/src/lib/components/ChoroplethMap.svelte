@@ -657,6 +657,12 @@
 				confScore: typeof cs === 'number' ? cs : null,
 				inBergueda: inBerg,
 				pernocta: cover,
+				// Costura del gap: si el valor pintat és el d'Idescat (cobert ≥1.000 hab), la nostra
+				// estimació viatja com a CONTRAST per al tooltip (gap_nostra). Null si no hi ha override.
+				gapNostra:
+					covered && indicator === 'gap_pernocta_pct'
+						? (catValues?.[ine5]?.gap_nostra ?? null)
+						: null,
 				x: point.x,
 				y: point.y
 			};

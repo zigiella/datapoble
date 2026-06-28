@@ -23,6 +23,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 SRC = REPO / "data" / "web" / "municipis.catalunya.json"
+PERN = REPO / "data" / "web" / "pernocta-catalunya.json"
 OUT = REPO / "data" / "web" / "indicadors-catalunya.json"
 
 # Indicadors numèrics que el mapa pinta a escala Catalunya (clau de mètrica → s'hi accedeix igual).
@@ -47,6 +48,14 @@ def main() -> int:
         return 2
 
     data = json.loads(SRC.read_text(encoding="utf-8"))["municipis"]
+    # Costura del gap al MAPA (regla del règim dens): on hi ha ETCA oficial (≥1.000 hab) MANA Idescat
+    # —mai la nostra pernocta pintada de fort (Barcelona, el Prat, l'Hospitalet… serien artefacte)—.
+    # Així el color del cobert ja es pinta amb el gap d'Idescat; la nostra estimació queda com a
+    # CONTRAST anotat (`gap_nostra`) per al tooltip. Als <1.000 (sense ETCA) es manté la nostra,
+    # tramada per confiança baixa. El waveform fa el contrari (la nostra mètrica és l'heroi): és una
+    # decisió PER SUPERFÍCIE, no una còpia.
+    pern = json.loads(PERN.read_text(encoding="utf-8"))["munis"] if PERN.exists() else {}
+
     out: dict[str, dict] = {}
     for ine5, muni in data.items():
         v = muni.get("values", {})
@@ -54,6 +63,13 @@ def main() -> int:
         for k in NUM_KEYS:
             if isinstance(v.get(k), (int, float)):
                 rec[k] = v[k]
+        # Override del gap per als munis amb ETCA: el color del mapa mostra Idescat, no la nostra.
+        p = pern.get(ine5)
+        if p and isinstance(p.get("etca_oficial"), (int, float)) and p.get("padro"):
+            idescat_gap = round((p["etca_oficial"] - p["padro"]) / p["padro"] * 100, 1)
+            if isinstance(rec.get("gap_pernocta_pct"), (int, float)):
+                rec["gap_nostra"] = rec["gap_pernocta_pct"]  # la nostra estimació, ara com a contrast
+            rec["gap_pernocta_pct"] = idescat_gap
         conf = v.get("confianca")
         if isinstance(conf, str):
             rec["conf"] = conf
