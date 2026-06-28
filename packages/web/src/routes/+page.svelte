@@ -17,7 +17,6 @@
 	import { classify, methodFor } from '$lib/map/classify';
 	import { mapValue } from '$lib/map/indicators';
 	import { slugForIne5, toSlug } from '$lib/contract/slug';
-	import { buildTroballes, type Troballa } from '$lib/analysis/troballes';
 	import { localizeHref } from '$lib/i18n';
 	import { m } from '$lib/paraglide/messages';
 	import type { MetricKey } from '$lib/contract/types';
@@ -44,12 +43,9 @@
 		{ key: 'municipi', label: () => m.map_granularity_municipi() }
 	];
 
-	// Licitacions aparcades per al llançament (decisió Bea): sense l'artefacte, la troballa 'lic'
-	// no apareix (buildTroballes ja la condiciona). La maquinària es conserva per a la Fase 2.
-	const troballes = $derived(buildTroballes(dataset));
-
-	// Mapa de suport: coloració per TIPOLOGIA (categòric: quin TIPUS de pressió, no «més/menys»).
-	const indicator = 'tipologia' as MetricKey;
+	// Mapa de suport: % habitatge no principal (oficial, llegible a escala CAT). NO tipologia —els
+	// llindars no generalitzen («Barcelona = excursió» trencava la credibilitat (reconducció)).
+	const indicator = 'pct_noprincipal' as MetricKey;
 	const series = $derived(
 		geojson.features.map((f: import('geojson').Feature) =>
 			mapValue(indicator, dataset.municipis[(f.properties?.ine5 as string) ?? '']?.values?.[indicator])
@@ -69,32 +65,6 @@
 		if (cov) goto(localizeHref(`/municipi/${toSlug(cov.nom)}`));
 	}
 
-	function troballaText(t: Troballa): string {
-		switch (t.kind) {
-			case 'gap':
-				return m.home_troballa_gap({ nom: t.nom });
-			case 'ietr':
-				return m.home_troballa_ietr({ nom: t.nom });
-			case 'div':
-				return m.home_troballa_div({ nom: t.nom });
-			case 'lic':
-				return m.home_troballa_lic({ nom: t.nom });
-		}
-	}
-	function troballaCognom(t: Troballa): string {
-		switch (t.kind) {
-			case 'gap':
-				return m.home_cognom_gap();
-			case 'ietr':
-				return m.home_cognom_ietr();
-			case 'div':
-				return m.home_cognom_div();
-			case 'lic':
-				return m.home_cognom_lic();
-		}
-	}
-	const valorTxt = (t: Troballa): string =>
-		t.kind === 'gap' ? `+${t.valor}%` : t.kind === 'lic' ? `${t.valor}` : `${t.valor}`;
 
 	const heroSummits = [
 		{ cx: 900, cy: 130, r0: 16, step: 23, rings: 9, sq: 0.96, seed: 1.1, lt: 0.03 },
@@ -121,28 +91,7 @@
 	</div>
 
 	<div class="ds-main">
-		<!-- TROBALLES · el que les dades criden (extrems honestos, amb procedència) -->
-		{#if troballes.length}
-			<section class="ds-sec first">
-				<div class="ds-sec__hd"><span class="ref">★</span><h2>{m.home_troballes_title()}</h2></div>
-				<ul class="home-troballes">
-					{#each troballes as t (t.kind)}
-						<li>
-							<a class="troballa" href={localizeHref(`/municipi/${t.slug}`)}>
-								<span class="troballa__txt">{troballaText(t)}</span>
-								<span class="troballa__meta">
-									<span class="dot {t.to === 'mesura' ? 'dot--measured' : 'dot--derived'}"></span>
-									<span class="troballa__val">{valorTxt(t)}</span>
-									<span class="troballa__cognom">{troballaCognom(t)}</span>
-								</span>
-							</a>
-						</li>
-					{/each}
-				</ul>
-			</section>
-		{/if}
-
-		<!-- MAPA · el territori d'un cop d'ull (color per tipus de pressió; clic → fitxa) -->
+		<!-- MAPA · el territori d'un cop d'ull (% habitatge no principal, oficial; clic → fitxa) -->
 		<section class="ds-sec">
 			<div class="ds-sec__hd"><span class="ref">◵</span><h2>{m.home_map_title()}</h2></div>
 			<p class="lead">{m.home_map_hint()}</p>
@@ -195,7 +144,6 @@
 				<div class="porta porta--soon" aria-disabled="true">
 					<span class="porta__nom">{m.home_porta_proxim()}</span>
 					<span class="porta__sub">{m.home_porta_proxim_sub()}</span>
-					<span class="porta__soon">{m.home_porta_soon()}</span>
 				</div>
 			</div>
 		</section>
