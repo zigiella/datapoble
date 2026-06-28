@@ -118,12 +118,6 @@
 		},
 		{
 			ref: 'F',
-			title: () => m.met_block_politica(),
-			intro: () => m.met_politica_intro(),
-			keys: ['pct_indep', 'pct_extrema_dreta']
-		},
-		{
-			ref: 'G',
 			title: () => m.met_block_origen(),
 			intro: () => m.met_origen_intro(),
 			keys: [
