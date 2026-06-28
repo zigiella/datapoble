@@ -6,7 +6,8 @@ publicable per si sola.*
 > **🧭 RUMBO DECIDIT (2026-06-27).** Després de l'arc «fer-ho bé» (dada honesta a tot CAT) i del dossier
 > de consultoria, la **consultoria externa** ha reconduït el projecte. Decisió a
 > `docs/dossier-consultoria-2026-06/01-reconduccio.md`. Concepte: **«l'observatori que sap el que no
-> sap»** (Berguedà = nucli validat · Catalunya = context honest i curat, amb la **costura visible**
+> sap»** (Berguedà = nucli validat als 9 munis ≥1.000 —frase canònica a `docs/contracte-abast.md`— ·
+> Catalunya = context honest i curat, amb la **costura visible**
 > entre Idescat ≥1.000 hab i la nostra estimació <1.000). **El gap és el ganxo; l'epistemologia és el
 > producte.** Es treballa per **fases (0→5)**. **Fase 0 ✅ completa · Fase 1 EN MARXA** (calibració ✅
 > #187: la banda és honesta, 80%→78,4%). Criteri de parada: si només dues, **Fase 1 + Fase 2**.
@@ -35,7 +36,7 @@ publicable per si sola.*
 - [ ] **Treure la calibració a /metodologia** (reliability diagram visible) + documentar el **supòsit causal i els confusors** (R²=0,41).
 
 ## Fase 2 · la vitrina Berguedà · *rigor de punta a punta*
-- [ ] 31 munis, dades completes, model validat i ben narrat.
+- [ ] 31 munis, dades completes; model validat contra ETCA als **9 munis ≥1.000** (no els 31), honest amb els 22 sense validació oficial (frase canònica a `docs/contracte-abast.md`).
 - [ ] Pàgina de **metodologia auditable** amb gràfics de validació.
 - [ ] Error per **tipus territorial** i límits declarats (inclòs que **ETCA també és estimació**).
 
@@ -83,3 +84,10 @@ publicable per si sola.*
 
 ## Diferit a Fase 2 (del projecte, no del pla)
 Licitacions de veritat (menors → majors/diputació) · fonts noves.
+
+## Futur · per a qui continuï (documentat, no per executar ara)
+- **Pernocta multianual (sèrie temporal).** A la raw d'ICAEN hi ha **2013–2024 anual**; la pernocta
+  només fa servir **un tall (2024)**. Calcular-la any a any donaria (a) una **tendència** de la població
+  invisible al llarg d'una dècada i (b) un **test d'estabilitat = senyal vs soroll en el temps**: un gap
+  que **persisteix** any rere any és senyal; un que **parpelleja** és soroll (la mateixa partició dels
+  151, però en l'eix del temps). Reforçaria la calibració amb evidència nova. Bon material per a Fase 2/3.

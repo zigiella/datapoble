@@ -11,7 +11,7 @@ Quan dubtem on va un indicador, mana aquesta taula. *Saber tallar és el senyal 
 
 Quatre destinacions:
 - **Mapa públic CAT** — el cop d'ull a tot el país. Pocs indicadors, tots blindats.
-- **Vitrina Berguedà** — el nucli validat (error medià 8,2% vs ETCA): hi cap el detall que no generalitza.
+- **Vitrina Berguedà** — el nucli validat (vegeu «Validació», la frase canònica): hi cap el detall que no generalitza.
 - **Fitxa de municipi** — context per poble (es llegeix amb el municipi al davant, no en abstracte).
 - **Fora** — el que no s'entén com a mapa; pot reconvertir-se en senyal intern.
 
@@ -35,7 +35,7 @@ Quatre destinacions:
 ## Resultat per superfície
 
 - **Mapa públic CAT (3):** gap (reenquadrat) · % habitatge no principal · residus.
-- **Vitrina Berguedà:** el detall validat (tipologia, IETR, pressió…), narrat i amb el guardó ETCA.
+- **Vitrina Berguedà:** el detall (tipologia, IETR, pressió…), narrat; validat contra ETCA als 9 munis grans (vegeu «Validació»).
 - **Fitxa:** context (densitat, renda, restauració, IETR…), cadascun amb procedència i caveat.
 - **Fora:** contradiccions (→ senyal intern de confiança) · política.
 
@@ -57,4 +57,23 @@ munició. La postura ha de ser **deliberada**, amb una **nota de mètode** sobre
 (decisió de direcció, pendent). El que sí és ferm: cap contingut polític es mostra al web.
 
 ---
+## Validació (frase canònica)
+
+*Frase ÚNICA de validació. Tota referència a «validat» (web, dossier, metodologia, cua) hi apunta;
+no es repeteix a mà —una font, no dotze còpies que es contradiran.*
+
+> La pernocta està validada contra l'ETCA d'Idescat als **9 municipis del Berguedà de ≥1.000 hab**
+> (ρ=0,967; error medià 8,2%, **dins de mostra**). Als **22 municipis petits no hi ha ETCA**:
+> l'estimació no té validació oficial, i és on l'error creix. La **generalització** del model és la
+> cobertura de la banda **fora de mostra** (interval nominal del 80% → 78,4% empíric), no el 8,2%.
+
+Curta (peus i tooltips): «Validat contra l'ETCA als 9 munis grans del Berguedà; als 22 petits,
+estimació sense validació oficial. Generalització: banda 80%→78,4% fora de mostra.»
+
+Al web, la font és el missatge i18n **`met_valid_canon`** / **`met_valid_canon_curt`** (ca+es). El que
+NO canvia: cap número ni cap càlcul; la banda ×1,5 dels micromunicipis sense validar es manté, ara ben
+etiquetada com el que és —estimació sense validació oficial.
+
+---
+
 *Deriva de la reconducció (rumbo 2026-06-27). Si canvia, s'actualitza aquí primer.*

@@ -63,7 +63,8 @@ que no sap, integra la font oficial on existeix i es nega a fingir precisió on 
 el ganxo narratiu; l'epistemologia és el producte.**
 
 **Concepte.** **«L'observatori que sap el que no sap».** Híbrid amb jerarquia estricta:
-- **Berguedà = nucli validat** (error medià 8,2% contra ETCA): la vitrina de fondària.
+- **Berguedà = nucli validat** als **9 munis ≥1.000 hab** (8,2% vs ETCA, dins de mostra; generalització
+  held-out 80%→78,4% — frase canònica al contracte d'abast): la vitrina de fondària.
 - **Catalunya = capa de context honesta i curada**, on es veu la **costura** entre el dato oficial
   d'Idescat (≥1.000 hab) i la nostra estimació experimental (només <1.000, etiquetada com a tal).
   Ensenyar la costura, en comptes de dissimular-la, **és** la declaració de porfoli.

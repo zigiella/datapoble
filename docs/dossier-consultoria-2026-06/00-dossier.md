@@ -74,7 +74,7 @@ la nostra moneda.*
 
 | Indicador | Defensa | Crítica | Veredicte |
 |---|---|---|---|
-| **Gent que el padró no veu** (gap) | El cor del projecte. Inferència validada (ETCA 8,2% al Berguedà). Distintiu. | Cal explicar-lo molt millor, sobretot el gap **negatiu** a ciutats denses (Barcelona). | **ESTRELLA.** Secció pròpia. Explicació de luxe (què és, com es calcula, com es llegeix, per què Barcelona). |
+| **Gent que el padró no veu** (gap) | El cor del projecte. Inferència validada contra ETCA als **9 munis grans del Berguedà** (8,2%, dins de mostra; frase canònica al contracte d'abast). Distintiu. | Cal explicar-lo molt millor, sobretot el gap **negatiu** a ciutats denses (Barcelona). | **ESTRELLA.** Secció pròpia. Explicació de luxe (què és, com es calcula, com es llegeix, per què Barcelona). |
 | **% habitatge no principal** | Llegible d'un cop d'ull, estructural, dada oficial directa. | Poca; només cal rematar l'explicació. | **MANTENIR.** Dels més clars; un dels pilars de context. |
 | **Residus kg/hab/any** | Mesura directa (ARC), proxy de càrrega real. Els colors a escala CAT funcionen. | Cal acabar d'explicar-lo bé. | **MANTENIR** amb explicació. |
 | **Densitat de població** | Covariable del model + lectura territorial bàsica. | **Escala:** Barcelona domina; cal escala log per veure la resta. | **MANTENIR amb escala log** (refer la classificació). |
@@ -99,7 +99,8 @@ Un observatori honest mostra **menys coses, totes blindades i explicades**.
 - **Model de presència (Nivell C):** la presència estimada = consum elèctric domèstic / **base per
   covariables** `base = f(densitat, renda, fracció de gas)`. La base NO depèn de senyals de presència
   (no és circular). Ajustada contra l'**ETCA oficial** (Idescat) sobre 486 munis; **R²=0,41** a escala
-  Catalunya, **held-out robust** (no sobreajust). Provada al Berguedà: error medià **8,2%**, millor
+  Catalunya, **held-out robust** (no sobreajust). Provada als **9 munis del Berguedà amb ETCA** (dels 31): error medià **8,2%** dins de mostra (la
+  generalització és la banda held-out 80%→78,4%, no el 8,2% — frase canònica al contracte d'abast), millor
   que la base fixa anterior.
 - **Honestedat doctrinal:** tot en **rang** (p10–p90 per tipus territorial) quan no validem prou;
   **confiança graduada** (trama); **«sense dada»** explícit; cap número sense procedència; el **«no»**

@@ -11,6 +11,7 @@
  */
 import { loadMunicipisDataset } from '$lib/data/dataset';
 import type { EtcaValidacio } from '$lib/contract/etca';
+import type { MetodologiaModel } from '$lib/contract/metodologia';
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ fetch }) => {
@@ -24,5 +25,13 @@ export const load: PageLoad = async ({ fetch }) => {
 	} catch {
 		etca = null;
 	}
-	return { dataset, etca };
+	// Límits del model (Fase 1): reliability + scatter ETCA↔pernocta + règim dens. Opcional.
+	let model: MetodologiaModel | null = null;
+	try {
+		const res = await fetch('/data/metodologia-model.json');
+		if (res.ok) model = (await res.json()) as MetodologiaModel;
+	} catch {
+		model = null;
+	}
+	return { dataset, etca, model };
 };
