@@ -13,6 +13,7 @@
 	 * titulars, tokens --dp-*; procedència amb la signatura `.prov` (slate=oficial, porpra=inferència).
 	 */
 	import ContourField from '$lib/components/ContourField.svelte';
+	import MetodologiaModel from '$lib/components/MetodologiaModel.svelte';
 	import { currentLocale, pick } from '$lib/i18n';
 	import { provenanceOf } from '$lib/map/provenance';
 	import { m } from '$lib/paraglide/messages';
@@ -24,6 +25,8 @@
 	const locale = $derived(currentLocale());
 	// Validació externa contra ETCA (Pas 4): artefacte opcional (data/web/etca-validacio.json).
 	const etca = $derived(data.etca);
+	// Límits del model (Fase 1): reliability + scatter ETCA↔pernocta + règim dens. Opcional.
+	const model = $derived(data.model);
 	const intl = $derived(locale === 'es' ? 'es-ES' : 'ca-ES');
 	const dec = (v: number, n = 1) =>
 		v.toLocaleString(intl, { minimumFractionDigits: n, maximumFractionDigits: n });
@@ -223,6 +226,16 @@
 				</div>
 			</section>
 		{/each}
+
+		{#if model}
+			<section class="ds-sec">
+				<div class="ds-sec__hd">
+					<span class="ref">G</span><h2>{m.met_model_title()}</h2>
+				</div>
+				<p class="lead">{m.met_model_intro()}</p>
+				<MetodologiaModel {model} />
+			</section>
+		{/if}
 
 		{#if etca?.pernocta_vs_etca}
 			{@const s = etca.pernocta_vs_etca}
