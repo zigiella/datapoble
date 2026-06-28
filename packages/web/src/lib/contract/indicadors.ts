@@ -16,5 +16,11 @@ import type { MetricKey } from './types';
 
 export type IndicadorsCatData = Record<
 	string,
-	Partial<Record<MetricKey, number>> & { conf?: string; tip?: string }
+	Partial<Record<MetricKey, number>> & {
+		conf?: string;
+		tip?: string;
+		/** Costura del gap: on `gap_pernocta_pct` és la dada d'Idescat (munis ≥1.000 hab), aquí hi va
+		 * la NOSTRA estimació com a contrast per al tooltip (mai pintada de fort al mapa). */
+		gap_nostra?: number;
+	}
 >;

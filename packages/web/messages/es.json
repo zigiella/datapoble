@@ -175,6 +175,8 @@
   "map_confidence_mid": "media",
   "map_confidence_low": "baja",
   "map_gap_tooltip_caveat": "Inferencia (no censo): estimación de los tres rastros de presencia (pernocta, carga o presión turística) a partir de señales físicas. Lectura a escala municipal.",
+  "map_gap_idescat_tag": "Idescat (oficial)",
+  "map_gap_nostra_tag": "nuestra estimación",
   "map_prov_measured": "dato oficial",
   "map_prov_derived": "índice riusdegent (derivado)",
   "map_prov_nodata": "sin dato",

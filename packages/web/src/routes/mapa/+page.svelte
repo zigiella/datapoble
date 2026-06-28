@@ -221,6 +221,8 @@
 		inBergueda: boolean;
 		/** Presència estimada EN RANG (Nivell C) si és un muni cobert de fora del Berguedà; si no, null. */
 		pernocta?: PernoctaMuni | null;
+		/** Costura del gap: la NOSTRA estimació (%) com a contrast quan el valor pintat és d'Idescat. */
+		gapNostra?: number | null;
 		x: number;
 		y: number;
 	}
@@ -343,6 +345,7 @@
 									conf={hover.conf}
 									confScore={hover.confScore}
 									pernocta={hover.pernocta}
+									gapNostra={hover.gapNostra}
 									x={hover.x}
 									y={hover.y}
 									hint={coarse ? m.map_open_fitxa_touch() : m.map_open_fitxa()}

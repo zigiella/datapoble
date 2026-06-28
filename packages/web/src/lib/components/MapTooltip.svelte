@@ -39,6 +39,9 @@
 		/** Presència estimada EN RANG (Nivell C) dels munis coberts fora del Berguedà: si hi és, el
 		 * tooltip hi afegeix la banda rang_baix–rang_alt + ETCA (la presència és inferència, no cens). */
 		pernocta?: PernoctaMuni | null;
+		/** Costura del gap: si el valor pintat és el d'Idescat (cobert ≥1.000 hab), la NOSTRA estimació
+		 * (%) arriba aquí com a CONTRAST. Quan hi és, el tooltip etiqueta el principal com a Idescat. */
+		gapNostra?: number | null;
 	}
 	let {
 		nom,
@@ -52,10 +55,16 @@
 		hint = null,
 		href = null,
 		touchMode = false,
-		pernocta = null
+		pernocta = null,
+		gapNostra = null
 	}: Props = $props();
 
 	const locale = $derived(currentLocale());
+	// Costura del gap: el valor pintat és d'Idescat (oficial) i la nostra estimació és el contrast.
+	const isGapOverride = $derived(typeof gapNostra === 'number' && metricKey === 'gap_pernocta_pct');
+	const gapNostraTxt = $derived(
+		typeof gapNostra === 'number' ? `${gapNostra > 0 ? '+' : ''}${gapNostra}%` : ''
+	);
 	// La tipologia és CATEGÒRICA: el valor és una cadena d'arquetip → es mostra l'etiqueta HUMANA
 	// (no el snake_case) i una frase curta del que vol dir. La resta de mètriques, format numèric.
 	const isTipologia = $derived(isCategorical(metricKey));
@@ -138,6 +147,14 @@
 		{/if}
 	{:else}
 		<div class="tip__val tip__val--nodata">{m.map_tooltip_nodata()}</div>
+	{/if}
+
+	{#if isGapOverride && hasVal}
+		<!-- Costura: el valor de dalt és d'Idescat (oficial); la nostra estimació, com a contrast. -->
+		<p class="tip__contrast">
+			<span class="tip__contrast-tag">{m.map_gap_idescat_tag()}</span>
+			· {m.map_gap_nostra_tag()}: <b class="tnum">{gapNostraTxt}</b>
+		</p>
 	{/if}
 
 	{#if isEstimate && hasVal && (confLabel || hasScore)}
@@ -338,6 +355,18 @@
 		font-family: var(--dp-font-mono);
 		font-size: 0.58rem;
 		color: var(--dp-text-subtle);
+	}
+	/* Contrast de la costura: la nostra estimació al costat del valor oficial d'Idescat. */
+	.tip__contrast {
+		margin: 0 0 6px;
+		font-family: var(--dp-font-mono);
+		font-size: 0.62rem;
+		color: var(--dp-text-subtle);
+		line-height: 1.35;
+	}
+	.tip__contrast-tag {
+		font-weight: 700;
+		color: var(--dp-success, #2f6b4f);
 	}
 	.tip__caveat {
 		margin: 7px 0 0;
