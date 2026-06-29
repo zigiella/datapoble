@@ -27,7 +27,6 @@
 	import { formatMetric, formatDecimal, formatInteger } from '$lib/format';
 	import { SIGNED_PCT_KEYS } from '$lib/map/classify';
 	import { provenanceOf } from '$lib/map/provenance';
-	import { tipologiaMeta } from '$lib/map/tipologia';
 	import { toSlug, slugForIne5 } from '$lib/contract/slug';
 	import Espina from '$lib/components/Espina.svelte';
 	import MirallConstel from '$lib/components/MirallConstel.svelte';
@@ -341,8 +340,7 @@
 		return def.date ? `${def.source} · ${def.date}` : def.source;
 	}
 
-	// ── Capçalera del municipi: tipologia + confiança (idèntica lectura que el Resum) ─────────
-	const tipo = $derived(row ? tipologiaMeta(row.values.tipologia) : undefined);
+	// ── Capçalera del municipi: confiança (idèntica lectura que el Resum) ─────────
 	// Pobles mirall a escala Catalunya: bessons funcionals (no geogràfics) de tot el país, resolts al
 	// loader des de l'artefacte `municipis-mirall.json` (Nivell C). Per a QUALSEVOL muni, no només Berguedà.
 	const miralls = $derived(data.miralls ?? []);
@@ -563,16 +561,6 @@
 						{#if row.idescat6}<span>Idescat {row.idescat6}</span>{/if}
 					</p>
 
-					<!-- Tipologia (Fase 1): la LECTURA narrativa — quin TIPUS de pressió. Pastilla amb el
-					     color categòric de l'arquetip + etiqueta humana + frase curta (reusa tipologia.ts). -->
-					{#if tipo}
-						<div class="muni-card__tipo">
-							<span class="muni-card__tipo-badge" style="--tipo-c:{tipo.color}">
-								<span class="dot"></span>{tipo.label()}
-							</span>
-							<p class="muni-card__tipo-blurb">{tipo.blurb()}</p>
-						</div>
-					{/if}
 
 					<!-- Confiança (consultor #2): bandera GRAN + «per què» (concordança/padró) + divergència
 					     dels senyals 0-100 + riscos. Que ningú confongui la qualitat amb una xifra opaca. -->
@@ -939,41 +927,6 @@
 		color: var(--dp-text-muted);
 	}
 
-	/* Pastilla de tipologia (mateixa pell que .ex__tipo del Resum). */
-	.muni-card__tipo {
-		margin: 14px 0 0;
-	}
-	.muni-card__tipo-badge {
-		display: inline-flex;
-		align-items: center;
-		gap: 7px;
-		padding: 4px 11px 4px 9px;
-		border-radius: 999px;
-		background: color-mix(in srgb, var(--tipo-c) 14%, var(--dp-surface));
-		border: 1px solid color-mix(in srgb, var(--tipo-c) 40%, var(--dp-border));
-		font-family: 'Archivo', var(--dp-font-sans);
-		font-weight: 700;
-		font-size: 0.95rem;
-		letter-spacing: -0.01em;
-		color: var(--dp-text);
-		line-height: 1.15;
-	}
-	.muni-card__tipo-badge .dot {
-		width: 10px;
-		height: 10px;
-		border-radius: 50%;
-		background: var(--tipo-c);
-		flex: none;
-		box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
-	}
-	.muni-card__tipo-blurb {
-		margin: 7px 0 0;
-		font-family: var(--dp-font-sans);
-		font-size: 0.85rem;
-		line-height: 1.45;
-		color: var(--dp-text-muted);
-		max-width: 52ch;
-	}
 
 	/* Bloc de confiança (consultor #2): bandera + per què + divergència + riscos, en files.
 	   Que ningú confongui la qualitat (bandera) amb una puntuació opaca. Gest mono del Resum. */
