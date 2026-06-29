@@ -180,12 +180,6 @@
 				'carrega_funcional_est',
 				'index_turisme'
 			]
-		},
-		{
-			ref: 'F',
-			title: () => m.muni_blk_ietr(),
-			sub: () => m.muni_blk_ietr_sub(),
-			keys: ['IETR', 'IETR_rank', 'IETR_stock', 'IETR_impact', 'pct_icaen_EFG']
 		}
 	];
 
@@ -377,31 +371,8 @@
 		return out;
 	});
 
-	// IETR per al rètol gran de la capçalera (1 decimal) i el rang.
-	const ietr = $derived.by<number | null>(() => {
-		const v = row?.values.IETR;
-		return typeof v === 'number' ? v : null;
-	});
-	const ietrRank = $derived(row?.values.IETR_rank ?? null);
-	const numMunis = $derived(dataset.comarca.num_municipis);
-
-	// Lectura IETR-família: estructura (stock) × empremta (impact) → quadrant, reusant la
-	// MATEIXA semàntica que la constel·lació del Resum (claus i18n constel_q_*). Treu l'IETR
-	// de número únic («no només 26,0»): diu QUIN tipus d'exposició, no només quant.
-	const ietrReading = $derived.by(() => {
-		const s = typeof row?.values.IETR_stock === 'number' ? row.values.IETR_stock : null;
-		const i = typeof row?.values.IETR_impact === 'number' ? row.values.IETR_impact : null;
-		if (s === null || i === null) return null;
-		const q =
-			s >= 50 && i >= 50
-				? { name: m.constel_q_consolidada(), help: m.constel_q_consolidada_help() }
-				: s >= 50
-					? { name: m.constel_q_latent(), help: m.constel_q_latent_help() }
-					: i >= 50
-						? { name: m.constel_q_sense_stock(), help: m.constel_q_sense_stock_help() }
-						: { name: m.constel_q_baixa(), help: m.constel_q_baixa_help() };
-		return { stock: s, impact: i, name: q.name, help: q.help };
-	});
+	// IETR retirat de la capçalera de la fitxa (passada d'overpromise): no s'entén a escala i la
+	// capçalera ha de liderar amb la dada OFICIAL (població de padró), no amb un índex d'inferència.
 
 	// Nom del municipi (topònim, igual en ambdós locales): del dataset (Berguedà), del rang (cobert)
 	// o del CATÀLEG de tota Catalunya (`data.nom`, qualsevol poble); en últim cas, el codi.
@@ -536,28 +507,16 @@
 			<section class="ds-sec">
 				<div class="muni-card">
 					<div class="muni-card__top">
-						<span class="muni-card__rank"
-							>{m.resum_rank()} <b>{ietrRank ?? '—'}</b> {m.resum_rank_of()} {formatInteger(numMunis, locale)}</span
-						>
-						{#if ietr !== null}
+						{#if typeof row.values.poblacio === 'number'}
 							<div class="muni-card__ietr">
-								<span class="v tnum">{formatDecimal(ietr, locale, 1)}</span><span class="u"
-									>{m.resum_ietr_scale()}</span
+								<span class="v tnum">{formatInteger(row.values.poblacio, locale)}</span><span class="u"
+									>{m.muni_hab_padro()}</span
 								>
 							</div>
 						{/if}
 					</div>
-					{#if ietrReading}
-						<p class="muni-card__ietr-reading" style="margin:6px 0 0; display:flex; flex-wrap:wrap; gap:4px 10px; align-items:baseline; font-size:13px;">
-							<span style="font-family:var(--dp-font-mono); color:var(--dp-text-muted)">stock {formatDecimal(ietrReading.stock, locale, 0)} · impact {formatDecimal(ietrReading.impact, locale, 0)}</span>
-							<span style="color:var(--dp-text)"><b>{ietrReading.name}</b> · {ietrReading.help}</span>
-						</p>
-					{/if}
 					<p class="muni-card__meta">
 						<span>INE {ine5}</span>
-						{#if typeof row.values.poblacio === 'number'}<span
-								>{formatInteger(row.values.poblacio, locale)} hab.</span
-							>{/if}
 						{#if row.idescat6}<span>Idescat {row.idescat6}</span>{/if}
 					</p>
 
@@ -664,8 +623,8 @@
 						<span class="n5__v">{typeof row.values.pct_noprincipal === 'number' ? formatDecimal(row.values.pct_noprincipal, locale, 0) : '—'}<span class="n5__u">%</span></span>
 					</div>
 					<div class="n5">
-						<span class="n5__lab"><span class="pd dot--derived"></span>{m.muni_num_expo()}</span>
-						<span class="n5__v">{ietr !== null ? formatDecimal(ietr, locale, 0) : '—'}<span class="n5__u">/100{#if ietrRank} · {ietrRank}è{/if}</span></span>
+						<span class="n5__lab"><span class="pd dot--measured"></span>{m.muni_num_renda()}</span>
+						<span class="n5__v">{typeof row.values.renda_neta_persona === 'number' ? formatInteger(row.values.renda_neta_persona, locale) : '—'}<span class="n5__u">€</span></span>
 					</div>
 				</div>
 			</section>
@@ -886,16 +845,6 @@
 		justify-content: space-between;
 		gap: 14px;
 		flex-wrap: wrap;
-	}
-	.muni-card__rank {
-		font-family: var(--dp-font-mono);
-		font-size: 0.68rem;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		color: var(--dp-text-subtle);
-	}
-	.muni-card__rank b {
-		color: var(--dp-text);
 	}
 	.muni-card__ietr {
 		display: flex;

@@ -271,6 +271,8 @@
   "muni_to_inferencia": "inferencia",
   "muni_to_interpretacio": "interpretación",
   "muni_ev_pernocta_rang": "Población estimada (pernocta)",
+  "muni_hab_padro": "hab. (padrón)",
+  "muni_num_renda": "Renta neta/persona",
   "muni_ev_etca_idescat": "Validación ETCA (Idescat)",
   "muni_ev_tipus_territorial": "Tipo de territorio",
   "muni_preg_title": "Pregúntale",
