@@ -263,6 +263,7 @@ def build_municipis(muni: pd.DataFrame, elec: pd.DataFrame, demog: pd.DataFrame)
     elec_by = elec.set_index("ine5")
     demog_by = demog.set_index("ine5")
     out: dict[str, dict] = {}
+    sense_est: list[str] = []  # munis amb confiança però SENSE estimació de pernocta (sanejat)
     for _, r in muni.iterrows():
         ine5 = str(r["ine5"])
         values: dict[str, Any] = {}
@@ -303,12 +304,26 @@ def build_municipis(muni: pd.DataFrame, elec: pd.DataFrame, demog: pd.DataFrame)
         else:
             for key in COL_ELEC:
                 values[key] = None
+        # Sanejat d'honestedat: la `confianca` és la confiança EN l'estimació de pernocta (L1 del
+        # model de 3 capes). Si no hi ha estimació (poblacio_pernocta_est = null —micromunis sense
+        # covariables, exclosos de nivellc_regressio: són el forat 947→927), una confiança és buida;
+        # l'anul·lem a la dada publicada. L'IETR NO es toca (es deriva independent: resid/turisme).
+        # No és destructiu: el mart (font) conserva l'original; aquí declinem publicar-la i ho registrem.
+        if values.get("poblacio_pernocta_est") is None:
+            if any(values.get(k) is not None for k in ("confianca", "confianca_score", "divergencia_senyals")):
+                sense_est.append(ine5)
+            for k in ("confianca", "confianca_score", "divergencia_senyals"):
+                values[k] = None
         out[ine5] = {
             "ine5": ine5,
             "nom": str(r["municipi"]),
             "idescat6": str(r["codi6"]),
             "values": values,
         }
+    if sense_est:
+        mostra = ", ".join(sorted(sense_est)[:5])
+        print(f"Sanejat: {len(sense_est)} munis sense estimació de pernocta → confiança anul·lada "
+              f"({mostra}{'…' if len(sense_est) > 5 else ''}).", file=sys.stderr)
     return out
 
 

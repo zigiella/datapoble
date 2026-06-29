@@ -87,7 +87,10 @@ def main() -> int:
         kwh = _f(r.get("kwh_dom"))
         etca = _f(r.get("etca"))
         # Palanca 2: l'estimació és kWh/base_pred — l'ETCA NO hi cal (només valida). Així cobrim
-        # també els <1.000 hab. Cal base_pred i consum vàlids.
+        # també els <1.000 hab. Cal base_pred i consum vàlids: els micromunis sense covariables
+        # (base_pred/kwh absents) s'exclouen aquí — són el forat 947→927 i a la fitxa surten com a
+        # «sense estimació» (mai una xifra inventada). Sanejat coherent: a municipis.catalunya.json
+        # aquests munis tenen la confiança anul·lada (export_web_municipis.py).
         if not (base_pred and base_pred > 0 and kwh and kwh > 0):
             continue
         est = kwh / base_pred
