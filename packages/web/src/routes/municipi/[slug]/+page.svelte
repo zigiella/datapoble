@@ -803,8 +803,8 @@
 					<p class="muni-empty__scope">{m.map_outside_scope()}</p>
 					<div class="muni-empty__actions">
 						<a class="muni-empty__link" href={localizeHref('/mapa')}>{m.muni_pick_map()}</a>
-						<a class="muni-empty__link muni-empty__link--alt" href={localizeHref('/resum')}
-							>← {m.stub_back()}</a
+						<a class="muni-empty__link muni-empty__link--alt" href={localizeHref('/')}
+							>← {m.nav_inici()}</a
 						>
 					</div>
 				</div>

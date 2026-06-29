@@ -88,9 +88,6 @@
 		<a href={localizeHref('/')} class:on={isActive('/')} aria-current={isActive('/') ? 'page' : undefined}>
 			<span>{m.nav_inici()}</span>
 		</a>
-		<a href={localizeHref('/resum')} class:on={isActive('/resum')} aria-current={isActive('/resum') ? 'page' : undefined}>
-			<span>{m.nav_resum()}</span>
-		</a>
 		<a href={localizeHref('/mapa')} class:on={isActive('/mapa')} aria-current={isActive('/mapa') ? 'page' : undefined}>
 			<span>{m.nav_mapa()}</span>
 		</a>
@@ -121,7 +118,6 @@
 	{#if menuOpen}
 		<div id="ds-drawer" class="ds-drawer">
 			<a href={localizeHref('/')} class:on={isActive('/')} onclick={() => (menuOpen = false)}>{m.nav_inici()}</a>
-			<a href={localizeHref('/resum')} class:on={isActive('/resum')} onclick={() => (menuOpen = false)}>{m.nav_resum()}</a>
 			<a href={localizeHref('/mapa')} class:on={isActive('/mapa')} onclick={() => (menuOpen = false)}>{m.nav_mapa()}</a>			<a href={localizeHref('/pregunta-li')} class:on={isActive('/pregunta-li')} onclick={() => (menuOpen = false)}>{m.nav_preguntale()}</a>
 			<a href={localizeHref('/metodologia')} class:on={isActive('/metodologia')} onclick={() => (menuOpen = false)}>{m.foot_link_method_to()}</a>
 			<a href={localizeHref('/glossari')} class:on={isActive('/glossari')} onclick={() => (menuOpen = false)}>{m.foot_link_glossary()}</a>
@@ -155,7 +151,6 @@
 		<div>
 			<h4>{m.foot_explore()}</h4>
 			<ul>
-				<li><a href={localizeHref('/resum')}>{m.nav_resum()}</a></li>
 				<li><a href={localizeHref('/mapa')}>{m.nav_mapa()}</a></li>
 				<li><a href={localizeHref('/licitacions')}>{m.nav_licitacions()}</a></li>
 				<li><a href={localizeHref('/metodologia')}>{m.foot_link_method_to()}</a></li>
