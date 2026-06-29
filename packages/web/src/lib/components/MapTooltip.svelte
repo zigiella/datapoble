@@ -42,6 +42,8 @@
 		/** Costura del gap: si el valor pintat és el d'Idescat (cobert ≥1.000 hab), la NOSTRA estimació
 		 * (%) arriba aquí com a CONTRAST. Quan hi és, el tooltip etiqueta el principal com a Idescat. */
 		gapNostra?: number | null;
+		/** Validació (té ETCA?): sense ETCA, la confiança de la pernocta passa a «sense validació oficial». */
+		validat?: boolean;
 	}
 	let {
 		nom,
@@ -56,7 +58,8 @@
 		href = null,
 		touchMode = false,
 		pernocta = null,
-		gapNostra = null
+		gapNostra = null,
+		validat = true
 	}: Props = $props();
 
 	const locale = $derived(currentLocale());
@@ -99,6 +102,9 @@
 		'poblacio_real_rel'
 	]);
 	const isEstimate = $derived(ESTIMATE_KEYS.has(metricKey));
+	// Sense ETCA (no validat): la confiança de la pernocta passa a «sense validació oficial» (la
+	// validació mana sobre l'heurística interna — coherent amb la fitxa i /metodologia).
+	const senseValidacioMap = $derived(isEstimate && metricKey === 'gap_pernocta_pct' && !validat && hasVal);
 	/** Hi ha score auditable 0-100 a mostrar? Es complementa amb la bandera (no la substitueix). */
 	const hasScore = $derived(typeof confScore === 'number' && Number.isFinite(confScore));
 	/** Etiqueta localitzada del nivell de confiança (alta/mitjana/baixa). */
@@ -156,7 +162,13 @@
 		</p>
 	{/if}
 
-	{#if isEstimate && hasVal && !isGapOverride && (confLabel || hasScore)}
+	{#if senseValidacioMap}
+		<!-- Sense ETCA: la validació mana → cap «confiança alta» sobre la pernocta (coherent amb la
+		     fitxa i /metodologia). -->
+		<div class="tip__conf tip__conf--baixa">
+			<span class="tip__conf-val">{m.muni_conf_sense_validacio()}</span>
+		</div>
+	{:else if isEstimate && hasVal && !isGapOverride && (confLabel || hasScore)}
 		<!-- Confiança: la BANDERA (alta/mitjana/baixa) i el SCORE auditable 0-100 es mostren TOTS
 		     DOS — poden divergir (Castellar: bandera «alta» però score ≈ 33 per senyals que es
 		     contradiuen). Veure els dos és l'honestedat: el score és el costat fi de la tensió. -->

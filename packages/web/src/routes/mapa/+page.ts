@@ -51,5 +51,15 @@ export const load: PageLoad = async ({ fetch }) => {
 		catValues = {};
 	}
 
-	return { dataset, geojson, comarques, vegueries, pernocta, catValues };
+	// Estatut de VALIDACIÓ (té ETCA?): capa la confiança del tooltip —cap muni sense ETCA mostra
+	// confiança en la pernocta (la validació mana sobre l'heurística interna)—. No-fatal.
+	let validats: string[] = [];
+	try {
+		const res = await fetch('/data/validats.json');
+		if (res.ok) validats = (await res.json()) as string[];
+	} catch {
+		validats = [];
+	}
+
+	return { dataset, geojson, comarques, vegueries, pernocta, catValues, validats };
 };

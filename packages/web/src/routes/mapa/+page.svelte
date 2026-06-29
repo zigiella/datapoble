@@ -47,6 +47,8 @@
 	const pernocta = $derived(data.pernocta?.munis);
 	// Indicadors a escala Catalunya (gap, residus) per pintar la vista municipi a tot el país.
 	const catValues = $derived(data.catValues);
+	// Estatut de validació (té ETCA?) per capar la confiança del tooltip de la pernocta.
+	const validats = $derived(new Set(data.validats ?? []));
 	const locale = $derived(currentLocale());
 
 	// Granularitat del mapa (municipi = coroplètic per indicador; comarca/vegueria = cobertura).
@@ -223,6 +225,8 @@
 		pernocta?: PernoctaMuni | null;
 		/** Costura del gap: la NOSTRA estimació (%) com a contrast quan el valor pintat és d'Idescat. */
 		gapNostra?: number | null;
+		/** Validació (té ETCA?): capa la confiança del tooltip de la pernocta. */
+		validat?: boolean;
 		x: number;
 		y: number;
 	}
@@ -330,6 +334,7 @@
 							{granularity}
 							{pernocta}
 							{catValues}
+							{validats}
 							onhover={(p) => (hover = p)}
 							onselect={onMuniSelect}
 						/>
@@ -346,6 +351,7 @@
 									confScore={hover.confScore}
 									pernocta={hover.pernocta}
 									gapNostra={hover.gapNostra}
+									validat={hover.validat}
 									x={hover.x}
 									y={hover.y}
 									hint={coarse ? m.map_open_fitxa_touch() : m.map_open_fitxa()}
