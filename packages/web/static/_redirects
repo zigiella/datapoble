@@ -6,7 +6,6 @@
 /  /ca/  301
 
 # Rutes de contingut sense prefix → /ca (neteja; el splat conserva slug/subruta).
-/resum/*  /ca/resum/:splat  301
 /mapa/*  /ca/mapa/:splat  301
 /municipi/*  /ca/municipi/:splat  301
 /licitacions/*  /ca/licitacions/:splat  301
@@ -17,3 +16,8 @@
 # Legacy (l'alias antic sense guió) → ara amb prefix.
 /preguntale  /ca/pregunta-li  301
 /es/preguntale  /es/pregunta-li  301
+# /resum eliminat (la vitrina del Berguedà passa a les fitxes) → aterra a la comarca.
+/resum  /ca/comarca/bergueda/  301
+/resum/*  /ca/comarca/bergueda/  301
+/es/resum  /es/comarca/bergueda/  301
+/es/resum/*  /es/comarca/bergueda/  301

@@ -16,7 +16,6 @@ const SITE = 'https://riusdegent.cat';
 const LOCALES = ['ca', 'es'] as const;
 const STATIC_ROUTES = [
 	'/',
-	'/resum/',
 	'/mapa/',
 	'/licitacions/',
 	'/metodologia/',

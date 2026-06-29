@@ -9,7 +9,7 @@
 	<p class="err__code">{page.status}</p>
 	<h1>{m.not_found_title()}</h1>
 	<p class="err__body">{m.not_found_body()}</p>
-	<a href={localizeHref('/resum')}>← {m.stub_back()}</a>
+	<a href={localizeHref('/')}>← {m.nav_inici()}</a>
 </section>
 
 <style>

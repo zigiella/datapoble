@@ -132,11 +132,11 @@
 			</section>
 		{/if}
 
-		<!-- PORTES DE COMARCA · /resum és ara la subhome del Berguedà -->
+		<!-- PORTES DE COMARCA · el Berguedà aterra a /comarca/bergueda (la vitrina passa a les fitxes) -->
 		<section class="ds-sec">
 			<div class="ds-sec__hd"><span class="ref">▦</span><h2>{m.home_portes_title()}</h2></div>
 			<div class="home-portes">
-				<a class="porta porta--on" href={localizeHref('/resum')}>
+				<a class="porta porta--on" href={localizeHref('/comarca/bergueda')}>
 					<span class="porta__nom">Berguedà</span>
 					<span class="porta__sub">{m.home_porta_bergueda_sub()}</span>
 					<span class="porta__cta">{m.home_porta_bergueda_cta()} →</span>
