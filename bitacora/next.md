@@ -35,6 +35,20 @@ publicable per si sola.*
 - [ ] Verificar que **Barcelona i les ciutats denses les parla Idescat** (desapareix el negatiu absurd) — part de la costura.
 - [ ] **Treure la calibració a /metodologia** (reliability diagram visible) + documentar el **supòsit causal i els confusors** (R²=0,41).
 
+### Passada de solidesa (2026-06-29) · *tancar ENSENYAR↔VALIDAR* — recomanació a `docs/dossier-consultoria-2026-06/03-recomanacio-solidesa.md`
+*Diagnòstic multiagent + crítica adversarial + verificació manual. Lliçó: cap síntesi entra sense
+verificar el fet que la sosté (la pròpia síntesi va sobrepormetre el #1; la confiança ja estava capada).*
+**Tres baranes per a tota curació de dades:** (1) regenerar des de la font, mai editar el JSON a mà
+(idempotent via `--check`); (2) overlay no destructiu, registrar afectats; (3) banderes **tri-estat**
+amb `no_classificable`, mai default booleà (survivorship bias).
+- [ ] **#1 · `muni_lede` honest** (fora «la mateixa riquesa… per a qualsevol municipi»; lede condicional Berguedà vs resta). ← *en marxa (PR).*
+- [ ] **#3 · sanejar `confianca` sense estimació**: regla `pernocta_est null ⇒ confiança null` a l'exportador (els 20 munis = el forat 947→927); `IETR` NO es toca (independent); + `export_web_municipis --check` a CI. ← *en marxa (PR).*
+- [ ] **#4 · banderes data-level** (`regim_dens`, `soroll`/`senyal` propagant la `classe` ja existent, `outlier`) tri-estat; `confianca`→`confianca_model`.
+- [ ] **#5 · cobertura per tipus a /metodologia** amb la **n** al costat (corona n=9 55,6%, litoral n=7 57,1%); si n<~15 → «no validat per separat».
+- [ ] **Publicar el fet «nucli validat = 9 municipis»** (no enterrat a prosa).
+- [ ] **#2 · degradar la maquinària P3 fora del Berguedà** (no la confiança; NO la mateixa tisora per als 486 validats). ← **vot de la Bea**: replegar a rang vs caveat fort.
+- [ ] **#7 · front-0 d'utilitat** (protegir pernocta <1.000 + `serveisLectura` com a resposta; % habitatge no principal al mapa; `/pregunta-li`). ← **vot de la Bea**.
+
 ## Fase 2 · la vitrina Berguedà · *rigor de punta a punta*
 - [ ] 31 munis, dades completes; model validat contra ETCA als **9 munis ≥1.000** (no els 31), honest amb els 22 sense validació oficial (frase canònica a `docs/contracte-abast.md`).
 - [ ] Pàgina de **metodologia auditable** amb gràfics de validació.

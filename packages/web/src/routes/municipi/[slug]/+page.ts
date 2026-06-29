@@ -198,5 +198,5 @@ export const load: PageLoad = async ({ fetch, params }) => {
 		}
 	}
 
-	return { dataset, ine5, nom, row, lectura, pernocta, territori, veins, veinsTotal, miralls, validat };
+	return { dataset, ine5, nom, row, isBergueda, lectura, pernocta, territori, veins, veinsTotal, miralls, validat };
 };
