@@ -37,7 +37,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install (dbt-duckdb + verifiers)
-        run: pip install dbt-duckdb duckdb pandas pyarrow ruff
+        run: pip install dbt-duckdb duckdb pandas pyarrow pyyaml ruff
       - name: Lint (ruff) · transform + ingestion + signals
         run: ruff check packages/transform packages/ingestion packages/signals
       - name: dbt parse (plantilla + schema vàlids)
@@ -56,6 +56,10 @@ jobs:
         run: python tools/discrepancia_etca_pernocta.py --check
       - name: Export Licitacions al dia (cabal → web · offline)
         run: python tools/export_licitacions.py --check
+      - name: Export web municipis al dia (cabal → web · offline)
+        run: |
+          python tools/export_web_municipis.py --scope catalunya --check
+          python tools/export_web_municipis.py --scope bergueda --check
 
   # Brúixola: evals de la capa de IA (texto→SQL trazable). Corre OFFLINE
   # (sin OPENROUTER_API_KEY): determinista, sin red. Gate anti-regresión.
