@@ -225,6 +225,7 @@
   "map_tipologia_tooltip_caveat": "Lectura narrativa (no censo): el arquetipo que mejor encaja con las señales comarcales. Crúzalo con la confianza; «indeterminado» = territorio mixto, no error.",
   "map_confidence_score_label": "Confianza auditable (0-100)",
   "conf_global_label": "índice global",
+  "muni_conf_sense_validacio": "Estimación sin validación oficial",
   "conf_why_label": "Por qué",
   "conf_diverg_label": "Divergencia de señales",
   "conf_risks_label": "Riesgos",

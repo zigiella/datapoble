@@ -225,6 +225,7 @@
   "map_tipologia_tooltip_caveat": "Lectura narrativa (no cens): l'arquetip que millor encaixa amb els senyals comarcals. Creua'l amb la confiança; «indeterminat» = territori mixt, no error.",
   "map_confidence_score_label": "Confiança auditable (0-100)",
   "conf_global_label": "índex global",
+  "muni_conf_sense_validacio": "Estimació sense validació oficial",
   "conf_why_label": "Per què",
   "conf_diverg_label": "Divergència de senyals",
   "conf_risks_label": "Riscos",
