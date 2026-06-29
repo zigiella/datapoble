@@ -185,5 +185,18 @@ export const load: PageLoad = async ({ fetch, params }) => {
 		}
 	}
 
-	return { dataset, ine5, nom, row, lectura, pernocta, territori, veins, veinsTotal, miralls };
+	// Estatut de VALIDACIÓ (té ETCA oficial d'Idescat?): capa la confiança de la pernocta a la fitxa
+	// —cap municipi sense ETCA pot mostrar «confiança alta» (la validació mana sobre l'heurística
+	// interna)—. Senyal precís (els 9 munis del Berguedà amb ETCA hi són; els 22 petits, no). Prerender-safe.
+	let validat = false;
+	if (ine5) {
+		try {
+			const res = await fetch('/data/validats.json');
+			if (res.ok) validat = ((await res.json()) as string[]).includes(ine5);
+		} catch {
+			validat = false;
+		}
+	}
+
+	return { dataset, ine5, nom, row, lectura, pernocta, territori, veins, veinsTotal, miralls, validat };
 };

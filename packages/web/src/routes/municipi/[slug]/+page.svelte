@@ -351,6 +351,9 @@
 		return typeof s === 'number' && Number.isFinite(s) ? s : null;
 	});
 	const confFlag = $derived(row?.values.confianca as string | undefined);
+	// Estatut de VALIDACIÓ (té ETCA?): capa la confiança de la pernocta. Sense ETCA, cap «alta» —la
+	// validació mana sobre l'heurística interna (no es poden contradir dues pàgines).
+	const validat = $derived(data.validat ?? false);
 	const confLabel = $derived.by<string | null>(() => {
 		if (confFlag === 'alta') return m.map_confidence_high();
 		if (confFlag === 'mitjana') return m.map_confidence_mid();
@@ -577,8 +580,8 @@
 						<div class="muni-card__conf">
 							<div class="muni-card__conf-head">
 								<span class="muni-card__conf-lbl">{m.map_confidence_label()}</span>
-								{#if confLabel}<span class="muni-card__conf-flag muni-card__conf-flag--{confFlag}">{confLabel}</span>{/if}
-								{#if score !== null}<span class="muni-card__conf-global" title={m.map_confidence_score_label()}>{m.conf_global_label()} {formatDecimal(score, locale, 0)}<span class="muni-card__conf-scale">/100</span></span>{/if}
+								{#if !validat}<span class="muni-card__conf-flag muni-card__conf-flag--baixa">{m.muni_conf_sense_validacio()}</span>{:else if confLabel}<span class="muni-card__conf-flag muni-card__conf-flag--{confFlag}">{confLabel}</span>{/if}
+								{#if validat && score !== null}<span class="muni-card__conf-global" title={m.map_confidence_score_label()}>{m.conf_global_label()} {formatDecimal(score, locale, 0)}<span class="muni-card__conf-scale">/100</span></span>{/if}
 							</div>
 							{#if confWhy.length}
 								<p class="muni-card__conf-line">
