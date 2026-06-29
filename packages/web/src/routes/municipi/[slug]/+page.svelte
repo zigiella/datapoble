@@ -40,6 +40,7 @@
 	const row = $derived(data.row);
 	const ine5 = $derived(data.ine5);
 	const pernocta = $derived(data.pernocta); // presència estimada EN RANG (munis coberts fora del Berguedà)
+	const isBergueda = $derived(data.isBergueda ?? false); // pilot profund vs espina CAT (lede honest)
 	// Espina territorial: comarca/vegueria del muni + municipis veïns de la comarca (navegació).
 	const territori = $derived(data.territori);
 	const veins = $derived(data.veins ?? []);
@@ -461,8 +462,10 @@
 				><span class="sep">/</span><span>INE {ine5}</span>
 			</p>
 			<h1>{muniNom}</h1>
-			{#if row}
+			{#if isBergueda}
 				<p class="lede">{m.muni_lede()}</p>
+			{:else if row}
+				<p class="lede">{m.muni_lede_cat()}</p>
 			{:else}
 				<p class="lede">{m.muni_outside_lede()}</p>
 			{/if}
