@@ -78,6 +78,9 @@
 		/** Valors d'indicadors a escala Catalunya (ine5 → {clau → valor} + `conf`) per pintar i TRAMAR
 		 * els coberts pel mateix indicador i tractament de confiança que el Berguedà. Opcional. */
 		catValues?: IndicadorsCatData;
+		/** Conjunt d'ine5 amb ETCA oficial (validats). Capa la confiança del tooltip: cap muni sense
+		 * ETCA mostra confiança en la pernocta. Si no es passa, no es capa res. */
+		validats?: Set<string>;
 		onhover?: (p: HoverPayload | null) => void;
 		onselect?: (ine5: string | null) => void;
 	}
@@ -92,6 +95,7 @@
 		granularity = 'municipi',
 		pernocta,
 		catValues,
+		validats,
 		onhover,
 		onselect
 	}: Props = $props();
@@ -663,6 +667,9 @@
 					covered && indicator === 'gap_pernocta_pct'
 						? (catValues?.[ine5]?.gap_nostra ?? null)
 						: null,
+				// Validació (té ETCA?): capa la confiança del tooltip de la pernocta. Sense el conjunt,
+				// no es capa (true per defecte).
+				validat: validats ? validats.has(ine5) : true,
 				x: point.x,
 				y: point.y
 			};
