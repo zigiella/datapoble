@@ -44,6 +44,18 @@
 	const ly = (k: number) => P.t + (1 - Math.min(k, KMAX) / KMAX) * ih;
 	const densTicks = [1, 10, 100, 1000, 10000];
 	const med = $derived(model.regim.mediana ?? 0);
+
+	// 4 · Cobertura per tipus (taula): la promesa del 80% per territori, amb la n. On la n és massa
+	// petita per validar el tipus per separat, no en donem el percentatge (seria falsa precisió).
+	const N_MIN = 15;
+	const TIPUS_LABEL: Record<string, () => string> = {
+		interior_rural: () => m.met_tipus_interior_rural(),
+		litoral_vacacional: () => m.met_tipus_litoral_vacacional(),
+		metropolita_dens: () => m.met_tipus_metropolita_dens(),
+		corona_metropolitana: () => m.met_tipus_corona(),
+		litoral_metropolita: () => m.met_tipus_litoral_metropolita()
+	};
+	const tipusLabel = (t: string) => TIPUS_LABEL[t]?.() ?? t;
 </script>
 
 <div class="mm">
@@ -115,6 +127,34 @@
 		</svg>
 		<p class="mm__txt">{m.met_regim_cap()}</p>
 	</figure>
+
+	<!-- 4 · COBERTURA PER TIPUS (amb la n; n massa petita → no es valida el tipus per separat) -->
+	{#if model.perTipus?.length}
+		<figure class="mm__fig">
+			<figcaption class="mm__cap">{m.met_tipus_title()}</figcaption>
+			<table class="mm__tbl">
+				<thead>
+					<tr>
+						<th>{m.met_tipus_col_tipus()}</th>
+						<th class="num">{m.met_tipus_col_n()}</th>
+						<th class="num">{m.met_tipus_col_cob()}</th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each model.perTipus as t (t.tipus)}
+						<tr>
+							<td>{tipusLabel(t.tipus)}</td>
+							<td class="num">{t.n}</td>
+							<td class="num"
+								>{#if t.n < N_MIN}<span class="mm__weak">{m.met_tipus_npetita()}</span>{:else}{t.e}%{/if}</td
+							>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+			<p class="mm__txt">{m.met_tipus_cap()}</p>
+		</figure>
+	{/if}
 </div>
 
 <style>
@@ -203,5 +243,29 @@
 		font-family: var(--dp-font-mono);
 		font-size: 10px;
 		fill: var(--dp-text-muted);
+	}
+	.mm__tbl {
+		width: 100%;
+		border-collapse: collapse;
+		font-family: var(--dp-font-sans);
+		font-size: 0.8rem;
+	}
+	.mm__tbl th,
+	.mm__tbl td {
+		padding: 6px 8px;
+		border-bottom: 1px solid var(--dp-border);
+		text-align: left;
+	}
+	.mm__tbl th {
+		color: var(--dp-text-muted);
+		font-weight: 600;
+	}
+	.mm__tbl .num {
+		text-align: right;
+		font-family: var(--dp-font-mono);
+	}
+	.mm__weak {
+		color: var(--dp-text-subtle);
+		font-style: italic;
 	}
 </style>
