@@ -255,6 +255,7 @@
 						>{s.passa ? m.met_val_passa() : m.met_val_nopassa()}</span
 					>
 				</div>
+				<p class="val-nucli">{m.met_val_nucli_fet({ n: etca.municipis.filter((x) => x.covered).length })}</p>
 				<p class="val-llindar">
 					{m.met_val_llindar()} ρ ≥ {dec(etca.go_no_go.rho_min)} · {m.met_val_err()} ≤ {etca.go_no_go.error_max_pct}%
 				</p>
@@ -443,6 +444,12 @@
 	}
 	.val-headline--ok {
 		border-left-color: var(--dp-forest, #2f6b4f);
+	}
+	.val-nucli {
+		margin: 8px 0 4px;
+		font-size: 1rem;
+		font-weight: 700;
+		color: var(--dp-text);
 	}
 	.val-headline__metric {
 		font-size: 0.82rem;

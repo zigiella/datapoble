@@ -676,6 +676,8 @@
 						<p class="muni-gap-veu" class:is-ferm={pernoctaBand.veu === 'ferm'}>{veuText}</p>
 					{:else if pernoctaBand.registre === 'soroll'}
 						<p class="muni-gap-veu is-soroll">{m.muni_gap_soroll()}</p>
+					{:else if pernoctaBand.registre === 'oficial' && pernoctaBand.etcaPct !== null}
+						<p class="muni-gap-veu is-oficial">{m.muni_gap_oficial({ pct: fSign(pernoctaBand.etcaPct), rang: `${fInt(pernoctaBand.estLow)}–${fInt(pernoctaBand.estHigh)}` })}</p>
 					{/if}
 				{/if}
 			</section>
@@ -1051,6 +1053,11 @@
 	}
 	.muni-gap-veu.is-soroll {
 		font-style: italic;
+	}
+	.muni-gap-veu.is-oficial {
+		color: var(--dp-text);
+		border-left: 2px solid var(--dp-border-strong);
+		padding-left: 9px;
 	}
 	.n5 {
 		background: var(--dp-surface);
