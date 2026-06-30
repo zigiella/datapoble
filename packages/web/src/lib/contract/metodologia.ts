@@ -12,6 +12,9 @@ export interface MetodologiaModel {
 	reliability: { n: number; e: number }[];
 	/** Cobertura empírica de l'interval nominal del 80% (la xifra clau). */
 	interval80: number | null;
+	/** Cobertura de l'interval 80% per tipus territorial, amb la n. Ordenat per n desc. La UI marca
+	 *  «n massa petita» quan no es pot validar el tipus per separat (falsa precisió). */
+	perTipus?: { tipus: string; e: number; n: number }[];
 	discrepancia: {
 		n: number;
 		oposat: number;

@@ -206,6 +206,16 @@ function buildMetodologiaModel() {
 		.map((r) => ({ n: Number(r.nivell_nominal), e: Number(r.cobertura_loo) }));
 	const interval80 = reliability.find((r) => r.n === 80)?.e ?? null;
 
+	// Cobertura per TIPUS territorial al nominal 80 (la promesa headline), amb la n. La UI marca
+	// «n massa petita» quan no es pot validar el tipus per separat (a n=7-9 el % és gairebé soroll).
+	const TIPUS = ['interior_rural', 'litoral_vacacional', 'metropolita_dens', 'corona_metropolitana', 'litoral_metropolita'];
+	const perTipus = TIPUS.map((t) => {
+		const r = cal.find((x) => x.scope === t && Number(x.nivell_nominal) === 80);
+		return r ? { tipus: t, e: Number(r.cobertura_loo), n: Number(r.n) } : null;
+	})
+		.filter(Boolean)
+		.sort((a, b) => b.n - a.n);
+
 	// Discrepància (scatter): un punt per muni amb ETCA. cls = coincident|senyal|soroll → c|s|n.
 	const dis = parseCsv(readFileSync(disP, 'utf8'));
 	const CLS = { coincident: 'c', senyal: 's', soroll: 'n' };
@@ -242,7 +252,7 @@ function buildMetodologiaModel() {
 		? Math.round(calRatios[Math.floor((calRatios.length - 1) / 2)])
 		: null;
 
-	const out = { reliability, interval80, discrepancia, regim: { mediana, punts: reg } };
+	const out = { reliability, interval80, perTipus, discrepancia, regim: { mediana, punts: reg } };
 	const dest = resolve(DEST_DIR, 'metodologia-model.json');
 	writeFileSync(dest, JSON.stringify(out));
 	const kb = (statSync(dest).size / 1024).toFixed(1);

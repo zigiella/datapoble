@@ -49,8 +49,8 @@ amb `no_classificable`, mai default booleà (survivorship bias).
 padró) → tercera via. La frontera no és la població del municipi, és si la nostra estimació es distingeix
 del nostre error. La magnitud va al **to**, no al llindar (sense ETCA no hi ha segona porta).*
 - [x] **Eina auditable** `tools/senyal_sub1000.py` (`--check` + CSV, com els 151) + a CI. El 99 és recalculable.
-- [ ] **Costura a la fitxa amb els tres registres** (desbloqueja el pas pendent de Fase 1): (1) verificat oficial sempre; (2) els ~99 → pernocta en rang amb veu graduada per `marge_rel_pct`; (3) soroll + 20 → base oficial i prou, amb motiu visible «no distingible del marge».
-- [ ] **#5 · cobertura per tipus a /metodologia** amb la **n** al costat (corona n=9 55,6%, litoral n=7 57,1%); si n<~15 → «no validat per separat».
+- [x] **Costura a la fitxa amb els tres registres** (banda real + veu graduada; soroll replegat). #204, desplegat. *Tanca l'últim pas de Fase 1.*
+- [x] **#5 · cobertura per tipus a /metodologia** amb la **n** al costat (corona n=9 i litoral n=7 → «n massa petita», no un % de falsa precisió). #205.
 - [ ] **Publicar el fet «nucli validat = 9 municipis»** (no enterrat a prosa).
 - [ ] **#4 · banderes data-level** (`regim_dens`, `soroll`/`senyal`, `outlier`) tri-estat; `confianca`→`confianca_model`. *(En part absorbit pels tres registres a la fitxa.)*
 - [ ] **Reclassificat — test multianual** (ICAEN 2013–2024): de «oportunitat futura» a **via de validació dels 99** (gap que persisteix = comprovat en el temps). No s'executa ara; canvia d'estatut.
