@@ -264,7 +264,7 @@
 		/>
 		<div class="ap-hero__in">
 			<p class="ap-eyebrow">
-				<span>{m.map_eyebrow_a()}</span><span class="sep">/</span><span>{m.map_eyebrow_b()}</span>
+				<span>{m.map_eyebrow_a()}</span><span class="sep">·</span><span>{m.map_eyebrow_b()}</span>
 			</p>
 			<h1>{m.map_h1_a()} <span class="q">{m.map_h1_b()}</span>.</h1>
 			<p class="lede">
