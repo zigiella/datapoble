@@ -50,9 +50,7 @@
 		restauracio_per_1000hab: () => m.met_restauracio_what(),
 		restauracio_estab: () => m.met_restauracio_what(),
 		confianca: () => m.met_confianca_what(),
-		pct_icaen_EFG: () => m.met_efg_what(),
-		pct_indep: () => m.met_indep_what(),
-		pct_extrema_dreta: () => m.met_xd_what()
+		pct_icaen_EFG: () => m.met_efg_what()
 	};
 	// «Com es calcula» (fórmula llegible) per clau — fidel a semantic/metrics.yml.
 	const HOW: Partial<Record<MetricKey, () => string>> = {
@@ -71,9 +69,7 @@
 		restauracio_per_1000hab: () => m.met_restauracio_how(),
 		restauracio_estab: () => m.met_restauracio_how(),
 		confianca: () => m.met_confianca_how(),
-		pct_icaen_EFG: () => m.met_efg_how(),
-		pct_indep: () => m.met_indep_how(),
-		pct_extrema_dreta: () => m.met_xd_how()
+		pct_icaen_EFG: () => m.met_efg_how()
 	};
 	// Fórmula curta (codi, sense i18n: idèntica ca/es) com a darrer recurs del «com es calcula».
 	const FORMULA: Partial<Record<MetricKey, string>> = {

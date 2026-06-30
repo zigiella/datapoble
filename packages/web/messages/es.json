@@ -549,10 +549,6 @@
   "met_efg_what": "Peso de las calificaciones energéticas bajas (E, F, G) sobre el total de certificados: proxy del potencial de rehabilitación.",
   "met_efg_how": "certificados E-G / certificados totales × 100 (ICAEN).",
 
-  "met_indep_what": "Cuota del bloque independentista (ERC, Junts, CUP, Aliança.cat…) sobre el voto válido.",
-  "met_indep_how": "votos independentistas / votos válidos × 100.",
-  "met_xd_what": "Cuota de la extrema derecha (Vox, Aliança Catalana, PxC histórico) sobre el voto válido, en serie temporal para captar la irrupción. Aliança Catalana es el foco: extrema derecha independentista, emergente y rural.",
-  "met_xd_how": "votos extrema derecha / votos válidos × 100 (2017–2024).",
 
   "met_rang_title": "Presencia estimada en Cataluña (en rango)",
   "met_rang_1": "Más allá del Berguedà, estimamos la presencia (quién duerme) a partir del consumo eléctrico doméstico, ajustando la base de cada municipio con covariables que NO dependen de la presencia: densidad, renta y fracción de calefacción de gas.",

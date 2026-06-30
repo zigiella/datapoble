@@ -29,7 +29,7 @@ export type Localized = Record<Locale, string>;
 export type Ine5 = string;
 
 /**
- * Claus de mètrica del contracte (columnes de `mart_municipi` / `mart_electoral`).
+ * Claus de mètrica del contracte (columnes de `mart_municipi`).
  * Mantingudes 1:1 amb `metrics.yml` perquè el join amb el mart sigui directe.
  */
 export type MetricKey =
@@ -103,12 +103,7 @@ export type MetricKey =
 	| 'IETR'
 	| 'IETR_rank'
 	| 'IETR_stock'
-	| 'IETR_impact'
-	// Política (lectura ecològica)
-	| 'pct_indep'
-	| 'pct_esquerra'
-	| 'pct_extrema_dreta'
-	| 'guanya';
+	| 'IETR_impact';
 
 /**
  * Format de presentació d'una mètrica. Determina com Intl.NumberFormat
@@ -140,8 +135,7 @@ export interface MetricDef {
 		| 'serveis'
 		| 'pressio'
 		| 'energia'
-		| 'index'
-		| 'politica';
+		| 'index';
 	format: MetricFormat;
 	/** Organisme/producte de la font (sources.* del contracte). */
 	source: string;
@@ -155,7 +149,7 @@ export interface MetricDef {
 
 /**
  * Valor d'una mètrica per a un municipi concret. `null` = no disponible (n. d.).
- * Per a `guanya` (candidatura) el valor és text; la resta són numèrics.
+ * Per a les categòriques (p. ex. `tipologia`, `confianca`) el valor és text; la resta, numèrics.
  */
 export type MetricValue = number | string | null;
 
