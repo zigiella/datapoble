@@ -50,7 +50,6 @@
 		restauracio_per_1000hab: () => m.met_restauracio_what(),
 		restauracio_estab: () => m.met_restauracio_what(),
 		confianca: () => m.met_confianca_what(),
-		IETR: () => m.met_ietr_what(),
 		pct_icaen_EFG: () => m.met_efg_what(),
 		pct_indep: () => m.met_indep_what(),
 		pct_extrema_dreta: () => m.met_xd_what()
@@ -72,7 +71,6 @@
 		restauracio_per_1000hab: () => m.met_restauracio_how(),
 		restauracio_estab: () => m.met_restauracio_how(),
 		confianca: () => m.met_confianca_how(),
-		IETR: () => m.met_ietr_how(),
 		pct_icaen_EFG: () => m.met_efg_how(),
 		pct_indep: () => m.met_indep_how(),
 		pct_extrema_dreta: () => m.met_xd_how()
@@ -111,16 +109,11 @@
 		},
 		{
 			ref: 'D',
-			title: () => m.met_block_ietr(),
-			keys: ['IETR']
-		},
-		{
-			ref: 'E',
 			title: () => m.met_block_energia(),
 			keys: ['pct_icaen_EFG']
 		},
 		{
-			ref: 'F',
+			ref: 'E',
 			title: () => m.met_block_origen(),
 			intro: () => m.met_origen_intro(),
 			keys: [

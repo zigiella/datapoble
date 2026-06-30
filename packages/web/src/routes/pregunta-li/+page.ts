@@ -18,7 +18,7 @@ import type { PageLoad } from './$types';
  * preferència: població, gap de pernocta (l'indicador estrella), IETR i residus.
  * Coherent amb el brief. Si alguna no és al dataset, se salta.
  */
-const EXAMPLE_KEYS: MetricKey[] = ['poblacio', 'gap_pernocta_pct', 'IETR', 'kg_hab_any'];
+const EXAMPLE_KEYS: MetricKey[] = ['poblacio', 'gap_pernocta_pct', 'pct_noprincipal', 'kg_hab_any'];
 
 export const load: PageLoad = async ({ fetch }) => {
 	let metricLabels: Array<{ key: MetricKey; label: MetricDef['label'] }> = [];
