@@ -229,33 +229,72 @@
 		'IETR'
 	]);
 
-	// ——— Pas 0 · «el rang és la dada» (spec consultora 2 §10) ———
-	// La família pernocta (qui dorm / gap) és inferència: es mostra en RANG, no com a punt.
-	// Banda interim = sensibilitat de la base ±10% (multiplicativa); §2 la substituirà pel
-	// p10–p90 del model d'esperats. Com que pernocta_est ∝ 1/base, la banda és
-	// [est/(1+s), est/(1−s)]. Si el rang del gap CREUA el 0, el signe no és concloent
-	// (cas Berga −2%, Puig-reig −5%): es diu «≈0 · no concloent», mai un número amb signe.
+	// ——— Pas 0 · «el rang és la dada» + TRES REGISTRES (vot 2026-06-29 · 05-vot-tres-registres) ———
+	// La família pernocta (qui dorm / gap) és inferència: es mostra en RANG. La banda és la REAL
+	// calibrada (p10–p90 held-out per tipus, eixamplada ×1,5 als <1.000) de pernocta-catalunya.json
+	// (rang_baix/alt) — substitueix la interina ±10%. Tres registres segons la banda (mateix criteri
+	// que tools/senyal_sub1000.py):
+	//   · oficial → té ETCA (≥1.000 hab): la font oficial mana.
+	//   · senyal  → l'interval EXCLOU el padró: afirmem el gap, amb veu graduada per magnitud.
+	//   · soroll  → l'interval INCLOU el padró: no es distingeix del marge → no n'afirmem el gap.
+	// Si el muni no és a pernocta-catalunya.json, cau a la banda interina ±10% (no trenca la vitrina).
 	const GAP_SENSITIVITY = 0.1;
+	const VEU_FERMA_PCT = 20; // marge relatiu del padró a la vora de la banda per a «veu ferma»
 	const PERNOCTA_RANGE_KEYS = new Set<MetricKey>([
 		'poblacio_pernocta_est',
 		'gap_pernocta',
 		'gap_pernocta_pct'
 	]);
 	const pernoctaBand = $derived.by(() => {
-		const est = row?.values.poblacio_pernocta_est;
 		const padro = row?.values.poblacio;
-		if (typeof est !== 'number' || typeof padro !== 'number' || padro <= 0) return null;
-		const s = GAP_SENSITIVITY;
-		const estLow = est / (1 + s);
-		const estHigh = est / (1 - s);
-		const pctLow = (estLow / padro - 1) * 100;
-		const pctHigh = (estHigh / padro - 1) * 100;
+		if (typeof padro !== 'number' || padro <= 0) return null;
+		let estLow: number, estHigh: number, est: number;
+		let etca: number | null = null;
+		if (
+			pernocta &&
+			typeof pernocta.rang_baix === 'number' &&
+			typeof pernocta.rang_alt === 'number' &&
+			typeof pernocta.estimacio === 'number'
+		) {
+			estLow = pernocta.rang_baix;
+			estHigh = pernocta.rang_alt;
+			est = pernocta.estimacio;
+			etca = typeof pernocta.etca_oficial === 'number' ? pernocta.etca_oficial : null;
+		} else {
+			const e = row?.values.poblacio_pernocta_est; // fallback: banda interina ±10%
+			if (typeof e !== 'number') return null;
+			estLow = e / (1 + GAP_SENSITIVITY);
+			estHigh = e / (1 - GAP_SENSITIVITY);
+			est = e;
+		}
+		const direccio = estLow > padro ? 'mes' : estHigh < padro ? 'menys' : null;
+		const registre = etca !== null ? 'oficial' : direccio ? 'senyal' : 'soroll';
+		const marge =
+			direccio === 'mes'
+				? ((estLow - padro) / padro) * 100
+				: direccio === 'menys'
+					? ((padro - estHigh) / padro) * 100
+					: 0;
 		return {
-			inconcludent: pctLow < 0 && pctHigh > 0,
+			registre,
+			direccio,
+			veu: marge >= VEU_FERMA_PCT ? 'ferm' : 'prudent',
+			etca,
+			etcaPct: etca !== null ? (etca / padro - 1) * 100 : null,
+			inconcludent: registre === 'soroll',
 			estLow, estHigh, est,
 			gapAbsLow: estLow - padro, gapAbsHigh: estHigh - padro, gapAbs: est - padro,
-			pctLow, pctHigh, pct: (est / padro - 1) * 100
+			pctLow: (estLow / padro - 1) * 100, pctHigh: (estHigh / padro - 1) * 100,
+			pct: (est / padro - 1) * 100
 		};
+	});
+	// Veu graduada (registre senyal): com parla el gap segons direcció i magnitud. La còpia és de Bea.
+	const veuText = $derived.by<string | null>(() => {
+		if (!pernoctaBand || pernoctaBand.registre !== 'senyal' || !pernoctaBand.direccio) return null;
+		const f = pernoctaBand.veu === 'ferm';
+		if (pernoctaBand.direccio === 'mes')
+			return f ? m.muni_gap_veu_ferm_mes() : m.muni_gap_veu_prudent_mes();
+		return f ? m.muni_gap_veu_ferm_menys() : m.muni_gap_veu_prudent_menys();
 	});
 	// Enter localitzat (recomptes) i amb signe explícit (gaps), 0 decimals.
 	const fInt = (v: number): string => formatDecimal(v, locale, 0);
@@ -414,8 +453,8 @@
 			></span
 		>
 		{#if PERNOCTA_RANGE_KEYS.has(key) && pernoctaBand}
-			{#if pernoctaBand.inconcludent && (key === 'gap_pernocta' || key === 'gap_pernocta_pct')}
-				<span class="val val--neutral">{m.ficha_inconcludent()}</span>
+			{#if pernoctaBand.registre === 'soroll' && (key === 'gap_pernocta' || key === 'gap_pernocta_pct')}
+				<span class="val val--neutral">{m.muni_gap_soroll()}</span>
 			{:else if key === 'poblacio_pernocta_est'}
 				<span class="val"
 					>{fInt(pernoctaBand.estLow)} … {fInt(pernoctaBand.estHigh)}<span class="u">hab.</span>
@@ -630,6 +669,15 @@
 						<span class="n5__v">{typeof row.values.renda_neta_persona === 'number' ? formatInteger(row.values.renda_neta_persona, locale) : '—'}<span class="n5__u">€</span></span>
 					</div>
 				</div>
+				<!-- Veu del gap (tres registres): senyal → veu graduada; soroll → es replega a base oficial.
+				     Només fora del Berguedà (la vitrina té la seva narració-IA). -->
+				{#if !isBergueda && pernoctaBand}
+					{#if veuText}
+						<p class="muni-gap-veu" class:is-ferm={pernoctaBand.veu === 'ferm'}>{veuText}</p>
+					{:else if pernoctaBand.registre === 'soroll'}
+						<p class="muni-gap-veu is-soroll">{m.muni_gap_soroll()}</p>
+					{/if}
+				{/if}
 			</section>
 
 			<!-- P3 · LA MAQUINÀRIA: la fitxa completa, plegada en acordions (oberts amb «mode dades»).
@@ -989,6 +1037,20 @@
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
 		gap: 10px;
+	}
+	/* Veu del gap (tres registres): senyal graduat (ferm/prudent) · soroll replegat. */
+	.muni-gap-veu {
+		margin: 12px 0 0;
+		font-size: 0.92rem;
+		line-height: 1.45;
+		color: var(--dp-text-muted);
+	}
+	.muni-gap-veu.is-ferm {
+		color: var(--dp-text);
+		font-weight: 600;
+	}
+	.muni-gap-veu.is-soroll {
+		font-style: italic;
 	}
 	.n5 {
 		background: var(--dp-surface);

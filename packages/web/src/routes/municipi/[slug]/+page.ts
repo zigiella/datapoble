@@ -109,9 +109,12 @@ export const load: PageLoad = async ({ fetch, params }) => {
 		}
 	}
 
-	// Presència estimada EN RANG (Nivell C) per als munis coberts FORA del Berguedà. Prerender-safe.
+	// Presència estimada EN RANG (Nivell C) + banda real calibrada (rang_baix/alt) i ETCA oficial.
+	// Es carrega per a TOTS els munis (no només els !row): la fitxa la fa servir per classificar els
+	// TRES REGISTRES (oficial ≥1.000 · senyal <1.000 que exclou el padró · soroll) amb la banda real,
+	// no la interina ±10% (vot 2026-06-29 · `05-vot-tres-registres.md`). Prerender-safe.
 	let pernocta: PernoctaMuni | null = null;
-	if (ine5 && !row) {
+	if (ine5) {
 		try {
 			const res = await fetch('/data/pernocta-catalunya.json');
 			if (res.ok) {
