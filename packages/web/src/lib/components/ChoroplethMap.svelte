@@ -156,10 +156,17 @@
 	 * la font de dades, no una llista codificada. El dia que entrin més comarques, s'amplia sol.
 	 */
 	const bergSet = $derived(new Set(Object.keys(dataset.municipis)));
-	// Munis amb presència estimada EN RANG fora del Berguedà (Nivell C): es pinten distints de
-	// l'atenuat «sense dades», però NO per l'indicador (no el tenim per a ells) — un tint propi.
+	// Munis FORA del Berguedà amb dada per pintar: UNIÓ de la presència estimada en rang (pernocta) i
+	// dels indicadors a escala Catalunya (catValues). Cal la unió perquè catValues cobreix 947 munis i
+	// pernocta només 927: els ~20 micromunis sense estimació de pernocta SÍ tenen indicadors oficials
+	// (p. ex. % habitatge no principal) i s'han de pintar, no quedar atenuats. El pintat real per muni
+	// el decideix `__covval` (el valor de l'indicador ACTIU): si l'indicador no en té per a aquell muni
+	// (p. ex. el gap, que necessita pernocta), queda transparent → atenuat (honest). La banda de
+	// pernocta al tooltip segueix lligada a `pernocta` (null per als que no en tenen).
 	const coveredSet = $derived(
-		new Set(Object.keys(pernocta ?? {}).filter((i) => !bergSet.has(i)))
+		new Set(
+			[...Object.keys(pernocta ?? {}), ...Object.keys(catValues ?? {})].filter((i) => !bergSet.has(i))
+		)
 	);
 
 	/** Patró de tramat diagonal per a "sense dada" (canvas → addImage). */
