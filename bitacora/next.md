@@ -51,7 +51,9 @@ del nostre error. La magnitud va al **to**, no al llindar (sense ETCA no hi ha s
 - [x] **Eina auditable** `tools/senyal_sub1000.py` (`--check` + CSV, com els 151) + a CI. El 99 és recalculable.
 - [x] **Costura a la fitxa amb els tres registres** (banda real + veu graduada; soroll replegat). #204, desplegat. *Tanca l'últim pas de Fase 1.*
 - [x] **#5 · cobertura per tipus a /metodologia** amb la **n** al costat (corona n=9 i litoral n=7 → «n massa petita», no un % de falsa precisió). #205.
-- [ ] **Publicar el fet «nucli validat = 9 municipis»** (no enterrat a prosa).
+- [x] **Publicar el fet «nucli validat = 9 municipis»** (callout destacat a /metodologia). #206.
+- [x] **ETCA lidera el gap als ≥1.000 a la fitxa** (registre oficial: Idescat lidera + nostra estimació de contrast + doble etiqueta). #206.
+- [ ] **⚠️ Reconciliar la font de PADRÓ** (crack descobert): `municipis.catalunya.json` (`poblacio`) ≠ `pernocta-catalunya.json` (`padro`) en el 97% dels munis (~3%, vintages diferents) → **~20 munis fronterers** classifiquen senyal/soroll diferent a la fitxa (`row.poblacio`) que a `senyal_sub1000.py` (`pernocta.padro`). Decidir el padró canònic i unificar (afecta el «99», els 151, la fitxa). I de retruc l'etcaPct de la fitxa hauria de casar amb el gap d'Idescat del mapa.
 - [ ] **#4 · banderes data-level** (`regim_dens`, `soroll`/`senyal`, `outlier`) tri-estat; `confianca`→`confianca_model`. *(En part absorbit pels tres registres a la fitxa.)*
 - [ ] **Reclassificat — test multianual** (ICAEN 2013–2024): de «oportunitat futura» a **via de validació dels 99** (gap que persisteix = comprovat en el temps). No s'executa ara; canvia d'estatut.
 
