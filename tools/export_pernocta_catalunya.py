@@ -23,10 +23,13 @@ NOTA: aquesta primera tanda cobreix els municipis amb ETCA (≥1.000 hab) de les
 ingerides. Els <1.000 (els petits turístics, el cas que més ho necessita) requereixen baixar-ne
 les covariables a part — següent pas.
 
-Ús:  python tools/export_pernocta_catalunya.py
+Ús:
+    python tools/export_pernocta_catalunya.py            # escriu el JSON
+    python tools/export_pernocta_catalunya.py --check     # no escriu; falla si està desactualitzat
 """
 from __future__ import annotations
 
+import argparse
 import csv
 import json
 import sys
@@ -55,11 +58,17 @@ def _pct(xs: list[float], p: float) -> float:
     return s[lo] + (s[hi] - s[lo]) * (k - lo)
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     try:
         sys.stdout.reconfigure(encoding="utf-8")
     except Exception:
         pass
+    ap = argparse.ArgumentParser(prog="export_pernocta_catalunya")
+    ap.add_argument(
+        "--check", action="store_true",
+        help="no escriu; falla (codi 1) si el JSON al disc no coincideix amb el generat",
+    )
+    args = ap.parse_args(argv)
     if not ANAL.exists() or not REGR.exists():
         print("FALLA: cal nivellc_analisi.csv i nivellc_regressio.csv", file=sys.stderr)
         return 2
@@ -129,8 +138,24 @@ def main() -> int:
                       "municipis costaners (Territori/PPOL, Llei 8/2020).",
         "munis": dict(sorted(munis.items())),
     }
+    out_str = json.dumps(payload, ensure_ascii=False, indent=1) + "\n"
+
+    if args.check:
+        if not OUT.exists():
+            print(f"FALLA (--check): no existeix {OUT}", file=sys.stderr)
+            return 1
+        # Lectura sense traducció de finals de línia (newline="") → comparació estable LF/CRLF.
+        with OUT.open("r", encoding="utf-8", newline="") as fh:
+            if fh.read() != out_str:
+                print(f"FALLA (--check): {OUT} desactualitzat (re-executa sense --check)", file=sys.stderr)
+                return 1
+        print(f"OK (--check): {OUT} al dia ({n_cov} municipis).")
+        return 0
+
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(payload, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    # newline="\n": LF explícit (no CRLF a Windows) → byte-estable amb .gitattributes eol=lf.
+    with OUT.open("w", encoding="utf-8", newline="\n") as fh:
+        fh.write(out_str)
     kb = OUT.stat().st_size / 1024
     print(f"Escrit {OUT.relative_to(REPO).as_posix()} · {n_cov} municipis · {kb:.0f} kB")
     print("Banda per tipus (p10/p90 del residual held-out):")
