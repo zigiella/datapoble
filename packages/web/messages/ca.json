@@ -549,10 +549,6 @@
   "met_efg_what": "Pes de les qualificacions energètiques baixes (E, F, G) sobre el total de certificats: proxy del potencial de rehabilitació.",
   "met_efg_how": "certificats E-G / certificats totals × 100 (ICAEN).",
 
-  "met_indep_what": "Quota del bloc independentista (ERC, Junts, CUP, Aliança.cat…) sobre el vot vàlid.",
-  "met_indep_how": "vots independentistes / vots vàlids × 100.",
-  "met_xd_what": "Quota de l'extrema dreta (Vox, Aliança Catalana, PxC històric) sobre el vot vàlid, en sèrie temporal per captar la irrupció. Aliança Catalana és el focus: extrema dreta independentista, emergent i rural.",
-  "met_xd_how": "vots extrema dreta / vots vàlids × 100 (2017–2024).",
 
   "met_rang_title": "Presència estimada a Catalunya (en rang)",
   "met_rang_1": "Més enllà del Berguedà, estimem la presència (qui hi dorm) a partir del consum elèctric domèstic, ajustant la base de cada municipi amb covariables que NO depenen de la presència: densitat, renda i fracció de calefacció de gas.",

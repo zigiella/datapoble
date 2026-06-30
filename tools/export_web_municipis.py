@@ -20,9 +20,6 @@ Frontera honesta (cap valor inventat):
   · `pct_icaen_EFG` = null per a tots: requereix el connector de certificats ICAEN
     (`j6ii-t3w2`), fora d'aquest PR. És un buit honest marcat (status del contracte),
     no un placeholder.
-  · Els indicadors polítics (`pct_indep`, `pct_esquerra`, `pct_extrema_dreta`,
-    `guanya`) surten de `mart_electoral`, convocatòria Parlament 2024 (A20241).
-    LECTURA ECOLÒGICA (agregat municipal, mai individual; volàtil en micromunicipis).
   · Qualsevol valor absent al mart s'emet com a `null` (n. d.), mai s'omple.
 
 Ús:
@@ -45,16 +42,12 @@ import yaml
 
 REPO = Path(__file__).resolve().parents[1]
 MART_MUNI = REPO / "data" / "marts" / "mart_municipi.parquet"
-MART_ELEC = REPO / "data" / "marts" / "mart_electoral.parquet"
 MART_DEMOG = REPO / "data" / "marts" / "mart_demografia.parquet"
 METRICS_YML = REPO / "semantic" / "metrics.yml"
 # Sortida per abast (F3): el pilot profund del Berguedà (31, amb política/origen/OSM) i l'espina de
 # tot Catalunya (947 — presència/residus/IETR/confiança per a tots; els extres només al Berguedà).
 OUT_BERGUEDA = REPO / "data" / "web" / "municipis.bergueda.json"
 OUT_CATALUNYA = REPO / "data" / "web" / "municipis.catalunya.json"
-
-# Convocatòria electoral vigent per a les columnes polítiques del web.
-ELEC = "A20241"
 
 # Ordre i claus de mètrica del contracte (= MetricKey a types.ts). Determina
 # l'ordre del catàleg `metrics` al JSON (estable → diffs nets).
@@ -86,7 +79,6 @@ METRIC_KEYS = [
     "pct_icaen_EFG", "IETR", "IETR_rank",
     # FASE 1 · 3 derivats nous (endurir el model): IETR dual + tipologia + score.
     "IETR_stock", "IETR_impact", "tipologia", "confianca_score", "divergencia_senyals",
-    "pct_indep", "pct_esquerra", "pct_extrema_dreta", "guanya",
 ]
 
 # Format de presentació per clau (MetricFormat a types.ts). No és al contracte
@@ -123,8 +115,6 @@ FORMAT_BY_KEY = {
     # FASE 1: IETR dual 0-100 → decimal; tipologia categòrica → text; score 0-100 → decimal.
     "IETR_stock": "decimal", "IETR_impact": "decimal",
     "tipologia": "text", "confianca_score": "decimal", "divergencia_senyals": "integer",
-    "pct_indep": "percent", "pct_esquerra": "percent",
-    "pct_extrema_dreta": "percent", "guanya": "text",
 }
 
 # Mapa clau de mètrica → columna del mart corresponent.
@@ -178,13 +168,6 @@ COL_DEMOG = {
     "confianca_origen": "confianca_origen",
 }
 TEXT_COLS_DEMOG = {"confianca_origen"}
-
-COL_ELEC = {
-    "pct_indep": f"pct_indep_{ELEC}",
-    "pct_esquerra": f"pct_esq_{ELEC}",
-    "pct_extrema_dreta": f"pct_extrema_dreta_{ELEC}",
-    "guanya": f"guanya_{ELEC}",
-}
 
 # Mètriques de recompte (suma comarcal) vs derivades (no se sumen).
 COMARCA_SUM = ["poblacio", "hab_total", "rtc_total"]
@@ -258,9 +241,8 @@ def _num(v: Any) -> Any:
     return int(f) if f.is_integer() else f
 
 
-def build_municipis(muni: pd.DataFrame, elec: pd.DataFrame, demog: pd.DataFrame) -> dict[str, dict]:
+def build_municipis(muni: pd.DataFrame, demog: pd.DataFrame) -> dict[str, dict]:
     """Files per municipi (Record<Ine5, MunicipiRow>), dades reals."""
-    elec_by = elec.set_index("ine5")
     demog_by = demog.set_index("ine5")
     out: dict[str, dict] = {}
     sense_est: list[str] = []  # munis amb confiança però SENSE estimació de pernocta (sanejat)
@@ -289,20 +271,6 @@ def build_municipis(muni: pd.DataFrame, elec: pd.DataFrame, demog: pd.DataFrame)
                     values[key] = _num(dr[col])
         else:
             for key in COL_DEMOG:
-                values[key] = None
-        # Polítics des de mart_electoral (A20241). guanya és text (sigla) o None.
-        if ine5 in elec_by.index:
-            er = elec_by.loc[ine5]
-            for key, col in COL_ELEC.items():
-                if col not in elec.columns:
-                    values[key] = None
-                elif key == "guanya":
-                    g = er[col]
-                    values[key] = None if pd.isna(g) else str(g)
-                else:
-                    values[key] = _num(er[col])
-        else:
-            for key in COL_ELEC:
                 values[key] = None
         # Sanejat d'honestedat: la `confianca` és la confiança EN l'estimació de pernocta (L1 del
         # model de 3 capes). Si no hi ha estimació (poblacio_pernocta_est = null —micromunis sense
@@ -371,7 +339,6 @@ def build_comarca(muni: pd.DataFrame, contract: dict, label: str | None = None) 
 def build_dataset(scope: str = "bergueda") -> dict:
     contract = yaml.safe_load(METRICS_YML.read_text(encoding="utf-8"))
     muni = pd.read_parquet(MART_MUNI)
-    elec = pd.read_parquet(MART_ELEC)
     demog = pd.read_parquet(MART_DEMOG)
 
     if scope == "bergueda":
@@ -393,7 +360,7 @@ def build_dataset(scope: str = "bergueda") -> dict:
         "contractVersion": str(contract["meta"]["version"]),
         "scope": scope_label,
         "metrics": build_metrics(contract),
-        "municipis": build_municipis(muni, elec, demog),
+        "municipis": build_municipis(muni, demog),
         "comarca": comarca,
     }
 
@@ -410,7 +377,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = ap.parse_args(argv)
 
-    for p in (MART_MUNI, MART_ELEC, MART_DEMOG, METRICS_YML):
+    for p in (MART_MUNI, MART_DEMOG, METRICS_YML):
         if not p.exists():
             print(f"FALLA: no existeix {p} (executa abans el pipeline transform)", file=sys.stderr)
             return 2
