@@ -51,6 +51,12 @@ sources:
     dataset_id: 8idm-becu
     llicencia: Dades Obertes de Catalunya
     nota: "Sector USOS DOMÈSTICS, darrer any de cobertura plena (2024). kWh/hab és el senyal de la capa L1 (població pernocta)."
+  electoral:
+    organisme: Generalitat
+    producte: Processos electorals - Vots
+    dataset_id: ntc4-rnwr
+    llicencia: Dades Obertes de Catalunya
+    nota: "Lectura ECOLÒGICA (no individual). Volàtil en micromunicipis."
   osm_overpass:
     organisme: OpenStreetMap (col·laboradors) — via Overpass API
     producte: Punts d'interès de restauració (amenity=restaurant/cafe/bar/fast_food/pub/biergarten/ice_cream)
@@ -1005,6 +1011,70 @@ metrics:
       ca: "Relativa a la comarca (z-scores). Alta divergència sol venir de proxies confosos (p. ex. calefacció de llenya: residus alts però elèctric baix), no necessàriament d'un error: és un senyal per llegir amb cura, no un veto. Lectura ECOLÒGICA."
       es: "Relativa a la comarca (z-scores). Alta divergencia suele venir de proxies confundidos (p. ej. calefacción de leña: residuos altos pero eléctrico bajo), no necesariamente de un error: es una señal para leer con cuidado, no un veto. Lectura ECOLÓGICA."
     synonyms: {ca: [divergència de senyals, discrepància, concordança], es: [divergencia de señales, discrepancia, concordancia]}
+
+  # --- Política (visible, lectura ecològica) ---
+  pct_indep:
+    label: {ca: "% vot independentista", es: "% voto independentista"}
+    definicio:
+      ca: "Quota del bloc independentista (ERC, Junts, CUP, Aliança.cat, Alhora…) sobre vot vàlid."
+      es: "Cuota del bloque independentista (ERC, Junts, CUP, Aliança.cat, Alhora…) sobre voto válido."
+    dimension: politica
+    unit: "%"
+    formula: "vots_independentistes / vots_valids * 100"
+    source: electoral
+    date: "2024"
+    table: mart_electoral
+    column: pct_indep_A20241
+    visibility: public
+    nota:
+      ca: "Lectura ECOLÒGICA (no individual; falàcia ecològica). Volàtil en micromunicipis (N petit)."
+      es: "Lectura ECOLÓGICA (no individual; falacia ecológica). Volátil en micromunicipios (N pequeño)."
+
+  pct_esquerra:
+    label: {ca: "% vot esquerra", es: "% voto izquierda"}
+    definicio:
+      ca: "Quota del bloc d'esquerra (PSC, ERC, CUP, Comuns…) sobre vot vàlid."
+      es: "Cuota del bloque de izquierda (PSC, ERC, CUP, Comuns…) sobre voto válido."
+    dimension: politica
+    unit: "%"
+    formula: "vots_esquerra / vots_valids * 100"
+    source: electoral
+    date: "2024"
+    table: mart_electoral
+    column: pct_esq_A20241
+    visibility: public
+
+  pct_extrema_dreta:
+    label: {ca: "% vot extrema dreta", es: "% voto extrema derecha"}
+    definicio:
+      ca: "Quota de l'extrema dreta (Vox + Aliança Catalana + PxC històric) sobre vot vàlid. Sèrie temporal per captar la irrupció."
+      es: "Cuota de la extrema derecha (Vox + Aliança Catalana + PxC histórico) sobre voto válido. Serie temporal para captar la irrupción."
+    dimension: politica
+    unit: "%"
+    formula: "vots_extrema_dreta / vots_valids * 100"
+    source: electoral
+    date: "2017-2024"
+    table: mart_electoral
+    column: pct_extrema_dreta
+    visibility: public
+    status: planned
+    nota:
+      ca: "Lectura ecològica. Aliança Catalana és el focus (extrema dreta independentista, emergent i rural)."
+      es: "Lectura ecológica. Aliança Catalana es el foco (extrema derecha independentista, emergente y rural)."
+
+  guanya:
+    label: {ca: Candidatura guanyadora, es: Candidatura ganadora}
+    definicio:
+      ca: Candidatura més votada al municipi.
+      es: Candidatura más votada en el municipio.
+    dimension: politica
+    unit: {ca: sigla, es: sigla}
+    formula: "argmax(vots)"
+    source: electoral
+    date: "2024"
+    table: mart_electoral
+    column: guanya_A20241
+    visibility: public
 
 # ----------------------------------------------------------------------------
 # Preguntas tipo (semilla para evals de la IA)
