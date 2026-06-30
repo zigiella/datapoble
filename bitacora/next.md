@@ -41,13 +41,19 @@ verificar el fet que la sosté (la pròpia síntesi va sobrepormetre el #1; la c
 **Tres baranes per a tota curació de dades:** (1) regenerar des de la font, mai editar el JSON a mà
 (idempotent via `--check`); (2) overlay no destructiu, registrar afectats; (3) banderes **tri-estat**
 amb `no_classificable`, mai default booleà (survivorship bias).
-- [ ] **#1 · `muni_lede` honest** (fora «la mateixa riquesa… per a qualsevol municipi»; lede condicional Berguedà vs resta). ← *en marxa (PR).*
-- [ ] **#3 · sanejar `confianca` sense estimació**: regla `pernocta_est null ⇒ confiança null` a l'exportador (els 20 munis = el forat 947→927); `IETR` NO es toca (independent); + `export_web_municipis --check` a CI. ← *en marxa (PR).*
-- [ ] **#4 · banderes data-level** (`regim_dens`, `soroll`/`senyal` propagant la `classe` ja existent, `outlier`) tri-estat; `confianca`→`confianca_model`.
+- [x] **#1 · `muni_lede` honest** (fora «la mateixa riquesa… per a qualsevol municipi»; lede condicional Berguedà vs resta). #200, desplegat.
+- [x] **#3 · sanejar `confianca` sense estimació**: `pernocta_est null ⇒ confiança null` a l'exportador (els 20 = forat 947→927); `IETR` intacte; + `export_web_municipis --check` a CI. #201, desplegat.
+
+### Vot dels tres registres (2026-06-29) · *el nus «verificat-primer vs costura», RESOLT* — `docs/dossier-consultoria-2026-06/05-vot-tres-registres.md`
+*No es vota arquitectura: es mira el número. **99 dels 441 <1.000** passen el llindar (interval exclou el
+padró) → tercera via. La frontera no és la població del municipi, és si la nostra estimació es distingeix
+del nostre error. La magnitud va al **to**, no al llindar (sense ETCA no hi ha segona porta).*
+- [x] **Eina auditable** `tools/senyal_sub1000.py` (`--check` + CSV, com els 151) + a CI. El 99 és recalculable.
+- [ ] **Costura a la fitxa amb els tres registres** (desbloqueja el pas pendent de Fase 1): (1) verificat oficial sempre; (2) els ~99 → pernocta en rang amb veu graduada per `marge_rel_pct`; (3) soroll + 20 → base oficial i prou, amb motiu visible «no distingible del marge».
 - [ ] **#5 · cobertura per tipus a /metodologia** amb la **n** al costat (corona n=9 55,6%, litoral n=7 57,1%); si n<~15 → «no validat per separat».
 - [ ] **Publicar el fet «nucli validat = 9 municipis»** (no enterrat a prosa).
-- [ ] **#2 · degradar la maquinària P3 fora del Berguedà** (no la confiança; NO la mateixa tisora per als 486 validats). ← **vot de la Bea**: replegar a rang vs caveat fort.
-- [ ] **#7 · front-0 d'utilitat** (protegir pernocta <1.000 + `serveisLectura` com a resposta; % habitatge no principal al mapa; `/pregunta-li`). ← **vot de la Bea**.
+- [ ] **#4 · banderes data-level** (`regim_dens`, `soroll`/`senyal`, `outlier`) tri-estat; `confianca`→`confianca_model`. *(En part absorbit pels tres registres a la fitxa.)*
+- [ ] **Reclassificat — test multianual** (ICAEN 2013–2024): de «oportunitat futura» a **via de validació dels 99** (gap que persisteix = comprovat en el temps). No s'executa ara; canvia d'estatut.
 
 ## Fase 2 · la vitrina Berguedà · *rigor de punta a punta*
 - [ ] 31 munis, dades completes; model validat contra ETCA als **9 munis ≥1.000** (no els 31), honest amb els 22 sense validació oficial (frase canònica a `docs/contracte-abast.md`).
