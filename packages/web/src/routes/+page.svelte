@@ -2,12 +2,10 @@
 	/**
 	 * HOME «La Llera» (cercador primer) — la portada de riusdegent.
 	 *
-	 * Decisió Bea: la Home s'articula sobre BUSCADOR + MAPA + TROBALLES; /resum passa a subhome
-	 * de comarca. Aquí: hero amb el buscador com a heroi (MuniSearch), tira de TROBALLES
-	 * deterministes (extrems honestos del territori, amb procedència), MAPA coroplètic per
-	 * TIPOLOGIA (suport, navega a la fitxa) i PORTES DE COMARCA (Berguedà → /resum). Funcional;
-	 * el poliment fi anirà a la DA externa. Estil: design-system (classes .ap-hero/.ds-sec/.card/
-	 * .dot-- i les noves .home-* d'aplicacio.css). Cap xifra sense procedència.
+	 * S'articula sobre BUSCADOR + MAPA + WAVEFORM + PORTES. Aquí: hero amb el cercador com a heroi
+	 * (MuniSearch, tota Catalunya), MAPA coroplètic de TOT CATALUNYA per % habitatge no principal
+	 * (oficial; clic → fitxa), WAVEFORM del gap (Beeswarm, tota Catalunya) i PORTES DE COMARCA
+	 * (Berguedà → /comarca/bergueda, el nucli que treballem a fons). Cap xifra sense procedència.
 	 */
 	import { goto } from '$app/navigation';
 	import ContourField from '$lib/components/ContourField.svelte';
@@ -32,24 +30,24 @@
 	const pernocta = $derived(data.pernocta?.munis);
 	// Catàleg de tots els munis de Catalunya (cerca a tot el país).
 	const cataleg = $derived(data.cataleg);
+	// Indicadors a escala Catalunya (pinten TOTS els municipis) + validació (capa la confiança del tooltip).
+	const catValues = $derived(data.catValues);
+	const validats = $derived(new Set(data.validats ?? []));
 
-	// Granularitat del mapa de la home. Per defecte COMARCA (decisió Bea): la home dona el cop
-	// d'ull de cobertura a tot Catalunya; municipi mostra el detall del Berguedà.
-	type Granularity = 'municipi' | 'comarca' | 'vegueria';
-	let granularity = $state<Granularity>('comarca');
-	const GRAN_OPTS: { key: Granularity; label: () => string }[] = [
-		{ key: 'comarca', label: () => m.map_granularity_comarca() },
-		{ key: 'vegueria', label: () => m.map_granularity_vegueria() },
-		{ key: 'municipi', label: () => m.map_granularity_municipi() }
-	];
-
-	// Mapa de suport: % habitatge no principal (oficial, llegible a escala CAT). NO tipologia —els
-	// llindars no generalitzen («Barcelona = excursió» trencava la credibilitat (reconducció)).
+	// Mapa de la home: TOTA CATALUNYA per % habitatge no principal (oficial, llegible a escala CAT i
+	// amb dada per a tots els munis). NO tipologia —els llindars no generalitzen («Barcelona =
+	// excursió» trencava la credibilitat (reconducció))—. Sense commutador de granularitat (decisió
+	// Bea): un sol mapa de país; el detall per comarca viu a /comarca i el mapa complet a /mapa.
 	const indicator = 'pct_noprincipal' as MetricKey;
+	// Sèrie sobre TOT Catalunya: valor del Berguedà (dataset) o, si no, el de catValues (escala CAT),
+	// perquè els talls/colors abastin tots els municipis (mirall de /mapa).
 	const series = $derived(
-		geojson.features.map((f: import('geojson').Feature) =>
-			mapValue(indicator, dataset.municipis[(f.properties?.ine5 as string) ?? '']?.values?.[indicator])
-		)
+		geojson.features.map((f: import('geojson').Feature) => {
+			const ine5 = (f.properties?.ine5 as string) ?? '';
+			const dv = mapValue(indicator, dataset.municipis[ine5]?.values?.[indicator]);
+			if (dv !== null && dv !== undefined) return dv;
+			return catValues?.[ine5]?.[indicator] ?? null;
+		})
 	);
 	const method = $derived(methodFor(indicator));
 	const classification = $derived(classify(series, method));
@@ -97,16 +95,6 @@
 			<p class="lead">{m.home_map_hint()}</p>
 			<!-- Abast honest «tota Catalunya»: què cobrim i per què (no fingim dada on no n'hi ha). -->
 			<p class="home-map__scope">{m.home_map_scope()}</p>
-			<div class="home-gran" role="group" aria-label={m.map_granularity_label()}>
-				{#each GRAN_OPTS as o (o.key)}
-					<button
-						type="button"
-						class="home-gran__btn"
-						aria-pressed={granularity === o.key}
-						onclick={() => (granularity = o.key)}>{o.label()}</button
-					>
-				{/each}
-			</div>
 			<div class="home-map">
 				<ChoroplethMap
 					{dataset}
@@ -115,8 +103,10 @@
 					{vegueries}
 					{indicator}
 					{classification}
-					{granularity}
 					{pernocta}
+					{catValues}
+					{validats}
+					fitTo="catalunya"
 					onselect={navTo}
 				/>
 			</div>
@@ -158,31 +148,5 @@
 		font-size: 0.86rem;
 		line-height: 1.5;
 		color: var(--dp-text-muted);
-	}
-
-	/* Commutador de granularitat del mapa de la home (comarca/vegueria/municipi). */
-	.home-gran {
-		display: inline-flex;
-		margin: 0 0 12px;
-		border: 1px solid var(--dp-border-strong);
-		border-radius: var(--dp-radius-full);
-		overflow: hidden;
-	}
-	.home-gran__btn {
-		font-family: var(--dp-font-mono);
-		font-size: 0.72rem;
-		letter-spacing: 0.02em;
-		padding: 6px 14px;
-		border: none;
-		background: var(--dp-surface);
-		color: var(--dp-text-muted);
-		cursor: pointer;
-	}
-	.home-gran__btn + .home-gran__btn {
-		border-left: 1px solid var(--dp-border);
-	}
-	.home-gran__btn[aria-pressed='true'] {
-		background: var(--dp-text);
-		color: var(--dp-bg);
 	}
 </style>

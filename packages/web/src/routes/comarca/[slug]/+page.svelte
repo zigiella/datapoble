@@ -5,9 +5,14 @@
 	 */
 	import Espina from '$lib/components/Espina.svelte';
 	import Beeswarm from '$lib/components/Beeswarm.svelte';
+	import ChoroplethMap from '$lib/components/ChoroplethMap.svelte';
+	import { goto } from '$app/navigation';
 	import { localizeHref } from '$lib/i18n';
-	import { toSlug } from '$lib/contract/slug';
+	import { toSlug, slugForIne5 } from '$lib/contract/slug';
+	import { classify, methodFor } from '$lib/map/classify';
+	import { mapValue } from '$lib/map/indicators';
 	import { m } from '$lib/paraglide/messages';
+	import type { MetricKey } from '$lib/contract/types';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -15,6 +20,36 @@
 	const munis = $derived(data.munis);
 	const pernSub = $derived(data.pernSub);
 	const coberts = $derived(data.coberts);
+
+	// Mapa de la comarca (mateix component que la home i /mapa), enquadrat als seus municipis. Pinta
+	// el Berguedà (dataset) o la resta (catValues) pel % habitatge no principal (oficial); clic → fitxa.
+	const dataset = $derived(data.dataset);
+	const geojson = $derived(data.geojson);
+	const comarquesGeo = $derived(data.comarques);
+	const vegueries = $derived(data.vegueries);
+	const catValues = $derived(data.catValues);
+	const validats = $derived(new Set(data.validats ?? []));
+	const pernocta = $derived(data.pernocta);
+	const indicator = 'pct_noprincipal' as MetricKey;
+	const series = $derived(
+		geojson.features.map((f: import('geojson').Feature) => {
+			const ine5 = (f.properties?.ine5 as string) ?? '';
+			const dv = mapValue(indicator, dataset.municipis[ine5]?.values?.[indicator]);
+			if (dv !== null && dv !== undefined) return dv;
+			return catValues?.[ine5]?.[indicator] ?? null;
+		})
+	);
+	const classification = $derived(classify(series, methodFor(indicator)));
+
+	function navTo(ine5: string | null) {
+		if (!ine5) return;
+		if (dataset.municipis[ine5]) {
+			goto(localizeHref(`/municipi/${slugForIne5(ine5, dataset)}`));
+			return;
+		}
+		const cov = pernocta?.[ine5];
+		if (cov) goto(localizeHref(`/municipi/${toSlug(cov.nom)}`));
+	}
 
 	const trail = $derived([
 		{ label: m.espina_catalunya(), href: localizeHref('/') },
@@ -39,6 +74,25 @@
 			<h1>{comarca.nom}</h1>
 			<p class="lead">{m.comarca_sub({ total: String(munis.length), coberts: String(coberts) })}</p>
 		</header>
+
+		<section class="ds-sec">
+			<div class="ds-sec__hd"><span class="ref">◵</span><h2>{m.home_map_title()}</h2></div>
+			<div class="com-map">
+				<ChoroplethMap
+					{dataset}
+					{geojson}
+					comarques={comarquesGeo}
+					{vegueries}
+					{indicator}
+					{classification}
+					{pernocta}
+					{catValues}
+					{validats}
+					fitTo={comarca.ine5s}
+					onselect={navTo}
+				/>
+			</div>
+		</section>
 
 		{#if coberts >= 3}
 			<section class="ds-sec">

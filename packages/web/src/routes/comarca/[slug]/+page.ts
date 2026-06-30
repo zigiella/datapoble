@@ -8,9 +8,12 @@
  */
 import { toSlug } from '$lib/contract/slug';
 import { error } from '@sveltejs/kit';
+import { loadMunicipisDataset } from '$lib/data/dataset';
 import type { ComarquesData } from '$lib/contract/comarques';
 import type { CatalegData } from '$lib/contract/cataleg';
 import type { PernoctaData, PernoctaMuni } from '$lib/contract/pernocta';
+import type { IndicadorsCatData } from '$lib/contract/indicadors';
+import type { FeatureCollection } from 'geojson';
 import type { EntryGenerator, PageLoad } from './$types';
 
 export const prerender = true;
@@ -39,10 +42,14 @@ export const entries: EntryGenerator = async () => {
 };
 
 export const load: PageLoad = async ({ fetch, params }) => {
-	const [comRes, catRes, pernRes] = await Promise.all([
+	const [comRes, catRes, pernRes, munGeoRes, comGeoRes, vegGeoRes, dataset] = await Promise.all([
 		fetch('/data/comarques.json'),
 		fetch('/data/municipis-cataleg.json'),
-		fetch('/data/pernocta-catalunya.json')
+		fetch('/data/pernocta-catalunya.json'),
+		fetch('/geo/catalunya-municipis.geojson'),
+		fetch('/geo/catalunya-comarques.geojson'),
+		fetch('/geo/catalunya-vegueries.geojson'),
+		loadMunicipisDataset(fetch)
 	]);
 	const data = (await comRes.json()) as ComarquesData;
 	const comarca = data.comarques.find((c) => toSlug(c.nom) === params.slug);
@@ -68,10 +75,38 @@ export const load: PageLoad = async ({ fetch, params }) => {
 	const pernSub: Record<string, PernoctaMuni> = {};
 	for (const ine5 of comarca.ine5s) if (pern[ine5]) pernSub[ine5] = pern[ine5];
 
+	// Geometria + indicadors per al MAPA de la comarca (mateixos artefactes que /mapa). El mapa
+	// enquadra als municipis de la comarca (comarca.ine5s) i pinta el Berguedà (dataset) o la resta
+	// (catValues) pel mateix indicador. No-fatals.
+	const geojson = (await munGeoRes.json()) as FeatureCollection;
+	const comarquesGeo = (await comGeoRes.json()) as FeatureCollection;
+	const vegueries = (await vegGeoRes.json()) as FeatureCollection;
+	let catValues: IndicadorsCatData = {};
+	try {
+		const r = await fetch('/data/indicadors-catalunya.json');
+		if (r.ok) catValues = (await r.json()) as IndicadorsCatData;
+	} catch {
+		catValues = {};
+	}
+	let validats: string[] = [];
+	try {
+		const r = await fetch('/data/validats.json');
+		if (r.ok) validats = (await r.json()) as string[];
+	} catch {
+		validats = [];
+	}
+
 	return {
-		comarca: { nom: comarca.nom, vegueria: comarca.vegueria },
+		comarca: { nom: comarca.nom, vegueria: comarca.vegueria, ine5s: comarca.ine5s },
 		munis,
 		pernSub,
-		coberts: Object.keys(pernSub).length
+		coberts: Object.keys(pernSub).length,
+		dataset,
+		geojson,
+		comarques: comarquesGeo,
+		vegueries,
+		pernocta: pern,
+		catValues,
+		validats
 	};
 };

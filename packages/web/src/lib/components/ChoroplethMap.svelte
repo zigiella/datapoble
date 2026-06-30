@@ -81,6 +81,9 @@
 		/** Conjunt d'ine5 amb ETCA oficial (validats). Capa la confiança del tooltip: cap muni sense
 		 * ETCA mostra confiança en la pernocta. Si no es passa, no es capa res. */
 		validats?: Set<string>;
+		/** Enquadrament inicial a granularitat municipi: 'bergueda' (defecte), 'catalunya' (tot el
+		 *  país) o una llista d'ine5 (p. ex. els municipis d'una comarca). */
+		fitTo?: 'bergueda' | 'catalunya' | string[];
 		onhover?: (p: HoverPayload | null) => void;
 		onselect?: (ine5: string | null) => void;
 	}
@@ -96,6 +99,7 @@
 		pernocta,
 		catValues,
 		validats,
+		fitTo = 'bergueda',
 		onhover,
 		onselect
 	}: Props = $props();
@@ -614,9 +618,20 @@
 		show(COV_COM_LINE, g === 'comarca');
 		show(COV_VEG_FILL, g === 'vegueria');
 		show(COV_VEG_LINE, g === 'vegueria');
-		// Enquadrament: municipi → Berguedà (context); cobertura → tot Catalunya.
-		if (isMun) fitToBergueda();
-		else fitToFeatures(comarques);
+		// Enquadrament: a municipi, segons `fitTo` (Catalunya sencera, una comarca per ine5, o el
+		// Berguedà per defecte); a cobertura, tot Catalunya.
+		if (isMun) {
+			if (fitTo === 'catalunya') {
+				fitToFeatures(geojson);
+			} else if (Array.isArray(fitTo)) {
+				const set = new Set(fitTo);
+				fitToFeatures(geojson, (f) => set.has((f.properties?.ine5 as string) ?? ''));
+			} else {
+				fitToBergueda();
+			}
+		} else {
+			fitToFeatures(comarques);
+		}
 	}
 
 	let hoverId: string | null = null;
