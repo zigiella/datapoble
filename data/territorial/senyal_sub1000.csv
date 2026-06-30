@@ -1,0 +1,442 @@
+ine5,nom,tipus,padro,estimacio,rang_baix,rang_alt,registre,marge_rel_pct
+08002,Aguilar de Segarra,interior_rural,291,250,199,342,soroll,0.0
+08004,Alpens,interior_rural,270,255,202,348,soroll,0.0
+08008,Argençola,interior_rural,241,212,168,289,soroll,0.0
+08024,Borredà,interior_rural,426,418,332,571,soroll,0.0
+08026,"Brull, el",interior_rural,293,248,197,339,soroll,0.0
+08036,Calonge de Segarra,interior_rural,174,128,102,175,soroll,0.0
+08039,Campins,interior_rural,609,616,489,841,soroll,0.0
+08045,Capolat,interior_rural,92,80,64,109,soroll,0.0
+08048,Carme,interior_rural,819,628,498,857,soroll,0.0
+08050,Castellar del Riu,interior_rural,163,122,97,166,soroll,0.0
+08052,Castellar de n'Hug,interior_rural,164,136,108,185,soroll,0.0
+08055,Castellcir,interior_rural,778,716,568,978,soroll,0.0
+08057,Castell de l'Areny,interior_rural,69,56,45,77,soroll,0.0
+08059,Castellfollit del Boix,interior_rural,460,521,414,712,soroll,0.0
+08060,Castellfollit de Riubregós,interior_rural,151,286,227,390,senyal_mes,50.3
+08063,Castellolí,interior_rural,659,594,471,810,soroll,0.0
+08070,Collsuspina,interior_rural,390,385,306,526,soroll,0.0
+08071,Copons,interior_rural,352,282,224,386,soroll,0.0
+08078,"Espunyola, l'",interior_rural,263,261,207,356,soroll,0.0
+08079,"Estany, l'",interior_rural,401,431,342,588,soroll,0.0
+08080,Fígols,interior_rural,42,20,16,28,senyal_menys,33.3
+08081,Fogars de Montclús,interior_rural,503,551,437,752,soroll,0.0
+08087,Gallifa,interior_rural,174,174,138,237,soroll,0.0
+08090,Gaià,interior_rural,178,187,149,256,soroll,0.0
+08093,Gisclareny,interior_rural,30,32,26,44,soroll,0.0
+08103,Jorba,interior_rural,827,768,610,1049,soroll,0.0
+08104,"Llacuna, la",interior_rural,984,1113,883,1519,soroll,0.0
+08109,Lluçà,interior_rural,289,190,151,260,senyal_menys,10.0
+08111,Malla,interior_rural,274,382,304,522,senyal_mes,10.9
+08116,"Masies de Roda, les",interior_rural,749,625,496,853,soroll,0.0
+08128,Monistrol de Calders,interior_rural,762,690,548,942,soroll,0.0
+08129,Muntanyola,interior_rural,712,604,479,824,soroll,0.0
+08130,Montclar,interior_rural,132,143,114,196,soroll,0.0
+08132,Montmajor,interior_rural,474,527,418,720,soroll,0.0
+08133,Montmaneu,interior_rural,200,128,102,175,senyal_menys,12.5
+08137,Montseny,interior_rural,379,334,265,456,soroll,0.0
+08139,Mura,interior_rural,232,245,195,335,soroll,0.0
+08142,"Nou de Berguedà, la",interior_rural,163,168,133,229,soroll,0.0
+08144,Olvan,interior_rural,910,792,629,1082,soroll,0.0
+08150,Orís,interior_rural,349,353,280,482,soroll,0.0
+08151,Oristà,interior_rural,571,528,419,721,soroll,0.0
+08152,Orpí,interior_rural,179,128,101,174,senyal_menys,2.8
+08153,Òrrius,interior_rural,806,811,644,1108,soroll,0.0
+08154,Pacs del Penedès,interior_rural,943,746,592,1018,soroll,0.0
+08160,Perafita,interior_rural,438,503,399,687,soroll,0.0
+08168,Pontons,interior_rural,518,500,397,683,soroll,0.0
+08170,"Prats de Rei, els",interior_rural,554,518,411,707,soroll,0.0
+08174,Puigdàlber,interior_rural,629,685,543,935,soroll,0.0
+08176,Pujalt,interior_rural,212,253,201,346,soroll,0.0
+08177,"Quar, la",interior_rural,44,76,60,104,senyal_mes,36.4
+08178,Rajadell,interior_rural,594,597,474,815,soroll,0.0
+08179,Rellinars,interior_rural,920,945,750,1291,soroll,0.0
+08185,Rubió,interior_rural,240,184,146,252,soroll,0.0
+08188,Sagàs,interior_rural,154,247,196,337,senyal_mes,27.3
+08189,Sant Pere Sallavinera,interior_rural,158,171,136,234,soroll,0.0
+08190,Saldes,interior_rural,300,336,267,459,soroll,0.0
+08195,Sant Agustí de Lluçanès,interior_rural,108,99,79,136,soroll,0.0
+08199,Sant Bartomeu del Grau,interior_rural,939,790,627,1079,soroll,0.0
+08201,Sant Boi de Lluçanès,interior_rural,574,437,347,597,soroll,0.0
+08212,Sant Feliu Sasserra,interior_rural,629,592,470,808,soroll,0.0
+08216,Sant Jaume de Frontanyà,interior_rural,26,28,22,38,soroll,0.0
+08225,Sant Martí d'Albars,interior_rural,140,79,62,107,senyal_menys,23.6
+08228,Sant Martí Sesgueioles,interior_rural,360,370,294,505,soroll,0.0
+08229,Sant Mateu de Bages,interior_rural,637,644,511,880,soroll,0.0
+08239,Sant Quirze Safaja,interior_rural,671,752,597,1027,soroll,0.0
+08242,Marganell,interior_rural,310,264,209,360,soroll,0.0
+08243,Santa Cecília de Voltregà,interior_rural,192,187,148,255,soroll,0.0
+08249,Santa Fe del Penedès,interior_rural,360,320,254,437,soroll,0.0
+08253,Santa Maria de Besora,interior_rural,164,156,124,213,soroll,0.0
+08255,Santa Maria de Merlès,interior_rural,175,238,189,325,senyal_mes,8.0
+08256,Santa Maria de Martorelles,interior_rural,872,707,561,965,soroll,0.0
+08257,Santa Maria de Miralles,interior_rural,137,93,74,127,senyal_menys,7.3
+08272,Sora,interior_rural,219,240,191,328,soroll,0.0
+08275,Tavèrnoles,interior_rural,341,357,283,487,soroll,0.0
+08276,Tagamanent,interior_rural,339,292,232,399,soroll,0.0
+08277,Talamanca,interior_rural,212,233,185,318,soroll,0.0
+08280,Tavertet,interior_rural,131,175,139,240,senyal_mes,6.1
+08293,Vallcebre,interior_rural,272,199,158,272,soroll,0.0
+08297,Veciana,interior_rural,175,225,179,308,senyal_mes,2.3
+08299,Vilada,interior_rural,443,385,305,525,soroll,0.0
+08303,Vilanova de Sau,interior_rural,317,270,215,369,soroll,0.0
+08306,Vilalba Sasserra,interior_rural,780,706,561,965,soroll,0.0
+08308,Viver i Serrateix,interior_rural,173,181,143,247,soroll,0.0
+08901,Rupit i Pruit,interior_rural,281,339,269,463,soroll,0.0
+08903,Sant Julià de Cerdanyola,interior_rural,231,258,205,352,soroll,0.0
+17001,Agullana,interior_rural,910,728,578,994,soroll,0.0
+17003,Albanyà,interior_rural,167,94,75,129,senyal_menys,22.8
+17004,Albons,interior_rural,828,1048,831,1431,senyal_mes,0.4
+17010,Argelaguer,interior_rural,451,376,298,513,soroll,0.0
+17018,Bellcaire d'Empordà,interior_rural,737,899,713,1228,soroll,0.0
+17021,Beuda,interior_rural,205,181,143,247,soroll,0.0
+17024,Bolvir,interior_rural,497,1984,1575,2709,senyal_mes,216.9
+17026,Borrassà,interior_rural,774,745,591,1017,soroll,0.0
+17028,Brunyola,interior_rural,393,403,320,550,soroll,0.0
+17029,Boadella i les Escaules,interior_rural,260,247,196,337,soroll,0.0
+17030,Cabanes,interior_rural,975,747,593,1020,soroll,0.0
+17031,Cabanelles,interior_rural,280,384,305,524,senyal_mes,8.9
+17035,Camós,interior_rural,713,675,535,921,soroll,0.0
+17037,Campelles,interior_rural,165,196,156,268,soroll,0.0
+17038,Campllong,interior_rural,544,645,512,881,soroll,0.0
+17040,Canet d'Adri,interior_rural,744,653,518,891,soroll,0.0
+17041,Cantallops,interior_rural,346,311,247,424,soroll,0.0
+17042,Capmany,interior_rural,691,558,443,762,soroll,0.0
+17043,Queralbs,interior_rural,206,329,261,449,senyal_mes,26.7
+17046,Castellfollit de la Roca,interior_rural,947,888,705,1213,soroll,0.0
+17051,Cistella,interior_rural,294,306,243,418,soroll,0.0
+17052,Siurana,interior_rural,177,233,185,319,senyal_mes,4.5
+17055,Colomers,interior_rural,205,241,191,329,soroll,0.0
+17058,Crespià,interior_rural,251,262,208,358,soroll,0.0
+17060,Darnius,interior_rural,549,569,452,777,soroll,0.0
+17061,Das,interior_rural,270,481,381,656,senyal_mes,41.1
+17063,Espinelves,interior_rural,254,290,230,396,soroll,0.0
+17064,Espolla,interior_rural,412,308,244,420,soroll,0.0
+17065,Esponellà,interior_rural,438,434,345,593,soroll,0.0
+17068,Foixà,interior_rural,291,504,400,689,senyal_mes,37.5
+17069,Fontanals de Cerdanya,interior_rural,531,1590,1261,2170,senyal_mes,137.5
+17070,Fontanilles,interior_rural,168,365,289,498,senyal_mes,72.0
+17074,Fortià,interior_rural,801,802,637,1095,soroll,0.0
+17075,Garrigàs,interior_rural,470,515,409,704,soroll,0.0
+17076,Garrigoles,interior_rural,186,195,155,266,soroll,0.0
+17078,Ger,interior_rural,494,1000,793,1365,senyal_mes,60.5
+17080,Gombrèn,interior_rural,197,157,124,214,soroll,0.0
+17081,Gualta,interior_rural,428,970,770,1325,senyal_mes,79.9
+17082,Guils de Cerdanya,interior_rural,568,1575,1250,2150,senyal_mes,120.1
+17084,Isòvol,interior_rural,330,547,434,747,senyal_mes,31.5
+17085,Jafre,interior_rural,387,483,384,660,soroll,0.0
+17087,Juià,interior_rural,345,332,264,454,soroll,0.0
+17088,Lladó,interior_rural,828,709,563,968,soroll,0.0
+17090,Llambilles,interior_rural,728,854,678,1167,soroll,0.0
+17091,Llanars,interior_rural,515,703,558,960,senyal_mes,8.3
+17096,"Llosses, les",interior_rural,199,251,199,343,soroll,0.0
+17097,Madremanya,interior_rural,288,308,244,420,soroll,0.0
+17098,Maià de Montcal,interior_rural,488,388,308,529,soroll,0.0
+17099,Meranges,interior_rural,111,115,91,156,soroll,0.0
+17100,Masarac,interior_rural,296,228,181,311,soroll,0.0
+17101,Massanes,interior_rural,843,828,657,1131,soroll,0.0
+17102,Maçanet de Cabrenys,interior_rural,775,818,649,1116,soroll,0.0
+17105,Mieres,interior_rural,348,309,245,421,soroll,0.0
+17106,Mollet de Peralada,interior_rural,215,168,133,229,soroll,0.0
+17107,Molló,interior_rural,373,470,373,642,soroll,0.0
+17112,Ogassa,interior_rural,218,211,168,289,soroll,0.0
+17115,Ordis,interior_rural,396,394,313,538,soroll,0.0
+17116,Osor,interior_rural,422,364,289,497,soroll,0.0
+17119,Palau de Santa Eulàlia,interior_rural,136,120,95,164,soroll,0.0
+17121,Palau-sator,interior_rural,305,722,573,985,senyal_mes,87.9
+17123,Palol de Revardit,interior_rural,467,458,363,625,soroll,0.0
+17125,Pardines,interior_rural,161,161,128,219,soroll,0.0
+17126,Parlavà,interior_rural,429,617,490,843,senyal_mes,14.2
+17128,Pau,interior_rural,590,802,637,1095,senyal_mes,8.0
+17129,Pedret i Marzà,interior_rural,188,202,160,275,soroll,0.0
+17130,"Pera, la",interior_rural,452,683,542,933,senyal_mes,19.9
+17134,Planoles,interior_rural,306,347,275,474,soroll,0.0
+17135,Pont de Molins,interior_rural,572,463,368,633,soroll,0.0
+17136,Pontós,interior_rural,289,292,232,399,soroll,0.0
+17143,Rabós,interior_rural,239,265,210,362,soroll,0.0
+17144,Regencós,interior_rural,279,436,346,596,senyal_mes,24.0
+17149,Riudaura,interior_rural,528,392,311,535,soroll,0.0
+17151,Riumors,interior_rural,264,240,190,327,soroll,0.0
+17153,Rupià,interior_rural,329,503,399,686,senyal_mes,21.3
+17154,Sales de Llierca,interior_rural,157,183,145,250,soroll,0.0
+17157,Sant Andreu Salou,interior_rural,173,223,177,305,senyal_mes,2.3
+17158,Sant Climent Sescebes,interior_rural,675,507,402,692,soroll,0.0
+17162,Sant Ferriol,interior_rural,236,179,142,244,soroll,0.0
+17166,Sant Jordi Desvalls,interior_rural,867,1147,910,1566,senyal_mes,5.0
+17168,Sant Joan de Mollet,interior_rural,526,478,379,652,soroll,0.0
+17170,Vallfogona de Ripollès,interior_rural,222,228,181,311,soroll,0.0
+17171,Sant Llorenç de la Muga,interior_rural,258,306,242,417,soroll,0.0
+17172,Sant Martí de Llémena,interior_rural,705,776,616,1059,soroll,0.0
+17173,Sant Martí Vell,interior_rural,262,403,320,550,senyal_mes,22.1
+17174,Sant Miquel de Campmajor,interior_rural,250,296,235,404,soroll,0.0
+17175,Sant Miquel de Fluvià,interior_rural,840,791,628,1080,soroll,0.0
+17176,Sant Mori,interior_rural,164,238,189,325,senyal_mes,15.2
+17177,Sant Pau de Segúries,interior_rural,722,748,593,1021,soroll,0.0
+17182,Santa Llogaia d'Àlguema,interior_rural,400,436,346,595,soroll,0.0
+17183,Sant Aniol de Finestres,interior_rural,372,273,217,373,soroll,0.0
+17188,"Selva de Mar, la",interior_rural,220,308,244,420,senyal_mes,10.9
+17191,Serra de Daró,interior_rural,231,425,337,580,senyal_mes,45.9
+17192,Setcases,interior_rural,192,320,254,437,senyal_mes,32.3
+17195,"Tallada d'Empordà, la",interior_rural,476,665,528,908,senyal_mes,10.9
+17196,Terrades,interior_rural,342,327,259,446,soroll,0.0
+17197,Torrent,interior_rural,174,510,404,696,senyal_mes,132.2
+17198,Torroella de Fluvià,interior_rural,770,920,730,1256,soroll,0.0
+17200,Tortellà,interior_rural,828,659,523,900,soroll,0.0
+17201,Toses,interior_rural,192,179,142,244,soroll,0.0
+17203,Ultramort,interior_rural,214,336,267,459,senyal_mes,24.8
+17205,Ullastret,interior_rural,266,435,345,594,senyal_mes,29.7
+17206,Urús,interior_rural,207,426,338,582,senyal_mes,63.3
+17210,Ventalló,interior_rural,891,1291,1025,1763,senyal_mes,15.0
+17212,Vidrà,interior_rural,169,128,102,175,soroll,0.0
+17214,Vilabertran,interior_rural,987,840,666,1147,soroll,0.0
+17216,Viladasens,interior_rural,212,253,201,346,soroll,0.0
+17217,Viladamat,interior_rural,492,550,437,751,soroll,0.0
+17218,Vilademuls,interior_rural,865,1052,835,1436,soroll,0.0
+17222,Vilaür,interior_rural,170,214,170,293,soroll,0.0
+17224,Vilallonga de Ter,interior_rural,395,676,537,924,senyal_mes,35.9
+17225,Vilamacolum,interior_rural,373,493,392,674,senyal_mes,5.1
+17227,Vilamaniscle,interior_rural,202,237,188,324,soroll,0.0
+17228,Vilanant,interior_rural,402,477,379,651,soroll,0.0
+17230,Vila-sacra,interior_rural,815,656,521,896,soroll,0.0
+17232,Vilopriu,interior_rural,213,378,300,517,senyal_mes,40.8
+17234,Biure,interior_rural,225,240,190,328,soroll,0.0
+25001,Abella de la Conca,interior_rural,161,108,85,147,senyal_menys,8.7
+25002,Àger,interior_rural,608,459,364,627,soroll,0.0
+25004,"Alamús, els",interior_rural,799,826,655,1128,soroll,0.0
+25005,Alàs i Cerc,interior_rural,325,402,319,549,soroll,0.0
+25006,"Albagés, l'",interior_rural,343,246,195,335,senyal_menys,2.3
+25009,"Albi, l'",interior_rural,764,622,494,849,soroll,0.0
+25010,Alcanó,interior_rural,240,236,188,323,soroll,0.0
+25014,Alfés,interior_rural,284,285,227,390,soroll,0.0
+25015,Algerri,interior_rural,426,440,349,600,soroll,0.0
+25017,Alins,interior_rural,275,84,67,115,senyal_menys,58.2
+25020,Almatret,interior_rural,303,231,183,315,soroll,0.0
+25022,Alòs de Balaguer,interior_rural,118,122,97,167,soroll,0.0
+25024,Alt Àneu,interior_rural,457,566,449,773,soroll,0.0
+25030,"Pont de Bar, el",interior_rural,165,142,112,193,soroll,0.0
+25032,Arsèguel,interior_rural,78,93,74,127,soroll,0.0
+25035,"Sentiu de Sió, la",interior_rural,454,415,329,566,soroll,0.0
+25036,Aspa,interior_rural,219,184,146,251,soroll,0.0
+25037,"Avellanes i Santa Linya, les",interior_rural,430,391,311,535,soroll,0.0
+25039,Baix Pallars,interior_rural,344,350,277,477,soroll,0.0
+25041,Barbens,interior_rural,908,711,565,971,soroll,0.0
+25042,"Baronia de Rialb, la",interior_rural,230,201,160,275,soroll,0.0
+25044,Bassella,interior_rural,210,157,124,214,soroll,0.0
+25046,Belianes,interior_rural,518,556,441,760,soroll,0.0
+25049,Bellmunt d'Urgell,interior_rural,183,158,126,216,soroll,0.0
+25055,Biosca,interior_rural,177,248,197,339,senyal_mes,11.3
+25056,Bovera,interior_rural,253,235,186,320,soroll,0.0
+25057,"Bòrdes, Es",interior_rural,281,309,245,422,soroll,0.0
+25061,Cabó,interior_rural,91,69,55,94,soroll,0.0
+25063,Canejan,interior_rural,101,98,77,133,soroll,0.0
+25064,Castellar de la Ribera,interior_rural,144,197,157,269,senyal_mes,9.0
+25067,Castelldans,interior_rural,891,786,624,1073,soroll,0.0
+25068,Castellnou de Seana,interior_rural,728,822,652,1122,soroll,0.0
+25069,Castelló de Farfanya,interior_rural,543,415,329,567,soroll,0.0
+25070,Castellserà,interior_rural,992,979,777,1337,soroll,0.0
+25071,Cava,interior_rural,40,63,50,86,senyal_mes,25.0
+25073,Cervià de les Garrigues,interior_rural,640,613,487,837,soroll,0.0
+25074,Ciutadilla,interior_rural,194,179,142,245,soroll,0.0
+25075,Clariana de Cardener,interior_rural,160,126,100,172,soroll,0.0
+25076,"Cogul, el",interior_rural,162,137,109,187,soroll,0.0
+25077,Coll de Nargó,interior_rural,583,738,586,1008,senyal_mes,0.5
+25079,Cubells,interior_rural,342,309,245,422,soroll,0.0
+25081,"Espluga Calba, l'",interior_rural,332,326,259,445,soroll,0.0
+25082,Espot,interior_rural,379,416,330,567,soroll,0.0
+25085,Estaràs,interior_rural,162,143,114,196,soroll,0.0
+25088,Estamariu,interior_rural,133,104,82,141,soroll,0.0
+25089,Farrera,interior_rural,128,81,65,111,senyal_menys,13.3
+25092,"Floresta, la",interior_rural,164,112,89,152,senyal_menys,7.3
+25093,Fondarella,interior_rural,807,738,586,1008,soroll,0.0
+25094,Foradada,interior_rural,200,271,215,370,senyal_mes,7.5
+25098,Gavet de la Conca,interior_rural,262,208,165,284,soroll,0.0
+25100,Gósol,interior_rural,214,248,197,339,soroll,0.0
+25101,"Granadella, la",interior_rural,762,531,421,725,senyal_menys,4.9
+25102,"Granja d'Escarp, la",interior_rural,941,948,752,1294,soroll,0.0
+25103,Granyanella,interior_rural,140,142,113,194,soroll,0.0
+25104,Granyena de Segarra,interior_rural,147,141,112,192,soroll,0.0
+25105,Granyena de les Garrigues,interior_rural,164,173,137,236,soroll,0.0
+25109,Guimerà,interior_rural,249,336,267,459,senyal_mes,7.2
+25111,Guixers,interior_rural,135,149,118,204,soroll,0.0
+25112,Ivars de Noguera,interior_rural,319,251,199,342,soroll,0.0
+25114,Ivorra,interior_rural,102,74,58,101,senyal_menys,1.0
+25118,Juncosa,interior_rural,389,290,230,396,soroll,0.0
+25123,Lladorre,interior_rural,254,236,187,322,soroll,0.0
+25124,Lladurs,interior_rural,185,219,173,299,soroll,0.0
+25125,Llardecans,interior_rural,427,498,395,680,soroll,0.0
+25126,Llavorsí,interior_rural,336,139,110,190,senyal_menys,43.5
+25127,Lles de Cerdanya,interior_rural,288,390,309,532,senyal_mes,7.3
+25128,Llimiana,interior_rural,132,265,210,361,senyal_mes,59.1
+25129,Llobera,interior_rural,208,197,157,270,soroll,0.0
+25130,Maldà,interior_rural,239,205,162,279,soroll,0.0
+25131,Massalcoreig,interior_rural,576,500,397,683,soroll,0.0
+25132,Massoteres,interior_rural,212,178,141,243,soroll,0.0
+25133,Maials,interior_rural,916,862,684,1177,soroll,0.0
+25134,Menàrguens,interior_rural,793,682,541,931,soroll,0.0
+25136,"Molsosa, la",interior_rural,105,197,156,268,senyal_mes,48.6
+25138,Montgai,interior_rural,640,587,466,801,soroll,0.0
+25139,Montellà i Martinet,interior_rural,619,628,499,858,soroll,0.0
+25141,Montoliu de Segarra,interior_rural,181,172,137,235,soroll,0.0
+25142,Montoliu de Lleida,interior_rural,477,341,271,466,senyal_menys,2.3
+25146,Navès,interior_rural,302,535,425,730,senyal_mes,40.7
+25148,Odèn,interior_rural,231,199,158,272,soroll,0.0
+25150,Oliola,interior_rural,195,159,126,218,soroll,0.0
+25152,"Oluges, les",interior_rural,165,140,111,192,soroll,0.0
+25153,"Omellons, els",interior_rural,189,178,142,244,soroll,0.0
+25154,"Omells de na Gaia, els",interior_rural,121,110,87,150,soroll,0.0
+25155,Organyà,interior_rural,809,1004,797,1371,soroll,0.0
+25157,Ossó de Sió,interior_rural,195,204,162,278,soroll,0.0
+25161,Conca de Dalt,interior_rural,435,359,285,490,soroll,0.0
+25163,"Coma i la Pedra, la",interior_rural,283,618,490,843,senyal_mes,73.1
+25164,Penelles,interior_rural,435,330,262,451,soroll,0.0
+25165,Peramola,interior_rural,349,359,285,490,soroll,0.0
+25166,Pinell de Solsonès,interior_rural,203,178,141,243,soroll,0.0
+25167,Pinós,interior_rural,277,365,290,499,senyal_mes,4.7
+25168,"Poal, el",interior_rural,652,603,479,824,soroll,0.0
+25169,"Pobla de Cérvoles, la",interior_rural,209,202,160,276,soroll,0.0
+25170,Bellaguarda,interior_rural,295,239,190,326,soroll,0.0
+25174,"Portella, la",interior_rural,723,589,467,804,soroll,0.0
+25175,Prats i Sansor,interior_rural,254,860,683,1174,senyal_mes,168.9
+25176,Preixana,interior_rural,404,375,297,512,soroll,0.0
+25177,Preixens,interior_rural,390,387,307,528,soroll,0.0
+25179,Prullans,interior_rural,252,339,269,463,senyal_mes,6.7
+25180,Puiggròs,interior_rural,257,300,238,409,soroll,0.0
+25181,Puigverd d'Agramunt,interior_rural,247,127,101,173,senyal_menys,30.0
+25185,Ribera d'Urgellet,interior_rural,960,926,735,1265,soroll,0.0
+25186,Riner,interior_rural,264,244,194,333,soroll,0.0
+25190,Salàs de Pallars,interior_rural,354,351,279,479,soroll,0.0
+25191,Sanaüja,interior_rural,387,430,341,587,soroll,0.0
+25194,Sant Ramon,interior_rural,495,402,319,549,soroll,0.0
+25196,Sant Esteve de la Sarga,interior_rural,124,75,60,103,senyal_menys,16.9
+25197,Sant Guim de la Plana,interior_rural,195,152,121,208,soroll,0.0
+25200,Sarroca de Lleida,interior_rural,381,357,284,488,soroll,0.0
+25201,Sarroca de Bellera,interior_rural,114,167,132,228,senyal_mes,15.8
+25202,Senterada,interior_rural,157,233,185,319,senyal_mes,17.8
+25205,Sidamon,interior_rural,769,656,520,895,soroll,0.0
+25206,"Soleràs, el",interior_rural,317,346,275,472,soroll,0.0
+25208,Soriguera,interior_rural,447,298,236,407,senyal_menys,8.9
+25211,Sudanell,interior_rural,897,661,525,903,soroll,0.0
+25212,Sunyer,interior_rural,306,256,203,350,soroll,0.0
+25215,Talarn,interior_rural,541,346,275,473,senyal_menys,12.6
+25216,Talavera,interior_rural,285,192,152,262,senyal_menys,8.1
+25218,Tarrés,interior_rural,125,87,69,119,senyal_menys,4.8
+25219,Tarroja de Segarra,interior_rural,172,118,94,161,senyal_menys,6.4
+25221,Tírvia,interior_rural,144,137,109,187,soroll,0.0
+25224,"Torms, els",interior_rural,138,113,90,155,soroll,0.0
+25225,Tornabous,interior_rural,842,873,693,1192,soroll,0.0
+25226,Torrebesses,interior_rural,273,258,205,352,soroll,0.0
+25227,"Torre de Cabdella, la",interior_rural,787,1770,1405,2417,senyal_mes,78.5
+25231,Torrelameu,interior_rural,799,576,457,787,senyal_menys,1.5
+25233,Torre-serona,interior_rural,440,369,293,504,soroll,0.0
+25238,Vallbona de les Monges,interior_rural,221,210,166,286,soroll,0.0
+25239,"Valls de Valira, les",interior_rural,810,680,539,928,soroll,0.0
+25242,Verdú,interior_rural,885,736,584,1005,soroll,0.0
+25244,Vilagrassa,interior_rural,633,529,420,722,soroll,0.0
+25245,Vilaller,interior_rural,506,547,434,746,soroll,0.0
+25247,Vilamòs,interior_rural,176,138,109,188,soroll,0.0
+25249,Vilanova de l'Aguda,interior_rural,195,191,152,261,soroll,0.0
+25250,Vilanova de Meià,interior_rural,462,480,381,655,soroll,0.0
+25252,Vila-sana,interior_rural,744,678,538,926,soroll,0.0
+25253,"Vilosell, el",interior_rural,192,258,205,353,senyal_mes,6.8
+25255,Vinaixa,interior_rural,449,381,302,520,soroll,0.0
+25901,Vall de Cardós,interior_rural,381,463,368,633,soroll,0.0
+25902,Sant Martí de Riucorb,interior_rural,675,652,517,890,soroll,0.0
+25903,"Guingueta d'Àneu, la",interior_rural,283,332,263,453,soroll,0.0
+25904,Castell de Mur,interior_rural,175,157,124,214,soroll,0.0
+25905,Ribera d'Ondara,interior_rural,454,398,316,543,soroll,0.0
+25906,"Valls d'Aguilar, les",interior_rural,269,206,163,281,soroll,0.0
+25907,Torrefeta i Florejacs,interior_rural,608,483,383,659,soroll,0.0
+25908,Fígols i Alinyà,interior_rural,244,265,210,361,soroll,0.0
+25909,"Vansa i Fórnols, la",interior_rural,189,196,156,268,soroll,0.0
+25910,Josa i Tuixén,interior_rural,123,162,128,221,senyal_mes,4.1
+25911,"Plans de Sió, els",interior_rural,521,422,335,576,soroll,0.0
+25913,Riu de Cerdanya,interior_rural,99,158,126,216,senyal_mes,27.3
+43003,"Albiol, l'",interior_rural,538,424,336,579,soroll,0.0
+43006,Aldover,interior_rural,897,808,641,1103,soroll,0.0
+43007,"Aleixar, l'",interior_rural,980,767,609,1047,soroll,0.0
+43008,Alfara de Carles,interior_rural,363,365,289,498,soroll,0.0
+43010,Alió,interior_rural,506,425,338,581,soroll,0.0
+43015,Arbolí,interior_rural,129,99,78,135,soroll,0.0
+43017,"Argentera, l'",interior_rural,129,95,75,130,soroll,0.0
+43018,Arnes,interior_rural,463,460,365,628,soroll,0.0
+43021,Barberà de la Conca,interior_rural,480,475,377,649,soroll,0.0
+43023,Bellmunt del Priorat,interior_rural,294,318,252,434,soroll,0.0
+43025,Benifallet,interior_rural,724,649,515,886,soroll,0.0
+43027,"Bisbal de Falset, la",interior_rural,207,240,190,327,soroll,0.0
+43029,Blancafort,interior_rural,393,372,295,508,soroll,0.0
+43030,Bonastre,interior_rural,762,792,628,1081,soroll,0.0
+43032,Bot,interior_rural,552,556,441,759,soroll,0.0
+43034,Bràfim,interior_rural,697,731,580,998,soroll,0.0
+43035,Cabacés,interior_rural,301,207,164,282,senyal_menys,6.3
+43039,Capafonts,interior_rural,106,104,82,142,soroll,0.0
+43040,Capçanes,interior_rural,426,388,308,530,soroll,0.0
+43041,Caseres,interior_rural,240,203,161,277,soroll,0.0
+43045,Colldejou,interior_rural,161,125,99,171,soroll,0.0
+43046,Conesa,interior_rural,113,110,87,150,soroll,0.0
+43053,Duesaigües,interior_rural,223,169,134,231,soroll,0.0
+43056,"Fatarella, la",interior_rural,856,887,704,1211,soroll,0.0
+43058,"Figuera, la",interior_rural,123,114,90,155,soroll,0.0
+43059,Figuerola del Camp,interior_rural,346,240,191,328,senyal_menys,5.2
+43062,Freginals,interior_rural,425,228,181,311,senyal_menys,26.8
+43063,"Galera, la",interior_rural,717,681,541,930,soroll,0.0
+43065,Garcia,interior_rural,540,513,407,700,soroll,0.0
+43066,"Garidells, els",interior_rural,204,129,103,176,senyal_menys,13.7
+43067,Ginestar,interior_rural,800,592,470,808,soroll,0.0
+43068,Godall,interior_rural,621,539,427,735,soroll,0.0
+43069,Gratallops,interior_rural,232,176,139,240,soroll,0.0
+43070,"Guiamets, els",interior_rural,256,239,189,326,soroll,0.0
+43072,"Lloar, el",interior_rural,100,104,82,142,soroll,0.0
+43073,Llorac,interior_rural,102,94,75,128,soroll,0.0
+43075,Margalef,interior_rural,108,196,155,267,senyal_mes,43.5
+43076,Marçà,interior_rural,599,554,439,756,soroll,0.0
+43077,Mas de Barberans,interior_rural,546,401,318,547,soroll,0.0
+43079,Masllorenç,interior_rural,567,619,491,845,soroll,0.0
+43080,"Masó, la",interior_rural,288,267,212,364,soroll,0.0
+43081,Maspujols,interior_rural,893,729,578,995,soroll,0.0
+43082,"Masroig, el",interior_rural,480,443,352,605,soroll,0.0
+43083,"Milà, el",interior_rural,197,194,154,265,soroll,0.0
+43084,Miravet,interior_rural,683,694,550,947,soroll,0.0
+43085,"Molar, el",interior_rural,308,249,198,341,soroll,0.0
+43089,Montferri,interior_rural,473,531,422,726,soroll,0.0
+43091,Mont-ral,interior_rural,185,164,130,224,soroll,0.0
+43096,"Morera de Montsant, la",interior_rural,144,156,124,213,soroll,0.0
+43097,"Nou de Gaià, la",interior_rural,611,552,438,754,soroll,0.0
+43098,Nulles,interior_rural,557,503,399,686,soroll,0.0
+43099,"Palma d'Ebre, la",interior_rural,335,307,244,420,soroll,0.0
+43101,Passanant i Belltall,interior_rural,162,146,116,199,soroll,0.0
+43102,Paüls,interior_rural,543,473,375,645,soroll,0.0
+43105,"Piles, les",interior_rural,230,180,143,246,soroll,0.0
+43107,Pira,interior_rural,499,380,301,519,soroll,0.0
+43110,"Pobla de Massaluca, la",interior_rural,344,306,243,417,soroll,0.0
+43112,Poboleda,interior_rural,333,299,237,408,soroll,0.0
+43113,"Pont d'Armentera, el",interior_rural,498,423,336,578,soroll,0.0
+43114,Porrera,interior_rural,417,449,357,614,soroll,0.0
+43115,Pradell de la Teixeta,interior_rural,178,144,114,196,soroll,0.0
+43117,Prat de Comte,interior_rural,188,138,110,189,soroll,0.0
+43118,Pratdip,interior_rural,763,1000,793,1365,senyal_mes,3.9
+43120,Querol,interior_rural,595,664,527,906,soroll,0.0
+43121,Rasquera,interior_rural,796,614,488,839,soroll,0.0
+43122,Renau,interior_rural,158,102,81,140,senyal_menys,11.4
+43124,"Riba, la",interior_rural,568,374,297,510,senyal_menys,10.2
+43130,Rocafort de Queralt,interior_rural,246,219,174,299,soroll,0.0
+43132,Rodonyà,interior_rural,522,529,420,723,soroll,0.0
+43134,"Rourell, el",interior_rural,403,334,265,457,soroll,0.0
+43135,Salomó,interior_rural,530,527,418,720,soroll,0.0
+43141,Pontils,interior_rural,123,101,80,138,soroll,0.0
+43147,Solivella,interior_rural,627,462,366,630,soroll,0.0
+43149,Tivenys,interior_rural,937,870,691,1188,soroll,0.0
+43151,"Torre de Fontaubella, la",interior_rural,119,92,73,126,soroll,0.0
+43152,"Torre de l'Espanyol, la",interior_rural,630,594,472,812,soroll,0.0
+43154,Torroja del Priorat,interior_rural,137,161,127,219,soroll,0.0
+43157,Ulldemolins,interior_rural,414,320,254,436,soroll,0.0
+43164,Vespella de Gaià,interior_rural,504,656,521,896,senyal_mes,3.4
+43165,Vilabella,interior_rural,725,581,461,794,soroll,0.0
+43167,Vilanova d'Escornalbou,interior_rural,611,685,543,935,soroll,0.0
+43168,Vilanova de Prades,interior_rural,110,104,83,143,soroll,0.0
+43169,Vilaplana,interior_rural,560,338,268,461,senyal_menys,17.7
+43172,Vilaverd,interior_rural,470,334,265,456,senyal_menys,3.0
+43173,"Vilella Alta, la",interior_rural,130,89,71,122,senyal_menys,6.2
+43174,"Vilella Baixa, la",interior_rural,206,242,192,330,soroll,0.0
+43175,Vilalba dels Arcs,interior_rural,614,582,462,794,soroll,0.0
+43176,Vimbodí i Poblet,interior_rural,893,765,607,1045,soroll,0.0
+43177,Vinebre,interior_rural,426,415,329,567,soroll,0.0
