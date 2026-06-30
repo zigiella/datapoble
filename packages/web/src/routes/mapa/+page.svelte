@@ -335,6 +335,7 @@
 							{pernocta}
 							{catValues}
 							{validats}
+							fitTo="catalunya"
 							onhover={(p) => (hover = p)}
 							onselect={onMuniSelect}
 						/>
@@ -653,7 +654,7 @@
 	.map-canvaswrap :global(.map) {
 		display: block;
 		width: 100%;
-		min-height: 380px;
+		min-height: 600px;
 	}
 
 	/* Separador discret amb el panell lateral (abans el donava la vora del .map-grid). */
@@ -666,7 +667,7 @@
 
 	.map-ssr {
 		width: 100%;
-		min-height: 380px;
+		min-height: 600px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
