@@ -41,13 +41,3 @@ export async function loadMunicipisDataset(fetchFn: FetchLike): Promise<Municipi
 export function getMunicipi(dataset: MunicipisDataset, ine5: string): MunicipiRow | undefined {
 	return dataset.municipis[ine5];
 }
-
-/**
- * Codis INE5 dels dos municipis destacats a la comparativa del "resum":
- * els dos extrems de la pressió turística-residencial del Berguedà.
- * Castellar de n'Hug (màxim) ↔ Berga (capital comarcal).
- */
-export const FEATURED_INE5 = {
-	castellar: '08052',
-	berga: '08022'
-} as const;
