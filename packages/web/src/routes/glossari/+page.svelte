@@ -69,11 +69,20 @@
 		label: () => string;
 		entries: MetricDef[];
 	}
+	// Indicadors retirats del públic (no surten al diccionari): l'IETR i la seva família (retirat del
+	// mapa i col·lapsat de la fitxa), el model d'una sola capa antic (duplicats confusos del gap
+	// reenquadrat) i els scores interns (massa tècnics per a un diccionari). La dada segueix al
+	// contracte; només no es publica aquí.
+	const HIDDEN = new Set<string>([
+		'IETR', 'IETR_rank', 'IETR_stock', 'IETR_impact',
+		'poblacio_real_est', 'gap_abs', 'gap_pct', 'poblacio_real_rel',
+		'confianca_score', 'divergencia_senyals'
+	]);
 	const groups = $derived.by<Group[]>(() => {
 		const all = Object.values(dataset.metrics);
 		const out: Group[] = [];
 		for (const dim of DIM_ORDER) {
-			const entries = all.filter((d) => d.dimension === dim);
+			const entries = all.filter((d) => d.dimension === dim && !HIDDEN.has(d.key));
 			if (entries.length) out.push({ dim, label: DIM_LABEL[dim], entries });
 		}
 		return out;

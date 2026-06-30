@@ -214,7 +214,7 @@
 			{ servei: m.muni_serv_residus(), denom: m.muni_serv_d_carrega(), val: num('carrega_funcional_est'), unit: 'hab.' },
 			{ servei: m.muni_serv_aigua(), denom: m.muni_serv_d_l1(), val: num('poblacio_pernocta_est'), unit: 'hab.' },
 			{ servei: m.muni_serv_vivenda(), denom: m.muni_serv_d_padro_np(), val: null, unit: '' },
-			{ servei: m.muni_serv_turisme(), denom: m.muni_serv_d_turisme(), val: num('IETR'), unit: 'IETR' },
+			{ servei: m.muni_serv_turisme(), denom: m.muni_serv_d_turisme(), val: null, unit: '' },
 			{ servei: m.muni_serv_socials(), denom: m.muni_serv_d_socials(), val: null, unit: '' },
 			{ servei: m.muni_serv_seguretat(), denom: m.muni_serv_d_seguretat(), val: null, unit: '' }
 		];
@@ -225,8 +225,7 @@
 		'rtc_per_1000hab',
 		'bretxa_naturalitzacio',
 		'gap_pernocta_pct',
-		'carrega_funcional_est',
-		'IETR'
+		'carrega_funcional_est'
 	]);
 
 	// ——— Pas 0 · «el rang és la dada» + TRES REGISTRES (vot 2026-06-29 · 05-vot-tres-registres) ———
