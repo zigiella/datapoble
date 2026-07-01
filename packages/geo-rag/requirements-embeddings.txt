@@ -1,0 +1,14 @@
+# requirements-embeddings.txt — reproducible CPU install for the Phase-0b embeddings.
+#
+# torch comes from the CPU wheel index (on Linux/CI, PyPI's torch is the ~2.5 GB CUDA
+# build); everything else from PyPI. This extra NEVER ships to Render (which builds
+# only packages/ai), so torch stays out of the production API.
+#
+#     pip install -r requirements-embeddings.txt
+#
+# Model weights download separately on first use: intfloat/multilingual-e5-small
+# (pin the HF revision/commit SHA in code, not just the name).
+--index-url https://download.pytorch.org/whl/cpu
+--extra-index-url https://pypi.org/simple
+torch==2.12.1
+sentence-transformers==5.6.0

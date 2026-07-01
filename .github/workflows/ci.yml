@@ -89,6 +89,8 @@ jobs:
   # (no toca packages/ai). El smoke test reconstrueix el substrat des de fonts
   # versionades (geometria + bandes/σ + registre + bessons + sèrie ICAEN) i comprova
   # que els valors tracen als fitxers font (byte-match) — el «split» és recalculable.
+  # OFFLINE a propòsit: NO instal·la l'extra [embeddings] (torch/sentence-transformers)
+  # ni baixa pesos; els embeddings corren sobre l'artefacte commitejat (vegeu el README).
   geo-rag:
     name: geo-rag substrate (experiment · offline)
     runs-on: ubuntu-latest

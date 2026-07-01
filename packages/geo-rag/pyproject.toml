@@ -19,6 +19,14 @@ dependencies = [
 dev = [
     "pytest>=8.0",
 ]
+# Phase-0b embeddings (local model). Heavy (torch) and OPTIONAL — this extra NEVER
+# reaches the Render image (that builds only packages/ai), so torch stays out of
+# production. On Linux/CI install via requirements-embeddings.txt to force the CPU
+# torch wheel (PyPI's torch on Linux is the ~2.5 GB CUDA build). See README.
+embeddings = [
+    "torch==2.12.1",
+    "sentence-transformers==5.6.0",
+]
 
 [project.scripts]
 datapoble-geo-rag = "datapoble_geo_rag.build:main"
