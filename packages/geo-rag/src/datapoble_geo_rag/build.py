@@ -230,11 +230,19 @@ def build(db_path: str | None = None) -> duckdb.DuckDBPyConnection:
         CREATE OR REPLACE TABLE _substrate_meta (key VARCHAR, value VARCHAR);
         """
     )
+    # ---- Semantic embeddings (Phase 0b) ----
+    # Load the COMMITTED base-embeddings artifact into municipi_emb IF it exists.
+    # Torch-free: read_parquet only. Absent artifact -> skip silently (0a still works).
+    from .search import load_embeddings
+
+    emb_ok = load_embeddings(conn)
+
     conn.executemany(
         "INSERT INTO _substrate_meta VALUES (?,?)",
         [
             ("spatial", "1" if spatial_ok else "0"),
             ("fts", "1" if fts_ok else "0"),
+            ("embeddings", "1" if emb_ok else "0"),
             ("indeterminat_count", str(len(indeterminat))),
             ("indeterminat_ine5", ",".join(indeterminat)),
         ],

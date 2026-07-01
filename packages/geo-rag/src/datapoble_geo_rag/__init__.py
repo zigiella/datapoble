@@ -5,5 +5,17 @@ Isolated experiment — does not depend on or touch packages/ai.
 """
 
 from datapoble_geo_rag.build import build, name_search, neighbors
+from datapoble_geo_rag.descriptions import generate_descriptions
+from datapoble_geo_rag.search import load_embeddings, semantic_search
 
-__all__ = ["build", "name_search", "neighbors"]
+# NOTE: embeddings.py is intentionally NOT imported here — it is the only torch module,
+# and importing the package must stay torch-free (CI installs no torch).
+
+__all__ = [
+    "build",
+    "name_search",
+    "neighbors",
+    "generate_descriptions",
+    "load_embeddings",
+    "semantic_search",
+]

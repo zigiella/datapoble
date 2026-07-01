@@ -58,8 +58,43 @@ recomputed comarca-local split.
 - The build is offline-safe: if either extension fails to install, geometry falls back to
   `geom_geojson` text and search falls back to `LIKE`, and the build does not fail.
 
+## Phase 0b — descriptions + embeddings artifact
+
+### Generated descriptions (derived, not a new source)
+
+`descriptions.generate_descriptions(conn)` produces one Catalan document per muni from the
+**`municipi` table only** — no new external source. Every number in a description already
+lives in the substrate (`nom`, `tipus`, `estimacio`, `rang_baix`, `rang_alt`, `padro`,
+`etca_oficial`) and is rounded to an integer for display; `tipus` underscores render as
+spaces. Fixed template per `register`:
+
+| register | shape (numbers as integers) |
+|---|---|
+| `oficial` | "{nom} (Berguedà) · {tipus}. Presència estimada {estimacio} (rang {rang_baix}–{rang_alt}). Registre oficial: ≥1.000 hab amb dada ETCA d'Idescat ({etca_oficial}) — el model es pot contrastar amb la font oficial." |
+| `senyal_mes` | "… (rang …), per sobre del padró ({padro}). Registre senyal: <1.000 hab; l'interval exclou el padró, sense validació oficial." |
+| `senyal_menys` | same as `senyal_mes` but "per sota del padró ({padro})". |
+| `soroll` | "… Registre soroll: el rang inclou el padró ({padro}) — l'estimació no es distingeix del propi marge en aquest poble." |
+
+### Committed embeddings artifact
+
+| Path | Content |
+|---|---|
+| `data/embeddings-e5-small.parquet` | `(ine5 VARCHAR, emb DOUBLE[])`, 31 rows × 384-dim base vectors (deterministic, dropout OFF, `passage:`-prefixed, normalized) |
+| `data/embeddings-e5-small.meta.json` | `{model, revision, dim:384, prefix_doc:"passage: ", prefix_query:"query: ", n:31, generated_note}` |
+
+- **Model:** `intfloat/multilingual-e5-small` (MIT, 384-dim), **pinned revision**
+  `614241f622f53c4eeff9890bdc4f31cfecc418b3`.
+- **Dropout confirmed p>0** on the pinned revision (`hidden_dropout_prob=0.1`,
+  `attention_probs_dropout_prob=0.1`) — precondition for the later MC-Dropout σ experiment.
+- The artifact is the deterministic **source of truth**; `torch`/`sentence-transformers`
+  are used ONLY to regenerate it locally (see README "Regenerate"), never in CI.
+- Reproducibility caveat: CPU float ops are not bit-identical across machines — compare
+  re-generated vectors with a tolerance (`np.allclose`, atol ≈ 1e-4), not equality.
+
 ## Honesty note
 
 No invented numbers; every value traces to a committed source file listed above.
 Munis present in the geometry but absent from a source are marked `indeterminat` and counted,
-never fabricated.
+never fabricated. The 0b descriptions add no numbers — they only reword substrate fields;
+semantic retrieval over these 31 short docs is phrasing-sensitive and is reported as-is
+(no cherry-picked query), consistent with "the observatory that knows what it doesn't know".
