@@ -2,3 +2,8 @@
 *.duckdb
 *.duckdb.wal
 data/bergueda.duckdb
+
+# The base-embeddings artifact IS committed (deterministic source of truth for the
+# torch-free search path). Only *.duckdb is ignored above; parquet/json stay tracked.
+!data/embeddings-e5-small.parquet
+!data/embeddings-e5-small.meta.json

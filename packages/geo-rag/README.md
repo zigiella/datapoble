@@ -94,3 +94,65 @@ pip install -e ".[embeddings]"
 - **MC-Dropout viability:** confirm the model config has **dropout p>0**
   (`hidden_dropout_prob`, `attention_probs_dropout_prob`) or σ comes out null. e5-small
   (MiniLM-based) ships p=0.1 — verify it on the pinned revision before committing.
+
+### 0b implementation (what shipped)
+
+Three new modules under `src/datapoble_geo_rag/`:
+
+- **`descriptions.py` (torch-free)** — `generate_descriptions(conn) -> {ine5: str}`
+  builds one Catalan document per muni from the `municipi` table only (nothing invented
+  beyond its fields). Numbers render as integers; `tipus` underscores become spaces. One
+  fixed template per `register`:
+  - `oficial` → "… Registre oficial: ≥1.000 hab amb dada ETCA d'Idescat (…) — el model
+    es pot contrastar amb la font oficial."
+  - `senyal_mes` → "… per sobre del padró (…). Registre senyal: <1.000 hab; l'interval
+    exclou el padró, sense validació oficial."
+  - `senyal_menys` → same, "per sota del padró (…)".
+  - `soroll` → "… Registre soroll: el rang inclou el padró (…) — l'estimació no es
+    distingeix del propi marge en aquest poble."
+
+- **`embeddings.py` (the ONLY torch module)** — pins the model revision in
+  `MODEL_REVISION` (currently
+  `614241f622f53c4eeff9890bdc4f31cfecc418b3` for `intfloat/multilingual-e5-small`),
+  verifies dropout p>0 (confirmed `hidden=0.1`, `attention=0.1`), and
+  `regenerate_artifact(conn)` writes the committed base vectors (dropout OFF,
+  deterministic, `passage:` prefix, normalized). Also `embed_query(text)` (prepends
+  `query:`) for local use. Never imported by the build or the search ranking path.
+
+- **`search.py` (torch-free)** — `load_embeddings(conn)` loads the committed parquet into
+  `municipi_emb(ine5 VARCHAR, emb FLOAT[384])` if present (silently skipped if absent, so
+  0a still builds). `semantic_search(conn, query_vec, k=5) -> [(ine5, nom, score)]` ranks
+  by `array_cosine_similarity`. It takes a **ready** vector; query embedding
+  (`embeddings.embed_query`, torch) stays out of this path.
+
+`build()` auto-loads `municipi_emb` when the artifact exists and records
+`embeddings=1|0` in `_substrate_meta`.
+
+### Committed artifact
+
+- `data/embeddings-e5-small.parquet` — `(ine5 VARCHAR, emb DOUBLE[])`, 31 rows × 384 dim
+  (~73 KB). Committed as the deterministic source of truth.
+- `data/embeddings-e5-small.meta.json` — `{model, revision, dim, prefix_doc,
+  prefix_query, n, generated_note}`. The `.gitignore` ignores only `*.duckdb`; these two
+  artifacts are explicitly kept tracked.
+
+### Regenerate (local, deliberate — never in CI)
+
+```sh
+pip install -r requirements-embeddings.txt          # torch CPU + sentence-transformers
+python -c "from datapoble_geo_rag.build import build; \
+from datapoble_geo_rag import embeddings; embeddings.regenerate_artifact(build(None))"
+```
+
+This re-downloads the pinned-revision weights, re-embeds the 31 documents, and rewrites
+the parquet + meta. CPU float ops are not bit-identical across machines — compare with a
+tolerance (`np.allclose`, atol ≈ 1e-4), never equality.
+
+### Tests / CI
+
+`tests/test_embeddings.py` — the offline tests (descriptions, artifact shape, meta
+revision, `municipi_emb` load, cosine **self-retrieval** rank-1) read only committed
+artifacts and the torch-free path; these are what the `geo-rag` CI job runs. One
+torch-guarded test (`pytest.importorskip("torch")`) embeds a live query and **skips** in
+CI. Retrieval is phrasing-sensitive on these 31 short docs: a query echoing the document
+wording surfaces the intended register; a loose paraphrase may not.

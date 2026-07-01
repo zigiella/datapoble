@@ -1,0 +1,9 @@
+{
+  "model": "intfloat/multilingual-e5-small",
+  "revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+  "dim": 384,
+  "prefix_doc": "passage: ",
+  "prefix_query": "query: ",
+  "n": 31,
+  "generated_note": "Base (deterministic, dropout OFF) e5-small embeddings for the 31 Berguedà munis. Regenerated locally via embeddings.regenerate_artifact() on 2026-07-01. CPU float ops are not bit-identical across machines; compare with a tolerance, not equality. dropout: hidden=0.1, attention=0.1."
+}
