@@ -6,10 +6,12 @@ Isolated experiment — does not depend on or touch packages/ai.
 
 from datapoble_geo_rag.build import build, name_search, neighbors
 from datapoble_geo_rag.descriptions import generate_descriptions
+from datapoble_geo_rag.retrieval import detect_anchor, retrieve
 from datapoble_geo_rag.search import load_embeddings, semantic_search
 
 # NOTE: embeddings.py is intentionally NOT imported here — it is the only torch module,
-# and importing the package must stay torch-free (CI installs no torch).
+# and importing the package must stay torch-free (CI installs no torch). retrieval.py and
+# eval.py are torch-free and safe to import.
 
 __all__ = [
     "build",
@@ -18,4 +20,6 @@ __all__ = [
     "generate_descriptions",
     "load_embeddings",
     "semantic_search",
+    "detect_anchor",
+    "retrieve",
 ]

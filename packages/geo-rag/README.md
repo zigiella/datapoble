@@ -1,7 +1,9 @@
 # datapoble-geo-rag
 
-Phase 0a of an **isolated** geospatial-RAG experiment: build a DuckDB substrate for the
-**31 Berguedà municipalities** from committed data sources.
+An **isolated** geospatial-RAG experiment over the **31 Berguedà municipalities**: a
+DuckDB substrate built from committed data sources (Phase 0a), local descriptions +
+embeddings (Phase 0b), and a spatial retriever whose only honest addition is that it
+**reports ties it cannot break** instead of inventing a winner (Phase 1).
 
 This package is self-contained. It does **not** import or depend on `packages/ai`.
 
@@ -156,3 +158,88 @@ artifacts and the torch-free path; these are what the `geo-rag` CI job runs. One
 torch-guarded test (`pytest.importorskip("torch")`) embeds a live query and **skips** in
 CI. Retrieval is phrasing-sensitive on these 31 short docs: a query echoing the document
 wording surfaces the intended register; a loose paraphrase may not.
+
+## Phase 1 — the spatial retriever (tie = abstention)
+
+**Contract:** `docs/experiment-rag-geo/03-fase1-recuperador.md`.
+
+Inability to distinguish appears at three heights and the honest system makes the **same
+gesture** at each — it does **not** break a tie the data can't break, it **reports** it:
+
+| height | name | gesture |
+|---|---|---|
+| data | **soroll** | "I can't tell this number from my own margin" |
+| muni | **col·lisió** | "I can't tell this town from that one" |
+| retrieval | **empat** | "I can't tell which document comes first" |
+
+An unbreakable tie is the **abstention of ordering** — the same abstention-calibration
+KPI as Phase 3, one level up. A retriever that always returns a clean winner over tied
+data lies with confidence.
+
+### `retrieval.py` (torch-free — the ranking path never imports torch)
+
+`retrieve(conn, query_text, query_vec, anchor_ine5=None, k=5) -> dict`, in order:
+
+1. **Hard spatial filter first.** `detect_anchor(conn, query_text)` matches a muni
+   proper-name (via `municipi.nom`, longest surface form first, incl. de-articled
+   "la Pobla de Lillet"). With an anchor, the candidate set = anchor + its spatial
+   neighbours (`ST_Intersects`); otherwise = all 31 (comarca). This narrows **before**
+   any scoring.
+2. **Up to three ranked lists** over the candidates: (a) **spatial** (anchor only) by
+   centroid distance `ST_Distance(ST_Centroid(geom), anchor)`, nearest first; (b)
+   **semantic** cosine over `municipi_emb` (`array_cosine_similarity`); (c) **name** via
+   FTS `match_bm25(nom)`.
+3. **RRF fusion of ranks:** `score(d) = Σ_lists 1/(60 + rank_l(d))` (Cormack 2009) —
+   fuse **ranks**, not raw scores.
+4. **Tie detection** (the only addition):
+   - **collision tie (data):** if the top candidate is in a `descriptions._collision_groups()`
+     group, report the **whole** group (marking which members are in the 31); the note says
+     the number is **not** muni-specific. For an `oficial` group it also cites that Idescat
+     **does** separate them (ETCA 1005 vs 1121 for Guardiola ↔ la Pobla de Lillet).
+   - **score tie (RRF):** if the #1/#2 fused scores are within `EPS` (relative gap < 0.02),
+     the pair is reported tied — **not** ordered by phrasing noise.
+
+Returns `{candidates:[{ine5,nom,score,register,estimacio,in_collision}], anchor,
+n_candidates, tie:{is_tie,kind,group,note}}`. It never presents a shared/collision figure
+as muni-specific and never imposes an order the data doesn't support.
+
+### Query bank + committed query vectors
+
+`data/fase1-bank.json` — ~8 hand-written entries `{id, query (Catalan), kind, anchor_ine5,
+expected:{targets, expect_tie, tie_group}, query_vec:[384 floats]}`. It covers a normal
+**spatial** query (`veïns de Berga`, anchor = Berga, targets = its real neighbours), a
+normal **semantic** query, the **collision_oficial** case (Guardiola / la Pobla de Lillet,
+no separating anchor → must report the tie + ETCA), and a **collision_soroll** case
+(Gósol, Saldes → group of 3). The `query_vec`s are **committed** so eval/CI run torch-free.
+The `.gitignore` tracks this file (only `*.duckdb` is ignored).
+
+Regenerate the vectors (local, deliberate — needs torch; never in CI):
+
+```sh
+pip install -r requirements-embeddings.txt
+# then run the small generator (embeds each query via embeddings.embed_query and rewrites
+# data/fase1-bank.json). See docs/experiment-rag-geo/03-fase1-recuperador.md for the entries.
+```
+
+Each entry's `query_vec = embeddings.embed_query(query)` (the e5 `query:` prefix, 384-dim,
+normalized). CPU float ops are not bit-identical across machines — regenerate and compare
+with a tolerance, not equality.
+
+### `eval.py` (torch-free)
+
+`python -m datapoble_geo_rag.eval` runs `retrieve()` over the committed bank and scores each
+entry against the contract: **normal** passes if an expected target is in top-k;
+**collision_\*** passes only if `tie.is_tie` is True, `tie.group` reports the sharing munis,
+and no single member is presented as a clean winner (fails if it hides the tie). It prints a
+per-entry report, a `n pass / n fail` summary, and an **abstention-of-ordering** line
+(collision cases correctly reported as ties). Current run: **8/8 pass, 4/4 collision cases
+reported as ties**.
+
+### Phase-1 tests
+
+`tests/test_retrieval.py` (offline, torch-free — uses the committed bank vectors): the
+anchor spatial filter narrows candidates (< 31, all within the 31); `collision_oficial` →
+tie with group `{Guardiola, la Pobla de Lillet}` and an ETCA-separation note;
+`collision_soroll` → tie; a normal entry → target in top-k with no false collision tie; an
+RRF unit check (`rrf_score(r1,r2) == 1/(60+r1)+1/(60+r2)`). One torch-guarded test embeds a
+live query and **skips** in CI.
