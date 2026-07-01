@@ -17,10 +17,12 @@ publicable per si sola.*
 > Guardiola↔Pobla de Lillet, que Idescat separa i el model no). La 0b hi posa advertència honesta a les
 > descripcions; la causa estructural + l'abast a l'oficial són de Sondeig. Pregunta clau: quantes estimacions
 > del registre oficial són números repetits presentats com a específics del municipi?
-> **Fase 1 EN MARXA (recuperador espacial)** — contracte a `docs/experiment-rag-geo/03-fase1-recuperador.md`.
-> Condició de la Rapaz: definir «recuperació correcta» (incloent l'**empat**) abans de codificar. El recuperador
-> no trenca empats que la dada no permet: els **reporta** (abstenció d'ordenar = el KPI a un altre nivell).
-> Filtre espacial dur → híbrid RRF → detecció d'empat. El cas de col·lisió (parell oficial + un soroll) entra al banc el dia 1.
+> **Fase 1 ✅ fusionada (#221)** — recuperador espacial (filtre dur → híbrid RRF → detecció d'empat).
+> Contracte `03-fase1-recuperador.md`. Eval 8/8; abstenció d'ordenar 4/4 (col·lisió oficial + soroll reportades com a empat).
+> **Fase 2 EN MARXA (herència d'estatut · distingibilitat)** — contracte `docs/experiment-rag-geo/04-fase2-distingibilitat.md`.
+> **Una sola regla** per als dos usos: modulació per σ sobre un muni (`S=μ−λσ`, to graduat) i ordenació entre munis
+> (comparació). No distingibles si les bandes p10–p90 se solapen → abstenció d'ordenar. La col·lisió exacta de la
+> Fase 1 = el cas límit (distància zero), sense codi duplicat. Regla fixada abans de la Fase 3 (que la mesura).
 
 > **🧭 RUMBO DECIDIT (2026-06-27).** Després de l'arc «fer-ho bé» (dada honesta a tot CAT) i del dossier
 > de consultoria, la **consultoria externa** ha reconduït el projecte. Decisió a
