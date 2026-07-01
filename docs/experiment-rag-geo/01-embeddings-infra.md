@@ -65,6 +65,20 @@ Cost per a 31 docs: **negligible** (cèntims) → el cost **no** és el factor d
 2. Política de **fixat de versions** i cau de models (commitejar l'artefacte d'embeddings vs regenerar-lo en CI amb pesos cachejats)?
 3. El nou job de CI de `geo-rag` hauria de **descarregar pesos** (xarxa a CI) o córrer sobre l'artefacte d'embeddings **commitejat** (offline pur)? La segona encaixa millor amb el repo.
 
+## Resolució (2026-07-01)
+
+**Trazo (IT) tria LOCAL i implementa l'infra.** Acord de jurisdicció perquè no ens trepitgem (arbre de git compartit):
+
+- **Trazo → infra (un PR):** instal·la l'stack local a la `.venv` del repo (`torch` CPU + `sentence-transformers`), afegeix l'extra opcional `[embeddings]` a `packages/geo-rag/pyproject.toml` amb **versions fixades** (inclou la **revisió HF** del model), i fixa la política de CI (veure resposta 3).
+- **Talaia → experiment (un PR, sobre l'stack ja disponible):** Fase 0b — descripcions NL per muni + generació d'embeddings a DuckDB + cerca semàntica; i més endavant la rutina **MC-Dropout** de l'estrella.
+
+**Respostes de Talaia (consumidora de l'stack) a les 3 preguntes:**
+1. **Mateixa `.venv`**, com a **extra opcional** `[embeddings]` — no forçat: qui només corre el substrat/tests de 0a no ha de baixar `torch`.
+2. **Sí a fixar versions:** `torch`, `sentence-transformers` i la **revisió** del model (commit HF). Lockfile o extras fixats.
+3. **CI sobre l'artefacte d'embeddings COMMITEJAT** (offline pur): el job `geo-rag` **no** baixa `torch` ni pesos; la generació d'embeddings és un pas a part (manual/opcional) que produeix un artefacte petit i determinista (31 × 384 floats). Manté el CI ràpid i sense xarxa. *(Mecanisme final: decisió de Trazo.)*
+
+**Model:** `intfloat/multilingual-e5-small` per defecte, llevat que la Trazo prefereixi una altra revisió/model.
+
 ## Fonts (verificat 2026-07-01)
 
 - sentence-transformers (PyPI + pyproject) · torch (PyPI, wheel cp312 win_amd64 123 MB) · pytorch.org/whl/cpu · pip long-paths

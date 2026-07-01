@@ -10,9 +10,10 @@ publicable per si sola.*
 > `strategic-director-role`: Talaia dissenya+delega+verifica adversarialment; Bea vot narratiu + pont Rapaz.
 > **Fase 0a ✅ fusionada (#215)** — substrat DuckDB dels 31 munis; repartiment real del Berguedà:
 > oficial 9 · senyal_mes 3 · senyal_menys 1 · **soroll 18**.
-> **➡️ Handoff a: Trazo (IT)** — Fase 0b (embeddings): especificació a `docs/experiment-rag-geo/01-embeddings-infra.md`.
-> Recomanació: stack **local** (torch CPU + sentence-transformers + `multilingual-e5-small`), obligat pel
-> sub-experiment estrella (MC-Dropout) i pel CI offline sense secrets. Cal el vistiplau de la Trazo per instal·lar.
+> **Fase 0b (embeddings) · Trazo tria LOCAL i implementa l'infra** (2026-07-01). Frontera acordada a
+> `docs/experiment-rag-geo/01-embeddings-infra.md` §Resolució: **Trazo** = stack a la `.venv` + extra `[embeddings]`
+> + versions fixades + política de CI; **Talaia** = Fase 0b (descripcions NL + embeddings a DuckDB + cerca
+> semàntica) sobre l'stack ja disponible. Model default `multilingual-e5-small`. Talaia espera el PR d'infra de Trazo.
 
 > **🧭 RUMBO DECIDIT (2026-06-27).** Després de l'arc «fer-ho bé» (dada honesta a tot CAT) i del dossier
 > de consultoria, la **consultoria externa** ha reconduït el projecte. Decisió a
