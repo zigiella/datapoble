@@ -3,6 +3,13 @@
 *Mètode: **Cambium Charter v0.5**. Es treballa de dalt a baix; cada tasca = un PR. Cada **fase** és
 publicable per si sola.*
 
+> **🧪 TRACK ACTIU (2026-07-01): experiment RAG geoespacial honest (Berguedà).** Carta a
+> `docs/experiment-rag-geo/00-arrencada.md`. Decisions de Bea: **DuckDB-first** (avisar Rapaz de la
+> desviació vs Postgres del brief) · **posicionament a decidir més tard**. KPI = calibració de
+> l'abstenció. Fases 0–3 = nucli de valor; 4–5 tancades darrere la porta de la Fase 3. En marxa: **Fase
+> 0a** (substrat DuckDB a `packages/geo-rag`, sense tocar `packages/ai`). Direcció sota
+> `strategic-director-role`: Talaia dissenya+delega+verifica adversarialment; Bea vot narratiu + pont Rapaz.
+
 > **🧭 RUMBO DECIDIT (2026-06-27).** Després de l'arc «fer-ho bé» (dada honesta a tot CAT) i del dossier
 > de consultoria, la **consultoria externa** ha reconduït el projecte. Decisió a
 > `docs/dossier-consultoria-2026-06/01-reconduccio.md`. Concepte: **«l'observatori que sap el que no
