@@ -108,6 +108,38 @@ across the oficial register Catalunya-wide are the **handoff to Sondeig**
 - Reproducibility caveat: CPU float ops are not bit-identical across machines — compare
   re-generated vectors with a tolerance (`np.allclose`, atol ≈ 1e-4), not equality.
 
+## Phase 1 — the retriever + committed query bank
+
+### Query bank (a committed artifact, torch-free to consume)
+
+| Path | Content |
+|---|---|
+| `data/fase1-bank.json` | ~8 hand-written entries: `{id, query (Catalan), kind, anchor_ine5, expected:{targets, expect_tie, tie_group}, query_vec:[384 floats]}` |
+
+- `query_vec` is **committed** (each = `embeddings.embed_query(query)`, e5 `query:` prefix,
+  384-dim, normalized) so the eval and CI run **torch-free** on the bank.
+- `kind ∈ {normal_spatial, normal_semantic, collision_oficial, collision_soroll}`. Minimum
+  coverage (from the contract): a spatial query (`veïns de Berga`, anchor = Berga, targets =
+  its real `ST_Intersects` neighbours), a semantic query, the `collision_oficial` case
+  (Guardiola de Berguedà / la Pobla de Lillet, **no separating anchor** → must report the
+  tie and that Idescat separates them, ETCA 1005 vs 1121), and a `collision_soroll` case
+  (Gósol / Saldes — groups of 3 Catalunya-wide).
+- Introduces **no new numbers**: it holds only queries, expected ine5 targets, and the
+  committed 384-float vectors (a function of the queries + the pinned model). Regenerating is
+  a deliberate local step (needs torch); CPU float ops are not bit-identical across machines.
+- `.gitignore` tracks this file (only `*.duckdb` is ignored).
+
+### The tie = the abstention of ordering
+
+The retriever reuses the substrate (native `GEOMETRY`, FTS, `municipi_emb`) and adds one
+honest gesture: it does **not** break a tie the data can't break. A **collision tie** is
+reported straight from `descriptions._collision_groups()` (the same identical-estimate groups
+already flagged in the descriptions) — the shared figure is **never** rendered as
+muni-specific, and for an `oficial` group the note cites the distinguishing ETCA. A **score
+tie** (RRF #1/#2 within `EPS`) is reported, not ordered by phrasing noise. This is the same
+abstention-calibration KPI as Phase 3, one level up — a well-reported tie is an abstention
+hit; a false tie-break hiding the tie is a failure. See `docs/experiment-rag-geo/03-fase1-recuperador.md`.
+
 ## Honesty note
 
 No invented numbers; every value traces to a committed source file listed above.
