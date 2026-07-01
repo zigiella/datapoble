@@ -31,7 +31,8 @@ from __future__ import annotations
 
 import duckdb
 
-from .descriptions import _collision_groups, _denom
+from .descriptions import _collision_groups, _denom, join_noms
+from .distinguish import distinguishable
 from .search import EMB_DIM, load_embeddings  # noqa: F401 (load_embeddings re-exported)
 
 # RRF constant (Cormack et al. 2009). Ranks start at 1.
@@ -41,7 +42,7 @@ RRF_K = 60
 # top candidates are declared tied — we will NOT order them by phrasing noise.
 EPS = 0.02
 
-__all__ = ["RRF_K", "EPS", "load_embeddings", "detect_anchor", "retrieve"]
+__all__ = ["RRF_K", "EPS", "load_embeddings", "detect_anchor", "detect_anchors", "retrieve"]
 
 
 def _has(conn: duckdb.DuckDBPyConnection, key: str) -> bool:
@@ -69,6 +70,50 @@ def detect_anchor(conn: duckdb.DuckDBPyConnection, query_text: str) -> str | Non
         if surface.lower() in q:
             return ine5
     return None
+
+
+def detect_anchors(
+    conn: duckdb.DuckDBPyConnection, query_text: str, limit: int = 2
+) -> list[str]:
+    """Return up to `limit` distinct muni ine5 whose names appear in the query.
+
+    Generalises detect_anchor to the comparison route (Fase 2), where a query names TWO
+    munis ("quin té més gent que no consta, X o Y"). Longest surface form first (so
+    multi-word names beat their prefixes), and once a name matches its span is consumed so
+    a substring of it can't match a second, different muni. Ordered by first appearance in
+    the query so the natural reading order is preserved. Torch-free.
+    """
+    q = (query_text or "").lower()
+    rows = conn.execute("SELECT ine5, nom FROM municipi").fetchall()
+    forms: list[tuple[str, str]] = []
+    for ine5, nom in rows:
+        for surface in {nom, _denom(nom)}:
+            forms.append((ine5, surface.lower()))
+    forms.sort(key=lambda t: len(t[1]), reverse=True)
+
+    found: list[tuple[int, str]] = []  # (position, ine5)
+    seen: set[str] = set()
+    consumed: list[tuple[int, int]] = []  # spans already claimed
+    for ine5, surface in forms:
+        if ine5 in seen:
+            continue
+        start = 0
+        while True:
+            pos = q.find(surface, start)
+            if pos < 0:
+                break
+            end = pos + len(surface)
+            if any(pos < ce and cs < end for cs, ce in consumed):
+                start = pos + 1  # this occurrence overlaps a claimed span; try next
+                continue
+            found.append((pos, ine5))
+            seen.add(ine5)
+            consumed.append((pos, end))
+            break
+        if len(seen) >= limit:
+            break
+    found.sort(key=lambda t: t[0])
+    return [ine5 for _, ine5 in found]
 
 
 def _candidate_set(
@@ -301,7 +346,19 @@ def _detect_tie(
         est = meta[top][3]  # estimacio
         in31 = [m for m in group if m in the31]
         register = meta[top][2]
-        peers_all = " i ".join(_denom(allm[m]["nom"]) for m in group)
+        # SHARED ORDERABILITY PREDICATE (Fase 2): a collision group has identical bands,
+        # so the SAME rule that orders munis by band overlap must say "not orderable" here
+        # too — the distance-zero limit. We route through distinguish.distinguishable
+        # instead of trusting the identity grouping alone, so Phase 1 and Phase 2 can never
+        # contradict. (The identity grouping stays as the ENRICHED note; only the predicate
+        # is shared.)
+        blo = float(allm[top]["rang_baix"])
+        bhi = float(allm[top]["rang_alt"])
+        assert not distinguishable(blo, bhi, blo, bhi), (
+            "collision group with identical bands must be NOT distinguishable "
+            "(the distance-zero limit of the Phase-2 rule)"
+        )
+        peers_all = join_noms([_denom(allm[m]["nom"]) for m in group])
         if register == "oficial":
             etcas = " vs ".join(
                 str(int(round(float(allm[m]["etca_oficial"]))))
@@ -341,7 +398,7 @@ def _detect_tie(
             tied = [c for c in ordered if s1 > 0 and (s1 - scores[c]) / s1 < EPS]
             if len(tied) < 2:  # both-zero case
                 tied = [c for c in ordered if scores[c] == s1]
-            noms = " i ".join(_denom(meta[c][1]) for c in tied)
+            noms = join_noms([_denom(meta[c][1]) for c in tied])
             note = (
                 f"Empat de score (recuperació): {len(tied)} candidats amb score RRF dins "
                 f"d'ε={EPS} ({noms}); la recuperació no els pot ordenar. No s'imposa ordre."

@@ -52,6 +52,20 @@ def _denom(nom: str) -> str:
     return nom
 
 
+def join_noms(noms: list[str]) -> str:
+    """Join a list of names with Catalan conjunction: 'A', 'A i B', 'A, B i C'.
+
+    Shared by the Phase-1 collision/tie notes and the Phase-2 comparison notes so the
+    list polish lives in one place ('A, B i C', not 'A i B i C').
+    """
+    noms = [n for n in noms if n]
+    if not noms:
+        return ""
+    if len(noms) == 1:
+        return noms[0]
+    return f"{', '.join(noms[:-1])} i {noms[-1]}"
+
+
 def _collision_groups() -> tuple[dict[str, list[str]], dict]:
     """Groups of munis (Catalunya-wide) with identical (estimacio, rang_baix, rang_alt).
 
@@ -86,7 +100,7 @@ def _collision_note(row: dict, by_ine: dict[str, list[str]], allm: dict, berg: s
     est = _i(allm[ine5]["estimacio"])
 
     if row["register"] == "oficial":
-        peers = " i ".join(_denom(allm[m]["nom"]) for m in others)
+        peers = join_noms([_denom(allm[m]["nom"]) for m in others])
         etcas = " vs ".join(
             str(_i(allm[m]["etca_oficial"])) for m in members if allm[m].get("etca_oficial") is not None
         )
@@ -97,7 +111,7 @@ def _collision_note(row: dict, by_ine: dict[str, list[str]], allm: dict, berg: s
         )
 
     berg_co = [_denom(allm[m]["nom"]) for m in others if m in berg]
-    co = f" (al Berguedà, també {' i '.join(berg_co)})" if berg_co else ""
+    co = f" (al Berguedà, també {join_noms(berg_co)})" if berg_co else ""
     return (
         f" ⚠️ Col·lisió del model: dona aquesta mateixa estimació ({est}) a {len(members)} municipis "
         f"de Catalunya{co}; no els distingeix. Fins que no es resolgui a la font, aquesta xifra no "

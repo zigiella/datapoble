@@ -243,3 +243,85 @@ tie with group `{Guardiola, la Pobla de Lillet}` and an ETCA-separation note;
 `collision_soroll` → tie; a normal entry → target in top-k with no false collision tie; an
 RRF unit check (`rrf_score(r1,r2) == 1/(60+r1)+1/(60+r2)`). One torch-guarded test embeds a
 live query and **skips** in CI.
+
+## Phase 2 — the distinguishability rule (one rule, two uses)
+
+**Contract:** `docs/experiment-rag-geo/04-fase2-distingibilitat.md`.
+
+Phase 2 does not add a new function — it **generalises** Phase 1. Phase 1's collision tie
+handles the **exact** collision (two munis, identical number). **Band overlap** is the
+same phenomenon in continuous form, more common and previously invisible. The two show up
+as **one rule**:
+
+> Two munis can be **ordered** only if the distance between their estimates **exceeds their
+> combined band uncertainty**. If the p10–p90 bands overlap, they are **not
+> distinguishable** and the system **abstains from ordering** — the same gesture as the
+> Phase-1 collision tie, but by **overlap** instead of by **identity**. The exact collision
+> is this rule at **distance zero** (identical bands fully overlap).
+
+### `distinguish.py` (torch-free, pure — numbers in, bool out)
+
+The single shared rule, called by BOTH uses and by the tests so they can never contradict:
+
+- `overlaps(a_low, a_high, b_low, b_high)` — `max(a_low,b_low) <= min(a_high,b_high)`.
+- `distinguishable(a_low, a_high, b_low, b_high, min_gap=0.0)` — True iff the intervals are
+  disjoint beyond `min_gap`. The default `0.0` means **any p10–p90 overlap → not
+  distinguishable**: the clean, auditable criterion from the contract, on the
+  **already-calibrated** band (78.4% coverage), with **no new parameter**. A finer
+  `min_gap` is a **declared methodology parameter, never truth** (like `|ETCA|≥5%`).
+
+### Use 1 — comparison between munis (`compare.py`, torch-free)
+
+`compare(conn, ine5_a, ine5_b) -> {distinguishable, higher, lower, note}` reuses
+`distinguish.distinguishable` (no reimplemented overlap). If distinguishable → order by
+`estimacio`; if not → `higher/lower = None` and an abstention note (*"els seus intervals
+p10-p90 s'encavalquen (…); no els puc ordenar amb confiança"*).
+`answer_comparison(conn, query_text)` detects the **two** muni names in the query
+(`retrieval.detect_anchors`, up to two) and routes to `compare()`; if a comparative query
+names one/zero munis it says so honestly rather than inventing an opponent.
+
+### Use 2 — σ modulation on one muni (`compare.answer`, torch-free)
+
+`answer(conn, ine5) -> {ine5, nom, register, estimacio, band, sigma, rang_rel, tone,
+s_score, text}`. The **same σ** (the band) sets the tone: **`ferm`** when the relative band
+is narrow, **`prudent`** (wide range) when large; `soroll` is always prudent (its band
+includes the padró). `s_score = estimacio − LAMBDA·sigma` with `LAMBDA=1.0`. **Honest
+note:** `S = μ − λσ` is the standard **mean-variance (Markowitz)** risk penalty, **not** a
+bespoke formula — our contribution is that σ is a **real reliability band** (half the
+calibrated p10–p90), not the model's introspective variance. The `text` is a short Catalan
+answer whose tone (firm vs hedged) and width reflect σ.
+
+### Unification with Phase 1 (no duplicated overlap logic)
+
+The Phase-1 exact-collision tie and the Phase-2 comparison both express "not orderable"
+through `distinguish.distinguishable`: `retrieval._detect_tie` asserts the collision group's
+identical bands are NOT distinguishable (the distance-zero limit) via the shared function,
+so the two phases can't drift apart. Only the orderability **predicate** is shared; the
+richer collision **note** (peers by exact-estimate group + ETCA) stays. The list-join
+polish is a shared helper `descriptions.join_noms` (`"A, B i C"`, not `"A i B i C"`) used by
+the collision/tie notes and the comparison notes.
+
+### Bank + eval2
+
+`data/fase2-bank.json` (torch-free — **no query vectors**; comparison is by band, detection
+by name): entries `{id, kind, munis|query, expected}`. Required cases (contract, day 1):
+`compare_separated` (Berga vs Gironella → order), `compare_overlap` (Olvan vs la Pobla de
+Lillet → not distinguishable), `sigma_small` (Berga → `ferm`), `sigma_large` (Gósol soroll →
+`prudent`), `exact_collision_limit` (Guardiola de Berguedà vs la Pobla de Lillet →
+`distinguishable=False` via the **same** rule at distance zero). Pairs were picked by
+inspecting the substrate bands so "separated" and "overlap" are genuinely so.
+
+`python -m datapoble_geo_rag.eval2` runs the bank, scores per contract (orders only when
+distinguishable; abstains on overlap; tone reflects σ), and prints an
+**abstention-of-ordering** line. Current run: **5/5 pass, 2/2 non-distinguishable cases
+(overlap + exact collision) reported as not-orderable**.
+
+### Phase-2 tests
+
+`tests/test_distinguish.py` (offline, torch-free): `distinguishable()` unit (disjoint True;
+overlap False; **identical bands False** = the Phase-1 limit; touching False; declared
+`min_gap`); `compare()` orders separated + abstains on overlap; `answer()` tone `ferm` for a
+narrow-band muni and `prudent` for a soroll muni; `answer_comparison` detects two names and
+is honest with one; exact collision (Guardiola/la Pobla de Lillet) → `distinguishable`
+False **through the shared function** (asserts the substrate bands are identical and that
+the pure `distinguishable` call agrees); `s_score == μ − λσ`.

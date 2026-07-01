@@ -1,0 +1,37 @@
+[
+  {
+    "id": "compare_separated_berga_gironella",
+    "kind": "compare_separated",
+    "munis": ["08022", "08092"],
+    "note": "Berga [14206,20289] vs Gironella [4423,6316] — bandes clarament disjuntes.",
+    "expected": {"distinguishable": true, "higher": "08022", "lower": "08092"}
+  },
+  {
+    "id": "compare_overlap_olvan_pobla",
+    "kind": "compare_overlap",
+    "munis": ["08144", "08166"],
+    "note": "Olvan [629,1082] vs la Pobla de Lillet [726,1037] — bandes que s'encavalquen (no idèntiques).",
+    "expected": {"distinguishable": false, "higher": null, "lower": null}
+  },
+  {
+    "id": "sigma_small_berga",
+    "kind": "sigma_small",
+    "munis": ["08022"],
+    "note": "Berga (oficial, rang_rel 0.365) — banda relativa estreta → to ferm.",
+    "expected": {"tone": "ferm"}
+  },
+  {
+    "id": "sigma_large_gosol",
+    "kind": "sigma_large",
+    "munis": ["25100"],
+    "note": "Gósol (soroll, rang_rel 0.573) — el rang inclou el padró → to prudent.",
+    "expected": {"tone": "prudent"}
+  },
+  {
+    "id": "exact_collision_limit_guardiola_pobla",
+    "kind": "exact_collision_limit",
+    "munis": ["08099", "08166"],
+    "note": "Guardiola de Berguedà vs la Pobla de Lillet — bandes IDÈNTIQUES (852; [726,1037]); la col·lisió exacta de la Fase 1 = distingibilitat a distància zero, per la MATEIXA regla.",
+    "expected": {"distinguishable": false, "higher": null, "lower": null}
+  }
+]

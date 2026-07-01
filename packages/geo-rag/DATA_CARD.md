@@ -140,6 +140,39 @@ tie** (RRF #1/#2 within `EPS`) is reported, not ordered by phrasing noise. This 
 abstention-calibration KPI as Phase 3, one level up — a well-reported tie is an abstention
 hit; a false tie-break hiding the tie is a failure. See `docs/experiment-rag-geo/03-fase1-recuperador.md`.
 
+## Phase 2 — the distinguishability rule (one rule, two uses)
+
+Phase 2 **generalises** the Phase-1 tie: the exact collision (identical estimate+range) and
+**band overlap** are the same phenomenon at two resolutions. One rule serves both uses so
+the system never contradicts itself.
+
+**The rule (torch-free, pure — `distinguish.py`).** Two munis can be **ordered** only if the
+distance between their estimates **exceeds the combined band uncertainty**. Concretely,
+`distinguishable(a_low, a_high, b_low, b_high, min_gap=0.0)` is True iff the p10–p90 bands
+are disjoint beyond `min_gap`. The default `min_gap=0.0` means **any overlap → not
+distinguishable** — the clean, auditable criterion on the **already-calibrated** band (78.4%
+coverage), introducing **no new number/parameter**. A finer `min_gap` is a **declared
+methodology parameter, never truth** (same status as the `|ETCA|≥5%` threshold).
+
+**Use 1 — comparison (`compare.py`).** `compare(conn, a, b)` calls the shared
+`distinguishable` (no reimplemented overlap): disjoint bands → order by `estimacio`;
+overlapping bands → abstain from ordering. The exact collision (Guardiola de Berguedà ↔ la
+Pobla de Lillet, identical `[726,1037]`) resolves through the **same** function at distance
+zero — not a special path.
+
+**Use 2 — σ modulation (`compare.answer`).** The same σ (half the calibrated p10–p90 band)
+sets the tone: `ferm` for a narrow relative band, `prudent` for a wide one; `soroll` is
+always prudent. `s_score = estimacio − λ·sigma` (`λ=1.0`). This is the **mean-variance
+(Markowitz)** risk penalty — **not** a bespoke formula; the contribution is that σ is a
+**real reliability band**, not the model's introspective variance (see the `sigma` caveat
+above).
+
+**No new sources or numbers.** Phase 2 adds only logic + a query-vector-free bank
+(`data/fase2-bank.json`) holding ine5 pairs/queries and expected outcomes; every band it
+reads already lives in the `municipi` table (from `pernocta-catalunya.json`). See
+`docs/experiment-rag-geo/04-fase2-distingibilitat.md`. Guarded by `tests/test_distinguish.py`
+and `eval2` (5/5 pass; 2/2 non-distinguishable cases reported as not-orderable).
+
 ## Honesty note
 
 No invented numbers; every value traces to a committed source file listed above.
