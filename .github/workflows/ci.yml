@@ -85,6 +85,28 @@ jobs:
       - name: Test suite + eval gate
         run: pytest
 
+  # Geo-RAG (experiment): substrat DuckDB del Berguedà (31 munis). Paquet AÏLLAT
+  # (no toca packages/ai). El smoke test reconstrueix el substrat des de fonts
+  # versionades (geometria + bandes/σ + registre + bessons + sèrie ICAEN) i comprova
+  # que els valors tracen als fitxers font (byte-match) — el «split» és recalculable.
+  geo-rag:
+    name: geo-rag substrate (experiment · offline)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/geo-rag
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install package (+ dev) + ruff
+        run: pip install -e ".[dev]" ruff
+      - name: Lint (ruff)
+        run: ruff check src tests
+      - name: Smoke test (Berguedà substrate byte-fidel)
+        run: pytest
+
   # Mirador: build + type-check del frontend (SvelteKit + TS, i18n Paraglide).
   # npm (hay package-lock.json en packages/web; aún no hay workspace pnpm en raíz).
   # vitest + playwright (a11y) llegan en un PR posterior.

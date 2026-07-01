@@ -1,0 +1,4 @@
+# Built DuckDB substrate — a build artifact, never committed.
+*.duckdb
+*.duckdb.wal
+data/bergueda.duckdb
