@@ -10,10 +10,13 @@ publicable per si sola.*
 > `strategic-director-role`: Talaia dissenya+delega+verifica adversarialment; Bea vot narratiu + pont Rapaz.
 > **Fase 0a ✅ fusionada (#215)** — substrat DuckDB dels 31 munis; repartiment real del Berguedà:
 > oficial 9 · senyal_mes 3 · senyal_menys 1 · **soroll 18**.
-> **Fase 0b (embeddings) · Trazo tria LOCAL i implementa l'infra** (2026-07-01). Frontera acordada a
-> `docs/experiment-rag-geo/01-embeddings-infra.md` §Resolució: **Trazo** = stack a la `.venv` + extra `[embeddings]`
-> + versions fixades + política de CI; **Talaia** = Fase 0b (descripcions NL + embeddings a DuckDB + cerca
-> semàntica) sobre l'stack ja disponible. Model default `multilingual-e5-small`. Talaia espera el PR d'infra de Trazo.
+> **Fase 0b (embeddings) · Trazo va implementar l'infra (#218); Talaia l'experiment.** Stack local
+> (`multilingual-e5-small`, revisió fixada), artefacte d'embeddings commitejat, cerca semàntica torch-free.
+> **➡️ Handoff a: Sondeig (dades)** — `docs/experiment-rag-geo/02-handoff-sondeig-collisio.md`: **col·lisió
+> d'estimacions** del Nivell C (54 grups a CAT; 12/31 al Berguedà; l'esquerda greu = parell OFICIAL
+> Guardiola↔Pobla de Lillet, que Idescat separa i el model no). La 0b hi posa advertència honesta a les
+> descripcions; la causa estructural + l'abast a l'oficial són de Sondeig. Pregunta clau: quantes estimacions
+> del registre oficial són números repetits presentats com a específics del municipi?
 
 > **🧭 RUMBO DECIDIT (2026-06-27).** Després de l'arc «fer-ho bé» (dada honesta a tot CAT) i del dossier
 > de consultoria, la **consultoria externa** ha reconduït el projecte. Decisió a

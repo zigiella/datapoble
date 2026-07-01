@@ -75,6 +75,23 @@ spaces. Fixed template per `register`:
 | `senyal_menys` | same as `senyal_mes` but "per sota del padró ({padro})". |
 | `soroll` | "… Registre soroll: el rang inclou el padró ({padro}) — l'estimació no es distingeix del propi marge en aquest poble." |
 
+### Collision notes (honest rendering of a source error)
+
+The Nivell C model gives **identical** `(estimacio, rang_baix, rang_alt)` to different munis
+(54 groups Catalunya-wide). Rendering the number naked would propagate a source error in
+silence, so `generate_descriptions` reads `pernocta-catalunya.json` and **appends a warning**
+to any Berguedà muni whose estimate is shared (**12 of 31**). Register-aware:
+
+- **oficial** (the serious case — the label promises "contrastable", yet the model collapses
+  two towns Idescat separates): names the peer(s) + cites the distinguishing ETCA, e.g.
+  Guardiola de Berguedà ↔ la Pobla de Lillet (852=852; ETCA 1005 vs 1121).
+- **senyal / soroll**: states the estimate is shared by N Catalunya munis and is not
+  muni-specific until fixed at source.
+
+Not a 0b defect (the substrate is rendered faithfully); the structural cause + the extent
+across the oficial register Catalunya-wide are the **handoff to Sondeig**
+(`docs/experiment-rag-geo/02-handoff-sondeig-collisio.md`). Guarded by `tests/test_collision.py`.
+
 ### Committed embeddings artifact
 
 | Path | Content |
