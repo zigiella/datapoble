@@ -6,9 +6,13 @@ publicable per si sola.*
 > **🧪 TRACK ACTIU (2026-07-01): experiment RAG geoespacial honest (Berguedà).** Carta a
 > `docs/experiment-rag-geo/00-arrencada.md`. Decisions de Bea: **DuckDB-first** (avisar Rapaz de la
 > desviació vs Postgres del brief) · **posicionament a decidir més tard**. KPI = calibració de
-> l'abstenció. Fases 0–3 = nucli de valor; 4–5 tancades darrere la porta de la Fase 3. En marxa: **Fase
-> 0a** (substrat DuckDB a `packages/geo-rag`, sense tocar `packages/ai`). Direcció sota
+> l'abstenció. Fases 0–3 = nucli de valor; 4–5 tancades darrere la porta de la Fase 3. Direcció sota
 > `strategic-director-role`: Talaia dissenya+delega+verifica adversarialment; Bea vot narratiu + pont Rapaz.
+> **Fase 0a ✅ fusionada (#215)** — substrat DuckDB dels 31 munis; repartiment real del Berguedà:
+> oficial 9 · senyal_mes 3 · senyal_menys 1 · **soroll 18**.
+> **➡️ Handoff a: Trazo (IT)** — Fase 0b (embeddings): especificació a `docs/experiment-rag-geo/01-embeddings-infra.md`.
+> Recomanació: stack **local** (torch CPU + sentence-transformers + `multilingual-e5-small`), obligat pel
+> sub-experiment estrella (MC-Dropout) i pel CI offline sense secrets. Cal el vistiplau de la Trazo per instal·lar.
 
 > **🧭 RUMBO DECIDIT (2026-06-27).** Després de l'arc «fer-ho bé» (dada honesta a tot CAT) i del dossier
 > de consultoria, la **consultoria externa** ha reconduït el projecte. Decisió a
