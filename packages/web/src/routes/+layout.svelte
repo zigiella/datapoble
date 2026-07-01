@@ -91,9 +91,6 @@
 		<a href={localizeHref('/mapa')} class:on={isActive('/mapa')} aria-current={isActive('/mapa') ? 'page' : undefined}>
 			<span>{m.nav_mapa()}</span>
 		</a>
-		<a href={localizeHref('/pregunta-li')} class:on={isActive('/pregunta-li')} aria-current={isActive('/pregunta-li') ? 'page' : undefined}>
-			<span>{m.nav_preguntale()}</span>
-		</a>
 		<a href={localizeHref('/metodologia')} class:on={isActive('/metodologia')} aria-current={isActive('/metodologia') ? 'page' : undefined}>
 			<span>{m.foot_link_method_to()}</span>
 		</a>
@@ -118,7 +115,7 @@
 	{#if menuOpen}
 		<div id="ds-drawer" class="ds-drawer">
 			<a href={localizeHref('/')} class:on={isActive('/')} onclick={() => (menuOpen = false)}>{m.nav_inici()}</a>
-			<a href={localizeHref('/mapa')} class:on={isActive('/mapa')} onclick={() => (menuOpen = false)}>{m.nav_mapa()}</a>			<a href={localizeHref('/pregunta-li')} class:on={isActive('/pregunta-li')} onclick={() => (menuOpen = false)}>{m.nav_preguntale()}</a>
+			<a href={localizeHref('/mapa')} class:on={isActive('/mapa')} onclick={() => (menuOpen = false)}>{m.nav_mapa()}</a>
 			<a href={localizeHref('/metodologia')} class:on={isActive('/metodologia')} onclick={() => (menuOpen = false)}>{m.foot_link_method_to()}</a>
 			<a href={localizeHref('/glossari')} class:on={isActive('/glossari')} onclick={() => (menuOpen = false)}>{m.foot_link_glossary()}</a>
 			<div class="ds-drawer__ctl"><LangSwitcher /><ThemeSwitcher /></div>
@@ -162,7 +159,7 @@
 			<ul>
 				<li><span class="foot-inert" aria-disabled="true">{m.foot_about_who()}</span></li>
 				<li><span class="foot-inert" aria-disabled="true">{m.foot_link_contract()}</span></li>
-				<li><a href={localizeHref('/pregunta-li')}>{m.foot_about_ask()}</a></li>
+				<li><a href={localizeHref('/pregunta-li')}>{m.foot_about_ask()} · {m.pl_experimental()}</a></li>
 			</ul>
 		</div>
 		<div class="ap-foot__ctl">

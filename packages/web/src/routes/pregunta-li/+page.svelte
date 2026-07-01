@@ -193,7 +193,7 @@
 		/>
 		<div class="ap-hero__in">
 			<p class="ap-eyebrow">
-				<span>{m.pl_eyebrow_a()}</span><span class="sep">/</span><span>{m.pl_eyebrow_b()}</span>
+				<span>{m.pl_eyebrow_a()}</span><span class="sep">/</span><span>{m.pl_eyebrow_b()}</span><span class="pl-exp">{m.pl_experimental()}</span>
 			</p>
 			<h1>{m.pl_h1_a()} <span class="q">{m.pl_h1_b()}</span>.</h1>
 			<p class="lede">{m.pl_lede()}</p>
@@ -425,6 +425,18 @@
 
 	.ds-sec.first {
 		border-top: none;
+	}
+
+	/* Distintiu «experimental» a la capçalera: pilot honest fins que l'experiment reconstrueixi el motor. */
+	.pl-exp {
+		margin-left: 8px;
+		padding: 1px 8px;
+		border: 1px solid var(--dp-border-strong);
+		border-radius: var(--dp-radius-full);
+		font-size: 0.6rem;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--dp-text-muted);
 	}
 
 	/* ── Formulari ───────────────────────────────────────────────────────────── */

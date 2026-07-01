@@ -51,7 +51,14 @@
 	// Layout beeswarm: ordena per gap, col·loca per bins (amplada = punt) i apila alternant amunt/avall.
 	const placed = $derived.by(() => {
 		const pts = Object.values(munis)
-			.filter((mu) => mu.padro && mu.padro > 0)
+			.filter((mu) => {
+				if (!(mu.padro && mu.padro > 0)) return false;
+				// Tres registres a la doctrina, DOS a la tinta: oficial (té ETCA) i senyal (l'interval
+				// exclou el padró) es dibuixen; el SOROLL (l'interval inclou el padró) és ABSÈNCIA, no
+				// un tercer color — no afirmem un gap que no es distingeix del nostre marge.
+				if (mu.etca_oficial != null) return true;
+				return mu.rang_baix > (mu.padro as number) || mu.rang_alt < (mu.padro as number);
+			})
 			.map((mu) => {
 				// Tots els punts ploten la NOSTRA estimació de pernocta (la mètrica distintiva): a l'aparador
 				// no la cedim a la font oficial, la mostrem AL COSTAT. El «ple» NO vol dir «aquí va la xifra
