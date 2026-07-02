@@ -19,10 +19,15 @@ publicable per si sola.*
 > del registre oficial són números repetits presentats com a específics del municipi?
 > **Fase 1 ✅ fusionada (#221)** — recuperador espacial (filtre dur → híbrid RRF → detecció d'empat).
 > Contracte `03-fase1-recuperador.md`. Eval 8/8; abstenció d'ordenar 4/4 (col·lisió oficial + soroll reportades com a empat).
-> **Fase 2 EN MARXA (herència d'estatut · distingibilitat)** — contracte `docs/experiment-rag-geo/04-fase2-distingibilitat.md`.
-> **Una sola regla** per als dos usos: modulació per σ sobre un muni (`S=μ−λσ`, to graduat) i ordenació entre munis
-> (comparació). No distingibles si les bandes p10–p90 se solapen → abstenció d'ordenar. La col·lisió exacta de la
-> Fase 1 = el cas límit (distància zero), sense codi duplicat. Regla fixada abans de la Fase 3 (que la mesura).
+> **Fase 2 ✅ fusionada (#223)** — herència d'estatut: una regla de distingibilitat (solapament de bandes) per
+> als dos usos (modulació per σ + comparació). Contracte `04-fase2-distingibilitat.md`. eval2 5/5.
+> **Fase 3 EN MARXA (KPI d'abstenció · l'única fase que pot dir que ens equivoquem)** — contracte
+> `docs/experiment-rag-geo/06-fase3-kpi-abstencio.md`. Tres coses congelades abans de veure cap número:
+> composició del banc (30–50 Q, ≥1/3 abstenció amb les tres menes de no distingibilitat + contestables + fora de
+> catàleg), **etiquetatge daurat de Bea a mà (mai un model)**, i nivells d'èxit fixats per endavant. Mètrica:
+> abstention recall/precision/F1 + els dos errors separats. **Es prefereix un negatiu honest a un positiu fabricat.**
+> Talaia redacta preguntes+fets i codifica la mètrica; **Bea etiqueta, fixa els nivells i congela**; després es corre.
+> **El draft del paper** (`05-paper-esborrany.md`) NO es commiteija encara (Bea el llegeix).
 
 > **🧭 RUMBO DECIDIT (2026-06-27).** Després de l'arc «fer-ho bé» (dada honesta a tot CAT) i del dossier
 > de consultoria, la **consultoria externa** ha reconduït el projecte. Decisió a
