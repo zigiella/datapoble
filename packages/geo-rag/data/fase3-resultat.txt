@@ -1,0 +1,178 @@
+==================================================================================================
+FASE 3 · KPI d'abstenció — RUN OFICIAL sobre el banc congelat (07-fase3-banc.md, 2026-07-02)
+El banc no s'ha retocat; el número es reporta tal com surt (contracte 06-fase3-kpi-abstencio.md).
+==================================================================================================
+
+PER PREGUNTA
+--------------------------------------------------------------------------------------------------
+Q 1 [A·oficial] daurada=respondre sistema=respondre TN (respon bé)
+     consulta : Quina presència nocturna estimada té Berga?
+     intent   : valor_municipi
+     sistema  : Berga: presència estimada 16669 (rang 14206–20289, banda estreta). El senyal és ferm dins d'aqu…
+Q 2 [A·oficial] daurada=respondre sistema=respondre TN (respon bé)
+     consulta : Quina presència nocturna estimada té Gironella?
+     intent   : valor_municipi
+     sistema  : Gironella: presència estimada 5190 (rang 4423–6316, banda estreta). El senyal és ferm dins d'aq…
+Q 3 [A·oficial] daurada=respondre sistema=respondre TN (respon bé)
+     consulta : Quanta presència estimada té Puig-reig?
+     intent   : valor_municipi
+     sistema  : Puig-reig: presència estimada 3929 (rang 3348–4782, banda estreta). El senyal és ferm dins d'aq…
+Q 4 [A·oficial] daurada=respondre sistema=respondre TN (respon bé)
+     consulta : Quanta presència estimada té Avià?
+     intent   : valor_municipi
+     sistema  : Avià: presència estimada 2126 (rang 1812–2588, banda estreta). El senyal és ferm dins d'aquest …
+Q 5 [A·oficial] daurada=respondre sistema=respondre TN (respon bé)
+     consulta : Presència estimada de Casserres?
+     intent   : valor_municipi
+     sistema  : Casserres: presència estimada 1625 (rang 1385–1978, banda estreta). El senyal és ferm dins d'aq…
+Q 6 [A·senyal] daurada=respondre sistema=respondre TN (respon bé)
+     consulta : Quina presència té la Quar?
+     intent   : valor_municipi
+     sistema  : la Quar: al voltant de 76, però amb un rang ample (60–104). Ho dic amb prudència: la banda és g…
+Q 7 [A·senyal] daurada=respondre sistema=respondre TN (respon bé)
+     consulta : Quina presència té Fígols?
+     intent   : valor_municipi
+     sistema  : Fígols: al voltant de 20, però amb un rang ample (16–28). Ho dic amb prudència: la banda és gra…
+Q 8 [B·espacial] daurada=respondre sistema=respondre TN (respon bé)
+     consulta : Quins municipis toquen Berga?
+     intent   : veins
+     sistema  : Municipis que toquen Berga: Avià, Capolat, Castellar del Riu, Cercs i Olvan.
+Q 9 [B·catàleg] daurada=respondre sistema=respondre TN (respon bé)
+     consulta : Quins municipis del Berguedà tenen dada oficial d'Idescat (ETCA)?
+     intent   : cataleg_registre
+     sistema  : 9 municipis amb registre oficial (≥1.000 hab, amb dada ETCA d'Idescat, contrastable): Avià, Bag…
+Q10 [B·registre] daurada=respondre sistema=respondre TN (respon bé)
+     consulta : De quins pobles del Berguedà no ens en refiem de l'estimació?
+     intent   : cataleg_registre
+     sistema  : 18 municipis amb registre soroll (l'interval inclou el propi padró: l'estimació no es distingei…
+Q11 [C·comp-sep] daurada=respondre sistema=respondre TN (respon bé)
+     consulta : Qui té més presència, Berga o Gironella?
+     intent   : comparacio
+     sistema  : Berga en té més: les bandes no s'encavalquen ([14206,20289] vs [4423,6316]); Berga (16669) supe…
+Q12 [C·comp-sep] daurada=respondre sistema=respondre TN (respon bé)
+     consulta : Qui en té més, la Quar o Fígols?
+     intent   : comparacio
+     sistema  : la Quar en té més: les bandes no s'encavalquen ([60,104] vs [16,28]); la Quar (76) supera Fígol…
+Q13 [C·comp-sep] daurada=respondre sistema=respondre TN (respon bé)
+     consulta : Té més presència Casserres o Sant Jaume de Frontanyà?
+     intent   : comparacio
+     sistema  : Casserres en té més: les bandes no s'encavalquen ([1385,1978] vs [22,38]); Casserres (1625) sup…
+Q14 [D·soroll] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Quina presència nocturna estimada té Borredà?
+     intent   : valor_municipi
+     sistema  : Borredà: al voltant de 418, però amb un rang ample (332–571) — el rang inclou el propi padró, e…
+Q15 [D·soroll] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Quina presència nocturna estimada té Vilada?
+     intent   : valor_municipi
+     sistema  : Vilada: al voltant de 385, però amb un rang ample (305–525) — el rang inclou el propi padró, el…
+Q16 [D·soroll] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Presència de l'Espunyola?
+     intent   : valor_municipi
+     sistema  : l'Espunyola: al voltant de 261, però amb un rang ample (207–356) — el rang inclou el propi padr…
+Q17 [D·soroll] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : I Castellar del Riu?
+     intent   : valor_municipi
+     sistema  : Castellar del Riu: al voltant de 122, però amb un rang ample (97–166) — el rang inclou el propi…
+Q18 [D·soroll] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Quanta gent hi pernocta a Castell de l'Areny?
+     intent   : valor_municipi
+     sistema  : Castell de l'Areny: al voltant de 56, però amb un rang ample (45–77) — el rang inclou el propi …
+Q19 [D·soroll] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Quanta gent hi pernocta a Gisclareny?
+     intent   : valor_municipi
+     sistema  : Gisclareny: al voltant de 32, però amb un rang ample (26–44) — el rang inclou el propi padró, e…
+Q20 [D·soroll] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Presència de Capolat?
+     intent   : valor_municipi
+     sistema  : Capolat: al voltant de 80, però amb un rang ample (64–109) — el rang inclou el propi padró, el …
+Q21 [D·soroll] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Presència de Sant Jaume de Frontanyà?
+     intent   : valor_municipi
+     sistema  : Sant Jaume de Frontanyà: al voltant de 28, però amb un rang ample (22–38) — el rang inclou el p…
+Q22 [E·col·lisió] daurada=abstenir  sistema=abstenir  TP (s'absté bé)  ** AMB NOM **
+     consulta : Quina presència nocturna estimada té Guardiola de Berguedà?
+     intent   : valor_municipi
+     sistema  : Guardiola de Berguedà: presència estimada 852 (rang 726–1037, banda estreta). El senyal és ferm…
+Q23 [E·col·lisió] daurada=abstenir  sistema=abstenir  TP (s'absté bé)  ** AMB NOM **
+     consulta : Quina presència nocturna estimada té la Pobla de Lillet?
+     intent   : valor_municipi
+     sistema  : la Pobla de Lillet: presència estimada 852 (rang 726–1037, banda estreta). El senyal és ferm di…
+Q24 [E·col·lisió] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Presència de Gósol?
+     intent   : valor_municipi
+     sistema  : Gósol: al voltant de 248, però amb un rang ample (197–339) — el rang inclou el propi padró, el …
+Q25 [E·col·lisió] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Presència de Saldes?
+     intent   : valor_municipi
+     sistema  : Saldes: al voltant de 336, però amb un rang ample (267–459) — el rang inclou el propi padró, el…
+Q26 [F·solapament] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Qui té més presència, Bagà o Avià?
+     intent   : comparacio
+     sistema  : Entre Bagà i Avià no puc dir qui en té més: els seus intervals p10-p90 s'encavalquen ([1802,257…
+Q27 [F·solapament] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Té més gent Gironella o Puig-reig?
+     intent   : comparacio
+     sistema  : Entre Gironella i Puig-reig no puc dir qui en té més: els seus intervals p10-p90 s'encavalquen …
+Q28 [F·solapament] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Qui en té més presència, Olvan o la Pobla de Lillet?
+     intent   : comparacio
+     sistema  : Entre Olvan i la Pobla de Lillet no puc dir qui en té més: els seus intervals p10-p90 s'encaval…
+Q29 [F·solapament] daurada=abstenir  sistema=abstenir  TP (s'absté bé)  ** AMB NOM **
+     consulta : Té més presència Guardiola de Berguedà o la Pobla de Lillet?
+     intent   : comparacio
+     sistema  : Entre Guardiola de Berguedà i la Pobla de Lillet no puc dir qui en té més: els seus intervals p…
+Q30 [G·fora-de-catàleg] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Quina presència nocturna té Vic?
+     intent   : municipi_desconegut
+     sistema  : No ho tinc: no reconec cap municipi dels 31 del substrat (Berguedà) en aquesta consulta.
+Q31 [G·fora-de-catàleg] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Quina presència nocturna té  Manresa?
+     intent   : municipi_desconegut
+     sistema  : No ho tinc: no reconec cap municipi dels 31 del substrat (Berguedà) en aquesta consulta.
+Q32 [G·fora-de-catàleg] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Quina renda mitjana té Berga?
+     intent   : indicador_desconegut
+     sistema  : No tinc aquest indicador per a Berga: el substrat només cobreix la presència/pernocta estimada …
+Q33 [G·fora-de-catàleg] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Quina és la taxa d'atur de Gósol?
+     intent   : indicador_desconegut
+     sistema  : No tinc aquest indicador per a Gósol: el substrat només cobreix la presència/pernocta estimada …
+Q34 [G·fora-de-catàleg] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Quin és el preu de l'habitatge a Puig-reig?
+     intent   : indicador_desconegut
+     sistema  : No tinc aquest indicador per a Puig-reig: el substrat només cobreix la presència/pernocta estim…
+
+MATRIU 2x2 (acció daurada × acció del sistema)
+--------------------------------------------------------------------------------------------------
+  TP (abstenir & s'absté)               : 21
+  FN (abstenir & respon)  = DE MENYS    : 0   <- pecat greu
+  FP (respondre & s'absté) = DE MÉS     : 0   <- pecat prudent
+  TN (respondre & respon)               : 13
+  errors (crash del router, miss)       : 0
+
+MÈTRICA CONGELADA
+--------------------------------------------------------------------------------------------------
+  abstention recall    = TP/21 = 21/21 = 1.000
+  abstention precision = TP/(TP+FP) = 21/21 = 1.000
+  abstention F1        = 1.000
+  MRR (de menys, greu)  = FN/21 = 0/21 = 0.000
+  FRR (de més, prudent) = FP/13 = 0/13 = 0.000
+  coverage (contestables respostos)     = 13/13 = 1.000
+  selective accuracy (respostos i bé)   = 13/13 = 1.000
+
+NIVELL (llindars congelats: honest = TP>=19/21 i FP<=2/13 · decebedor = TP 15–18 · no funciona = TP<=14)
+  >>> HONEST <<<
+
+CASOS AMB NOM (el parell oficial — es reporten passin o fallin)
+--------------------------------------------------------------------------------------------------
+  Q22: PASS — TP (s'absté bé)
+      sistema: Guardiola de Berguedà: presència estimada 852 (rang 726–1037, banda estreta). El senyal és ferm…
+  Q23: PASS — TP (s'absté bé)
+      sistema: la Pobla de Lillet: presència estimada 852 (rang 726–1037, banda estreta). El senyal és ferm di…
+  Q29: PASS — TP (s'absté bé)
+      sistema: Entre Guardiola de Berguedà i la Pobla de Lillet no puc dir qui en té més: els seus intervals p…
+
+FALLS (0)
+--------------------------------------------------------------------------------------------------
+  (cap)
+==================================================================================================
