@@ -34,7 +34,15 @@ publicable per si sola.*
 > 2×2 recomptada a mà. **Caveat de mirall (escrit al banc):** les daurades deriven de la mateixa doctrina que el
 > sistema implementa → el 21/21 demostra que la canonada APLICA la doctrina sense fuites d'extrem a extrem, no
 > que la doctrina sigui certa; per endurir-lo: paràfrasis adversarials del banc + segon etiquetador + l'estrella.
-> **Nucli de valor (fases 0–3) TANCAT.** Portes de 4–5 desbloquejades (el número és sobre la taula); ★ pendent.
+> **Nucli de valor (fases 0–3) TANCAT.**
+> **CAPA GENERATIVA (contracte de la Rapaz, 2026-07-02)** — `08-contracte-capa-generativa.md`, fusionat abans de
+> codificar. El primer component que POT DESOBEIR: generador LLM + validació dura (SQL, cap autoritat sobre números)
+> + validació cega (2n model sense veure el raonament). Prompt = sistema congelat (dev set separat; el banc només a
+> la passada oficial) · N passades (proposta 5), distribució sencera, mai la millor · errors CLASSIFICATS (taxonomia
+> de com la fluïdesa ataca la doctrina) · intervencions de la gàbia ≠ mèrit del generador. **El número: el DELTA
+> determinista (21/21) vs generatiu — el cost de la fluïdesa amb σ real.** Nivells de Bea AMB gàbia i SENSE, abans
+> de la passada oficial. **ORDRE:** 1) paràfrasis adversarials del recuperador PRIMER (Talaia esborrany → Bea
+> congela) · 2) capa generativa · ★ estrella independent (no es bloqueja) · fases 4–5 tancades fins al delta.
 > **El draft del paper** (`05-paper-esborrany.md`) NO es commiteija encara (Bea el llegeix).
 
 > **🧭 RUMBO DECIDIT (2026-06-27).** Després de l'arc «fer-ho bé» (dada honesta a tot CAT) i del dossier
