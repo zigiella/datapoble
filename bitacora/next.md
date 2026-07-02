@@ -26,7 +26,10 @@ publicable per si sola.*
 > composició del banc (30–50 Q, ≥1/3 abstenció amb les tres menes de no distingibilitat + contestables + fora de
 > catàleg), **etiquetatge daurat de Bea a mà (mai un model)**, i nivells d'èxit fixats per endavant. Mètrica:
 > abstention recall/precision/F1 + els dos errors separats. **Es prefereix un negatiu honest a un positiu fabricat.**
-> Talaia redacta preguntes+fets i codifica la mètrica; **Bea etiqueta, fixa els nivells i congela**; després es corre.
+> **BANC CONGELAT (2026-07-02)** a `07-fase3-banc.md`: 34 Q (13 contestables + 21 abstenció), daurades revisades
+> i confirmades per Bea (preguntes autocontingudes; ⚑ confirmades), nivells fixats (honest ≥19/21 + FRR ≤2/13 ·
+> decebedor 15–18/21 · no-funciona ≤14/21). Següent: arnès de mesura (router genèric + scorer, SENSE tocar la
+> doctrina ni especialitzar al banc) → córrer UN cop → reportar el número tal com surti (Q22/23/29 amb nom).
 > **El draft del paper** (`05-paper-esborrany.md`) NO es commiteija encara (Bea el llegeix).
 
 > **🧭 RUMBO DECIDIT (2026-06-27).** Després de l'arc «fer-ho bé» (dada honesta a tot CAT) i del dossier
