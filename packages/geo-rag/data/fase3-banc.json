@@ -1,0 +1,262 @@
+[
+  {
+    "id": 1,
+    "block": "A",
+    "kind": "oficial",
+    "query": "Quina presència nocturna estimada té Berga?",
+    "golden": { "action": "respondre", "expect": { "value": 16669 } }
+  },
+  {
+    "id": 2,
+    "block": "A",
+    "kind": "oficial",
+    "query": "Quina presència nocturna estimada té Gironella?",
+    "golden": { "action": "respondre", "expect": { "value": 5190 } }
+  },
+  {
+    "id": 3,
+    "block": "A",
+    "kind": "oficial",
+    "query": "Quanta presència estimada té Puig-reig?",
+    "golden": { "action": "respondre", "expect": { "value": 3929 } }
+  },
+  {
+    "id": 4,
+    "block": "A",
+    "kind": "oficial",
+    "query": "Quanta presència estimada té Avià?",
+    "golden": { "action": "respondre", "expect": { "value": 2126 } }
+  },
+  {
+    "id": 5,
+    "block": "A",
+    "kind": "oficial",
+    "query": "Presència estimada de Casserres?",
+    "golden": { "action": "respondre", "expect": { "value": 1625 } }
+  },
+  {
+    "id": 6,
+    "block": "A",
+    "kind": "senyal",
+    "query": "Quina presència té la Quar?",
+    "golden": { "action": "respondre", "expect": { "value": 76 } }
+  },
+  {
+    "id": 7,
+    "block": "A",
+    "kind": "senyal",
+    "query": "Quina presència té Fígols?",
+    "golden": { "action": "respondre", "expect": { "value": 20 } }
+  },
+  {
+    "id": 8,
+    "block": "B",
+    "kind": "espacial",
+    "query": "Quins municipis toquen Berga?",
+    "golden": {
+      "action": "respondre",
+      "expect": { "list": ["08011", "08045", "08050", "08268", "08144"] }
+    }
+  },
+  {
+    "id": 9,
+    "block": "B",
+    "kind": "catàleg",
+    "query": "Quins municipis del Berguedà tenen dada oficial d'Idescat (ETCA)?",
+    "golden": {
+      "action": "respondre",
+      "expect": {
+        "list": [
+          "08022", "08092", "08175", "08016", "08011",
+          "08049", "08268", "08099", "08166"
+        ]
+      }
+    }
+  },
+  {
+    "id": 10,
+    "block": "B",
+    "kind": "registre",
+    "query": "De quins pobles del Berguedà no ens en refiem de l'estimació?",
+    "golden": {
+      "action": "respondre",
+      "expect": {
+        "list": [
+          "08024", "08045", "08050", "08052", "08057", "08078",
+          "08093", "08130", "08132", "08142", "08144", "08190",
+          "08216", "08293", "08299", "08308", "08903", "25100"
+        ]
+      }
+    }
+  },
+  {
+    "id": 11,
+    "block": "C",
+    "kind": "comp-sep",
+    "query": "Qui té més presència, Berga o Gironella?",
+    "golden": { "action": "respondre", "expect": { "winner": "08022" } }
+  },
+  {
+    "id": 12,
+    "block": "C",
+    "kind": "comp-sep",
+    "query": "Qui en té més, la Quar o Fígols?",
+    "golden": { "action": "respondre", "expect": { "winner": "08177" } }
+  },
+  {
+    "id": 13,
+    "block": "C",
+    "kind": "comp-sep",
+    "query": "Té més presència Casserres o Sant Jaume de Frontanyà?",
+    "golden": { "action": "respondre", "expect": { "winner": "08049" } }
+  },
+  {
+    "id": 14,
+    "block": "D",
+    "kind": "soroll",
+    "query": "Quina presència nocturna estimada té Borredà?",
+    "golden": { "action": "abstenir" }
+  },
+  {
+    "id": 15,
+    "block": "D",
+    "kind": "soroll",
+    "query": "Quina presència nocturna estimada té Vilada?",
+    "golden": { "action": "abstenir" }
+  },
+  {
+    "id": 16,
+    "block": "D",
+    "kind": "soroll",
+    "query": "Presència de l'Espunyola?",
+    "golden": { "action": "abstenir" }
+  },
+  {
+    "id": 17,
+    "block": "D",
+    "kind": "soroll",
+    "query": "I Castellar del Riu?",
+    "golden": { "action": "abstenir" }
+  },
+  {
+    "id": 18,
+    "block": "D",
+    "kind": "soroll",
+    "query": "Quanta gent hi pernocta a Castell de l'Areny?",
+    "golden": { "action": "abstenir" }
+  },
+  {
+    "id": 19,
+    "block": "D",
+    "kind": "soroll",
+    "query": "Quanta gent hi pernocta a Gisclareny?",
+    "golden": { "action": "abstenir" }
+  },
+  {
+    "id": 20,
+    "block": "D",
+    "kind": "soroll",
+    "query": "Presència de Capolat?",
+    "golden": { "action": "abstenir" }
+  },
+  {
+    "id": 21,
+    "block": "D",
+    "kind": "soroll",
+    "query": "Presència de Sant Jaume de Frontanyà?",
+    "golden": { "action": "abstenir" }
+  },
+  {
+    "id": 22,
+    "block": "E",
+    "kind": "col·lisió",
+    "query": "Quina presència nocturna estimada té Guardiola de Berguedà?",
+    "golden": { "action": "abstenir", "named": true }
+  },
+  {
+    "id": 23,
+    "block": "E",
+    "kind": "col·lisió",
+    "query": "Quina presència nocturna estimada té la Pobla de Lillet?",
+    "golden": { "action": "abstenir", "named": true }
+  },
+  {
+    "id": 24,
+    "block": "E",
+    "kind": "col·lisió",
+    "query": "Presència de Gósol?",
+    "golden": { "action": "abstenir" }
+  },
+  {
+    "id": 25,
+    "block": "E",
+    "kind": "col·lisió",
+    "query": "Presència de Saldes?",
+    "golden": { "action": "abstenir" }
+  },
+  {
+    "id": 26,
+    "block": "F",
+    "kind": "solapament",
+    "tag": "oficial",
+    "query": "Qui té més presència, Bagà o Avià?",
+    "golden": { "action": "abstenir" }
+  },
+  {
+    "id": 27,
+    "block": "F",
+    "kind": "solapament",
+    "tag": "oficial",
+    "query": "Té més gent Gironella o Puig-reig?",
+    "golden": { "action": "abstenir" }
+  },
+  {
+    "id": 28,
+    "block": "F",
+    "kind": "solapament",
+    "query": "Qui en té més presència, Olvan o la Pobla de Lillet?",
+    "golden": { "action": "abstenir" }
+  },
+  {
+    "id": 29,
+    "block": "F",
+    "kind": "solapament",
+    "query": "Té més presència Guardiola de Berguedà o la Pobla de Lillet?",
+    "golden": { "action": "abstenir", "named": true }
+  },
+  {
+    "id": 30,
+    "block": "G",
+    "kind": "fora-de-catàleg",
+    "query": "Quina presència nocturna té Vic?",
+    "golden": { "action": "abstenir" }
+  },
+  {
+    "id": 31,
+    "block": "G",
+    "kind": "fora-de-catàleg",
+    "query": "Quina presència nocturna té  Manresa?",
+    "golden": { "action": "abstenir" }
+  },
+  {
+    "id": 32,
+    "block": "G",
+    "kind": "fora-de-catàleg",
+    "query": "Quina renda mitjana té Berga?",
+    "golden": { "action": "abstenir" }
+  },
+  {
+    "id": 33,
+    "block": "G",
+    "kind": "fora-de-catàleg",
+    "query": "Quina és la taxa d'atur de Gósol?",
+    "golden": { "action": "abstenir" }
+  },
+  {
+    "id": 34,
+    "block": "G",
+    "kind": "fora-de-catàleg",
+    "query": "Quin és el preu de l'habitatge a Puig-reig?",
+    "golden": { "action": "abstenir" }
+  }
+]

@@ -9,6 +9,7 @@ from datapoble_geo_rag.compare import answer, answer_comparison, compare
 from datapoble_geo_rag.descriptions import generate_descriptions
 from datapoble_geo_rag.distinguish import distinguishable, overlaps
 from datapoble_geo_rag.retrieval import detect_anchor, detect_anchors, retrieve
+from datapoble_geo_rag.router import route
 from datapoble_geo_rag.search import load_embeddings, semantic_search
 
 # NOTE: embeddings.py is intentionally NOT imported here — it is the only torch module,
@@ -30,4 +31,5 @@ __all__ = [
     "compare",
     "answer",
     "answer_comparison",
+    "route",
 ]

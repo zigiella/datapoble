@@ -26,10 +26,15 @@ publicable per si sola.*
 > composició del banc (30–50 Q, ≥1/3 abstenció amb les tres menes de no distingibilitat + contestables + fora de
 > catàleg), **etiquetatge daurat de Bea a mà (mai un model)**, i nivells d'èxit fixats per endavant. Mètrica:
 > abstention recall/precision/F1 + els dos errors separats. **Es prefereix un negatiu honest a un positiu fabricat.**
-> **BANC CONGELAT (2026-07-02)** a `07-fase3-banc.md`: 34 Q (13 contestables + 21 abstenció), daurades revisades
-> i confirmades per Bea (preguntes autocontingudes; ⚑ confirmades), nivells fixats (honest ≥19/21 + FRR ≤2/13 ·
-> decebedor 15–18/21 · no-funciona ≤14/21). Següent: arnès de mesura (router genèric + scorer, SENSE tocar la
-> doctrina ni especialitzar al banc) → córrer UN cop → reportar el número tal com surti (Q22/23/29 amb nom).
+> **BANC CONGELAT (2026-07-02)** a `07-fase3-banc.md` (34 Q, daurades de Bea, nivells fixats). **RUN OFICIAL
+> (2026-07-02): recall d'abstenció 21/21 (1,000) · de-menys (greu) 0/21 · de-més (prudent) 0/13 · selective
+> accuracy 13/13 → NIVELL HONEST.** Q22/23/29 (parell oficial) PASS amb la declaració de col·lisió + ETCA al text.
+> Resultat literal a `packages/geo-rag/data/fase3-resultat.txt`. Verificació adversarial de Talaia: doctrina
+> intacta, banc intacte, cap literal del banc al codi (sondes inventades → abstenció genèrica), determinista,
+> 2×2 recomptada a mà. **Caveat de mirall (escrit al banc):** les daurades deriven de la mateixa doctrina que el
+> sistema implementa → el 21/21 demostra que la canonada APLICA la doctrina sense fuites d'extrem a extrem, no
+> que la doctrina sigui certa; per endurir-lo: paràfrasis adversarials del banc + segon etiquetador + l'estrella.
+> **Nucli de valor (fases 0–3) TANCAT.** Portes de 4–5 desbloquejades (el número és sobre la taula); ★ pendent.
 > **El draft del paper** (`05-paper-esborrany.md`) NO es commiteija encara (Bea el llegeix).
 
 > **🧭 RUMBO DECIDIT (2026-06-27).** Després de l'arc «fer-ho bé» (dada honesta a tot CAT) i del dossier
