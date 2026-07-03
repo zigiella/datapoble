@@ -166,14 +166,22 @@ the delta against the deterministic 21/21 — not the σ-vs-σ star sub-experime
 MC-Dropout on local embeddings and needs no API) needs an **LLM generation +
 blind-validation** step, via the Anthropic API — local runs only, never in per-PR CI.
 
-- **Models** (exact IDs, pinned snapshots — don't append date suffixes):
-  - **Generator:** `claude-sonnet-5` — the realistic production-tier model; default
-    sampling (stochastic; N=5 passes capture it). Intro pricing $2/$10 per MTok until
-    2026-08-31, then $3/$15 (Sonnet 4.6 is now legacy).
-  - **Blind validator:** `claude-haiku-4-5` at `temperature=0` — a **different** model
-    (less-correlated blind spots), cheap, consistent. Haiku 4.5 / Sonnet 4.6 still accept
-    `temperature`; Opus 4.7+/Fable 5 reject it. Don't set `effort` on Haiku — it errors.
-- **Isolation:** the `[generativa]` extra (`anthropic`) **never** reaches Render (which
+- **Access: via OpenRouter** (decision Bea 2026-07-03 — the key already exists and
+  `packages/ai` uses the same pattern: `openai` SDK with
+  `base_url="https://openrouter.ai/api/v1"`). Slugs verified live on OpenRouter:
+  - **Generator:** `anthropic/claude-sonnet-5` — the realistic production-tier model;
+    default sampling (stochastic; N=5 passes capture it). $2/$10 per MTok on OpenRouter
+    today (Anthropic intro pricing passed through until 2026-08-31, then $3/$15;
+    Sonnet 4.6 is now legacy).
+  - **Blind validator:** `anthropic/claude-haiku-4.5` at `temperature=0` — a
+    **different** model (less-correlated blind spots), cheap, consistent; $1/$5 per
+    MTok; `temperature` in its supported params. Don't set `effort` on Haiku.
+  - **Pin the provider to Anthropic** on every call (OpenRouter provider routing:
+    `provider: {"order": ["anthropic"], "allow_fallbacks": false}`) — OpenRouter also
+    serves these via Vertex/Bedrock, and the experiment must measure one consistent
+    serving path. Log the OpenRouter generation `id`, `model` and served provider per
+    trial.
+- **Isolation:** the `[generativa]` extra (`openai`) **never** reaches Render (which
   builds only `packages/ai`), same discipline as `[embeddings]`.
 
 ### Install & key
@@ -181,20 +189,22 @@ blind-validation** step, via the Anthropic API — local runs only, never in per
 pip install -e ".[generativa]"
 cp .env.example .env      # then put the real key in .env (gitignored)
 ```
-The `anthropic` SDK reads **`ANTHROPIC_API_KEY`** from the environment automatically
-(`anthropic.Anthropic()`). Keep it in a gitignored `.env` (or `~/.secrets/`) — **never**
-in this public repo, never in logs; write raw responses to a gitignored dir.
+The harness reads **`OPENROUTER_API_KEY`** from the environment (same env var as
+`packages/ai`; the key also exists as a GitHub secret, which per-PR CI does NOT use).
+Keep it in a gitignored `.env` (or `~/.secrets/`) — **never** in this public repo,
+never in logs; write raw responses to a gitignored dir.
 
 ### Infra policy
 - **Per-PR CI stays offline:** the `geo-rag` job installs neither extra, downloads no
   weights, and **calls no API**. API-needing tests use an env guard —
-  `@pytest.mark.skipif(not os.getenv("ANTHROPIC_API_KEY"), ...)` (the analogue of
-  `importorskip("torch")`). **No GitHub Actions secret** for the key → nothing to leak.
+  `@pytest.mark.skipif(not os.getenv("OPENROUTER_API_KEY"), ...)` (the analogue of
+  `importorskip("torch")`). The existing GitHub secret is NOT wired into per-PR CI;
+  an optional manual `workflow_dispatch` for the official pass may use it later.
 - **Reproducibility → provenance, not a seed.** There is no `seed` param and
-  `temperature=0` is **not** bit-deterministic. Log per trial: `response.model`,
-  `response._request_id`, `usage`, and the pinned SDK version. The record of truth is the
-  committed per-trial JSON + raw responses — compare with tolerance / human review, not
-  byte-equality (same spirit as the embeddings artifact).
+  `temperature=0` is **not** bit-deterministic. Log per trial: the OpenRouter
+  generation `id`, returned `model` + provider, `usage`, and the pinned SDK version.
+  The record of truth is the committed per-trial JSON + raw responses — compare with
+  tolerance / human review, not byte-equality (same spirit as the embeddings artifact).
 - **Retries/limits:** the SDK's default `max_retries=2` (429/5xx/network, exponential
   backoff) is enough for ~340 calls/pass — no extra infra.
 - **Cost trim (optional):** the generator reuses a frozen prompt across passes → cache

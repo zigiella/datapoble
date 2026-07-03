@@ -14,8 +14,10 @@ Cridar **dos models d'LLM per API** des de `packages/geo-rag`, en local (mai al 
 
 | Rol | Model (ID exacte) | Preu (in/out per MTok) | Per què |
 |---|---|---|---|
-| Generador | `claude-sonnet-5` | intro **$2 / $10** fins 31-08-2026, després $3 / $15 | El nivell realista d'un «Pregunta-li» de producció: el Sonnet **actual** (4.6 ja és *legacy*). Mesurar el cost de la fluïdesa sobre un model que de debò faríem servir. Mostreig per defecte (estocàstic; N=5 el captura). |
-| Validador cec | `claude-haiku-4-5` | $1 / $5 | **Model diferent** del generador (menys punts cecs correlacionats — «dos models dient-se que sí» es mitiga amb ceguesa + diversitat), barat per a volum, i corre a `temperature=0` (jutge consistent; els models 4.5/4.6 encara accepten `temperature`). |
+| Generador | `anthropic/claude-sonnet-5` (via OpenRouter) | intro **$2 / $10** fins 31-08-2026, després $3 / $15 | El nivell realista d'un «Pregunta-li» de producció: el Sonnet **actual** (4.6 ja és *legacy*). Mesurar el cost de la fluïdesa sobre un model que de debò faríem servir. Mostreig per defecte (estocàstic; N=5 el captura). |
+| Validador cec | `anthropic/claude-haiku-4.5` (via OpenRouter) | $1 / $5 | **Model diferent** del generador (menys punts cecs correlacionats — «dos models dient-se que sí» es mitiga amb ceguesa + diversitat), barat per a volum, i corre a `temperature=0` (jutge consistent; `temperature` és als paràmetres suportats del slug, verificat en viu). |
+
+> **Decisió d'accés (Bea, 2026-07-03): VIA OPENROUTER.** La clau `OPENROUTER_API_KEY` ja existeix (secret de GitHub) i `packages/ai` ja usa el mateix patró (SDK `openai` + `base_url=https://openrouter.ai/api/v1`) → una sola relació de proveïdor, cap clau nova. **Verificat en viu (2026-07-03):** `anthropic/claude-sonnet-5` a $2/$10 i `anthropic/claude-haiku-4.5` a $1/$5 (preus d'Anthropic passats tal qual; OpenRouter cobra la seva comissió en comprar crèdit, ~5% — el total segueix sent ~2–3 $ la passada). **Requisits que això afegeix a l'arnès:** (1) **fixar el proveïdor a Anthropic** a cada crida (`provider: {"order": ["anthropic"], "allow_fallbacks": false}`) — OpenRouter també serveix aquests models via Vertex/Bedrock i l'experiment ha de mesurar un sol camí de servei; (2) provenance per trial = `id` de generació d'OpenRouter + `model` + proveïdor servit; (3) el secret de GitHub **NO es cableja al CI per-PR** (segueix offline); la passada oficial és local amb `.env`, i si mai es vol des d'Actions, serà un `workflow_dispatch` manual i explícit.
 
 *Alternativa anotada, no preregistrada:* repetir la passada amb `claude-opus-4-8` ($5/$25) com a generador «premium» seria una segona condició interessant per al paper, però NO es fa ara (multiplicar condicions abans de tenir el primer delta és soroll).
 
@@ -34,7 +36,7 @@ Cridar **dos models d'LLM per API** des de `packages/geo-rag`, en local (mai al 
 
 ## Preguntes per a la Trazo
 
-1. **Clau:** com la proveïm a la màquina (env de sessió, `.env` ignorat, gestor de secrets)? Qui la custodia i la rota?
+1. **Clau:** ~~com la proveïm a la màquina?~~ **RESOLT (Bea, 2026-07-03):** `OPENROUTER_API_KEY` — ja existeix com a secret de GitHub; per a la passada oficial local, la mateixa clau a un `.env` gitignored. Custòdia i rotació: Bea (openrouter.ai).
 2. **Extra opcional** `[generativa]` a `packages/geo-rag/pyproject.toml` amb `anthropic` pinnat — mateixa filosofia que `[embeddings]`?
 3. **Confirmació** que el job de CI continua offline i que cap workflow del repo públic pot filtrar la clau (cap secret de GitHub Actions per a això — no cal).
 4. **Límits:** el volum és trivial (~340 crides/passada) — el retry per defecte de l'SDK (2) és suficient; cap infraestructura addicional.
