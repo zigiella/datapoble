@@ -54,6 +54,12 @@ publicable per si sola.*
 > CI offline confirmat 5/5. **Correcció de Trazo acceptada:** la spec inicial de Talaia citava `sonnet-4-6` des
 > d'una taula cachejada (2026-06-04); la doc EN VIU confirma `claude-sonnet-5` actual i 4.6 *legacy*. Lliçó:
 > quan dues verificacions xoquen, mana la font viva — la pròpia verificació també caduca.
+> **Accés VIA OPENROUTER (decisió de Bea, 2026-07-03):** la clau `OPENROUTER_API_KEY` ja existeix (secret de
+> GitHub) i `packages/ai` ja usa el mateix patró (SDK `openai` + base_url d'OpenRouter). Slugs verificats en viu:
+> `anthropic/claude-sonnet-5` $2/$10 · `anthropic/claude-haiku-4.5` $1/$5 (preus passats tal qual). Extra
+> `[generativa]` → `openai==2.44.0`. Requisits: proveïdor FIXAT a Anthropic (`allow_fallbacks=false`, també el
+> serveixen Vertex/Bedrock), provenance = id de generació + model + proveïdor, i el secret NO es cableja al CI
+> per-PR (passada oficial local amb `.env`; si mai des d'Actions, `workflow_dispatch` manual).
 > **Paràfrasis:** esborrany de 68 (2 per Q, daurades HERETADES del banc congelat, 5 en castellà, fora-de-catàleg
 > sense keyword) a `09-parafrasis-adversarials.md` — **NO commitejat**, pendent de congelació de Bea.
 > **El draft del paper** (`05-paper-esborrany.md`) NO es commiteija encara (Bea el llegeix).
