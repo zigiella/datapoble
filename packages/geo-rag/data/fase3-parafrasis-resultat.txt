@@ -1,0 +1,368 @@
+==================================================================================================
+PARÀFRASIS ADVERSARIALS · RUN OFICIAL del recuperador DETERMINISTA (09-parafrasis-adversarials.md, congelat 2026-07-03)
+Daurades HERETADES del banc congelat (07). Sonda d'enduriment: resultat descriptiu, tal com surt; els nivells del 07 NO apliquen aquí.
+==================================================================================================
+
+PER PARÀFRASI
+--------------------------------------------------------------------------------------------------
+ P1a [A·oficial] daurada=respondre sistema=respondre TN (respon bé)
+     consulta : Quanta gent dorm a Berga una nit qualsevol?
+     intent   : valor_municipi
+     sistema  : Berga: presència estimada 16669 (rang 14206–20289, banda estreta). El senyal és ferm dins d'aqu…
+ P1b [A·oficial] daurada=respondre sistema=respondre TN (respon bé)
+     consulta : Quina població real calculeu per a Berga?
+     intent   : valor_municipi
+     sistema  : Berga: presència estimada 16669 (rang 14206–20289, banda estreta). El senyal és ferm dins d'aqu…
+ P2a [A·oficial] daurada=respondre sistema=respondre TN (respon bé)
+     consulta : Quanta gent hi viu de veritat, a Gironella?
+     intent   : valor_municipi
+     sistema  : Gironella: presència estimada 5190 (rang 4423–6316, banda estreta). El senyal és ferm dins d'aq…
+ P2b [es] [A·oficial] daurada=respondre sistema=respondre TN (respon bé)
+     consulta : ¿Cuánta gente calculáis que pasa la noche en Gironella?
+     intent   : valor_municipi
+     sistema  : Gironella: presència estimada 5190 (rang 4423–6316, banda estreta). El senyal és ferm dins d'aq…
+ P3a [A·oficial] daurada=respondre sistema=respondre TN (respon bé)
+     consulta : Quants habitants reals estimeu a Puig-reig?
+     intent   : valor_municipi
+     sistema  : Puig-reig: presència estimada 3929 (rang 3348–4782, banda estreta). El senyal és ferm dins d'aq…
+ P3b [A·oficial] daurada=respondre sistema=respondre TN (respon bé)
+     consulta : Quina és la vostra xifra de gent que fa nit a Puig-reig?
+     intent   : valor_municipi
+     sistema  : Puig-reig: presència estimada 3929 (rang 3348–4782, banda estreta). El senyal és ferm dins d'aq…
+ P4a [A·oficial] daurada=respondre sistema=respondre TN (respon bé)
+     consulta : Quanta població de nit té Avià segons vosaltres?
+     intent   : valor_municipi
+     sistema  : Avià: presència estimada 2126 (rang 1812–2588, banda estreta). El senyal és ferm dins d'aquest …
+ P4b [A·oficial] daurada=respondre sistema=respondre TN (respon bé)
+     consulta : Quanta gent hi ha a Avià quan es fa fosc?
+     intent   : valor_municipi
+     sistema  : Avià: presència estimada 2126 (rang 1812–2588, banda estreta). El senyal és ferm dins d'aquest …
+ P5a [A·oficial] daurada=respondre sistema=respondre TN (respon bé)
+     consulta : Quanta gent para a dormir a Casserres?
+     intent   : valor_municipi
+     sistema  : Casserres: presència estimada 1625 (rang 1385–1978, banda estreta). El senyal és ferm dins d'aq…
+ P5b [A·oficial] daurada=respondre sistema=abstenir  FP — ABSTENIR-SE DE MÉS (pecat prudent)
+     consulta : Quants residents efectius té Casserres?
+     intent   : indicador_desconegut
+     sistema  : No tinc aquest indicador per a Casserres: el substrat només cobreix la presència/pernocta estim…
+ P6a [A·senyal] daurada=respondre sistema=respondre TN (respon bé)
+     consulta : Quanta gent hi ha de veritat a la Quar?
+     intent   : valor_municipi
+     sistema  : la Quar: al voltant de 76, però amb un rang ample (60–104). Ho dic amb prudència: la banda és g…
+ P6b [A·senyal] daurada=respondre sistema=respondre TN (respon bé)
+     consulta : A la Quar hi viu més gent de la que diu el cens?
+     intent   : valor_municipi
+     sistema  : la Quar: al voltant de 76, però amb un rang ample (60–104). Ho dic amb prudència: la banda és g…
+ P7a [A·senyal] daurada=respondre sistema=respondre TN (respon bé)
+     consulta : Quanta gent queda a Fígols al vespre?
+     intent   : valor_municipi
+     sistema  : Fígols: al voltant de 20, però amb un rang ample (16–28). Ho dic amb prudència: la banda és gra…
+ P7b [A·senyal] daurada=respondre sistema=respondre TN (respon bé)
+     consulta : Fígols està més buit del que consta als papers?
+     intent   : valor_municipi
+     sistema  : Fígols: al voltant de 20, però amb un rang ample (16–28). Ho dic amb prudència: la banda és gra…
+ P8a [B·espacial] daurada=respondre sistema=abstenir  FP — ABSTENIR-SE DE MÉS (pecat prudent)
+     consulta : Amb quins pobles fa frontera Berga?
+     intent   : indicador_desconegut
+     sistema  : No tinc aquest indicador per a Berga: el substrat només cobreix la presència/pernocta estimada …
+ P8b [B·espacial] daurada=respondre sistema=abstenir  FP — ABSTENIR-SE DE MÉS (pecat prudent)
+     consulta : Quins municipis envolten Berga?
+     intent   : indicador_desconegut
+     sistema  : No tinc aquest indicador per a Berga: el substrat només cobreix la presència/pernocta estimada …
+ P9a [B·catàleg] daurada=respondre sistema=respondre TN (respon bé)
+     consulta : Per a quins pobles del Berguedà hi ha xifra oficial de població equivalent?
+     intent   : cataleg_registre
+     sistema  : 9 municipis amb registre oficial (≥1.000 hab, amb dada ETCA d'Idescat, contrastable): Avià, Bag…
+ P9b [B·catàleg] daurada=respondre sistema=abstenir  FP — ABSTENIR-SE DE MÉS (pecat prudent)
+     consulta : On podem contrastar el model amb Idescat, al Berguedà?
+     intent   : consulta_no_reconeguda
+     sistema  : No reconec la consulta: no hi detecto cap intent que el substrat pugui servir.
+P10a [B·registre] daurada=respondre sistema=abstenir  FP — ABSTENIR-SE DE MÉS (pecat prudent)
+     consulta : Quins pobles del Berguedà tenen l'estimació més fluixa?
+     intent   : municipi_desconegut
+     sistema  : No ho tinc: no reconec cap municipi dels 31 del substrat (Berguedà) en aquesta consulta.
+P10b [B·registre] daurada=respondre sistema=abstenir  FP — ABSTENIR-SE DE MÉS (pecat prudent)
+     consulta : A quins municipis del Berguedà no us creieu ni vosaltres el número?
+     intent   : indicador_desconegut
+     sistema  : No ho tinc: ni reconec cap municipi dels 31 del substrat ni l'indicador demanat és entre els qu…
+P11a [C·comp-sep] daurada=respondre sistema=respondre TN però contingut INCORRECTE
+     consulta : On hi ha més gent de nit, a Berga o a Gironella?
+     intent   : valor_municipi
+     sistema  : Berga: presència estimada 16669 (rang 14206–20289, banda estreta). El senyal és ferm dins d'aqu…
+P11b [es] [C·comp-sep] daurada=respondre sistema=respondre TN però contingut INCORRECTE
+     consulta : ¿Dónde duerme más gente, en Berga o en Gironella?
+     intent   : valor_municipi
+     sistema  : Berga: presència estimada 16669 (rang 14206–20289, banda estreta). El senyal és ferm dins d'aqu…
+P12a [C·comp-sep] daurada=respondre sistema=abstenir  FP — ABSTENIR-SE DE MÉS (pecat prudent)
+     consulta : Entre la Quar i Fígols, quin està més habitat?
+     intent   : indicador_desconegut
+     sistema  : No tinc aquest indicador per a la Quar: el substrat només cobreix la presència/pernocta estimad…
+P12b [C·comp-sep] daurada=respondre sistema=respondre TN però contingut INCORRECTE
+     consulta : Qui guanya en gent real, la Quar o Fígols?
+     intent   : valor_municipi
+     sistema  : la Quar: al voltant de 76, però amb un rang ample (60–104). Ho dic amb prudència: la banda és g…
+P13a [C·comp-sep] daurada=respondre sistema=respondre TN però contingut INCORRECTE
+     consulta : On viu més gent, a Casserres o a Sant Jaume de Frontanyà?
+     intent   : valor_municipi
+     sistema  : Casserres: presència estimada 1625 (rang 1385–1978, banda estreta). El senyal és ferm dins d'aq…
+P13b [C·comp-sep] daurada=respondre sistema=respondre TN però contingut INCORRECTE
+     consulta : Casserres és més gran que Sant Jaume de Frontanyà en població real?
+     intent   : valor_municipi
+     sistema  : Casserres: presència estimada 1625 (rang 1385–1978, banda estreta). El senyal és ferm dins d'aq…
+P14a [D·soroll] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Quanta gent fa nit a Borredà?
+     intent   : valor_municipi
+     sistema  : Borredà: al voltant de 418, però amb un rang ample (332–571) — el rang inclou el propi padró, e…
+P14b [D·soroll] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Quina és la població real de Borredà?
+     intent   : valor_municipi
+     sistema  : Borredà: al voltant de 418, però amb un rang ample (332–571) — el rang inclou el propi padró, e…
+P15a [D·soroll] daurada=abstenir  sistema=abstenir  TP però SILENCI EQUIVOCAT (esperat dada, observat catàleg)
+     consulta : Quants hi dormen, a Vilada?
+     intent   : indicador_desconegut
+     sistema  : No tinc aquest indicador per a Vilada: el substrat només cobreix la presència/pernocta estimada…
+P15b [es] [D·soroll] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : ¿Cuánta gente vive de verdad en Vilada?
+     intent   : valor_municipi
+     sistema  : Vilada: al voltant de 385, però amb un rang ample (305–525) — el rang inclou el propi padró, el…
+P16a [D·soroll] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Quanta gent hi ha a l'Espunyola de veritat?
+     intent   : valor_municipi
+     sistema  : l'Espunyola: al voltant de 261, però amb un rang ample (207–356) — el rang inclou el propi padr…
+P16b [D·soroll] daurada=abstenir  sistema=abstenir  TP però SILENCI EQUIVOCAT (esperat dada, observat catàleg)
+     consulta : Quina xifra nocturna té l'Espunyola?
+     intent   : indicador_desconegut
+     sistema  : No tinc aquest indicador per a l'Espunyola: el substrat només cobreix la presència/pernocta est…
+P17a [D·soroll] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Quanta gent viu de fet a Castellar del Riu?
+     intent   : valor_municipi
+     sistema  : Castellar del Riu: al voltant de 122, però amb un rang ample (97–166) — el rang inclou el propi…
+P17b [D·soroll] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Quants habitants reals té Castellar del Riu?
+     intent   : valor_municipi
+     sistema  : Castellar del Riu: al voltant de 122, però amb un rang ample (97–166) — el rang inclou el propi…
+P18a [D·soroll] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Quanta gent para de nit a Castell de l'Areny?
+     intent   : valor_municipi
+     sistema  : Castell de l'Areny: al voltant de 56, però amb un rang ample (45–77) — el rang inclou el propi …
+P18b [D·soroll] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Quina població efectiva té Castell de l'Areny?
+     intent   : valor_municipi
+     sistema  : Castell de l'Areny: al voltant de 56, però amb un rang ample (45–77) — el rang inclou el propi …
+P19a [D·soroll] daurada=abstenir  sistema=abstenir  TP però SILENCI EQUIVOCAT (esperat dada, observat catàleg)
+     consulta : Quants són a Gisclareny quan cau la nit?
+     intent   : indicador_desconegut
+     sistema  : No tinc aquest indicador per a Gisclareny: el substrat només cobreix la presència/pernocta esti…
+P19b [D·soroll] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Quanta gent real hi ha a Gisclareny?
+     intent   : valor_municipi
+     sistema  : Gisclareny: al voltant de 32, però amb un rang ample (26–44) — el rang inclou el propi padró, e…
+P20a [D·soroll] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Quanta gent hi ha a Capolat en realitat?
+     intent   : valor_municipi
+     sistema  : Capolat: al voltant de 80, però amb un rang ample (64–109) — el rang inclou el propi padró, el …
+P20b [D·soroll] daurada=abstenir  sistema=abstenir  TP però SILENCI EQUIVOCAT (esperat dada, observat catàleg)
+     consulta : Quants dormen a Capolat?
+     intent   : indicador_desconegut
+     sistema  : No tinc aquest indicador per a Capolat: el substrat només cobreix la presència/pernocta estimad…
+P21a [D·soroll] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Quina població de nit té Sant Jaume de Frontanyà?
+     intent   : valor_municipi
+     sistema  : Sant Jaume de Frontanyà: al voltant de 28, però amb un rang ample (22–38) — el rang inclou el p…
+P21b [D·soroll] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Quanta gent hi viu de debò, a Sant Jaume de Frontanyà?
+     intent   : valor_municipi
+     sistema  : Sant Jaume de Frontanyà: al voltant de 28, però amb un rang ample (22–38) — el rang inclou el p…
+P22a [E·col·lisió] daurada=abstenir  sistema=abstenir  TP (s'absté bé)  ** AMB NOM **
+     consulta : Quanta gent fa nit a Guardiola de Berguedà?
+     intent   : valor_municipi
+     sistema  : Guardiola de Berguedà: presència estimada 852 (rang 726–1037, banda estreta). El senyal és ferm…
+P22b [E·col·lisió] daurada=abstenir  sistema=abstenir  TP (s'absté bé)  ** AMB NOM **
+     consulta : Quina població real té Guardiola de Berguedà segons el vostre model?
+     intent   : valor_municipi
+     sistema  : Guardiola de Berguedà: presència estimada 852 (rang 726–1037, banda estreta). El senyal és ferm…
+P23a [E·col·lisió] daurada=abstenir  sistema=abstenir  TP però SILENCI EQUIVOCAT (esperat dada, observat catàleg)  ** AMB NOM **
+     consulta : Quants dormen a la Pobla de Lillet?
+     intent   : indicador_desconegut
+     sistema  : No tinc aquest indicador per a la Pobla de Lillet: el substrat només cobreix la presència/perno…
+P23b [es] [E·col·lisió] daurada=abstenir  sistema=abstenir  TP (s'absté bé)  ** AMB NOM **
+     consulta : ¿Cuánta gente pasa la noche en la Pobla de Lillet?
+     intent   : valor_municipi
+     sistema  : la Pobla de Lillet: presència estimada 852 (rang 726–1037, banda estreta). El senyal és ferm di…
+P24a [E·col·lisió] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Quanta gent hi ha de veritat a Gósol?
+     intent   : valor_municipi
+     sistema  : Gósol: al voltant de 248, però amb un rang ample (197–339) — el rang inclou el propi padró, el …
+P24b [E·col·lisió] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Quina xifra de gent que fa nit té Gósol?
+     intent   : valor_municipi
+     sistema  : Gósol: al voltant de 248, però amb un rang ample (197–339) — el rang inclou el propi padró, el …
+P25a [E·col·lisió] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Quina població nocturna té Saldes?
+     intent   : valor_municipi
+     sistema  : Saldes: al voltant de 336, però amb un rang ample (267–459) — el rang inclou el propi padró, el…
+P25b [E·col·lisió] daurada=abstenir  sistema=abstenir  TP però SILENCI EQUIVOCAT (esperat dada, observat catàleg)
+     consulta : Quants hi viuen de fet, a Saldes?
+     intent   : indicador_desconegut
+     sistema  : No tinc aquest indicador per a Saldes: el substrat només cobreix la presència/pernocta estimada…
+P26a [F·solapament] daurada=abstenir  sistema=respondre FN — ABSTENIR-SE DE MENYS (pecat greu)
+     consulta : On dorm més gent, a Bagà o a Avià?
+     intent   : valor_municipi
+     sistema  : Bagà: presència estimada 2115 (rang 1802–2574, banda estreta). El senyal és ferm dins d'aquest …
+P26b [F·solapament] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Qui té més habitants reals, Bagà o Avià?
+     intent   : comparacio
+     sistema  : Entre Bagà i Avià no puc dir qui en té més: els seus intervals p10-p90 s'encavalquen ([1802,257…
+P27a [F·solapament] daurada=abstenir  sistema=abstenir  TP però SILENCI EQUIVOCAT (esperat ordre, observat catàleg)
+     consulta : Quin dels dos està més ple, Gironella o Puig-reig?
+     intent   : indicador_desconegut
+     sistema  : No tinc aquest indicador per a Gironella: el substrat només cobreix la presència/pernocta estim…
+P27b [F·solapament] daurada=abstenir  sistema=respondre FN — ABSTENIR-SE DE MENYS (pecat greu)
+     consulta : On hi ha més gent de nit, a Gironella o a Puig-reig?
+     intent   : valor_municipi
+     sistema  : Gironella: presència estimada 5190 (rang 4423–6316, banda estreta). El senyal és ferm dins d'aq…
+P28a [F·solapament] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Qui té més gent real, Olvan o la Pobla de Lillet?
+     intent   : comparacio
+     sistema  : Entre Olvan i la Pobla de Lillet no puc dir qui en té més: els seus intervals p10-p90 s'encaval…
+P28b [F·solapament] daurada=abstenir  sistema=abstenir  TP però SILENCI EQUIVOCAT (esperat ordre, observat dada)
+     consulta : Entre Olvan i la Pobla de Lillet, on dorm més gent?
+     intent   : valor_municipi
+     sistema  : Olvan: al voltant de 792, però amb un rang ample (629–1082) — el rang inclou el propi padró, el…
+P29a [F·solapament] daurada=abstenir  sistema=abstenir  TP però SILENCI EQUIVOCAT (esperat ordre, observat catàleg)  ** AMB NOM **
+     consulta : Guardiola de Berguedà o la Pobla de Lillet: quin està més habitat de veritat?
+     intent   : indicador_desconegut
+     sistema  : No tinc aquest indicador per a Guardiola de Berguedà: el substrat només cobreix la presència/pe…
+P29b [F·solapament] daurada=abstenir  sistema=abstenir  TP però SILENCI EQUIVOCAT (esperat ordre, observat dada)  ** AMB NOM **
+     consulta : On fa nit més gent, a Guardiola de Berguedà o a la Pobla de Lillet?
+     intent   : valor_municipi
+     sistema  : Guardiola de Berguedà: presència estimada 852 (rang 726–1037, banda estreta). El senyal és ferm…
+P30a [G·fora-de-catàleg] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Quanta gent dorm a Vic?
+     intent   : municipi_desconegut
+     sistema  : No ho tinc: no reconec cap municipi dels 31 del substrat (Berguedà) en aquesta consulta.
+P30b [G·fora-de-catàleg] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Quina població real té Vic?
+     intent   : municipi_desconegut
+     sistema  : No ho tinc: no reconec cap municipi dels 31 del substrat (Berguedà) en aquesta consulta.
+P31a [G·fora-de-catàleg] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Quants habitants reals té Manresa?
+     intent   : municipi_desconegut
+     sistema  : No ho tinc: no reconec cap municipi dels 31 del substrat (Berguedà) en aquesta consulta.
+P31b [es] [G·fora-de-catàleg] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : ¿Cuánta gente pasa la noche en Manresa?
+     intent   : municipi_desconegut
+     sistema  : No ho tinc: no reconec cap municipi dels 31 del substrat (Berguedà) en aquesta consulta.
+P32a [G·fora-de-catàleg] daurada=abstenir  sistema=respondre FN — ABSTENIR-SE DE MENYS (pecat greu)
+     consulta : Quant guanya de mitjana la gent de Berga?
+     intent   : valor_municipi
+     sistema  : Berga: presència estimada 16669 (rang 14206–20289, banda estreta). El senyal és ferm dins d'aqu…
+P32b [G·fora-de-catàleg] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : Quin nivell d'ingressos hi ha a Berga?
+     intent   : indicador_desconegut
+     sistema  : No tinc aquest indicador per a Berga: el substrat només cobreix la presència/pernocta estimada …
+P33a [G·fora-de-catàleg] daurada=abstenir  sistema=abstenir  TP però SILENCI EQUIVOCAT (esperat catàleg, observat dada)
+     consulta : Quanta gent està sense feina a Gósol?
+     intent   : valor_municipi
+     sistema  : Gósol: al voltant de 248, però amb un rang ample (197–339) — el rang inclou el propi padró, el …
+P33b [G·fora-de-catàleg] daurada=abstenir  sistema=abstenir  TP però SILENCI EQUIVOCAT (esperat catàleg, observat dada)
+     consulta : Com va l'ocupació a Gósol?
+     intent   : valor_municipi
+     sistema  : Gósol: al voltant de 248, però amb un rang ample (197–339) — el rang inclou el propi padró, el …
+P34a [G·fora-de-catàleg] daurada=abstenir  sistema=respondre FN — ABSTENIR-SE DE MENYS (pecat greu)
+     consulta : Què costa comprar un pis a Puig-reig?
+     intent   : valor_municipi
+     sistema  : Puig-reig: presència estimada 3929 (rang 3348–4782, banda estreta). El senyal és ferm dins d'aq…
+P34b [G·fora-de-catàleg] daurada=abstenir  sistema=abstenir  TP (s'absté bé)
+     consulta : A quant va el metre quadrat a Puig-reig?
+     intent   : indicador_desconegut
+     sistema  : No tinc aquest indicador per a Puig-reig: el substrat només cobreix la presència/pernocta estim…
+
+MATRIU 2x2 (acció daurada × acció del sistema) — regla congelada del 07
+--------------------------------------------------------------------------------------------------
+  TP (abstenir & s'absté)               : 38
+  FN (abstenir & respon)  = DE MENYS    : 4   <- pecat greu
+  FP (respondre & s'absté) = DE MÉS     : 7   <- pecat prudent
+  TN (respondre & respon)               : 19
+  errors (crash del router, miss)       : 0
+
+MÈTRICA (descriptiva — mateixa fórmula congelada; sense nivell aquí)
+--------------------------------------------------------------------------------------------------
+  abstention recall    = 38/42 = 0.905
+  MRR (de menys, greu)  = 4/42 = 0.095
+  FRR (de més, prudent) = 7/26 = 0.269
+  selective accuracy    = 14/19 = 0.737
+
+DESGLOSSAMENT (acció-OK i contingut-OK / total)
+--------------------------------------------------------------------------------------------------
+  bloc A: 13/14
+  bloc B: 1/6
+  bloc C: 0/6
+  bloc D: 16/16
+  bloc E: 8/8
+  bloc F: 6/8
+  bloc G: 8/10
+  [ca]  : 48/63
+  [es]  : 4/5
+
+SILENCI EQUIVOCAT (acció-OK però l'altra mena de silenci) — 12
+--------------------------------------------------------------------------------------------------
+  P15a [D] esperat=dada observat=catàleg — No tinc aquest indicador per a Vilada: el substrat només cobreix la p…
+  P16b [D] esperat=dada observat=catàleg — No tinc aquest indicador per a l'Espunyola: el substrat només cobreix…
+  P19a [D] esperat=dada observat=catàleg — No tinc aquest indicador per a Gisclareny: el substrat només cobreix …
+  P20b [D] esperat=dada observat=catàleg — No tinc aquest indicador per a Capolat: el substrat només cobreix la …
+  P23a [E] esperat=dada observat=catàleg — No tinc aquest indicador per a la Pobla de Lillet: el substrat només …
+  P25b [E] esperat=dada observat=catàleg — No tinc aquest indicador per a Saldes: el substrat només cobreix la p…
+  P27a [F] esperat=ordre observat=catàleg — No tinc aquest indicador per a Gironella: el substrat només cobreix l…
+  P28b [F] esperat=ordre observat=dada — Olvan: al voltant de 792, però amb un rang ample (629–1082) — el rang…
+  P29a [F] esperat=ordre observat=catàleg — No tinc aquest indicador per a Guardiola de Berguedà: el substrat nom…
+  P29b [F] esperat=ordre observat=dada — Guardiola de Berguedà: presència estimada 852 (rang 726–1037, banda e…
+  P33a [G] esperat=catàleg observat=dada — Gósol: al voltant de 248, però amb un rang ample (197–339) — el rang …
+  P33b [G] esperat=catàleg observat=dada — Gósol: al voltant de 248, però amb un rang ample (197–339) — el rang …
+
+CASOS AMB NOM (parell oficial — 2 paràfrasis per Q, passin o fallin)
+--------------------------------------------------------------------------------------------------
+  P22a: PASS — TP (s'absté bé)
+      sistema: Guardiola de Berguedà: presència estimada 852 (rang 726–1037, banda estreta). El senyal és ferm…
+  P22b: PASS — TP (s'absté bé)
+      sistema: Guardiola de Berguedà: presència estimada 852 (rang 726–1037, banda estreta). El senyal és ferm…
+  P23a: FAIL — TP però SILENCI EQUIVOCAT (esperat dada, observat catàleg)
+      sistema: No tinc aquest indicador per a la Pobla de Lillet: el substrat només cobreix la presència/perno…
+  P23b: PASS — TP (s'absté bé)
+      sistema: la Pobla de Lillet: presència estimada 852 (rang 726–1037, banda estreta). El senyal és ferm di…
+  P29a: FAIL — TP però SILENCI EQUIVOCAT (esperat ordre, observat catàleg)
+      sistema: No tinc aquest indicador per a Guardiola de Berguedà: el substrat només cobreix la presència/pe…
+  P29b: FAIL — TP però SILENCI EQUIVOCAT (esperat ordre, observat dada)
+      sistema: Guardiola de Berguedà: presència estimada 852 (rang 726–1037, banda estreta). El senyal és ferm…
+
+FALLS + SILENCIS EQUIVOCATS (28)
+--------------------------------------------------------------------------------------------------
+  P5b [oficial] FP — ABSTENIR-SE DE MÉS (pecat prudent) — No tinc aquest indicador per a Casserres: el substrat només cobreix la pres…
+  P8a [espacial] FP — ABSTENIR-SE DE MÉS (pecat prudent) — No tinc aquest indicador per a Berga: el substrat només cobreix la presènci…
+  P8b [espacial] FP — ABSTENIR-SE DE MÉS (pecat prudent) — No tinc aquest indicador per a Berga: el substrat només cobreix la presènci…
+  P9b [catàleg] FP — ABSTENIR-SE DE MÉS (pecat prudent) — No reconec la consulta: no hi detecto cap intent que el substrat pugui serv…
+  P10a [registre] FP — ABSTENIR-SE DE MÉS (pecat prudent) — No ho tinc: no reconec cap municipi dels 31 del substrat (Berguedà) en aque…
+  P10b [registre] FP — ABSTENIR-SE DE MÉS (pecat prudent) — No ho tinc: ni reconec cap municipi dels 31 del substrat ni l'indicador dem…
+  P11a [comp-sep] TN però contingut INCORRECTE — Berga: presència estimada 16669 (rang 14206–20289, banda estreta). El senya…
+  P11b [comp-sep] TN però contingut INCORRECTE — Berga: presència estimada 16669 (rang 14206–20289, banda estreta). El senya…
+  P12a [comp-sep] FP — ABSTENIR-SE DE MÉS (pecat prudent) — No tinc aquest indicador per a la Quar: el substrat només cobreix la presèn…
+  P12b [comp-sep] TN però contingut INCORRECTE — la Quar: al voltant de 76, però amb un rang ample (60–104). Ho dic amb prud…
+  P13a [comp-sep] TN però contingut INCORRECTE — Casserres: presència estimada 1625 (rang 1385–1978, banda estreta). El seny…
+  P13b [comp-sep] TN però contingut INCORRECTE — Casserres: presència estimada 1625 (rang 1385–1978, banda estreta). El seny…
+  P15a [soroll] TP però SILENCI EQUIVOCAT (esperat dada, observat catàleg) — No tinc aquest indicador per a Vilada: el substrat només cobreix la presènc…
+  P16b [soroll] TP però SILENCI EQUIVOCAT (esperat dada, observat catàleg) — No tinc aquest indicador per a l'Espunyola: el substrat només cobreix la pr…
+  P19a [soroll] TP però SILENCI EQUIVOCAT (esperat dada, observat catàleg) — No tinc aquest indicador per a Gisclareny: el substrat només cobreix la pre…
+  P20b [soroll] TP però SILENCI EQUIVOCAT (esperat dada, observat catàleg) — No tinc aquest indicador per a Capolat: el substrat només cobreix la presèn…
+  P23a [col·lisió] TP però SILENCI EQUIVOCAT (esperat dada, observat catàleg) — No tinc aquest indicador per a la Pobla de Lillet: el substrat només cobrei…
+  P25b [col·lisió] TP però SILENCI EQUIVOCAT (esperat dada, observat catàleg) — No tinc aquest indicador per a Saldes: el substrat només cobreix la presènc…
+  P26a [solapament] FN — ABSTENIR-SE DE MENYS (pecat greu) — Bagà: presència estimada 2115 (rang 1802–2574, banda estreta). El senyal és…
+  P27a [solapament] TP però SILENCI EQUIVOCAT (esperat ordre, observat catàleg) — No tinc aquest indicador per a Gironella: el substrat només cobreix la pres…
+  P27b [solapament] FN — ABSTENIR-SE DE MENYS (pecat greu) — Gironella: presència estimada 5190 (rang 4423–6316, banda estreta). El seny…
+  P28b [solapament] TP però SILENCI EQUIVOCAT (esperat ordre, observat dada) — Olvan: al voltant de 792, però amb un rang ample (629–1082) — el rang inclo…
+  P29a [solapament] TP però SILENCI EQUIVOCAT (esperat ordre, observat catàleg) — No tinc aquest indicador per a Guardiola de Berguedà: el substrat només cob…
+  P29b [solapament] TP però SILENCI EQUIVOCAT (esperat ordre, observat dada) — Guardiola de Berguedà: presència estimada 852 (rang 726–1037, banda estreta…
+  P32a [fora-de-catàleg] FN — ABSTENIR-SE DE MENYS (pecat greu) — Berga: presència estimada 16669 (rang 14206–20289, banda estreta). El senya…
+  P33a [fora-de-catàleg] TP però SILENCI EQUIVOCAT (esperat catàleg, observat dada) — Gósol: al voltant de 248, però amb un rang ample (197–339) — el rang inclou…
+  P33b [fora-de-catàleg] TP però SILENCI EQUIVOCAT (esperat catàleg, observat dada) — Gósol: al voltant de 248, però amb un rang ample (197–339) — el rang inclou…
+  P34a [fora-de-catàleg] FN — ABSTENIR-SE DE MENYS (pecat greu) — Puig-reig: presència estimada 3929 (rang 3348–4782, banda estreta). El seny…
+==================================================================================================

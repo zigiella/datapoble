@@ -60,8 +60,16 @@ publicable per si sola.*
 > `[generativa]` → `openai==2.44.0`. Requisits: proveïdor FIXAT a Anthropic (`allow_fallbacks=false`, també el
 > serveixen Vertex/Bedrock), provenance = id de generació + model + proveïdor, i el secret NO es cableja al CI
 > per-PR (passada oficial local amb `.env`; si mai des d'Actions, `workflow_dispatch` manual).
-> **Paràfrasis:** esborrany de 68 (2 per Q, daurades HERETADES del banc congelat, 5 en castellà, fora-de-catàleg
-> sense keyword) a `09-parafrasis-adversarials.md` — **NO commitejat**, pendent de congelació de Bea.
+> **PARÀFRASIS CONGELADES (Bea, 2026-07-03) + RUN OFICIAL del determinista — EL RECUPERADOR TREMOLA:**
+> 68 paràfrasis (daurades heretades; JSON generat MECÀNICAMENT del doc congelat, guardat per test de fidelitat).
+> Resultat tal com surt (`fase3-parafrasis-resultat.txt`): recall 38/42 (0,905) però **FRR 7/26 (0,269)** ·
+> selective accuracy 14/19 · **bloc C (comparacions reformulades) 0/6 · bloc B 1/6** · **12 silencis equivocats**
+> («no tinc l'indicador» menjant-se el silenci de dada/ordre) · **4 FN greus**: P32a/P34a responen PERNOCTA a
+> preguntes de RENDA/HABITATGE amb to ferm (el «Barcelona −18%» en conversa) i P26a/P27b trenquen l'empat F
+> responent UN muni. [es] 4/5. Parell oficial: 3/6 PASS. **Lectura honesta:** el 21/21 del banc era aplicació
+> de doctrina amb frasejos que ecoen; la capa d'INTENCIÓ del router (patrons per paraula clau) és la juntura
+> fluixa — exactament on el generador multiplicarà la pressió. Següent proposat: endurir la capa d'intenció
+> (v2 transparent, banc+paràfrasis segueixen congelats) ABANS de la capa generativa.
 > **El draft del paper** (`05-paper-esborrany.md`) NO es commiteija encara (Bea el llegeix).
 
 > **🧭 RUMBO DECIDIT (2026-06-27).** Després de l'arc «fer-ho bé» (dada honesta a tot CAT) i del dossier
