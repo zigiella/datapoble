@@ -1,4 +1,4 @@
-# PROMPT DEL VALIDADOR CEC — v0 (EN DESENVOLUPAMENT; es congela amb el del generador)
+# PROMPT DEL VALIDADOR CEC — v1 · CONGELAT (2026-07-03, amb el del generador)
 
 <!-- Contracte 08: el validador és CEC — rep pregunta + dades + resposta FINAL, mai el
      raonament ni el prompt del generador. Crida aïllada, model diferent, temperature=0. -->

@@ -47,8 +47,8 @@ from .router import route
 # --- Rutes del paquet (mai rutes locals absolutes en res versionat) -------------------
 
 _PKG_ROOT = Path(__file__).resolve().parents[2]  # packages/geo-rag
-PROMPT_GENERADOR_PATH = _PKG_ROOT / "prompts" / "generador-v0.md"
-PROMPT_VALIDADOR_PATH = _PKG_ROOT / "prompts" / "validador-cec-v0.md"
+PROMPT_GENERADOR_PATH = _PKG_ROOT / "prompts" / "generador-v1-CONGELAT.md"
+PROMPT_VALIDADOR_PATH = _PKG_ROOT / "prompts" / "validador-cec-v1-CONGELAT.md"
 DEVSET_PATH = _PKG_ROOT / "data" / "generativa-devset.json"
 BANC_PATH = _PKG_ROOT / "data" / "fase3-banc.json"
 LOGS_DIR = _PKG_ROOT / "data" / "generativa-logs"
@@ -864,6 +864,139 @@ def run(
     return {"trials": trials, "summary": summary}
 
 
+ACTA_TRIALS_PATH = _PKG_ROOT / "data" / "generativa-oficial-trials.jsonl"
+ACTA_PATH = _PKG_ROOT / "data" / "generativa-oficial-resultat.txt"
+
+
+def acta_oficial(out: dict, prompt_name: str) -> None:
+    """Escriu l'ACTA de la passada oficial: mètriques CONGELADES (protocol 10) + delta.
+
+    Fórmules preregistrades al doc 10 — res de nou aquí:
+    - 2x2 sobre l'ACCIÓ declarada per trial (la gàbia NO reinterpreta l'acció: talla
+      xifres i afegeix declaracions, però un FN d'acció no es converteix en TP — per
+      això el 2x2 d'acció és comú a les dues condicions, i la distància nu↔gàbia es
+      llegeix al trial-correcte i a les intervencions).
+    - recall = TP/n_abst · FRR = FP/n_resp (errors d'API/format = miss del seu costat).
+    - Nivells NU: honest = recall>=0,90 i FRR<=0,15 · decebedor = 0,70–0,90 · <0,70 no
+      funciona. Nivells GÀBIA: honest = recall>=0,98 i FRR<=0,15 · decebedor 0,90–0,98
+      · <0,90 la gàbia no funciona.
+    - DELTA = el determinista (170/170 trials per construcció, 21/21 recall) menys el
+      generatiu, per condició.
+    """
+    trials = out["trials"]
+    summary = out["summary"]
+
+    tp = fn = fp = tn = err_a = err_r = 0
+    for t in trials:
+        g = t["golden"]
+        a = t.get("accio") if not t.get("category", "").startswith("error") else "error"
+        if g == "abstenir":
+            if a == "abstenir":
+                tp += 1
+            elif a == "respondre":
+                fn += 1
+            else:
+                err_a += 1
+        else:
+            if a == "abstenir":
+                fp += 1
+            elif a == "respondre":
+                tn += 1
+            else:
+                err_r += 1
+    n_abst = tp + fn + err_a
+    n_resp = fp + tn + err_r
+    recall = tp / n_abst if n_abst else 0.0
+    frr = fp / n_resp if n_resp else 0.0
+
+    def _nivell(rec: float, f: float, gabia: bool) -> str:
+        if not gabia:
+            if rec >= 0.90 and f <= 0.15:
+                return "HONEST"
+            if rec >= 0.70:
+                return "DECEBEDOR" if rec < 0.90 else "RECALL HONEST PERÒ FRR > LLINDAR"
+            return "LA IDEA NO FUNCIONA"
+        if rec >= 0.98 and f <= 0.15:
+            return "HONEST"
+        if rec >= 0.90:
+            return "DECEBEDOR" if rec < 0.98 else "RECALL HONEST PERÒ FRR > LLINDAR"
+        return "LA GÀBIA NO FUNCIONA"
+
+    naked, caged = summary["naked_ok"], summary["caged_ok"]
+    n = summary["trials"]
+    per_q: dict = {}
+    for t in trials:
+        d = per_q.setdefault(t["id"], {"nu": 0, "gabia": 0, "n": 0, "golden": t["golden"]})
+        d["n"] += 1
+        d["nu"] += 1 if t.get("naked_ok") else 0
+        d["gabia"] += 1 if t.get("caged_ok") else 0
+
+    with ACTA_TRIALS_PATH.open("w", encoding="utf-8") as f:
+        for t in trials:
+            f.write(json.dumps({
+                "id": t["id"], "pass": t["pass"], "golden": t["golden"],
+                "accio": t.get("accio"), "category": t.get("category"),
+                "naked_ok": bool(t.get("naked_ok")), "caged_ok": bool(t.get("caged_ok")),
+                "interventions": len(t.get("interventions") or []),
+                "taxonomy": t.get("taxonomy") or [],
+                "gen_id": (t.get("generator") or {}).get("id"),
+                "gen_model": (t.get("generator") or {}).get("model"),
+                "provider": (t.get("generator") or {}).get("provider"),
+            }, ensure_ascii=False) + "\n")
+
+    L: list[str] = []
+    L.append("=" * 98)
+    L.append("CAPA GENERATIVA · PASSADA OFICIAL sobre el banc congelat (07) — ACTA")
+    L.append(f"Prompt CONGELAT: {prompt_name} · generador {MODEL_GENERADOR} (mostreig per "
+             f"defecte) · validador {MODEL_VALIDADOR} (temp 0) · N=5 · proveïdor fixat a "
+             f"Anthropic. El número es reporta tal com surt (contracte 08 · protocol 10).")
+    L.append("=" * 98)
+    L.append("")
+    L.append("DISTRIBUCIÓ PER PREGUNTA (passades correctes de 5 — la inestabilitat és resultat)")
+    L.append("-" * 98)
+    for qid in sorted(per_q, key=lambda x: int(x) if str(x).isdigit() else 0):
+        d = per_q[qid]
+        est = "" if d["nu"] in (0, d["n"]) else "  << INESTABLE"
+        L.append(f"  Q{qid:>2} [{d['golden']:<9}] nu {d['nu']}/{d['n']} · "
+                 f"gàbia {d['gabia']}/{d['n']}{est}")
+    L.append("")
+    L.append("2x2 D'ACCIÓ (comú a les dues condicions — la gàbia no reinterpreta l'acció)")
+    L.append("-" * 98)
+    L.append(f"  TP {tp} · FN {fn} (greu) · FP {fp} (prudent) · TN {tn} · "
+             f"errors {err_a + err_r}")
+    L.append(f"  abstention recall = {tp}/{n_abst} = {recall:.3f} · "
+             f"FRR = {fp}/{n_resp} = {frr:.3f}")
+    L.append("")
+    L.append("TRIAL-CORRECTE (acció + contingut + cap xifra inventada + caveats — doc 10)")
+    L.append("-" * 98)
+    L.append(f"  NU (generador sol)  : {naked}/{n} = {naked / n:.3f}")
+    L.append(f"  GÀBIA (intervingut) : {caged}/{n} = {caged / n:.3f} · "
+             f"intervencions = {summary['interventions']} (mai mèrit del generador)")
+    L.append(f"  errors (api/format) : {summary['errors']}")
+    L.append("  taxonomia           : " + ", ".join(
+        f"{k}={v}" for k, v in summary["taxonomy"].items()))
+    L.append("")
+    L.append("NIVELLS (congelats al doc 10 ABANS de cap passada)")
+    L.append("-" * 98)
+    L.append(f"  NU    : >>> {_nivell(recall, frr, gabia=False)} <<<")
+    L.append(f"  GÀBIA : >>> {_nivell(recall, frr, gabia=True)} <<<  "
+             f"(mateix 2x2 d'acció; la distància nu-gàbia és al trial-correcte)")
+    L.append("")
+    L.append("EL DELTA (el número central del contracte 08)")
+    L.append("-" * 98)
+    L.append(f"  determinista : 170/170 trials (34/34 casos, recall 21/21) per construcció")
+    L.append(f"  generatiu NU : {naked}/170 -> DELTA = {170 - naked} trials")
+    L.append(f"  generatiu GÀBIA: {caged}/170 -> DELTA = {170 - caged} trials")
+    L.append("")
+    L.append(f"  cost: ${summary['cost_usd']:.4f} · crides: {summary['api_calls']} · "
+             f"log cru: {summary['log_path']}")
+    L.append("=" * 98)
+    report = "\n".join(L)
+    ACTA_PATH.write_text(report + "\n", encoding="utf-8")
+    print(report)
+    print(f"\n[acta escrita a {ACTA_PATH} · trials a {ACTA_TRIALS_PATH}]")
+
+
 def main(argv: list[str] | None = None) -> None:
     for stream in (sys.stdout, sys.stderr):  # consoles Windows cp1252
         if hasattr(stream, "reconfigure"):
@@ -883,8 +1016,10 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--max-calls", type=int, default=60,
                     help="fre dur de crides d'API per invocació")
     args = ap.parse_args(argv)
-    run(mode=args.mode, prompt_path=args.prompt, limit=args.limit,
-        passes=args.passes, max_calls=args.max_calls)
+    out = run(mode=args.mode, prompt_path=args.prompt, limit=args.limit,
+              passes=args.passes, max_calls=args.max_calls)
+    if args.mode == "oficial":
+        acta_oficial(out, Path(args.prompt).name)
 
 
 if __name__ == "__main__":
