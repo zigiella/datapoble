@@ -78,6 +78,17 @@ publicable per si sola.*
 > (seria overfitting per string). Baranes: **banc congelat segueix 34/34 IDÈNTIC** (regressió byte a byte) + 6 sondes
 > de generalització amb frasejos NOUS (no dels 68) en verd + caveat de circularitat escrit al codi. v1 preservat a
 > `fase3-parafrasis-resultat-v1-router-inicial.txt`. **Camí lliure per a la capa generativa.**
+> **ARNÈS GENERATIU CONSTRUÏT + PROMPT v0.1 MADUR AL DEV SET (2026-07-03):** `generativa.py` (OpenRouter amb
+> proveïdor FIXAT a Anthropic —verificat a cada crida—, context de DADES CRUES —la prosa determinista mai arriba
+> al generador—, validació dura amb tall ⟦xifra no verificada⟧, validador cec haiku a temp 0, nu/gàbia dels
+> mateixos outputs, intervencions a part, taxonomia, pressupost de crides, i el mode oficial ES NEGA a córrer
+> sense prompt «CONGELAT» al nom). Dev set de 12 preguntes NOVES + prompts v0 (generador + validador).
+> Iteració v0→v0.1 amb 3 falls reals: max_tokens 500 ofegava el raonament per defecte de Sonnet 5 (D4) → 1200;
+> mal-atribució estimació→«ETCA» (D6) → regla d'atribució per camp al prompt; «31 municipis» tallat (D9) →
+> constant doctrinal. **Dev final: 12/12 nu · 12/12 gàbia · 0 intervencions · taxonomia neta (~0,08 $/passada).**
+> Router v2.1 (destapat pel dev): «fa vida»/«moviment» com a marc feble; «té més» amb UN sol muni ja no és
+> comparació. Regressions: banc 34/34 IDÈNTIC · paràfrasis 67/68 IDÈNTIC. **Pendent: congelar el prompt
+> (generador-v1-CONGELAT) + PASSADA OFICIAL (34×5, nu i gàbia, ~2–3 $) → EL DELTA vs 21/21.**
 > **El draft del paper** (`05-paper-esborrany.md`) NO es commiteija encara (Bea el llegeix).
 
 > **🧭 RUMBO DECIDIT (2026-06-27).** Després de l'arc «fer-ho bé» (dada honesta a tot CAT) i del dossier
