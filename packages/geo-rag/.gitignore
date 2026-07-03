@@ -13,3 +13,7 @@ data/bergueda.duckdb
 .env
 .env.*
 !.env.example
+
+# Raw per-call LLM logs from the generative harness (spec 11: raw responses live in a
+# gitignored dir; only curated artefacts — per-trial JSON + report — get committed).
+data/generativa-logs/

@@ -1,0 +1,17 @@
+{
+  "_nota": "CONJUNT DE DESENVOLUPAMENT del prompt del generador (contracte 08 + protocol 10): preguntes NOVES que NO són al banc congelat (07) ni a les paràfrasis (09). Serveix NOMÉS per iterar el prompt abans de congelar-lo; mai entra al report oficial. Les dev-daurades les etiqueta Talaia (permès aquí: no és la vara oficial, que és el banc de Bea).",
+  "items": [
+    {"id": "D1", "query": "Quina és la presència estimada a Cercs?", "dev_golden": "respondre", "familia": "oficial", "nota": "oficial sense col·lisió: xifra + banda + contrast ETCA obligatori"},
+    {"id": "D2", "query": "Quanta gent fa vida a Puig-reig un dimarts qualsevol?", "dev_golden": "respondre", "familia": "oficial", "nota": "oficial; frasejat col·loquial"},
+    {"id": "D3", "query": "La Quar té més moviment del que diu el padró?", "dev_golden": "respondre", "familia": "senyal", "nota": "senyal_mes: rang + per sobre del padró + sense validació oficial"},
+    {"id": "D4", "query": "Digue'm la població que dorm a Montmajor.", "dev_golden": "abstenir", "familia": "soroll+collisio", "nota": "soroll i col·lisió: desautoritzar amb motiu + grup, mai xifra nua"},
+    {"id": "D5", "query": "Presència real de Vilada, si us plau.", "dev_golden": "abstenir", "familia": "soroll", "nota": "soroll: reconèixer l'estimació i desautoritzar-la amb el motiu (mai «no tinc dada»)"},
+    {"id": "D6", "query": "Qui és més gran de nit, Berga o Puig-reig?", "dev_golden": "respondre", "familia": "comparacio-separada", "nota": "bandes disjuntes: s'ordena amb confiança"},
+    {"id": "D7", "query": "Bagà i la Pobla de Lillet: quin dels dos reté més gent?", "dev_golden": "respondre", "familia": "comparacio-separada", "nota": "disjuntes; el perdedor (Pobla) és en col·lisió: la seva xifra no és específica"},
+    {"id": "D8", "query": "Cercs o Casserres, on s'hi queda més gent a la nit?", "dev_golden": "abstenir", "familia": "comparacio-solapada", "nota": "bandes [976,1393] i [1385,1978] s'encavalquen: cap guanyador, «probablement» prohibit"},
+    {"id": "D9", "query": "Quanta gent dorm a Ripoll?", "dev_golden": "abstenir", "familia": "fora-muni", "nota": "«no ho tinc» (fora dels 31), distingit del silenci de soroll"},
+    {"id": "D10", "query": "Quants cotxes hi ha censats a Berga?", "dev_golden": "abstenir", "familia": "fora-indicador", "nota": "indicador fora de catàleg"},
+    {"id": "D11", "query": "Quins pobles tenen el segell oficial d'Idescat aquí?", "dev_golden": "respondre", "familia": "cataleg", "nota": "llista dels 9 oficials, comptats no estimats"},
+    {"id": "D12", "query": "Guardiola de Berguedà: quanta gent hi viu de veritat?", "dev_golden": "abstenir", "familia": "collisio-oficial", "nota": "el cas exigent: grup nomenat + Idescat sí els separa (ETCA)"}
+  ]
+}

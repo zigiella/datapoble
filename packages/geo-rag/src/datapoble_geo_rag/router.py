@@ -66,9 +66,12 @@ _STRONG_FRAME_RE = re.compile(
 )
 
 # (d) MARC feble (necessita paraula de gent): viure-hi/ser-hi «de veritat/efectiu/real».
+# v2.1: + «fa/fan/fer vida» i «moviment» (presència viscuda), destapats pel dev set de la
+# capa generativa (D2) — famílies de presència, no strings del dev set.
 _WEAK_FRAME_RE = re.compile(
-    r"\b(viu(?:en)?|vive[ns]?|queda\w*|reals?|real|efectiu\w*|efectiva\w*)\b"
+    r"\b(viu(?:en)?|vive[ns]?|queda\w*|reals?|real|efectiu\w*|efectiva\w*|moviment)\b"
     r"|\bhi\s+ha\b|\bde\s+veritat\b|\bde\s+deb[oò]\b|\bde\s+verdad\b|\bde\s+fet\b"
+    r"|\bf(?:a|an|er)\s+vida\b"
 )
 
 # Llistes de catàleg per registre (el registre és un camp computat del substrat).
@@ -281,7 +284,13 @@ def route(conn: duckdb.DuckDBPyConnection, query_text: str) -> dict:
 
     # 1) Comparació: explícita («qui té més…») O estructural — DOS municipis detectats
     #    amb un comparatiu o la disjunció « o » («on dorm més gent, a X o a Y?»).
-    if _COMPARE_RE.search(q) or (len(munis) == 2 and _COMPARE_HINT_RE.search(q)):
+    #    v2.1: amb UN sol municipi, un «té més» NO és comparació entre municipis («la
+    #    Quar té més moviment del que diu el padró?» és una pregunta de valor vs padró) —
+    #    cau a la ruta de valor. Amb zero municipis, la comparació explícita es manté i
+    #    respon honestament que li calen dos noms reconeguts.
+    if (_COMPARE_RE.search(q) and len(munis) != 1) or (
+        len(munis) == 2 and _COMPARE_HINT_RE.search(q)
+    ):
         return _route_comparison(conn, query_text, munis)
 
     # 2) Veïns espacials («toquen», «veïns», «envolten», «fa frontera») amb un municipi.
