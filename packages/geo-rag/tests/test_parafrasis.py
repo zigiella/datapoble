@@ -65,3 +65,63 @@ def test_families_de_silenci():
     assert familia_silenci("consulta_no_reconeguda") == "catàleg"
     assert familia_silenci("veins") == "altra"
     assert FAMILIA_ESPERADA == {"D": "dada", "E": "dada", "F": "ordre", "G": "catàleg"}
+
+
+# --- Sondes de GENERALITZACIÓ de l'enduriment v2 del router --------------------------
+# Frasejos NOUS que NO són entre les 68 paràfrasis congelades (ni al banc): guarden que
+# l'enduriment és per famílies/estructura i no un ajust circular al joc de proves.
+
+
+def _route(q):
+    from datapoble_geo_rag.build import build
+    from datapoble_geo_rag.router import route
+
+    conn = build(None)
+    try:
+        return route(conn, q)
+    finally:
+        conn.close()
+
+
+def test_generalitzacio_presencia_col_loquial_nova():
+    # Frase nova amb marc de presència fort («dorm») → ruta de valor, no catàleg.
+    out = _route("Quanta penya dorm a Berga entre setmana?")
+    assert out["intent"] == "valor_municipi"
+    assert out["answer_action"] == "respondre"  # Berga: oficial, sense col·lisió
+
+
+def test_generalitzacio_gent_amb_verb_de_diners_no_es_pernocta():
+    # «gent» + verb de guany (frase nova) → NO és la magnitud servida → abstenció
+    # de catàleg, mai una xifra de pernocta amb to ferm.
+    out = _route("Quants calés guanya la gent d'Avià cada mes?")
+    assert out["answer_action"] == "abstenir"
+    assert out["intent"] in ("indicador_desconegut", "consulta_no_reconeguda")
+
+
+def test_generalitzacio_comparacio_estructural_nova():
+    # Comparació sense «té més» (frase nova): 2 municipis + comparatiu.
+    out = _route("Berga o Gironella: on hi ha més moviment de gent a la nit?")
+    assert out["intent"] == "comparacio"
+    assert out["answer_action"] == "respondre"  # bandes disjuntes → s'ordena
+    assert out["meta"].get("winner") == "08022"  # Berga
+
+
+def test_generalitzacio_soroll_amb_frase_nova():
+    # Presència col·loquial nova sobre un muni soroll → abstenció de DADA (marge).
+    out = _route("Quanta gent es queda a fer nit a Vallcebre?")
+    assert out["intent"] == "valor_municipi"
+    assert out["answer_action"] == "abstenir"
+
+
+def test_generalitzacio_indicador_desconegut_nou():
+    # Indicador desconegut NOU (mai enumerat enlloc) → cau per defecte.
+    out = _route("Què val el lloguer mitjà a Berga?")
+    assert out["intent"] == "indicador_desconegut"
+    assert out["answer_action"] == "abstenir"
+
+
+def test_generalitzacio_mencio_nua_segueix_viva():
+    # La menció nua estricta segueix funcionant (regressió del banc, Q17-style).
+    out = _route("I Gironella?")
+    assert out["intent"] == "valor_municipi"
+    assert out["answer_action"] == "respondre"

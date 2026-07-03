@@ -70,6 +70,14 @@ publicable per si sola.*
 > de doctrina amb frasejos que ecoen; la capa d'INTENCIÓ del router (patrons per paraula clau) és la juntura
 > fluixa — exactament on el generador multiplicarà la pressió. Següent proposat: endurir la capa d'intenció
 > (v2 transparent, banc+paràfrasis segueixen congelats) ABANS de la capa generativa.
+> **ROUTER ENDURIT (v2, 2026-07-03) + RE-RUN — el tremolor s'atura:** fix ESTRUCTURAL, no per strings (precedència:
+> gent sola ja no activa valor; menció-nua estricta; comparació estructural = 2 munis + comparatiu/« o »; famílies
+> de presència ca+es; bug «frontere»→«fronter»). **v2: recall 42/42 (1,000) · FN 0 · FRR 1/26 (0,038) · selective
+> accuracy 25/25 · TOTS els blocs nets · [es] 5/5 · 0 silencis equivocats · parell oficial 6/6 PASS.** Residu honest:
+> P7b («està més buit del que consta als papers») → «no reconec la consulta» — fall PRUDENT que no es persegueix
+> (seria overfitting per string). Baranes: **banc congelat segueix 34/34 IDÈNTIC** (regressió byte a byte) + 6 sondes
+> de generalització amb frasejos NOUS (no dels 68) en verd + caveat de circularitat escrit al codi. v1 preservat a
+> `fase3-parafrasis-resultat-v1-router-inicial.txt`. **Camí lliure per a la capa generativa.**
 > **El draft del paper** (`05-paper-esborrany.md`) NO es commiteija encara (Bea el llegeix).
 
 > **🧭 RUMBO DECIDIT (2026-06-27).** Després de l'arc «fer-ho bé» (dada honesta a tot CAT) i del dossier

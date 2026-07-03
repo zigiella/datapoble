@@ -32,35 +32,79 @@ from .retrieval import detect_anchors
 
 # --- Vocabulari del que el substrat TÉ (mai del que no té) ---------------------------
 # Aquests termes poden ser literals perquè anomenen els camps/registres reals de la
-# taula municipi. El que NO hi és no s'enumera enlloc: cau per defecte (el mecanisme
-# honest és desconegut-per-defecte).
+# taula municipi i la SEMÀNTICA de l'única magnitud servida (presència/pernocta = gent
+# que hi és/hi dorm/hi viu de veritat). El que NO hi és no s'enumera enlloc: cau per
+# defecte (el mecanisme honest és desconegut-per-defecte).
+#
+# ENDURIT (v2, 2026-07-03) després de la sonda de paràfrasis (fase3-parafrasis-resultat
+# v1): la capa d'intenció fallava per (1) «gent» sola activant la ruta de valor («quant
+# GUANYA la gent» responia pernocta — FN greu), (2) menció-nua massa golafre, (3)
+# comparacions només per «té més», (4) famílies de vocabulari massa estretes. El fix és
+# ESTRUCTURAL (precedència + famílies semàntiques), no una llista de frasejos del joc de
+# proves: cap paràfrasi literal apareix aquí. Caveat de circularitat declarat: les
+# famílies s'han ampliat a partir dels MODES DE FALL de la v1 (no dels seus strings);
+# la prova de generalització real seran frasejos nous (tests + capa generativa).
 
-# Indicador de valor que el substrat serveix: la presència/pernocta estimada (i el seu
-# vocabulari poblacional) + els camps padró i ETCA.
-KNOWN_VALUE_INDICATORS = (
-    "presènc", "presenc",       # presència (nocturna) estimada
-    "pernoct",                   # pernocta / hi pernocta
-    "estimac",                   # estimació
-    "gent", "habitant", "poblac",  # vocabulari poblacional del mateix indicador
-    "padró", "padro",            # camp padró
-    "etca",                      # camp etca_oficial
+# (a) Indicadors EXPLÍCITS del camp servit: basten sols.
+EXPLICIT_VALUE_TOKENS = (
+    "presènc", "presenc",  # presència (nocturna) estimada
+    "pernoct",             # pernocta / hi pernocta
+    "estimac",             # estimació
+    "padró", "padro",      # camp padró
+    "etca",                # camp etca_oficial
+)
+
+# (b) Paraules de GENT: ja NO basten soles (la pregunta pot ser sobre una altra magnitud
+# de la gent: guanys, feina…). Necessiten un marc de presència.
+_PEOPLE_RE = re.compile(
+    r"\b(gent|gente|habitants?|poblaci\w*|población|residents?|ànim(?:a|es))\b"
+)
+
+# (c) MARC DE PRESÈNCIA fort (basta sol): dormir-hi / fer-hi nit / ser-hi quan és fosc.
+_STRONG_FRAME_RE = re.compile(
+    r"\b(dorm\w*|duerme\w*|nits?|noche|nocturn\w*|fosc|pernocta\w*)\b|\bhi\s+viu\w*\b"
+)
+
+# (d) MARC feble (necessita paraula de gent): viure-hi/ser-hi «de veritat/efectiu/real».
+_WEAK_FRAME_RE = re.compile(
+    r"\b(viu(?:en)?|vive[ns]?|queda\w*|reals?|real|efectiu\w*|efectiva\w*)\b"
+    r"|\bhi\s+ha\b|\bde\s+veritat\b|\bde\s+deb[oò]\b|\bde\s+verdad\b|\bde\s+fet\b"
 )
 
 # Llistes de catàleg per registre (el registre és un camp computat del substrat).
-OFICIAL_LIST_TOKENS = ("dada oficial", "etca", "idescat", "oficial")
-DISTRUST_LIST_TOKENS = ("refi", "fiabl", "fiabilitat", "soroll")
+# «contrast(ar)» és vocabulari propi del registre oficial (la seva definició al web).
+OFICIAL_LIST_TOKENS = ("dada oficial", "etca", "idescat", "oficial", "contrast")
+# Família de (des)confiança/credibilitat de l'estimació = la semàntica del soroll.
+DISTRUST_LIST_TOKENS = (
+    "refi", "fiabl", "fiabilitat", "soroll", "fluix", "creie", "creïbl", "credib",
+    "confia", "confieu",
+)
 
 # Relació espacial que el substrat respon (build.neighbors).
-NEIGHBOUR_TOKENS = ("toquen", "toca ", "veïn", "vein", "limiten", "limita", "frontere")
+NEIGHBOUR_TOKENS = (
+    "toquen", "toca ", "veïn", "vein", "limiten", "limita", "fronter", "envolt",
+    "colind",
+)
 
-# Forma de comparació: «qui (en) té més», «té més … o …», «tenen més».
+# Forma de comparació EXPLÍCITA: «qui (en) té més», «té més … o …», «tenen més».
 _COMPARE_RE = re.compile(r"\bqui\s+(en\s+)?té\s+més\b|\bté\s+més\b|\btenen\s+més\b")
+# Pista comparativa ESTRUCTURAL: si es detecten DOS municipis, un comparatiu o la
+# disjunció « o » entre candidats ja marca comparació («on dorm més gent, a X o a Y?»).
+_COMPARE_HINT_RE = re.compile(r"\b(més|menys|más|menos|mayor|major)\b|\so\s")
 
 # Forma de pregunta quantitativa (interrogatius de quantitat/identitat de valor).
-_QUANT_RE = re.compile(r"\bquin(a|s|es)?\b|\bquant(a|s|es)?\b")
+_QUANT_RE = re.compile(
+    r"\bquin(a|s|es)?\b|\bquant(a|s|es)?\b|\bqu[èé]\b|\bcu[aá]nt(a|o|as|os)?\b"
+)
 
-# Forma de llista («quins municipis…», «de quins pobles…»).
-_LIST_RE = re.compile(r"\b(de\s+)?quin(s|es)\b.*\b(municipis|pobles)\b")
+# Forma de llista («quins municipis…», «de quins pobles…», «a quins municipis…»).
+_LIST_RE = re.compile(r"\bquin(s|es)\b.*\b(municipis|pobles)\b")
+
+# Mots buits per a la prova de menció-nua (vegeu _is_bare_mention).
+_STOPWORDS = {
+    "i", "y", "o", "u", "la", "el", "els", "les", "l", "de", "del", "d", "a", "al",
+    "en", "què", "que", "qué", "és", "es", "per", "hi",
+}
 
 __all__ = ["route"]
 
@@ -202,34 +246,69 @@ def _route_muni_value(conn, ine5: str) -> dict:
     )
 
 
+def _is_bare_mention(conn: duckdb.DuckDBPyConnection, q: str, munis: list[str]) -> bool:
+    """True si la consulta és essencialment NOMÉS el municipi («I Castellar del Riu?»).
+
+    Endurit v2: abans QUALSEVOL frase amb un municipi i sense paraula quantitativa
+    queia a la ruta de valor («què costa comprar un pis a Puig-reig?» responia la
+    pernocta — FN greu de la sonda). Ara: es treuen les formes del nom del municipi i
+    els mots buits; si queda cap paraula de contingut, NO és menció nua.
+    """
+    rest = q
+    rows = dict(conn.execute("SELECT ine5, nom FROM municipi").fetchall())
+    for ine5 in munis:
+        nom = rows.get(ine5, "")
+        for surface in {nom, _denom(nom)}:
+            if surface:
+                rest = rest.replace(surface.lower(), " ")
+    tokens = re.findall(r"[a-zà-ÿ']+", rest)
+    content = [t for t in tokens if t not in _STOPWORDS]
+    return len(content) == 0
+
+
 def route(conn: duckdb.DuckDBPyConnection, query_text: str) -> dict:
     """Encamina una consulta a les funcions existents. GENÈRIC: el desconegut cau sol.
 
     Retorna {intent, munis, answer_action ('respondre'|'abstenir'), text, meta}.
+
+    Precedència (endurida v2 — vegeu el bloc de vocabulari):
+      comparació (explícita O estructural amb 2 municipis) → veïns → llistes de catàleg
+      → valor (indicador explícit O marc de presència; gent sola ja no basta; menció
+      nua només si la consulta és NOMÉS el municipi) → indicador desconegut → per defecte.
     """
     q = (query_text or "").lower()
     munis = detect_anchors(conn, query_text, limit=2)
 
-    # 1) Comparació («qui té més…», «té més … o …»).
-    if _COMPARE_RE.search(q):
+    # 1) Comparació: explícita («qui té més…») O estructural — DOS municipis detectats
+    #    amb un comparatiu o la disjunció « o » («on dorm més gent, a X o a Y?»).
+    if _COMPARE_RE.search(q) or (len(munis) == 2 and _COMPARE_HINT_RE.search(q)):
         return _route_comparison(conn, query_text, munis)
 
-    # 2) Veïns espacials («toquen», «veïns», «limiten») amb un municipi reconegut.
+    # 2) Veïns espacials («toquen», «veïns», «envolten», «fa frontera») amb un municipi.
     if any(t in q for t in NEIGHBOUR_TOKENS) and munis:
         return _route_neighbours(conn, munis[0])
 
-    # 3) Llistes de catàleg per registre («quins municipis/pobles …»).
+    # 3) Llistes de catàleg per registre («quins municipis/pobles …»); el registre
+    #    oficial també respon la seva pròpia definició («on podem contrastar…»).
     if _LIST_RE.search(q):
         if any(t in q for t in DISTRUST_LIST_TOKENS):
             return _route_register_list(conn, "soroll")
         if any(t in q for t in OFICIAL_LIST_TOKENS):
             return _route_register_list(conn, "oficial")
+    if not munis and any(t in q for t in OFICIAL_LIST_TOKENS) and "contrast" in q:
+        return _route_register_list(conn, "oficial")
 
-    has_known = any(t in q for t in KNOWN_VALUE_INDICATORS)
+    # Detecció de la magnitud servida (presència/pernocta). La paraula de gent SOLA ja
+    # no activa la ruta de valor: cal un indicador explícit, un marc fort, o gent+marc.
+    has_known = (
+        any(t in q for t in EXPLICIT_VALUE_TOKENS)
+        or bool(_STRONG_FRAME_RE.search(q))
+        or (bool(_PEOPLE_RE.search(q)) and bool(_WEAK_FRAME_RE.search(q)))
+    )
     has_quant = bool(_QUANT_RE.search(q))
 
-    # 4) Indicador conegut (o menció nua d'un municipi): la ruta de valor.
-    if has_known or (munis and not has_quant):
+    # 4) Indicador servit (o menció ESTRICTAMENT nua d'un municipi): la ruta de valor.
+    if has_known or (munis and _is_bare_mention(conn, q, munis)):
         if munis:
             return _route_muni_value(conn, munis[0])
         # Indicador conegut però cap municipi entre els 31 → fora de catàleg.
@@ -239,7 +318,7 @@ def route(conn: duckdb.DuckDBPyConnection, query_text: str) -> dict:
             "aquesta consulta.",
         )
 
-    # 5) Pregunta quantitativa sense cap indicador conegut → indicador fora de catàleg.
+    # 5) Pregunta quantitativa sense cap indicador servit → indicador fora de catàleg.
     if has_quant:
         if munis:
             nom = _noms(conn, [munis[0]])[0]
