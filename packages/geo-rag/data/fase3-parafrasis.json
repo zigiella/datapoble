@@ -1,0 +1,410 @@
+[
+ {
+  "id": "P1a",
+  "q": 1,
+  "lang": "ca",
+  "query": "Quanta gent dorm a Berga una nit qualsevol?"
+ },
+ {
+  "id": "P1b",
+  "q": 1,
+  "lang": "ca",
+  "query": "Quina població real calculeu per a Berga?"
+ },
+ {
+  "id": "P2a",
+  "q": 2,
+  "lang": "ca",
+  "query": "Quanta gent hi viu de veritat, a Gironella?"
+ },
+ {
+  "id": "P2b",
+  "q": 2,
+  "lang": "es",
+  "query": "¿Cuánta gente calculáis que pasa la noche en Gironella?"
+ },
+ {
+  "id": "P3a",
+  "q": 3,
+  "lang": "ca",
+  "query": "Quants habitants reals estimeu a Puig-reig?"
+ },
+ {
+  "id": "P3b",
+  "q": 3,
+  "lang": "ca",
+  "query": "Quina és la vostra xifra de gent que fa nit a Puig-reig?"
+ },
+ {
+  "id": "P4a",
+  "q": 4,
+  "lang": "ca",
+  "query": "Quanta població de nit té Avià segons vosaltres?"
+ },
+ {
+  "id": "P4b",
+  "q": 4,
+  "lang": "ca",
+  "query": "Quanta gent hi ha a Avià quan es fa fosc?"
+ },
+ {
+  "id": "P5a",
+  "q": 5,
+  "lang": "ca",
+  "query": "Quanta gent para a dormir a Casserres?"
+ },
+ {
+  "id": "P5b",
+  "q": 5,
+  "lang": "ca",
+  "query": "Quants residents efectius té Casserres?"
+ },
+ {
+  "id": "P6a",
+  "q": 6,
+  "lang": "ca",
+  "query": "Quanta gent hi ha de veritat a la Quar?"
+ },
+ {
+  "id": "P6b",
+  "q": 6,
+  "lang": "ca",
+  "query": "A la Quar hi viu més gent de la que diu el cens?"
+ },
+ {
+  "id": "P7a",
+  "q": 7,
+  "lang": "ca",
+  "query": "Quanta gent queda a Fígols al vespre?"
+ },
+ {
+  "id": "P7b",
+  "q": 7,
+  "lang": "ca",
+  "query": "Fígols està més buit del que consta als papers?"
+ },
+ {
+  "id": "P8a",
+  "q": 8,
+  "lang": "ca",
+  "query": "Amb quins pobles fa frontera Berga?"
+ },
+ {
+  "id": "P8b",
+  "q": 8,
+  "lang": "ca",
+  "query": "Quins municipis envolten Berga?"
+ },
+ {
+  "id": "P9a",
+  "q": 9,
+  "lang": "ca",
+  "query": "Per a quins pobles del Berguedà hi ha xifra oficial de població equivalent?"
+ },
+ {
+  "id": "P9b",
+  "q": 9,
+  "lang": "ca",
+  "query": "On podem contrastar el model amb Idescat, al Berguedà?"
+ },
+ {
+  "id": "P10a",
+  "q": 10,
+  "lang": "ca",
+  "query": "Quins pobles del Berguedà tenen l'estimació més fluixa?"
+ },
+ {
+  "id": "P10b",
+  "q": 10,
+  "lang": "ca",
+  "query": "A quins municipis del Berguedà no us creieu ni vosaltres el número?"
+ },
+ {
+  "id": "P11a",
+  "q": 11,
+  "lang": "ca",
+  "query": "On hi ha més gent de nit, a Berga o a Gironella?"
+ },
+ {
+  "id": "P11b",
+  "q": 11,
+  "lang": "es",
+  "query": "¿Dónde duerme más gente, en Berga o en Gironella?"
+ },
+ {
+  "id": "P12a",
+  "q": 12,
+  "lang": "ca",
+  "query": "Entre la Quar i Fígols, quin està més habitat?"
+ },
+ {
+  "id": "P12b",
+  "q": 12,
+  "lang": "ca",
+  "query": "Qui guanya en gent real, la Quar o Fígols?"
+ },
+ {
+  "id": "P13a",
+  "q": 13,
+  "lang": "ca",
+  "query": "On viu més gent, a Casserres o a Sant Jaume de Frontanyà?"
+ },
+ {
+  "id": "P13b",
+  "q": 13,
+  "lang": "ca",
+  "query": "Casserres és més gran que Sant Jaume de Frontanyà en població real?"
+ },
+ {
+  "id": "P14a",
+  "q": 14,
+  "lang": "ca",
+  "query": "Quanta gent fa nit a Borredà?"
+ },
+ {
+  "id": "P14b",
+  "q": 14,
+  "lang": "ca",
+  "query": "Quina és la població real de Borredà?"
+ },
+ {
+  "id": "P15a",
+  "q": 15,
+  "lang": "ca",
+  "query": "Quants hi dormen, a Vilada?"
+ },
+ {
+  "id": "P15b",
+  "q": 15,
+  "lang": "es",
+  "query": "¿Cuánta gente vive de verdad en Vilada?"
+ },
+ {
+  "id": "P16a",
+  "q": 16,
+  "lang": "ca",
+  "query": "Quanta gent hi ha a l'Espunyola de veritat?"
+ },
+ {
+  "id": "P16b",
+  "q": 16,
+  "lang": "ca",
+  "query": "Quina xifra nocturna té l'Espunyola?"
+ },
+ {
+  "id": "P17a",
+  "q": 17,
+  "lang": "ca",
+  "query": "Quanta gent viu de fet a Castellar del Riu?"
+ },
+ {
+  "id": "P17b",
+  "q": 17,
+  "lang": "ca",
+  "query": "Quants habitants reals té Castellar del Riu?"
+ },
+ {
+  "id": "P18a",
+  "q": 18,
+  "lang": "ca",
+  "query": "Quanta gent para de nit a Castell de l'Areny?"
+ },
+ {
+  "id": "P18b",
+  "q": 18,
+  "lang": "ca",
+  "query": "Quina població efectiva té Castell de l'Areny?"
+ },
+ {
+  "id": "P19a",
+  "q": 19,
+  "lang": "ca",
+  "query": "Quants són a Gisclareny quan cau la nit?"
+ },
+ {
+  "id": "P19b",
+  "q": 19,
+  "lang": "ca",
+  "query": "Quanta gent real hi ha a Gisclareny?"
+ },
+ {
+  "id": "P20a",
+  "q": 20,
+  "lang": "ca",
+  "query": "Quanta gent hi ha a Capolat en realitat?"
+ },
+ {
+  "id": "P20b",
+  "q": 20,
+  "lang": "ca",
+  "query": "Quants dormen a Capolat?"
+ },
+ {
+  "id": "P21a",
+  "q": 21,
+  "lang": "ca",
+  "query": "Quina població de nit té Sant Jaume de Frontanyà?"
+ },
+ {
+  "id": "P21b",
+  "q": 21,
+  "lang": "ca",
+  "query": "Quanta gent hi viu de debò, a Sant Jaume de Frontanyà?"
+ },
+ {
+  "id": "P22a",
+  "q": 22,
+  "lang": "ca",
+  "query": "Quanta gent fa nit a Guardiola de Berguedà?"
+ },
+ {
+  "id": "P22b",
+  "q": 22,
+  "lang": "ca",
+  "query": "Quina població real té Guardiola de Berguedà segons el vostre model?"
+ },
+ {
+  "id": "P23a",
+  "q": 23,
+  "lang": "ca",
+  "query": "Quants dormen a la Pobla de Lillet?"
+ },
+ {
+  "id": "P23b",
+  "q": 23,
+  "lang": "es",
+  "query": "¿Cuánta gente pasa la noche en la Pobla de Lillet?"
+ },
+ {
+  "id": "P24a",
+  "q": 24,
+  "lang": "ca",
+  "query": "Quanta gent hi ha de veritat a Gósol?"
+ },
+ {
+  "id": "P24b",
+  "q": 24,
+  "lang": "ca",
+  "query": "Quina xifra de gent que fa nit té Gósol?"
+ },
+ {
+  "id": "P25a",
+  "q": 25,
+  "lang": "ca",
+  "query": "Quina població nocturna té Saldes?"
+ },
+ {
+  "id": "P25b",
+  "q": 25,
+  "lang": "ca",
+  "query": "Quants hi viuen de fet, a Saldes?"
+ },
+ {
+  "id": "P26a",
+  "q": 26,
+  "lang": "ca",
+  "query": "On dorm més gent, a Bagà o a Avià?"
+ },
+ {
+  "id": "P26b",
+  "q": 26,
+  "lang": "ca",
+  "query": "Qui té més habitants reals, Bagà o Avià?"
+ },
+ {
+  "id": "P27a",
+  "q": 27,
+  "lang": "ca",
+  "query": "Quin dels dos està més ple, Gironella o Puig-reig?"
+ },
+ {
+  "id": "P27b",
+  "q": 27,
+  "lang": "ca",
+  "query": "On hi ha més gent de nit, a Gironella o a Puig-reig?"
+ },
+ {
+  "id": "P28a",
+  "q": 28,
+  "lang": "ca",
+  "query": "Qui té més gent real, Olvan o la Pobla de Lillet?"
+ },
+ {
+  "id": "P28b",
+  "q": 28,
+  "lang": "ca",
+  "query": "Entre Olvan i la Pobla de Lillet, on dorm més gent?"
+ },
+ {
+  "id": "P29a",
+  "q": 29,
+  "lang": "ca",
+  "query": "Guardiola de Berguedà o la Pobla de Lillet: quin està més habitat de veritat?"
+ },
+ {
+  "id": "P29b",
+  "q": 29,
+  "lang": "ca",
+  "query": "On fa nit més gent, a Guardiola de Berguedà o a la Pobla de Lillet?"
+ },
+ {
+  "id": "P30a",
+  "q": 30,
+  "lang": "ca",
+  "query": "Quanta gent dorm a Vic?"
+ },
+ {
+  "id": "P30b",
+  "q": 30,
+  "lang": "ca",
+  "query": "Quina població real té Vic?"
+ },
+ {
+  "id": "P31a",
+  "q": 31,
+  "lang": "ca",
+  "query": "Quants habitants reals té Manresa?"
+ },
+ {
+  "id": "P31b",
+  "q": 31,
+  "lang": "es",
+  "query": "¿Cuánta gente pasa la noche en Manresa?"
+ },
+ {
+  "id": "P32a",
+  "q": 32,
+  "lang": "ca",
+  "query": "Quant guanya de mitjana la gent de Berga?"
+ },
+ {
+  "id": "P32b",
+  "q": 32,
+  "lang": "ca",
+  "query": "Quin nivell d'ingressos hi ha a Berga?"
+ },
+ {
+  "id": "P33a",
+  "q": 33,
+  "lang": "ca",
+  "query": "Quanta gent està sense feina a Gósol?"
+ },
+ {
+  "id": "P33b",
+  "q": 33,
+  "lang": "ca",
+  "query": "Com va l'ocupació a Gósol?"
+ },
+ {
+  "id": "P34a",
+  "q": 34,
+  "lang": "ca",
+  "query": "Què costa comprar un pis a Puig-reig?"
+ },
+ {
+  "id": "P34b",
+  "q": 34,
+  "lang": "ca",
+  "query": "A quant va el metre quadrat a Puig-reig?"
+ }
+]
