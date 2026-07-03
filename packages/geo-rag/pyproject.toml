@@ -27,6 +27,14 @@ embeddings = [
     "torch==2.12.1",
     "sentence-transformers==5.6.0",
 ]
+# Phase-0b generative layer (LLM via API). OPTIONAL and NEVER in the Render image
+# (that builds only packages/ai). Pure-Python + tiny — no CPU-index caveat like torch.
+# Key at runtime via the ANTHROPIC_API_KEY env var (a gitignored .env; never in this
+# public repo). Default models: generator claude-sonnet-5, blind validator
+# claude-haiku-4-5 (temperature=0). See README.
+generativa = [
+    "anthropic==0.116.0",
+]
 
 [project.scripts]
 datapoble-geo-rag = "datapoble_geo_rag.build:main"

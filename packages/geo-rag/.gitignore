@@ -7,3 +7,9 @@ data/bergueda.duckdb
 # torch-free search path). Only *.duckdb is ignored above; parquet/json stay tracked.
 !data/embeddings-e5-small.parquet
 !data/embeddings-e5-small.meta.json
+
+# Local secret — the ANTHROPIC_API_KEY for the [generativa] extra lives in a local
+# .env (or ~/.secrets). NEVER commit it. .env.example (placeholder only) IS tracked.
+.env
+.env.*
+!.env.example

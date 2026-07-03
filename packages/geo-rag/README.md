@@ -159,6 +159,46 @@ torch-guarded test (`pytest.importorskip("torch")`) embeds a live query and **sk
 CI. Retrieval is phrasing-sensitive on these 31 short docs: a query echoing the document
 wording surfaces the intended register; a loose paraphrase may not.
 
+## Generative layer (optional extra) — Phase 0b
+
+The "σ real vs σ of embeddings" star sub-experiment also needs an **LLM generation +
+blind-validation** step, via the Anthropic API — local runs only, never in per-PR CI.
+
+- **Models** (exact IDs, pinned snapshots — don't append date suffixes):
+  - **Generator:** `claude-sonnet-5` — the realistic production-tier model; default
+    sampling (stochastic; N=5 passes capture it). Intro pricing $2/$10 per MTok until
+    2026-08-31, then $3/$15 (Sonnet 4.6 is now legacy).
+  - **Blind validator:** `claude-haiku-4-5` at `temperature=0` — a **different** model
+    (less-correlated blind spots), cheap, consistent. Haiku 4.5 / Sonnet 4.6 still accept
+    `temperature`; Opus 4.7+/Fable 5 reject it. Don't set `effort` on Haiku — it errors.
+- **Isolation:** the `[generativa]` extra (`anthropic`) **never** reaches Render (which
+  builds only `packages/ai`), same discipline as `[embeddings]`.
+
+### Install & key
+```sh
+pip install -e ".[generativa]"
+cp .env.example .env      # then put the real key in .env (gitignored)
+```
+The `anthropic` SDK reads **`ANTHROPIC_API_KEY`** from the environment automatically
+(`anthropic.Anthropic()`). Keep it in a gitignored `.env` (or `~/.secrets/`) — **never**
+in this public repo, never in logs; write raw responses to a gitignored dir.
+
+### Infra policy
+- **Per-PR CI stays offline:** the `geo-rag` job installs neither extra, downloads no
+  weights, and **calls no API**. API-needing tests use an env guard —
+  `@pytest.mark.skipif(not os.getenv("ANTHROPIC_API_KEY"), ...)` (the analogue of
+  `importorskip("torch")`). **No GitHub Actions secret** for the key → nothing to leak.
+- **Reproducibility → provenance, not a seed.** There is no `seed` param and
+  `temperature=0` is **not** bit-deterministic. Log per trial: `response.model`,
+  `response._request_id`, `usage`, and the pinned SDK version. The record of truth is the
+  committed per-trial JSON + raw responses — compare with tolerance / human review, not
+  byte-equality (same spirit as the embeddings artifact).
+- **Retries/limits:** the SDK's default `max_retries=2` (429/5xx/network, exponential
+  backoff) is enough for ~340 calls/pass — no extra infra.
+- **Cost trim (optional):** the generator reuses a frozen prompt across passes → cache
+  the stable prefix (`cache_control: {"type": "ephemeral"}`); Sonnet's min cacheable
+  prefix is ~2048 tokens or it silently won't cache. Or use the Batch API (−50%, async).
+
 ## Phase 1 — the spatial retriever (tie = abstention)
 
 **Contract:** `docs/experiment-rag-geo/03-fase1-recuperador.md`.
