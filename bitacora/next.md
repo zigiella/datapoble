@@ -43,6 +43,14 @@ publicable per si sola.*
 > determinista (21/21) vs generatiu — el cost de la fluïdesa amb σ real.** Nivells de Bea AMB gàbia i SENSE, abans
 > de la passada oficial. **ORDRE:** 1) paràfrasis adversarials del recuperador PRIMER (Talaia esborrany → Bea
 > congela) · 2) capa generativa · ★ estrella independent (no es bloqueja) · fases 4–5 tancades fins al delta.
+> **Preregistrat (2026-07-02):** **N=5 (Bea)** · protocol + nivells a `10-generativa-protocol-i-nivells.md`
+> (nivells delegats per Bea a Talaia, justificats: **nu** = la MATEIXA vara que el determinista (recall ≥0,90 +
+> FRR ≤0,15) perquè el delta es llegeixi directe; **gàbia** = recall ≥0,98 perquè una fuga amb gàbia és fallada
+> triple; esmenables només ABANS de la passada oficial) · spec d'infra per a Trazo a `11-generativa-spec-infra.md`
+> (generador `claude-sonnet-4-6` $3/$15 · validador cec `claude-haiku-4-5` $1/$5 a temp 0 — model diferent +
+> context aïllat; ~340 crides/passada oficial, <15 $ total; clau NOMÉS local, el CI segueix offline).
+> **Paràfrasis:** esborrany de 68 (2 per Q, daurades HERETADES del banc congelat, 5 en castellà, fora-de-catàleg
+> sense keyword) a `09-parafrasis-adversarials.md` — **NO commitejat**, pendent de congelació de Bea.
 > **El draft del paper** (`05-paper-esborrany.md`) NO es commiteija encara (Bea el llegeix).
 
 > **🧭 RUMBO DECIDIT (2026-06-27).** Després de l'arc «fer-ho bé» (dada honesta a tot CAT) i del dossier
