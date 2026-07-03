@@ -159,9 +159,11 @@ torch-guarded test (`pytest.importorskip("torch")`) embeds a live query and **sk
 CI. Retrieval is phrasing-sensitive on these 31 short docs: a query echoing the document
 wording surfaces the intended register; a loose paraphrase may not.
 
-## Generative layer (optional extra) — Phase 0b
+## Generative layer (optional extra) — contracte 08
 
-The "σ real vs σ of embeddings" star sub-experiment also needs an **LLM generation +
+The **generative layer** (contract `docs/experiment-rag-geo/08-contracte-capa-generativa.md`:
+the delta against the deterministic 21/21 — not the σ-vs-σ star sub-experiment, which is
+MC-Dropout on local embeddings and needs no API) needs an **LLM generation +
 blind-validation** step, via the Anthropic API — local runs only, never in per-PR CI.
 
 - **Models** (exact IDs, pinned snapshots — don't append date suffixes):
