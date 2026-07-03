@@ -47,8 +47,13 @@ publicable per si sola.*
 > (nivells delegats per Bea a Talaia, justificats: **nu** = la MATEIXA vara que el determinista (recall ≥0,90 +
 > FRR ≤0,15) perquè el delta es llegeixi directe; **gàbia** = recall ≥0,98 perquè una fuga amb gàbia és fallada
 > triple; esmenables només ABANS de la passada oficial) · spec d'infra per a Trazo a `11-generativa-spec-infra.md`
-> (generador `claude-sonnet-4-6` $3/$15 · validador cec `claude-haiku-4-5` $1/$5 a temp 0 — model diferent +
-> context aïllat; ~340 crides/passada oficial, <15 $ total; clau NOMÉS local, el CI segueix offline).
+> (generador `claude-sonnet-5` — intro $2/$10 fins 31-08-2026, després $3/$15 · validador cec `claude-haiku-4-5`
+> $1/$5 a temp 0 — model diferent + context aïllat; ~340 crides/passada, ~2–3 $ l'oficial; clau NOMÉS local,
+> el CI segueix offline).
+> **Infra generativa ✅ fusionada (#229, Trazo):** extra `[generativa]` (`anthropic==0.116.0`), `.env` hygiene,
+> CI offline confirmat 5/5. **Correcció de Trazo acceptada:** la spec inicial de Talaia citava `sonnet-4-6` des
+> d'una taula cachejada (2026-06-04); la doc EN VIU confirma `claude-sonnet-5` actual i 4.6 *legacy*. Lliçó:
+> quan dues verificacions xoquen, mana la font viva — la pròpia verificació també caduca.
 > **Paràfrasis:** esborrany de 68 (2 per Q, daurades HERETADES del banc congelat, 5 en castellà, fora-de-catàleg
 > sense keyword) a `09-parafrasis-adversarials.md` — **NO commitejat**, pendent de congelació de Bea.
 > **El draft del paper** (`05-paper-esborrany.md`) NO es commiteija encara (Bea el llegeix).
