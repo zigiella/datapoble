@@ -106,6 +106,18 @@ publicable per si sola.*
 > ens penalitza, no ens infla; la gàbia ho recupera.** Ja són DUES passades al banc (avís de comparacions múltiples).
 > **Decisió de Bea: (a) tancar amb v2 documentant Q8 com a límit conegut i l'FP-que-es-mou, o (b) v3 amb doctrina de
 > `veins` (3a passada — afebleix el preregistre). Recomanació de Talaia: (a).**
+> **★ v3 (Bea: «v3») + 3a PASSADA — L'FP CAU A ZERO, i aquest cop NO es mou:** doctrina nova per a l'intent `veins`
+> (adjacència espacial = servei del substrat, derivable de la Fase 1; la cobertura de valor no exclou geografia).
+> Desenvolupat al dev (+D16 `veins` nou, 3/3). v2 preservada com a acta. **3a passada oficial (Anthropic 170/170,
+> $1,85): recall 105/105=1,000 · FN 0 · FP 0 · FRR 0,000 · nu 160/170 (0,941) · GÀBIA 170/170 (1,000) · DELTA nu 10
+> / gàbia 0.** Q8 estabilitzat a 5/5, i cap FP nou enlloc: el bony no s'ha mogut, ha desaparegut. Els 10 nu-fails
+> restants són TOTS l'estrictesa del validador cec (Q13 comparació desnivellada de soroll + Q27/Q28 empats): acció
+> correcta, gàbia els recupera. **CAVEAT PER AL PAPER (imprescindible): són TRES passades oficials al mateix banc;
+> l'FRR 0,154→0,046→0,000 és en part comparacions múltiples. El que ÉS robust (no un tir afortunat) és el recall
+> d'abstenció: 105/105, FN 0, a LES TRES passades — la propietat de seguretat (mai respondre quan s'ha de callar) no
+> va tremolar mai. La headline honesta NO és «170/170 gàbia» sinó «FN=0 robust + 3 fixos de doctrina principiats +
+> les 3 passades declarades».** Cada fix (precedència v2, veïns v3) desenvolupat al dev, mai al banc; validador cec
+> intacte a totes. Actes v1/v2/v3 totes versionades. **PR #235 llest per fusionar (verificat).**
 > **ARNÈS GENERATIU CONSTRUÏT + PROMPT v0.1 MADUR AL DEV SET (2026-07-03):** `generativa.py` (OpenRouter amb
 > proveïdor FIXAT a Anthropic —verificat a cada crida—, context de DADES CRUES —la prosa determinista mai arriba
 > al generador—, validació dura amb tall ⟦xifra no verificada⟧, validador cec haiku a temp 0, nu/gàbia dels

@@ -15,6 +15,7 @@
     {"id": "D12", "query": "Guardiola de Berguedà: quanta gent hi viu de veritat?", "dev_golden": "abstenir", "familia": "collisio-oficial", "nota": "el cas exigent: grup nomenat + Idescat sí els separa (ETCA)"},
     {"id": "D13", "query": "Quins municipis tenen una estimació que no us mereix confiança?", "dev_golden": "respondre", "familia": "cataleg-soroll", "nota": "v2: LLISTA del registre soroll → enumerar-los és pertinença al catàleg, NO abstenció de valor (mode de fall de la v1)"},
     {"id": "D14", "query": "Qui té més presència, Berga o Gisclareny?", "dev_golden": "respondre", "familia": "comparacio-desnivellada", "nota": "v2: Berga oficial vs Gisclareny soroll, bandes disjuntes → distinguishable:true mana; que un sigui soroll no bloqueja l'ordre (mode de fall de la v1)"},
-    {"id": "D15", "query": "Quins pobles teniu marcats com a poc fiables?", "dev_golden": "respondre", "familia": "cataleg-soroll", "nota": "v2: segona forma de llista soroll, frasejat diferent"}
+    {"id": "D15", "query": "Quins pobles teniu marcats com a poc fiables?", "dev_golden": "respondre", "familia": "cataleg-soroll", "nota": "v2: segona forma de llista soroll, frasejat diferent"},
+    {"id": "D16", "query": "Amb quins pobles limita Gironella?", "dev_golden": "respondre", "familia": "veins", "nota": "v3: relació de veïnatge (intent veins) — el substrat SÍ serveix la geografia; la llista veins ÉS la resposta, no fora de catàleg (mode de fall latent de Q8)"}
   ]
 }
