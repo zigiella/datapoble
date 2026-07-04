@@ -174,7 +174,7 @@
 		</div>
 	</div>
 	<div class="ap-foot__bottom">
-		<a href="https://zigiella.com">{m.foot_legal()}</a>
+		<span>{m.foot_legal()} <a href="https://zigiella.com">zigiella.com</a></span>
 		<span class="coord"><span>42°17′N · 2°01′E</span><span>{m.foot_update()}</span></span>
 	</div>
 </footer>
