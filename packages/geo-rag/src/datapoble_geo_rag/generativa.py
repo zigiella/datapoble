@@ -47,7 +47,7 @@ from .router import route
 # --- Rutes del paquet (mai rutes locals absolutes en res versionat) -------------------
 
 _PKG_ROOT = Path(__file__).resolve().parents[2]  # packages/geo-rag
-PROMPT_GENERADOR_PATH = _PKG_ROOT / "prompts" / "generador-v1-CONGELAT.md"
+PROMPT_GENERADOR_PATH = _PKG_ROOT / "prompts" / "generador-v2-CONGELAT.md"
 PROMPT_VALIDADOR_PATH = _PKG_ROOT / "prompts" / "validador-cec-v1-CONGELAT.md"
 DEVSET_PATH = _PKG_ROOT / "data" / "generativa-devset.json"
 BANC_PATH = _PKG_ROOT / "data" / "fase3-banc.json"

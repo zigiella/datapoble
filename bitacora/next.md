@@ -94,6 +94,18 @@ publicable per si sola.*
 > passada es va completar amb `--resume` sobre el MATEIX prompt/model congelats. **Pendent: vot narratiu de Bea sobre
 > com expliquem un resultat que frega el llindar per prudència; decidir si volem una v2 transparent del prompt
 > (regla: catàleg-de-sorolls i comparació-desnivellada NO disparen l'abstenció) o si el número queda tal com surt.**
+> **★ v2 DEL PROMPT + RE-PASSADA (2026-07-04, Bea: «jo faria v2»):** fix de PRECEDÈNCIA (primer intent/veredicte de
+> comparació, després registre), derivat de doctrina congelada, desenvolupat sobre el dev (ampliat +D13/14/15 nous);
+> validador cec SENSE tocar (estricte en contra nostra); v1 preservada com a acta. **Re-passada oficial v2: recall
+> d'abstenció 105/105=1,000 · FN 0 · FP 3 · FRR 0,046 (<0,15) → NIVELL HONEST (nu i gàbia) · nu 156/170 (0,918) ·
+> gàbia 167/170 (0,982) · DELTA nu 14 / gàbia 3.** Proveïdor Anthropic 170/170. **PERÒ honestedat: l'FP no es va
+> esvair, es va MOURE — v1 fallava Q10+Q13 (10 FP); v2 els arregla i destapa un forat LATENT a Q8 («quins municipis
+> toquen Berga», intent `veins`): 3/5 passades s'absté perquè el prompt no té doctrina per a `veins` i la seva frase
+> de cobertura exclou la geografia, tot i que el substrat SÍ serveix veïns (i el context ja porta la resposta). v1
+> feia Q8 5/5 per sort de mostreig. Q13 ara respon les 5 (acció arreglada) però nu 0/5 pel validador estricte —
+> ens penalitza, no ens infla; la gàbia ho recupera.** Ja són DUES passades al banc (avís de comparacions múltiples).
+> **Decisió de Bea: (a) tancar amb v2 documentant Q8 com a límit conegut i l'FP-que-es-mou, o (b) v3 amb doctrina de
+> `veins` (3a passada — afebleix el preregistre). Recomanació de Talaia: (a).**
 > **ARNÈS GENERATIU CONSTRUÏT + PROMPT v0.1 MADUR AL DEV SET (2026-07-03):** `generativa.py` (OpenRouter amb
 > proveïdor FIXAT a Anthropic —verificat a cada crida—, context de DADES CRUES —la prosa determinista mai arriba
 > al generador—, validació dura amb tall ⟦xifra no verificada⟧, validador cec haiku a temp 0, nu/gàbia dels
