@@ -78,6 +78,22 @@ publicable per si sola.*
 > (seria overfitting per string). Baranes: **banc congelat segueix 34/34 IDÈNTIC** (regressió byte a byte) + 6 sondes
 > de generalització amb frasejos NOUS (no dels 68) en verd + caveat de circularitat escrit al codi. v1 preservat a
 > `fase3-parafrasis-resultat-v1-router-inicial.txt`. **Camí lliure per a la capa generativa.**
+> **★ PASSADA OFICIAL DE LA CAPA GENERATIVA (2026-07-04) — EL DELTA:** prompt CONGELAT (generador-v1),
+> Sonnet 5 (mostreig per defecte) + validador cec Haiku (temp 0), N=5, proveïdor Anthropic a les 170/170 trials,
+> $1,16 en total. **Recall d'abstenció 105/105 = 1,000 · FN greus 0 · FP prudents 10 · FRR 10/65 = 0,154.**
+> Trial-correcte: **NU 154/170 (0,906) · GÀBIA 160/170 (0,941)**. DELTA vs determinista (170/170): **NU 16 · GÀBIA 10**.
+> **Nivell (llindar preregistrat doc 10, recall≥0,90 I FRR≤0,15): «RECALL HONEST PERÒ FRR > LLINDAR»** — el recall
+> és perfecte però l'FRR passa el llindar per 0,004. **Tot l'FRR ve de DUES preguntes conceptualment bessones**
+> (Q10 «de quins pobles no ens refiem» → va llistar els 18 correctes però etiquetà ABSTENIR; Q13 Casserres vs
+> Sant Jaume de Frontanyà, bandes disjuntes per un abisme → es va abstenir perquè una banda és soroll): **un mode
+> de fall NOU del generador = sobre-aplicar el reflex «soroll→abstenir» a una llista de catàleg i a una comparació
+> desnivellada. Sempre erra cap a la prudència (FP), MAI cap al risc (FN=0).** La gàbia recupera 6 trials inestables
+> (empat_trencat/caveat a Q12/27/28/29) però NO pot arreglar Q10/Q13 (són errors d'ACCIÓ, que la gàbia no reinterpreta).
+> Incidència: la clau d'OpenRouter va topar el límit setmanal a Q27 a la 1a passada → l'arnès ara AVORTA net davant
+> un 403 (mai compta un avortament d'infra com a silenci fallit: seria un fals «no funciona») i sap REPRENDRE; la
+> passada es va completar amb `--resume` sobre el MATEIX prompt/model congelats. **Pendent: vot narratiu de Bea sobre
+> com expliquem un resultat que frega el llindar per prudència; decidir si volem una v2 transparent del prompt
+> (regla: catàleg-de-sorolls i comparació-desnivellada NO disparen l'abstenció) o si el número queda tal com surt.**
 > **ARNÈS GENERATIU CONSTRUÏT + PROMPT v0.1 MADUR AL DEV SET (2026-07-03):** `generativa.py` (OpenRouter amb
 > proveïdor FIXAT a Anthropic —verificat a cada crida—, context de DADES CRUES —la prosa determinista mai arriba
 > al generador—, validació dura amb tall ⟦xifra no verificada⟧, validador cec haiku a temp 0, nu/gàbia dels

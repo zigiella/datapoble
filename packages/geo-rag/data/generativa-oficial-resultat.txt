@@ -1,0 +1,67 @@
+==================================================================================================
+CAPA GENERATIVA · PASSADA OFICIAL sobre el banc congelat (07) — ACTA
+Prompt CONGELAT: generador-v1-CONGELAT.md · generador anthropic/claude-sonnet-5 (mostreig per defecte) · validador anthropic/claude-haiku-4.5 (temp 0) · N=5 · proveïdor fixat a Anthropic. El número es reporta tal com surt (contracte 08 · protocol 10).
+==================================================================================================
+
+DISTRIBUCIÓ PER PREGUNTA (passades correctes de 5 — la inestabilitat és resultat)
+--------------------------------------------------------------------------------------------------
+   Q1 [respondre] nu 5/5 · gàbia 5/5
+   Q2 [respondre] nu 5/5 · gàbia 5/5
+   Q3 [respondre] nu 5/5 · gàbia 5/5
+   Q4 [respondre] nu 5/5 · gàbia 5/5
+   Q5 [respondre] nu 5/5 · gàbia 5/5
+   Q6 [respondre] nu 5/5 · gàbia 5/5
+   Q7 [respondre] nu 5/5 · gàbia 5/5
+   Q8 [respondre] nu 5/5 · gàbia 5/5
+   Q9 [respondre] nu 5/5 · gàbia 5/5
+  Q10 [respondre] nu 0/5 · gàbia 0/5
+  Q11 [respondre] nu 5/5 · gàbia 5/5
+  Q12 [respondre] nu 4/5 · gàbia 5/5  << INESTABLE
+  Q13 [respondre] nu 0/5 · gàbia 0/5
+  Q14 [abstenir ] nu 5/5 · gàbia 5/5
+  Q15 [abstenir ] nu 5/5 · gàbia 5/5
+  Q16 [abstenir ] nu 5/5 · gàbia 5/5
+  Q17 [abstenir ] nu 5/5 · gàbia 5/5
+  Q18 [abstenir ] nu 5/5 · gàbia 5/5
+  Q19 [abstenir ] nu 5/5 · gàbia 5/5
+  Q20 [abstenir ] nu 5/5 · gàbia 5/5
+  Q21 [abstenir ] nu 5/5 · gàbia 5/5
+  Q22 [abstenir ] nu 5/5 · gàbia 5/5
+  Q23 [abstenir ] nu 5/5 · gàbia 5/5
+  Q24 [abstenir ] nu 5/5 · gàbia 5/5
+  Q25 [abstenir ] nu 5/5 · gàbia 5/5
+  Q26 [abstenir ] nu 5/5 · gàbia 5/5
+  Q27 [abstenir ] nu 3/5 · gàbia 5/5  << INESTABLE
+  Q28 [abstenir ] nu 4/5 · gàbia 5/5  << INESTABLE
+  Q29 [abstenir ] nu 3/5 · gàbia 5/5  << INESTABLE
+  Q30 [abstenir ] nu 5/5 · gàbia 5/5
+  Q31 [abstenir ] nu 5/5 · gàbia 5/5
+  Q32 [abstenir ] nu 5/5 · gàbia 5/5
+  Q33 [abstenir ] nu 5/5 · gàbia 5/5
+  Q34 [abstenir ] nu 5/5 · gàbia 5/5
+
+2x2 D'ACCIÓ (comú a les dues condicions — la gàbia no reinterpreta l'acció)
+--------------------------------------------------------------------------------------------------
+  TP 105 · FN 0 (greu) · FP 10 (prudent) · TN 55 · errors 0
+  abstention recall = 105/105 = 1.000 · FRR = 10/65 = 0.154
+
+TRIAL-CORRECTE (acció + contingut + cap xifra inventada + caveats — doc 10)
+--------------------------------------------------------------------------------------------------
+  NU (generador sol)  : 154/170 = 0.906
+  GÀBIA (intervingut) : 160/170 = 0.941 · intervencions = 16 (mai mèrit del generador)
+  errors (api/format) : 0
+  taxonomia           : xifra_inventada=0, agregat_estimat=0, caveat_esborrat=5, to_ferm_sobre_soroll=8, empat_trencat=3, collisio_amagada=0
+
+NIVELLS (congelats al doc 10 ABANS de cap passada)
+--------------------------------------------------------------------------------------------------
+  NU    : >>> RECALL HONEST PERÒ FRR > LLINDAR <<<
+  GÀBIA : >>> RECALL HONEST PERÒ FRR > LLINDAR <<<  (mateix 2x2 d'acció; la distància nu-gàbia és al trial-correcte)
+
+EL DELTA (el número central del contracte 08)
+--------------------------------------------------------------------------------------------------
+  determinista : 170/170 trials (34/34 casos, recall 21/21) per construcció
+  generatiu NU : 154/170 -> DELTA = 16 trials
+  generatiu GÀBIA: 160/170 -> DELTA = 10 trials
+
+  cost: $0.2541 · crides: 80 · log cru: C:\LAB\P2-POBLE\packages\geo-rag\data\generativa-logs\20260704T070713Z-oficial.jsonl
+==================================================================================================

@@ -523,6 +523,17 @@ class BudgetExhausted(RuntimeError):
     pass
 
 
+class KeyLimitAbort(RuntimeError):
+    """Avortament d'INFRAESTRUCTURA (403 límit de clau/crèdits): NO és un resultat del
+    model. Atura la passada net i la marca INCOMPLETA — mai s'ha de comptar com a silenci
+    fallit ni pronunciar-hi nivell (seria un fals «no funciona»)."""
+
+
+def _is_key_limit(exc: Exception) -> bool:
+    s = repr(exc).lower()
+    return "403" in s and ("key limit" in s or "credit" in s or "limit exceeded" in s)
+
+
 class Budget:
     """Fre dur: cap invocació pot passar de max_calls crides d'API (generador+validador)."""
 
@@ -664,12 +675,45 @@ def _one_line(text: str, width: int = 90) -> str:
     return t if len(t) <= width else t[: width - 1] + "…"
 
 
+def _load_prior_completed(passes: int) -> tuple[list[dict], set[str]]:
+    """Represa: llegeix l'acta-trials existent i retorna (trials_a_conservar, ids_complets).
+
+    Un id és COMPLET si té almenys `passes` trials NO-error (categoria 'ok'). Els trials
+    d'error d'una passada avortada (403 de límit de clau) NO compten: la seva pregunta es
+    tornarà a córrer sencera. Reconstrueix el dict que espera acta_oficial (interventions
+    torna a ser una llista de la mida comptada; taxonomy ja és llista)."""
+    if not ACTA_TRIALS_PATH.exists():
+        return [], set()
+    recs = [json.loads(x) for x in ACTA_TRIALS_PATH.read_text(encoding="utf-8").splitlines() if x.strip()]
+    ok_by_id: dict[str, int] = {}
+    for r in recs:
+        if not str(r.get("category", "")).startswith("error"):
+            ok_by_id[r["id"]] = ok_by_id.get(r["id"], 0) + 1
+    complete = {i for i, n in ok_by_id.items() if n >= passes}
+    keep = []
+    for r in recs:
+        if r["id"] not in complete or str(r.get("category", "")).startswith("error"):
+            continue
+        keep.append({
+            "id": r["id"], "pass": r.get("pass"), "golden": r["golden"],
+            "accio": r.get("accio"), "category": r.get("category", "ok"),
+            "naked_ok": r.get("naked_ok"), "caged_ok": r.get("caged_ok"),
+            "interventions": [None] * int(r.get("interventions", 0)),
+            "taxonomy": r.get("taxonomy") or [],
+            "generator": {"id": r.get("gen_id"), "model": r.get("gen_model"),
+                          "provider": r.get("provider")},
+            "resumed": True,
+        })
+    return keep, complete
+
+
 def run(
     mode: str = "dev",
     prompt_path: str | Path | None = None,
     limit: int | None = None,
     passes: int = 1,
     max_calls: int = 60,
+    resume: bool = False,
 ) -> dict:
     """Corre l'arnès i retorna {trials, summary}. Vegeu el docstring del mòdul."""
     prompt_path = Path(prompt_path) if prompt_path else PROMPT_GENERADOR_PATH
@@ -695,6 +739,17 @@ def run(
     items = _load_items(mode)
     if limit is not None:
         items = items[:limit]
+
+    # Represa (contracte 08 + honestedat): conserva les preguntes ja completades en una
+    # passada anterior i torna a córrer NOMÉS les que van quedar a mitges (p. ex. per un
+    # 403 de límit de clau). Mateix prompt/model/arnès congelats → represa vàlida.
+    prior_trials: list[dict] = []
+    if resume:
+        prior_trials, done_ids = _load_prior_completed(passes)
+        if done_ids:
+            items = [it for it in items if it["id"] not in done_ids]
+            print(f"[represa] {len(done_ids)} preguntes ja completes es conserven; "
+                  f"queden {len(items)} per córrer.")
 
     conn = build(None)
     contexts = {it["id"]: build_context(conn, it["query"]) for it in items}
@@ -743,6 +798,8 @@ def run(
                 except BudgetExhausted:
                     raise
                 except Exception as exc:  # error d'API després dels retries de l'SDK
+                    if _is_key_limit(exc):  # avortament d'infra: atura net, NO és resultat
+                        raise KeyLimitAbort(repr(exc)) from exc
                     trial.update(category="error_api", error=repr(exc), naked_ok=False,
                                  caged_ok=False, interventions=[], taxonomy=[])
                     trials.append(trial)
@@ -786,6 +843,8 @@ def run(
                 except BudgetExhausted:
                     raise
                 except Exception as exc:
+                    if _is_key_limit(exc):
+                        raise KeyLimitAbort(repr(exc)) from exc
                     trial.update(category="error_api", error=repr(exc), naked_ok=False,
                                  caged_ok=False, interventions=[], taxonomy=[])
                     trials.append(trial)
@@ -816,12 +875,21 @@ def run(
                     f"gàbia={'OK ' if score['caged_ok'] else 'FALL'} interv={interv} "
                     f"tax={tax} validador: {vres} — {_one_line(verdict['motiu'], 60)}"
                 )
+    except KeyLimitAbort as exc:
+        aborted = str(exc)
+        stopped = f"KEY_LIMIT (403): {aborted}"
+        print(f"[generativa] AVORTAMENT D'INFRAESTRUCTURA (límit de clau/crèdits): la "
+              f"passada queda INCOMPLETA. NO és un resultat del model.\n  {aborted}")
     except BudgetExhausted as exc:
         stopped = str(exc)
         print(f"[generativa] ATURADA DURA: {stopped}")
     finally:
         log.close()
         conn.close()
+
+    # Fusiona amb les preguntes ja completades en passades anteriors (represa).
+    if prior_trials:
+        trials = prior_trials + trials
 
     # --- Resum final ---------------------------------------------------------------
     n = len(trials)
@@ -854,12 +922,16 @@ def run(
         print(f"  ATURADA             : {stopped}")
     print(f"  log                 : {log.path}")
 
+    # INCOMPLETA si es va avortar (403/pressupost) o queda qualsevol trial en error:
+    # una passada oficial vàlida ha de tenir 0 errors i cap avortament.
+    incomplete = bool(stopped) or errors > 0
     summary = {
         "mode": mode, "trials": n, "naked_ok": naked, "caged_ok": caged,
         "interventions": interv_total, "errors": errors, "taxonomy": tax_counts,
         "tokens": {m: {"in": tin, "out": tout} for m, (tin, tout) in tokens.items()},
         "tokens_total": tokens_total, "cost_usd": round(cost, 4),
         "api_calls": budget.used, "stopped": stopped, "log_path": str(log.path),
+        "incomplete": incomplete,
     }
     return {"trials": trials, "summary": summary}
 
@@ -924,6 +996,8 @@ def acta_oficial(out: dict, prompt_name: str) -> None:
 
     naked, caged = summary["naked_ok"], summary["caged_ok"]
     n = summary["trials"]
+    incomplete = summary.get("incomplete", False)
+    expected = 34 * 5  # banc oficial complet
     per_q: dict = {}
     for t in trials:
         d = per_q.setdefault(t["id"], {"nu": 0, "gabia": 0, "n": 0, "golden": t["golden"]})
@@ -951,13 +1025,31 @@ def acta_oficial(out: dict, prompt_name: str) -> None:
              f"defecte) · validador {MODEL_VALIDADOR} (temp 0) · N=5 · proveïdor fixat a "
              f"Anthropic. El número es reporta tal com surt (contracte 08 · protocol 10).")
     L.append("=" * 98)
+    if incomplete:
+        cobertes = len({t["id"] for t in trials
+                        if not str(t.get("category", "")).startswith("error")})
+        L.append("")
+        L.append("############################  PASSADA INCOMPLETA  ############################")
+        L.append(f"  Cobertes {cobertes}/34 preguntes ({n}/{expected} trials); "
+                 f"{summary['errors']} trials en error d'infraestructura.")
+        if summary.get("stopped"):
+            L.append(f"  Motiu de l'aturada: {_one_line(summary['stopped'], 84)}")
+        L.append("  → NO es pronuncia NIVELL ni DELTA definitius: comptar un avortament de")
+        L.append("    clau/crèdits com a silenci fallit seria un fals «no funciona». Els")
+        L.append("    números de sota són PARCIALS, només de les preguntes efectivament")
+        L.append("    mesurades. Reprèn amb --resume quan el límit es restableixi.")
+        L.append("#############################################################################")
     L.append("")
     L.append("DISTRIBUCIÓ PER PREGUNTA (passades correctes de 5 — la inestabilitat és resultat)")
     L.append("-" * 98)
-    for qid in sorted(per_q, key=lambda x: int(x) if str(x).isdigit() else 0):
+    def _qnum(qid: str) -> int:
+        digits = "".join(ch for ch in str(qid) if ch.isdigit())
+        return int(digits) if digits else 0
+
+    for qid in sorted(per_q, key=_qnum):
         d = per_q[qid]
         est = "" if d["nu"] in (0, d["n"]) else "  << INESTABLE"
-        L.append(f"  Q{qid:>2} [{d['golden']:<9}] nu {d['nu']}/{d['n']} · "
+        L.append(f"  {qid:>3} [{d['golden']:<9}] nu {d['nu']}/{d['n']} · "
                  f"gàbia {d['gabia']}/{d['n']}{est}")
     L.append("")
     L.append("2x2 D'ACCIÓ (comú a les dues condicions — la gàbia no reinterpreta l'acció)")
@@ -978,15 +1070,23 @@ def acta_oficial(out: dict, prompt_name: str) -> None:
     L.append("")
     L.append("NIVELLS (congelats al doc 10 ABANS de cap passada)")
     L.append("-" * 98)
-    L.append(f"  NU    : >>> {_nivell(recall, frr, gabia=False)} <<<")
-    L.append(f"  GÀBIA : >>> {_nivell(recall, frr, gabia=True)} <<<  "
-             f"(mateix 2x2 d'acció; la distància nu-gàbia és al trial-correcte)")
+    if incomplete:
+        L.append("  NU    : >>> INCOMPLETA — SENSE VEREDICTE <<<")
+        L.append("  GÀBIA : >>> INCOMPLETA — SENSE VEREDICTE <<<")
+        L.append("  (els llindars només s'apliquen a una passada sencera sense avortaments)")
+    else:
+        L.append(f"  NU    : >>> {_nivell(recall, frr, gabia=False)} <<<")
+        L.append(f"  GÀBIA : >>> {_nivell(recall, frr, gabia=True)} <<<  "
+                 f"(mateix 2x2 d'acció; la distància nu-gàbia és al trial-correcte)")
     L.append("")
     L.append("EL DELTA (el número central del contracte 08)")
     L.append("-" * 98)
-    L.append(f"  determinista : 170/170 trials (34/34 casos, recall 21/21) per construcció")
-    L.append(f"  generatiu NU : {naked}/170 -> DELTA = {170 - naked} trials")
-    L.append(f"  generatiu GÀBIA: {caged}/170 -> DELTA = {170 - caged} trials")
+    if incomplete:
+        L.append("  (pendent: la passada no cobreix les 34 preguntes — sense delta oficial)")
+    else:
+        L.append("  determinista : 170/170 trials (34/34 casos, recall 21/21) per construcció")
+        L.append(f"  generatiu NU : {naked}/170 -> DELTA = {170 - naked} trials")
+        L.append(f"  generatiu GÀBIA: {caged}/170 -> DELTA = {170 - caged} trials")
     L.append("")
     L.append(f"  cost: ${summary['cost_usd']:.4f} · crides: {summary['api_calls']} · "
              f"log cru: {summary['log_path']}")
@@ -1015,9 +1115,12 @@ def main(argv: list[str] | None = None) -> None:
                     help="passades per pregunta (oficial ho força a N=5)")
     ap.add_argument("--max-calls", type=int, default=60,
                     help="fre dur de crides d'API per invocació")
+    ap.add_argument("--resume", action="store_true",
+                    help="represa: conserva les preguntes ja completes de l'acta-trials "
+                         "i torna a córrer només les que van quedar a mitges")
     args = ap.parse_args(argv)
     out = run(mode=args.mode, prompt_path=args.prompt, limit=args.limit,
-              passes=args.passes, max_calls=args.max_calls)
+              passes=args.passes, max_calls=args.max_calls, resume=args.resume)
     if args.mode == "oficial":
         acta_oficial(out, Path(args.prompt).name)
 
