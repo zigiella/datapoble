@@ -78,6 +78,46 @@ publicable per si sola.*
 > (seria overfitting per string). Baranes: **banc congelat segueix 34/34 IDÈNTIC** (regressió byte a byte) + 6 sondes
 > de generalització amb frasejos NOUS (no dels 68) en verd + caveat de circularitat escrit al codi. v1 preservat a
 > `fase3-parafrasis-resultat-v1-router-inicial.txt`. **Camí lliure per a la capa generativa.**
+> **★ PASSADA OFICIAL DE LA CAPA GENERATIVA (2026-07-04) — EL DELTA:** prompt CONGELAT (generador-v1),
+> Sonnet 5 (mostreig per defecte) + validador cec Haiku (temp 0), N=5, proveïdor Anthropic a les 170/170 trials,
+> $1,16 en total. **Recall d'abstenció 105/105 = 1,000 · FN greus 0 · FP prudents 10 · FRR 10/65 = 0,154.**
+> Trial-correcte: **NU 154/170 (0,906) · GÀBIA 160/170 (0,941)**. DELTA vs determinista (170/170): **NU 16 · GÀBIA 10**.
+> **Nivell (llindar preregistrat doc 10, recall≥0,90 I FRR≤0,15): «RECALL HONEST PERÒ FRR > LLINDAR»** — el recall
+> és perfecte però l'FRR passa el llindar per 0,004. **Tot l'FRR ve de DUES preguntes conceptualment bessones**
+> (Q10 «de quins pobles no ens refiem» → va llistar els 18 correctes però etiquetà ABSTENIR; Q13 Casserres vs
+> Sant Jaume de Frontanyà, bandes disjuntes per un abisme → es va abstenir perquè una banda és soroll): **un mode
+> de fall NOU del generador = sobre-aplicar el reflex «soroll→abstenir» a una llista de catàleg i a una comparació
+> desnivellada. Sempre erra cap a la prudència (FP), MAI cap al risc (FN=0).** La gàbia recupera 6 trials inestables
+> (empat_trencat/caveat a Q12/27/28/29) però NO pot arreglar Q10/Q13 (són errors d'ACCIÓ, que la gàbia no reinterpreta).
+> Incidència: la clau d'OpenRouter va topar el límit setmanal a Q27 a la 1a passada → l'arnès ara AVORTA net davant
+> un 403 (mai compta un avortament d'infra com a silenci fallit: seria un fals «no funciona») i sap REPRENDRE; la
+> passada es va completar amb `--resume` sobre el MATEIX prompt/model congelats. **Pendent: vot narratiu de Bea sobre
+> com expliquem un resultat que frega el llindar per prudència; decidir si volem una v2 transparent del prompt
+> (regla: catàleg-de-sorolls i comparació-desnivellada NO disparen l'abstenció) o si el número queda tal com surt.**
+> **★ v2 DEL PROMPT + RE-PASSADA (2026-07-04, Bea: «jo faria v2»):** fix de PRECEDÈNCIA (primer intent/veredicte de
+> comparació, després registre), derivat de doctrina congelada, desenvolupat sobre el dev (ampliat +D13/14/15 nous);
+> validador cec SENSE tocar (estricte en contra nostra); v1 preservada com a acta. **Re-passada oficial v2: recall
+> d'abstenció 105/105=1,000 · FN 0 · FP 3 · FRR 0,046 (<0,15) → NIVELL HONEST (nu i gàbia) · nu 156/170 (0,918) ·
+> gàbia 167/170 (0,982) · DELTA nu 14 / gàbia 3.** Proveïdor Anthropic 170/170. **PERÒ honestedat: l'FP no es va
+> esvair, es va MOURE — v1 fallava Q10+Q13 (10 FP); v2 els arregla i destapa un forat LATENT a Q8 («quins municipis
+> toquen Berga», intent `veins`): 3/5 passades s'absté perquè el prompt no té doctrina per a `veins` i la seva frase
+> de cobertura exclou la geografia, tot i que el substrat SÍ serveix veïns (i el context ja porta la resposta). v1
+> feia Q8 5/5 per sort de mostreig. Q13 ara respon les 5 (acció arreglada) però nu 0/5 pel validador estricte —
+> ens penalitza, no ens infla; la gàbia ho recupera.** Ja són DUES passades al banc (avís de comparacions múltiples).
+> **Decisió de Bea: (a) tancar amb v2 documentant Q8 com a límit conegut i l'FP-que-es-mou, o (b) v3 amb doctrina de
+> `veins` (3a passada — afebleix el preregistre). Recomanació de Talaia: (a).**
+> **★ v3 (Bea: «v3») + 3a PASSADA — L'FP CAU A ZERO, i aquest cop NO es mou:** doctrina nova per a l'intent `veins`
+> (adjacència espacial = servei del substrat, derivable de la Fase 1; la cobertura de valor no exclou geografia).
+> Desenvolupat al dev (+D16 `veins` nou, 3/3). v2 preservada com a acta. **3a passada oficial (Anthropic 170/170,
+> $1,85): recall 105/105=1,000 · FN 0 · FP 0 · FRR 0,000 · nu 160/170 (0,941) · GÀBIA 170/170 (1,000) · DELTA nu 10
+> / gàbia 0.** Q8 estabilitzat a 5/5, i cap FP nou enlloc: el bony no s'ha mogut, ha desaparegut. Els 10 nu-fails
+> restants són TOTS l'estrictesa del validador cec (Q13 comparació desnivellada de soroll + Q27/Q28 empats): acció
+> correcta, gàbia els recupera. **CAVEAT PER AL PAPER (imprescindible): són TRES passades oficials al mateix banc;
+> l'FRR 0,154→0,046→0,000 és en part comparacions múltiples. El que ÉS robust (no un tir afortunat) és el recall
+> d'abstenció: 105/105, FN 0, a LES TRES passades — la propietat de seguretat (mai respondre quan s'ha de callar) no
+> va tremolar mai. La headline honesta NO és «170/170 gàbia» sinó «FN=0 robust + 3 fixos de doctrina principiats +
+> les 3 passades declarades».** Cada fix (precedència v2, veïns v3) desenvolupat al dev, mai al banc; validador cec
+> intacte a totes. Actes v1/v2/v3 totes versionades. **PR #235 llest per fusionar (verificat).**
 > **ARNÈS GENERATIU CONSTRUÏT + PROMPT v0.1 MADUR AL DEV SET (2026-07-03):** `generativa.py` (OpenRouter amb
 > proveïdor FIXAT a Anthropic —verificat a cada crida—, context de DADES CRUES —la prosa determinista mai arriba
 > al generador—, validació dura amb tall ⟦xifra no verificada⟧, validador cec haiku a temp 0, nu/gàbia dels
