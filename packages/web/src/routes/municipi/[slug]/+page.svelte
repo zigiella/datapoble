@@ -40,6 +40,28 @@
 	const row = $derived(data.row);
 	const ine5 = $derived(data.ine5);
 	const pernocta = $derived(data.pernocta); // presència estimada EN RANG (munis coberts fora del Berguedà)
+	// COL·LISIÓ DEL MODEL (doctrina geo-rag §7 del paper): municipis amb estimació+banda IDÈNTIQUES.
+	// Si n'hi ha, la fitxa ho adverteix — la xifra no es pot llegir com a específica del municipi.
+	const collisions = $derived(data.collisions ?? []);
+	const collisioNoms = $derived.by<string>(() => {
+		if (!collisions.length) return '';
+		return new Intl.ListFormat(locale === 'es' ? 'es-ES' : 'ca-ES', {
+			style: 'long',
+			type: 'conjunction'
+		}).format(collisions.map((c) => c.nom));
+	});
+	// Coda ETCA: si aquest muni I algun peer tenen dada oficial, Idescat SÍ que els distingeix.
+	const collisioEtca = $derived.by<{ self: string; peers: string } | null>(() => {
+		const selfEtca = pernocta?.etca_oficial;
+		if (typeof selfEtca !== 'number') return null;
+		const peers = collisions.filter((c) => typeof c.etca_oficial === 'number');
+		if (!peers.length) return null;
+		const f = (v: number) => formatInteger(v, locale);
+		return {
+			self: f(selfEtca),
+			peers: peers.map((c) => `${c.nom} ${f(c.etca_oficial as number)}`).join(' · ')
+		};
+	});
 	const isBergueda = $derived(data.isBergueda ?? false); // pilot profund vs espina CAT (lede honest)
 	// Espina territorial: comarca/vegueria del muni + municipis veïns de la comarca (navegació).
 	const territori = $derived(data.territori);
@@ -484,6 +506,29 @@
 	<meta name="description" content={m.muni_meta_desc({ nom: muniNom })} />
 </svelte:head>
 
+{#snippet collisioAlert()}
+	<!-- Advertència de COL·LISIÓ DEL MODEL (mai el número nu): estimació+banda idèntiques a
+	     altres municipis → la xifra no és específica. Si hi ha ETCA a banda i banda, la font
+	     oficial SÍ que els distingeix (i es diu). Terme diferent de la col·lisió de slug. -->
+	{#if collisions.length}
+		<div class="alert warn" style="margin-top:10px">
+			<span class="bar"></span>
+			<div>
+				<strong>{m.muni_collisio_title()}:</strong>
+				{m.muni_collisio_body({ peers: collisioNoms })}
+				{#if collisioEtca}
+					{m.muni_collisio_etca({ self: collisioEtca.self, peers: collisioEtca.peers })}
+				{/if}
+				<ul class="veins" style="margin:8px 0 0">
+					{#each collisions as c (c.slug)}
+						<li><a class="veins__chip" href={localizeHref(`/municipi/${c.slug}`)}>{c.nom}</a></li>
+					{/each}
+				</ul>
+			</div>
+		</div>
+	{/if}
+{/snippet}
+
 <section data-view="municipi" class="on">
 	<div class="ap-hero">
 		<ContourField
@@ -679,6 +724,7 @@
 						<p class="muni-gap-veu is-oficial">{m.muni_gap_oficial({ pct: fSign(pernoctaBand.etcaPct), rang: `${fInt(pernoctaBand.estLow)}–${fInt(pernoctaBand.estHigh)}` })}</p>
 					{/if}
 				{/if}
+				{@render collisioAlert()}
 			</section>
 
 			<!-- P3 · LA MAQUINÀRIA: la fitxa completa, plegada en acordions (oberts amb «mode dades»).
@@ -797,6 +843,7 @@
 					<div class="alert" style="margin-top:12px">
 						<span class="bar"></span><div>{m.muni_rang_caveat()}</div>
 					</div>
+					{@render collisioAlert()}
 					<div class="muni-empty__actions" style="margin-top:14px">
 						<a class="muni-empty__link" href={localizeHref('/metodologia')}>{m.muni_rang_method_link()}</a>
 						<a class="muni-empty__link muni-empty__link--alt" href={localizeHref('/mapa')}>{m.muni_pick_map()}</a>

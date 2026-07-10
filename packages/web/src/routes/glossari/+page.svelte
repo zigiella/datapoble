@@ -210,6 +210,30 @@
 			</section>
 		{/each}
 
+		<!-- COM LLEGIM LA INCERTESA — doctrina de lectura (experiment geo-rag), NO mètriques del
+		     contracte: per això és una secció a part i el seu copy és i18n (el principi «zero
+		     codificat a mà» aplica al diccionari de mètriques de dalt). La fitxa i el beeswarm ja
+		     APLIQUEN aquests conceptes; aquí se'ls dona nom. -->
+		<section class="ds-sec">
+			<div class="ds-sec__hd">
+				<span class="ref">σ</span><h2>{m.glo_doctrina_title()}</h2>
+			</div>
+			<p class="lead glo-distinct">{m.glo_doctrina_sub()}</p>
+			<dl class="glo-list">
+				{#each [
+					{ term: m.glo_doc_banda_term, def: m.glo_doc_banda_def },
+					{ term: m.glo_doc_registre_term, def: m.glo_doc_registre_def },
+					{ term: m.glo_doc_collisio_term, def: m.glo_doc_collisio_def },
+					{ term: m.glo_doc_disting_term, def: m.glo_doc_disting_def }
+				] as e (e.term)}
+					<div class="glo-term prov-edge--derived">
+						<dt class="glo-term__hd"><span class="glo-term__name">{e.term()}</span></dt>
+						<dd class="glo-term__body"><p class="glo-term__def">{e.def()}</p></dd>
+					</div>
+				{/each}
+			</dl>
+		</section>
+
 		<section class="ds-sec">
 			<p class="srcline">{m.glo_srcline()}</p>
 		</section>
