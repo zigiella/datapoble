@@ -118,6 +118,19 @@ publicable per si sola.*
 > va tremolar mai. La headline honesta NO és «170/170 gàbia» sinó «FN=0 robust + 3 fixos de doctrina principiats +
 > les 3 passades declarades».** Cada fix (precedència v2, veïns v3) desenvolupat al dev, mai al banc; validador cec
 > intacte a totes. Actes v1/v2/v3 totes versionades. **PR #235 llest per fusionar (verificat).**
+> **★ AUTO-AUDITORIA (2026-07-10) + PUNT 2 i 3 EXECUTATS.** Auditoria completa (metodologia/tècnica/procés/web);
+> la bretxa greu —la web publicava NU el número que l'experiment va demostrar no-específic— tancada a #237 (avís de
+> col·lisió a la fitxa + doctrina al glossari + candau distinguish.ts, vot de copy de Bea). **ANNEX DE RE-VALIDACIÓ**
+> (revalidacio.py, CAP output regenerat; integritat: la reconstrucció reprodueix l'acta 160/170+170/170 abans de cap
+> crida): (1) la gàbia COMPTABLE (170/170) sobreestimava — el text engabiat REAL passa el validador **163/170 (v1) /
+> 159/170 (v2)**: en 7–11 trials la intervenció no arreglava de veritat; el valor verificat de la gàbia és ~163/170.
+> (2) El validador v2 (fall de la comparació desnivellada corregit, congelat a part; el v1 i el número oficial
+> INTACTES) llegeix el NU igual: **160/170 amb ELS DOS instruments** — v2 perdona part del càstig desnivellat
+> (Q13 5→3, Q27 4→3) però destapa caveats omesos que v1 no veia (Q12/Q22/Q25): arreglar l'instrument NO va inflar
+> el número, va redistribuir els motius. Docs al dia (README amb resultats+annex, DATA_CARD amb tots els artefactes
+> post-F2, docstring parafrasis aclarit, TODO preus 2026-08-31), paper respatllat a OneDrive/CAJON, neteja
+> (%TEMP%, peu juliol 2026, launch.json versionat). **Pendents de Bea: banc de confirmació fresc (meitat [es],
+> etiquetes seves) · tret de sortida del ★.**
 > **ARNÈS GENERATIU CONSTRUÏT + PROMPT v0.1 MADUR AL DEV SET (2026-07-03):** `generativa.py` (OpenRouter amb
 > proveïdor FIXAT a Anthropic —verificat a cada crida—, context de DADES CRUES —la prosa determinista mai arriba
 > al generador—, validació dura amb tall ⟦xifra no verificada⟧, validador cec haiku a temp 0, nu/gàbia dels

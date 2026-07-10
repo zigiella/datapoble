@@ -173,6 +173,44 @@ reads already lives in the `municipi` table (from `pernocta-catalunya.json`). Se
 `docs/experiment-rag-geo/04-fase2-distingibilitat.md`. Guarded by `tests/test_distinguish.py`
 and `eval2` (5/5 pass; 2/2 non-distinguishable cases reported as not-orderable).
 
+## Phase 3 — the frozen bank + adversarial paraphrases (committed artifacts)
+
+### `data/fase3-banc.json` (FROZEN 2026-07-02)
+34 questions with golden labels **hand-written by Bea** (never a model): 21 abstain (the
+three heights of "can't distinguish" + out-of-catalog) + 13 answerable with `expect`.
+Success levels were fixed in `07-fase3-banc.md` BEFORE any run. Guard: `tests/test_fase3.py`
+re-parses the frozen doc and asserts JSON == doc. Official result: `data/fase3-resultat.txt`
+(21/21, level HONEST, mirror caveat written inside).
+
+### `data/fase3-parafrasis.json` (FROZEN 2026-07-03)
+68 adversarial rephrasings (2 per bank question; 5 Spanish), mechanically transcribed from
+the frozen doc `09-parafrasis-adversarials.md` (guard: `tests/test_parafrasis.py`). Golden
+labels are INHERITED from the bank by question id — nothing is relabelled. Actas:
+`data/fase3-parafrasis-resultat-v1-router-inicial.txt` (router v1: the tremor) and
+`data/fase3-parafrasis-resultat.txt` (router v2: 42/42).
+
+## Generative layer — committed artifacts
+
+### `data/generativa-devset.json` (dev only — NEVER in official reports)
+16 NEW questions (not in the bank nor the 68) used to develop the generator prompt before
+each freeze. Dev goldens labelled by Talaia (allowed: it is not the official yardstick).
+
+### Prompts (frozen, one file per version — history is the audit trail)
+`prompts/generador-v1/2/3-CONGELAT.md` (v3 is the live default) · `prompts/validador-cec-v1-CONGELAT.md`
+(the official instrument, untouched across all passes) · `prompts/validador-cec-v2-CONGELAT.md`
+(uneven-comparison fix; used ONLY by the re-validation annex).
+
+### Official actas (result files, one per pass; all three passes declared)
+`data/generativa-oficial-resultat.txt` (+`-trials.jsonl`) = v3 (live) · `-v1`/`-v2` suffixed
+copies preserved. Per-trial provenance: generation id, served model and provider (Anthropic
+pinned, verified 170/170 per pass). Raw call logs live in `data/generativa-logs/` (gitignored,
+local): the committed trials JSONL is the auditable record.
+
+### `data/generativa-annex-revalidacio.txt` (+`.jsonl`) — the annex (2026-07-10)
+Re-reads the SAME v3 outputs (no regeneration): (1) the real caged text re-validated
+(accounting vs verified); (2) the same outputs read with BOTH validator instruments
+(v1 strict / v2 corrected) — both readings published, the official number never rewritten.
+
 ## Honesty note
 
 No invented numbers; every value traces to a committed source file listed above.

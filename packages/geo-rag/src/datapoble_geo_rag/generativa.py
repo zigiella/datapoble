@@ -69,6 +69,8 @@ MAX_TOKENS_GENERADOR = 1200
 MAX_TOKENS_VALIDADOR = 300
 
 # Preus $/MTok (in, out) — spec 11 (intro de Sonnet 5 fins 31-08-2026).
+# TODO(2026-09-01): el preu intro de Sonnet 5 CADUCA el 2026-08-31 (passa a $3/$15);
+# després d'aquesta data el cost estimat de les actes serà FALS si no s'actualitza.
 PRICES = {MODEL_GENERADOR: (2.0, 10.0), MODEL_VALIDADOR: (1.0, 5.0)}
 
 # Vocabulari de doctrina: el llindar del registre («≥1.000 hab») és definició, no dada,
