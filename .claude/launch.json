@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "web",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "preview", "--prefix", "packages/web", "--", "--port", "4174", "--strictPort"],
+      "port": 4174
+    },
+    {
+      "name": "web-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "packages/web", "--", "--port", "5183", "--strictPort"],
+      "port": 5183
+    }
+  ]
+}

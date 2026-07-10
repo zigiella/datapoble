@@ -20,8 +20,12 @@ Extra que el doc congelat exigeix reportar (sense tocar la 2x2):
 NOTA de nivells: els llindars congelats del 07 apliquen al BANC ORIGINAL (21/13). Aquí
 el resultat és una SONDA D'ENDURIMENT i es reporta descriptivament, sense nivell.
 
-HONESTEDAT: cap mòdul de doctrina ni el router es toquen; el resultat es reporta tal
-com surt a data/fase3-parafrasis-resultat.txt (acta versionada).
+HONESTEDAT: aquest ARNÈS no toca cap mòdul de doctrina ni el router EN RUNTIME (només hi
+crida); el resultat es reporta tal com surt a data/fase3-parafrasis-resultat.txt (acta
+versionada). Nota d'història: el ROUTER sí que va ser endurit ENTRE la run v1 i la v2
+(#233, fix estructural per famílies) — l'acta viva és del router v2/v2.1 i la v1 queda
+preservada a data/fase3-parafrasis-resultat-v1-router-inicial.txt. Les dues es llegeixen
+juntes: la distància v1→v2 és la mesura de l'enduriment.
 """
 
 from __future__ import annotations

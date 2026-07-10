@@ -377,3 +377,58 @@ narrow-band muni and `prudent` for a soroll muni; `answer_comparison` detects tw
 is honest with one; exact collision (Guardiola/la Pobla de Lillet) → `distinguishable`
 False **through the shared function** (asserts the substrate bands are identical and that
 the pure `distinguishable` call agrees); `s_score == μ − λσ`.
+
+## Phase 3 — the abstention KPI (the number that can say we're wrong)
+
+Frozen BEFORE any run (contract `docs/experiment-rag-geo/06-fase3-kpi-abstencio.md`): a
+34-question bank **hand-labelled by Bea** (never a model; `data/fase3-banc.json`, frozen
+2026-07-02), success levels fixed in advance, result reported as-is.
+
+- **Official run (deterministic router): abstention recall 21/21 · 0 grave FN · 0 prudent
+  FP → level HONEST** (`data/fase3-resultat.txt`). Written mirror caveat: golden labels
+  derive from the same doctrine the system applies — the number proves the pipeline
+  applies the doctrine faithfully, not that the doctrine is true.
+- **Adversarial paraphrases** (68, frozen `docs/experiment-rag-geo/09-parafrasis-adversarials.md`):
+  run v1 exposed the tremor (recall 0.905, FRR 0.269, 4 grave FN — the keyword intent
+  layer answered pernocta to income/housing questions). The router was hardened
+  **structurally** (v2: precedence, strict bare-mention, 2-anchor comparison, ca+es
+  presence families) → **recall 42/42, FRR 0.038, 0 wrong-silences**, original bank
+  byte-identical. v1 preserved as acta (`data/fase3-parafrasis-resultat-v1-router-inicial.txt`).
+
+## Generative layer — results (three official passes, all declared)
+
+A real LLM (claude-sonnet-5, default sampling) writes the answer from **raw fields only**
+(never the deterministic prose); a blind validator (claude-haiku-4.5, temp 0, isolated
+call) checks doctrine; N=5 passes/question; NAKED vs CAGED scored on the same outputs
+(interventions counted separately — never the generator's merit). Prompt frozen before
+each pass; official mode refuses non-frozen prompts.
+
+| | v1 | v2 | v3 |
+|---|---|---|---|
+| Abstention recall | 1.000 | 1.000 | **1.000** |
+| Grave FN | 0 | 0 | **0** |
+| FRR (over-prudence) | 0.154 | 0.046 | **0.000** |
+| Trial-correct naked | 154/170 | 156/170 | **160/170** |
+| Trial-correct caged | 160/170 | 167/170 | **170/170** |
+
+**The honest headline is NOT "170/170".** The robust finding is the safety property:
+recall 105/105 with FN=0 on ALL THREE passes — the generator never answered firmly where
+it had to abstain, even with the flawed v1 prompt. What improved across passes was only
+over-prudence, each fix a principled doctrine clarification (v2: query-type precedence;
+v3: `veins` doctrine) developed on a separate dev set, never on the bank. **Multiple
+comparisons caveat, declared:** three passes over the same bank weaken the
+preregistration; the FRR trend is partly that. Actas: `data/generativa-oficial-resultat*.txt`
+(+ per-trial `*.jsonl`), v1/v2 preserved. The blind validator was left UNTOUCHED across
+all passes (conservatively strict against us in the uneven-comparison case); a corrected
+v2 validator exists only in the **re-validation annex** (`revalidacio.py` →
+`data/generativa-annex-revalidacio.txt`), which re-reads the SAME v3 outputs with both
+instruments and re-validates the real caged text (accounting vs verified).
+
+**Annex results (2026-07-10, no outputs regenerated):** the caged 170/170 was optimistic
+accounting — the REAL caged text passes the validator **163/170 (v1) / 159/170 (v2)**:
+in 7–11 trials the intervention did not truly fix the text. And the corrected-instrument
+reading of NAKED stays at **160/170 with BOTH validators**: v2 forgives part of the
+uneven-comparison penalty (Q13 5→3, Q27 4→3) but uncovers real omitted caveats v1 had
+missed (Q12, Q22, Q25) — fixing the instrument did not inflate the number, it
+redistributed the failures toward more accurate reasons. Honest bottom line: naked
+160/170 is solid; the cage's true verified value is ~163/170, not 170/170.
