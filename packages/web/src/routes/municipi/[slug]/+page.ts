@@ -20,6 +20,7 @@
 import { loadMunicipisDataset } from '$lib/data/dataset';
 import type { MunicipiRow } from '$lib/contract/types';
 import { buildSlugIndex, toSlug } from '$lib/contract/slug';
+import { collisionPeers } from '$lib/contract/distinguish';
 import type { LecturesData, LecturaEntry } from '$lib/contract/lectures';
 import type { PernoctaData, PernoctaMuni } from '$lib/contract/pernocta';
 import type { CatalegData } from '$lib/contract/cataleg';
@@ -113,7 +114,11 @@ export const load: PageLoad = async ({ fetch, params }) => {
 	// Es carrega per a TOTS els munis (no només els !row): la fitxa la fa servir per classificar els
 	// TRES REGISTRES (oficial ≥1.000 · senyal <1.000 que exclou el padró · soroll) amb la banda real,
 	// no la interina ±10% (vot 2026-06-29 · `05-vot-tres-registres.md`). Prerender-safe.
+	// COL·LISIÓ DEL MODEL (doctrina geo-rag): del MATEIX fetch (el dict sencer que abans es
+	// descartava) es deriven els municipis amb estimació+banda IDÈNTIQUES — si n'hi ha, la fitxa
+	// ho adverteix: la xifra no és específica del municipi. Mai el número nu (§7 del paper).
 	let pernocta: PernoctaMuni | null = null;
+	let collisions: { nom: string; slug: string; etca_oficial: number | null }[] = [];
 	if (ine5) {
 		try {
 			const res = await fetch('/data/pernocta-catalunya.json');
@@ -121,9 +126,19 @@ export const load: PageLoad = async ({ fetch, params }) => {
 				const all = (await res.json()) as PernoctaData;
 				pernocta = all.munis[ine5] ?? null;
 				if (pernocta && !nom) nom = pernocta.nom;
+				if (pernocta) {
+					// El nom del peer es resol via CATÀLEG (forma pública «la Pobla de Lillet», no
+					// la d'arxiu «Pobla de Lillet, la») — mateix patró que els miralls; el slug en surt.
+					const nomByIne5 = new Map(cataleg.map((mn) => [mn.ine5, mn.nom]));
+					collisions = collisionPeers(all.munis, ine5).map((p) => {
+						const pnom = nomByIne5.get(p.ine5) ?? p.nom;
+						return { nom: pnom, slug: toSlug(pnom), etca_oficial: p.etca_oficial };
+					});
+				}
 			}
 		} catch {
 			pernocta = null;
+			collisions = [];
 		}
 	}
 
@@ -201,5 +216,5 @@ export const load: PageLoad = async ({ fetch, params }) => {
 		}
 	}
 
-	return { dataset, ine5, nom, row, isBergueda, lectura, pernocta, territori, veins, veinsTotal, miralls, validat };
+	return { dataset, ine5, nom, row, isBergueda, lectura, pernocta, collisions, territori, veins, veinsTotal, miralls, validat };
 };
