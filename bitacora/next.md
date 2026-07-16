@@ -3,6 +3,31 @@
 *Mètode: **Cambium Charter v0.5**. Es treballa de dalt a baix; cada tasca = un PR. Cada **fase** és
 publicable per si sola.*
 
+> **🏛️ TRACK ACTIU (2026-07-16): datapoble per a ajuntaments — `docs/spec-ajuntaments-v1.md`**
+> (direcció de Bea, redacció Marea #239, ADOPTADA amb esmenes per Talaia — §10 de l'spec és vinculant).
+> Demo Magda (Diba) set 6–8. **El que ven la demo és el número** (recall del radar + KPI d'abstenció del xat),
+> verificat per Talaia — mai un titular sense el seu caveat.
+> **NO-OBJECTIUS VINCULANTS d'aquesta v1:** butlletí mensual · cartell A4 · radar per a entitats ·
+> fases 4–5 del geo-rag · escala Catalunya · cap personalització que amagui indicadors incòmodes.
+> Qualsevol excepció passa per Bea.
+>
+> **Track R (radar) i Track D (dashboard) corren EN PARAL·LEL; Track X (xat) seqüenciat rere el
+> tancament de la passada generativa del geo-rag — que JA ESTÀ FET (#232–#238): X1 desbloquejada.**
+> - **R0 (Talaia)** — contractes C3 (fitxa subvenció + perfil `actiu:`) + C4 (banc del radar: 20
+>   convocatòries, etiquetes de Bea, nivells congelats DINS el contracte, recall del pipeline sencer,
+>   E2 de l'spec) → després R1 (BDNS, Sondeig) · R2 (filtre, Sondeig) · R3 (semàfor Haiku, Brúixola) ·
+>   R4 (workflow correu — destinataris: Bea) · R5 (CIDO) · R6 (memòria on-demand). Experimental NOMÉS
+>   la Pobla (08166) via `actiu:`; Castellar (08052) i `_default` dorments. Porta de sortida: banc C4
+>   aprovat + 1 mes validació paral·lela + vistiplau de Bea.
+> - **D0 (Talaia)** — contractes C1 (mètriques noves + camp `visibilitat`, E4) + C2 (dades internes:
+>   `publicable:false` MAI al repo públic, E1) + C6 (mode govern, vot narratiu de Bea) → després
+>   D1 (atur Socrata) · D2 (HERMES selectiu) · D3 (municipal_csv) · D4 (mart_govern) · D5 (vista
+>   govern, Mirador) · D6 (CSV real de la Pobla, Bea).
+> - **X1 (Brúixola)** — collita C5: doctrina + gàbia RE-VALIDANT (E3, validador v2) cap a
+>   `packages/ai` · X2 (activar render.yaml dorment, Trazo) · X3 (catàleg govern + preguntes suggerides).
+> **El geo-rag NO es toca** (congelat com a annex de recerca fins a X1); els seus pendents propis
+> (banc de confirmació de Bea · ★ · paper) queden fora d'aquesta spec (E6), seqüenciats post-demo.
+
 > **🧪 TRACK ACTIU (2026-07-01): experiment RAG geoespacial honest (Berguedà).** Carta a
 > `docs/experiment-rag-geo/00-arrencada.md`. Decisions de Bea: **DuckDB-first** (avisar Rapaz de la
 > desviació vs Postgres del brief) · **posicionament a decidir més tard**. KPI = calibració de
