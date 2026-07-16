@@ -37,6 +37,13 @@ PHRASES: dict[str, dict[str, str]] = {
     "ca": {
         "value_for": "{label} de {municipi}: {value}{unit}.",
         "ranking_top": "El municipi amb {sup} {label} és {municipi} ({value}{unit}).",
+        # The doctrine's `empat`: the data shares the top, so we do not name a
+        # winner it does not single out.
+        "ranking_tie": (
+            "No puc dir quin municipi té {sup} {label}: n'hi ha {n} que "
+            "comparteixen exactament el mateix valor ({value}{unit}), i les "
+            "dades no els distingeixen. Són: {municipis}."
+        ),
         "ranking_list_intro": "Rànquing per {label}:",
         "ranking_row": "{rank}. {municipi}: {value}{unit}",
         "correlation": (
@@ -91,6 +98,13 @@ PHRASES: dict[str, dict[str, str]] = {
     "es": {
         "value_for": "{label} de {municipi}: {value}{unit}.",
         "ranking_top": "El municipio con {sup} {label} es {municipi} ({value}{unit}).",
+        # El `empat` de la doctrina: los datos comparten el máximo, así que no
+        # nombramos un ganador que no señalan.
+        "ranking_tie": (
+            "No puedo decir qué municipio tiene {sup} {label}: hay {n} que "
+            "comparten exactamente el mismo valor ({value}{unit}), y los datos "
+            "no los distinguen. Son: {municipis}."
+        ),
         "ranking_list_intro": "Ranking por {label}:",
         "ranking_row": "{rank}. {municipi}: {value}{unit}",
         "correlation": (

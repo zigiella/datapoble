@@ -66,7 +66,12 @@ class Answer:
     provenance: Provenance | None = None
     refusal_reason: RefusalReason | None = None
     metric_key: str | None = None   # convenience for evals/tests
+    metric_b_key: str | None = None  # second metric (correlation); the political gate reads both
     generation: dict[str, Any] | None = None  # LLM model + token usage (transparency #64); None = deterministic, no LLM
+    # What the generative layer did, if it ran at all (X1 / contract C5): the
+    # cage's status, its interventions and both blind verdicts. `None` = never
+    # narrated; a `fallback_*` status = the deterministic text is what you see.
+    narration: dict[str, Any] | None = None
 
     @property
     def is_answer(self) -> bool:
