@@ -410,6 +410,8 @@ class Router:
         col = metric.column
         order = "DESC" if intent.descending else "ASC"
         limit = 5 if intent.want_list else 1
+        # Fetch one row past what we render: naming a single winner is only
+        # honest if we have looked at the runner-up (see the tie guard below).
         sql = (
             f'SELECT municipi, "{col}" AS value '
             f'FROM "{metric.table}" WHERE "{col}" IS NOT NULL '
@@ -421,6 +423,30 @@ class Router:
                                 RefusalReason.UNSUPPORTED_QUESTION, backend)
         prov = self._provenance(metric, locale, sql, {})
         unit = self._unit_suffix(metric, locale)
+        if not intent.want_list:
+            tie = self._tie_at_top(metric, col, order)
+            if len(tie) > 1:
+                # The doctrine's `empat`, at the deterministic layer (X1 / C5).
+                # `LIMIT 1` picks one row out of a shared top by accident of row
+                # order; the data does not single it out, so we do not either.
+                # Live on the real mart: 47 municipalities share
+                # `index_turisme = 100`, 6 share `IETR = 100` (capped indices).
+                text = t(
+                    locale, "ranking_tie",
+                    sup=t(locale, "superlative_max" if intent.descending
+                          else "superlative_min"),
+                    label=metric.label(locale),
+                    n=len(tie),
+                    value=format_number(rows[0]["value"], locale),
+                    unit=unit,
+                    municipis=", ".join(tie[:5]) + ("…" if len(tie) > 5 else ""),
+                )
+                text = self._with_provenance_and_note(text, prov, locale)
+                return Answer(
+                    kind=AnswerKind.ANSWER, locale=locale, question=question,
+                    backend=backend, text=text, data=rows, provenance=prov,
+                    metric_key=metric.key,
+                )
         if intent.want_list:
             lines = [t(locale, "ranking_list_intro", label=metric.label(locale))]
             for i, r in enumerate(rows, 1):
@@ -442,6 +468,26 @@ class Router:
             backend=backend, text=text, data=rows, provenance=prov,
             metric_key=metric.key,
         )
+
+    def _tie_at_top(self, metric: Metric, col: str, order: str) -> list[str]:
+        """Municipalities sharing the leading value (>1 name means: do not order).
+
+        The marts store a point value per cell and no interval, so the only
+        separation their own cells can *prove* is that the leader is strictly
+        alone. This is the harvested band rule, honestly reduced — see
+        :func:`datapoble_ai.doctrine.distinguishable`.
+        """
+        top_sql = (
+            f'SELECT municipi FROM "{metric.table}" '
+            f'WHERE "{col}" = (SELECT {"MAX" if order == "DESC" else "MIN"}("{col}") '
+            f'FROM "{metric.table}" WHERE "{col}" IS NOT NULL) '
+            f'ORDER BY municipi'
+        )
+        try:
+            return [r["municipi"] for r in self.warehouse.query(top_sql)
+                    if r.get("municipi")]
+        except WarehouseError:
+            return []
 
     def _answer_correlation(self, question: str, locale: str, intent: Intent,
                             backend: str) -> Answer:
@@ -478,7 +524,7 @@ class Router:
         return Answer(
             kind=AnswerKind.ANSWER, locale=locale, question=question,
             backend=backend, text=text, data=rows, provenance=prov,
-            metric_key=a.key,
+            metric_key=a.key, metric_b_key=b.key,
         )
 
     def _with_provenance_and_note(self, text: str, prov: Provenance,

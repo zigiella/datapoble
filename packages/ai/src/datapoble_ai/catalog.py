@@ -176,7 +176,23 @@ class Metric:
         return localized(self.raw.get("unit"), locale)
 
     def note(self, locale: str = DEFAULT_LOCALE) -> str | None:
-        return localized(self.raw.get("nota"), locale)
+        """The caveat the contract declares for this metric, if any.
+
+        The contract writes it under **two** keys: ``nota:`` (5 metrics — IETR and
+        friends) and ``caveat:`` (14 metrics — every inference of the pressure
+        family: ``poblacio_pernocta_est``, ``gap_pernocta``, ``confianca`` …).
+        Only ``nota`` was read here, so the caveats of exactly the metrics that
+        most need one — the ones whose own text says *"INFERÈNCIA, no cens …
+        Lectura ECOLÒGICA"* — were dropped on the floor and never reached the
+        reader. Found during the X1 harvest (contract C5): the cage cannot enforce
+        an obligated caveat that the catalog refuses to surface.
+
+        Both keys are read; ``nota`` wins if a metric ever declares both.
+        """
+        value = self.raw.get("nota")
+        if value is None:
+            value = self.raw.get("caveat")
+        return localized(value, locale)
 
     def synonyms(self, locale: str = DEFAULT_LOCALE) -> list[str]:
         syn = self.raw.get("synonyms")

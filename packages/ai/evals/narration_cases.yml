@@ -1,0 +1,114 @@
+# End-to-end eval of the generative layer (X1 · contract C5 §5).
+#
+# The whole chain, offline: question -> deterministic answer (Router: SQL +
+# provenance) -> redactor -> cage -> RE-VALIDATION of the caged text -> served,
+# or deterministic fallback.
+#
+# The model is a **fixture**: `redactor` is what the redactor would have written
+# and `validator` is the queue of blind verdicts. Nothing here calls a network or
+# needs a key — the cage is the subject under test, so the model is pinned.
+#
+# Fields:
+#   id          identifier
+#   question    asked in `locale` against the seed fixtures
+#   redactor    the fixed redactor output (with its ACCIO tag)
+#   validator   queued verdicts, in order: [judgement of the prose, re-validation]
+#   expect      the narration status the cage must reach
+#   contains    substrings the served text MUST have
+#   excludes    substrings the served text must NOT have
+#   deterministic_floor  true = the served text must equal the deterministic answer
+
+cases:
+  # --- served: nothing to fix, the blind reading passes -----------------------
+  - id: clean_lookup
+    locale: ca
+    question: "Quants habitatges no principals té Castellar de n'Hug?"
+    redactor: |
+      ACCIO: RESPONDRE
+      A Castellar de n'Hug hi ha 205 habitatges no principals.
+    validator:
+      - '{"compleix": true, "problemes": [], "motiu": "tot traça a les dades"}'
+    expect: clean
+    contains: ["205 habitatges no principals", "Font:", "Fórmula:"]
+
+  # --- a figure from a column we never handed over is still an invention ------
+  # `hab_total` (276) is real data, but it is not in *this* answer's cells: the
+  # lookup returned one metric. A number the model did not get is a number the
+  # model remembered, and the cage cuts it.
+  - id: figure_from_another_column_is_cut
+    locale: ca
+    question: "Quants habitatges no principals té Castellar de n'Hug?"
+    redactor: |
+      ACCIO: RESPONDRE
+      Hi ha 205 habitatges no principals, de 276 en total.
+    validator:
+      - '{"compleix": true, "problemes": [], "motiu": "sembla correcte"}'
+      - '{"compleix": true, "problemes": [], "motiu": "la xifra no verificada està tallada"}'
+    expect: caged_revalidated
+    contains: ["205", "⟦276: xifra no verificada⟧"]
+
+  # --- served: the cage repaired it AND the repair was re-read ---------------
+  - id: caveat_restored_then_revalidated
+    locale: ca
+    question: "Quina població real estimada té Berga?"
+    redactor: |
+      ACCIO: RESPONDRE
+      La població real estimada de Berga és de 17.384 habitants.
+    validator:
+      - '{"compleix": false, "problemes": ["caveat_esborrat"], "motiu": "falta el caveat d''inferència"}'
+      - '{"compleix": true, "problemes": [], "motiu": "el caveat hi és"}'
+    expect: caged_revalidated
+    contains: ["17.384", "Gàbia:", "INFERÈNCIA"]
+
+  # --- served: an invented figure is cut, visibly, and the cut text re-read ---
+  - id: invented_figure_is_cut
+    locale: ca
+    question: "Quants habitatges no principals té Castellar de n'Hug?"
+    redactor: |
+      ACCIO: RESPONDRE
+      Són 205 habitatges no principals, un 88,4% del parc i la xifra més alta des de 2019.
+    validator:
+      - '{"compleix": true, "problemes": [], "motiu": "el validador cec no ho ha vist"}'
+      - '{"compleix": true, "problemes": [], "motiu": "les xifres no verificades estan tallades"}'
+    expect: caged_revalidated
+    contains: ["205", "xifra no verificada"]
+    excludes: ["88,4% del parc"]
+
+  # --- THE FALLBACK: caged, re-read, still failing -> deterministic ----------
+  # The annex's lesson made executable: an intervention is not a fix until the
+  # re-reading says so. Here it does not, so the generative text is discarded.
+  - id: provoked_failure_falls_back
+    locale: ca
+    question: "Quina població real estimada té Castellar de n'Hug?"
+    redactor: |
+      ACCIO: RESPONDRE
+      Castellar de n'Hug té 133 habitants reals: la xifra és clara i definitiva.
+    validator:
+      - '{"compleix": false, "problemes": ["to_ferm_sobre_soroll"], "motiu": "presenta un soroll com a fet"}'
+      - '{"compleix": false, "problemes": ["to_ferm_sobre_soroll"], "motiu": "el to segueix sent ferm"}'
+    expect: fallback_revalidation_failed
+    deterministic_floor: true
+    excludes: ["clara i definitiva"]
+
+  # --- the redactor abstains: an honest "no" is a good answer ----------------
+  - id: abstention_is_served
+    locale: ca
+    question: "Quina població real estimada té Castellar de n'Hug?"
+    redactor: |
+      ACCIO: ABSTENIR
+      Tenim una estimació per a Castellar de n'Hug, però el nostre propi sistema la marca
+      de confiança baixa (els senyals físics divergeixen), així que no l'afirmo com a fet.
+    validator:
+      - '{"compleix": true, "problemes": [], "motiu": "desautoritza l''estimació amb el motiu"}'
+    expect: clean
+    contains: ["confiança baixa"]
+
+  # --- a malformed output never reaches the reader --------------------------
+  - id: malformed_output_falls_back
+    locale: ca
+    question: "Quants habitatges no principals té Castellar de n'Hug?"
+    redactor: |
+      Se m'ha oblidat l'etiqueta d'acció.
+    validator: []
+    expect: fallback_format
+    deterministic_floor: true

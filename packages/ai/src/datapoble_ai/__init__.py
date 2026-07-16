@@ -12,6 +12,7 @@ Public surface (what Mirador / the API import):
 from __future__ import annotations
 
 from .agent import Agent
+from .cage import Cage, CageResult, apply_cage, hard_validation
 from .catalog import Catalog, Metric, Source, load_catalog
 from .costcontrol import (
     CostControl,
@@ -20,7 +21,9 @@ from .costcontrol import (
     SpendGuard,
     normalize_question,
 )
+from .doctrine import OFICIAL, SENYAL, SOROLL, distinguishable, register_for
 from .llm import LLMBackend, OfflineBackend, OpenRouterBackend
+from .narrator import Narrator, OpenRouterNarratorBackend, ScriptedBackend
 from .politics import PoliticsGate, is_political_metric
 from .types import Answer, AnswerKind, Provenance, RefusalReason
 from .warehouse import Warehouse, WarehouseError
@@ -49,4 +52,17 @@ __all__ = [
     "normalize_question",
     "PoliticsGate",
     "is_political_metric",
+    # The doctrine and the cage (X1 / contract C5).
+    "Cage",
+    "CageResult",
+    "hard_validation",
+    "apply_cage",
+    "distinguishable",
+    "register_for",
+    "OFICIAL",
+    "SENYAL",
+    "SOROLL",
+    "Narrator",
+    "ScriptedBackend",
+    "OpenRouterNarratorBackend",
 ]

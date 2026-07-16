@@ -78,6 +78,64 @@ backend.
 | `cli.py`       | `datapoble-ai "…" --locale ca` smoke CLI. |
 | `i18n.py`      | ca/es phrase templates + ca/es number formatting. |
 | `types.py`     | `Answer` / `Provenance` / refusal enums (the response contract). |
+| `doctrine.py`  | **The doctrine** (X1 / C5): cell registers `oficial`/`senyal`/`soroll`, the tie rule, the context the generative layer may see. |
+| `cage.py`      | **The cage** (X1 / C5): hard validation + blind validator + **re-validation** of the caged text. |
+| `narrator.py`  | The generative layer behind the deterministic answer: gates, budget, fallback. |
+
+---
+
+## The doctrine and the cage (harvested in X1 · contract C5)
+
+`packages/geo-rag` is the **research annex**, frozen: its findings are cited, not
+rewritten. Its doctrine was harvested here — **adapted to the marts, not copied**
+— and from now on `packages/ai` is the canonical house; the UI latch
+(`packages/web/src/lib/contract/distinguish.ts`) is propagated *from* it.
+
+**The registers.** A figure is not just a number. The experiment's register was a
+property of the *municipality*; here it is a property of the **cell** (metric ×
+municipality), read from what the contract and the marts actually declare:
+
+| Register  | Meaning | Read from |
+|-----------|---------|-----------|
+| `oficial` | a measured figure | contract: no `categoria: derived` |
+| `senyal`  | an inference | contract: `categoria: derived` |
+| `soroll`  | an inference the mart's own flag disowns | mart: `confianca = baixa` |
+
+**The two silences** — the distinction the experiment paid for, and the one this
+code exists to keep: `soroll` ("I have the estimate and I disown it, **with a
+reason**") is *not* out-of-catalog ("I don't have it"). Collapsing them is the
+failure the doctrine prevents.
+
+**The cage, and its law.** The re-validation annex (#238) proved that *counting*
+interventions overstates the fix: 170/170 by accounting, **163/170** when the
+caged text was actually re-read. So nothing generative is served unless it has
+been checked:
+
+```
+question → Router (SQL + provenance) → deterministic Answer      ← the floor
+                                            │
+                          redactor → cage → RE-VALIDATE the caged text
+                                            │
+                    fails / no budget / political metric / error
+                                            ▼
+                                   deterministic Answer
+```
+
+The generative layer is **opt-in** (`Agent(narrator=…)`) and never bypasses the
+router: the LLM still writes no SQL, and the provenance line is appended
+deterministically — the redactor never writes it. `politics.py` is untouched and
+wins over everything: no metric with `dimension: politica` is ever narrated, not
+even when the team's runtime unlock has opened the deterministic answer. A
+narration is priced **in full** (redactor + both blind reads) before the first
+call, so one is never started that the ceiling cannot see through.
+
+### What did NOT survive the harvest (declared, not hidden)
+
+- **Bands** ("el rang és la dada"): the marts store a point value per cell and no
+  interval, so a band rule here would be fabricated. The tie rule degrades to the
+  **exact tie** — the one separation the mart's own cells can prove.
+- **Collision groups**: a property of the estimator repeating a figure across
+  municipalities; the marts do not record it. Not modelled, not guessed.
 
 ---
 
@@ -144,6 +202,24 @@ Each case asserts the *shape* of a correct answer: answer-vs-refusal, the cited
 metric, the municipality in the rows, required substrings, and that **every
 answer has provenance** / every refusal has a reason. A guard test also asserts
 that **every `sample_question` in the contract is covered** by an eval case.
+
+### The narration eval (the cage, end to end)
+
+`evals/run_narration_eval.py` runs the whole generative chain — deterministic
+answer → redactor → cage → re-validation → served or fallback — against the seed
+fixtures with the **model pinned** (`narration_cases.yml` carries the redactor's
+prose and the blind verdicts). No network, no key:
+
+```bash
+# from packages/ai/
+PYTHONPATH=src python evals/run_narration_eval.py
+python -m pytest tests/test_narration_eval.py     # the same, as the CI gate
+```
+
+The cases deliberately include a **provoked failure** (a text the blind validator
+still rejects after caging) that must land on the deterministic answer — a cage
+eval without one would be marking its own homework — plus an invented figure that
+must come back visibly cut.
 
 ---
 

@@ -40,8 +40,19 @@ publicable per si sola.*
 > - **D1 (Sondeig)** — connector atur: **FONT ESMENADA a C1 §1.1** — el Socrata de l'spec NO EXISTEIX
 >   (verificat en viu); font real = CSV mensual del SEPE, amb la doctrina del «<5» = interval [1,4]
 >   (mai zero silenciós) i zero-pad de codis INE.
-> - **X1 (Brúixola)** — collita C5: doctrina + gàbia RE-VALIDANT (validador v2, fallback determinista),
->   politics.py mana per sobre de tot.
+> - **X1 (Brúixola)** — ✅ **FETA, PR obert** (bitàcola: `2026-07-16_x1-collita-geo-rag_bruixola.md`).
+>   Doctrina + gàbia RE-VALIDANT a `packages/ai` (validador v2 collit byte a byte, fallback
+>   determinista provat); geo-rag i politics.py intactes; pin `openai>=1.30` inalterat.
+>   187 tests offline verds · 13/13 evals originals · 7/7 eval nou end-to-end.
+>   **Dos forats destapats i esmenats:** (a) l'`empat` — el rànquing determinista afirmava
+>   guanyadors que les dades no assenyalen (**47 municipis** empatats a `index_turisme=100`,
+>   6 a `IETR=100`), i era el *fallback* de la gàbia; (b) el **caveat esborrat** — `catalog.py`
+>   llegia `nota:` i el contracte escriu `caveat:` a 14 mètriques (**totes les inferències**),
+>   així que «INFERÈNCIA, no cens» no arribava mai al lector.
+>   **➡️ Handoff a: Sondeig** — l'empat massiu és **saturació dels índexs** (topall a 100):
+>   un índex que aplana 47 municipis al cim, informa? (dades, no jurisdicció meva).
+>   **➡️ Handoff a: Talaia** — el contracte fa servir dues claus per al caveat (`nota:`/`caveat:`);
+>   el codi ja llegeix les dues, però unificar-ho estalviaria la propera esquerda.
 > **▶️ TRET DE SORTIDA DONAT PER BEA (2026-07-16).** Latido passat a **Sondeig** (→R1) i **Brúixola** (→X1).
 > **DIAL D'AUTONOMIA: UNA tasca per front i para** (mode segur per torns; no encadeneu). D1 queda a la cua de
 > Sondeig per al proper latido, o si Bea puja el dial a «un lot». Talaia verifica adversarialment i fusiona.

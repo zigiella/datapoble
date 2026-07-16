@@ -27,6 +27,21 @@ Every row carries an `is_real` flag.
   ranking / correlation / "which municipality" questions have a distribution to
   operate on offline. **Do not cite these as fact.** They exist only to make
   the evals and the deterministic router runnable without the pipeline.
+- **The pressure columns are illustrative for every row, `is_real` included**
+  (`kwh_hab`, `poblacio_pernocta_est`, `gap_pernocta`, `gap_pernocta_pct`,
+  `confianca`). Added in the X1 harvest so the doctrine's registers have
+  something to grade offline. `kwh_hab` and `confianca` are **chosen**; the three
+  derived columns are then computed with the contract's own formulas
+  (`round(poblacio * kwh_hab / 1224)` etc.), so the fixture is internally
+  consistent and a test can re-derive it. **Do not cite any of them as fact** —
+  not even for Castellar de n'Hug and Berga, whose *inputs* are real but whose
+  estimates here are not the pipeline's.
+
+  Castellar de n'Hug carries `confianca: baixa` on purpose: it is the contract's
+  own worked example of diverging signals (high waste, low electricity because
+  the mountain burns wood), so the fixture exercises the `soroll` register — "I
+  have the estimate and I disown it, with a reason" — rather than only the happy
+  path. La Nou de Berguedà is the second such case.
 
 The agent itself does not read `is_real`; it is documentation for humans and a
 hook for a future "fixture vs production" provenance flag.
