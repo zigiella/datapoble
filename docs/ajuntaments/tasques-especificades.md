@@ -1,6 +1,7 @@
 # Tasques especificades — track ajuntaments (R1 · D1 · X1)
 
-**Estat: ⏸ EN ESPERA DEL TRET DE SORTIDA DE BEA — cap front comença fins al latido.**
+**Estat: ▶️ EN MARXA — tret de sortida de Bea, 2026-07-16.** Dial: **una tasca per front i para**.
+Sondeig → R1 · Brúixola → X1 · D1 espera el proper latido de Sondeig (o que Bea pugi el dial).
 Especificades per Talaia (2026-07-16) amb **àncores verificades en viu** (cap URL de documentació
 caducada). Contractes vinculants fusionats: C1–C6 a `docs/ajuntaments/`. Cada tasca = 1 PR;
 verificació adversarial de Talaia abans de fusionar.

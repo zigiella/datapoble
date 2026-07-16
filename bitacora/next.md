@@ -37,7 +37,9 @@ publicable per si sola.*
 >   (mai zero silenciós) i zero-pad de codis INE.
 > - **X1 (Brúixola)** — collita C5: doctrina + gàbia RE-VALIDANT (validador v2, fallback determinista),
 >   politics.py mana per sobre de tot.
-> **⏸ CAP FRONT COMENÇA FINS AL TRET DE SORTIDA DE BEA (latido pendent — decisió seva explícita).**
+> **▶️ TRET DE SORTIDA DONAT PER BEA (2026-07-16).** Latido passat a **Sondeig** (→R1) i **Brúixola** (→X1).
+> **DIAL D'AUTONOMIA: UNA tasca per front i para** (mode segur per torns; no encadeneu). D1 queda a la cua de
+> Sondeig per al proper latido, o si Bea puja el dial a «un lot». Talaia verifica adversarialment i fusiona.
 
 > **🧪 TRACK ACTIU (2026-07-01): experiment RAG geoespacial honest (Berguedà).** Carta a
 > `docs/experiment-rag-geo/00-arrencada.md`. Decisions de Bea: **DuckDB-first** (avisar Rapaz de la
