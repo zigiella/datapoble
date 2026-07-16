@@ -5,8 +5,10 @@ publicable per si sola.*
 
 > **🏛️ TRACK ACTIU (2026-07-16): datapoble per a ajuntaments — `docs/spec-ajuntaments-v1.md`**
 > (direcció de Bea, redacció Marea #239, ADOPTADA amb esmenes per Talaia — §10 de l'spec és vinculant).
-> Demo Magda (Diba) set 6–8. **El que ven la demo és el número** (recall del radar + KPI d'abstenció del xat),
-> verificat per Talaia — mai un titular sense el seu caveat.
+> **Demo Magda (Diba): SENSE DATA (decisió de Bea, 2026-07-16)** — es valorarà presentar-la **quan sigui
+> online i funcionant**, no contra un calendari. Guió i prerequisits a `docs/ajuntaments/demo-diba.md`.
+> **El que ven la demo és el número** (recall del radar + KPI d'abstenció del xat), verificat per Talaia
+> — mai un titular sense el seu caveat.
 > **NO-OBJECTIUS VINCULANTS d'aquesta v1:** butlletí mensual · cartell A4 · radar per a entitats ·
 > fases 4–5 del geo-rag · escala Catalunya · cap personalització que amagui indicadors incòmodes.
 > Qualsevol excepció passa per Bea.
@@ -19,10 +21,13 @@ publicable per si sola.*
 >   R4 (workflow correu — destinataris: Bea) · R5 (CIDO) · R6 (memòria on-demand). Experimental NOMÉS
 >   la Pobla (08166) via `actiu:`; Castellar (08052) i `_default` dorments. Porta de sortida: banc C4
 >   aprovat + 1 mes validació paral·lela + vistiplau de Bea.
-> - **D0 (Talaia)** — contractes C1 (mètriques noves + camp `visibilitat`, E4) + C2 (dades internes:
->   `publicable:false` MAI al repo públic, E1) + C6 (mode govern, vot narratiu de Bea) → després
->   D1 (atur Socrata) · D2 (HERMES selectiu) · D3 (municipal_csv) · D4 (mart_govern) · D5 (vista
->   govern, Mirador) · D6 (CSV real de la Pobla, Bea).
+> - **D0 (Talaia)** ✅ — contractes C1 + C2 + C6 fusionats (#242) → després **D1** (atur SEPE, Sondeig) ·
+>   **D2** (HERMES selectiu) · **D4** (mart_govern + percentils) · **D5** (vista govern, Mirador).
+>   **DECISIÓ DE BEA (2026-07-16): v1 va NOMÉS amb dades públiques.** `D3` (connector municipal_csv) i
+>   `D6` (CSV real de la Pobla) → **FASE 2**: primer ensenyem valor amb el que tenim, després demanem
+>   dades a l'Ajuntament. C2 queda com a contracte llest i **dorment** (no es toca; ja serveix per a la fase 2).
+>   La selecció dels 12 KPIs (que C6 deixava oberta) és a **`docs/ajuntaments/gorra-alcalde-pobla.md`**
+>   — triats per decisió que suporten, amb els números reals i els rangs comarcals. **Vot de Bea pendent.**
 > - **X1 (Brúixola)** — collita C5: doctrina + gàbia RE-VALIDANT (E3, validador v2) cap a
 >   `packages/ai` · X2 (activar render.yaml dorment, Trazo) · X3 (catàleg govern + preguntes suggerides).
 > **El geo-rag NO es toca** (congelat com a annex de recerca fins a X1); els seus pendents propis
