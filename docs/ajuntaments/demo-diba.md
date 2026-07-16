@@ -1,6 +1,9 @@
 # La demo a la Diba — què és, exactament
 
-**Especificat per Talaia (2026-07-16) a petició de Bea.** Estat: **proposta — la data i el guió són vot de Bea.**
+**Especificat per Talaia (2026-07-16) a petició de Bea.** Estat: **proposta — el guió és vot de Bea.**
+**DATA: no n'hi ha (decisió de Bea, 2026-07-16).** Es valorarà presentar-la **quan el producte sigui online
+i funcionant** — no es treballa contra un calendari extern. El §4 (la lògica de la data) queda com a
+referència per al dia que es decideixi: segueix valent que el número del radar necessita el seu mes.
 Referència: `docs/spec-ajuntaments-v1.md` §7 (guió original de Marea) — aquest doc el concreta i n'explicita els prerequisits.
 
 ---
@@ -20,7 +23,7 @@ Referència: `docs/spec-ajuntaments-v1.md` §7 (guió original de Marea) — aqu
 | # | Moment (què veu la Magda) | Prerequisit dur | Si no hi és |
 |---|---|---|---|
 | 1 | **Mode govern de la Pobla**: atur del mes, KPIs amb percentil comarcal, sèries | D5 desplegat + D1 (atur real) + D4 (percentils al mart) | no hi ha demo — és el cor |
-| 2 | **Dades internes reals** de l'Ajuntament al costat de les públiques | D6 (CSV real arribat i validat) | s'ensenya amb sintètiques **marcades «demo»** (honest, però perd molt) |
+| 2 | ~~Dades internes reals~~ → **FASE 2** (decisió de Bea): la v1 va només amb dades públiques. El moment 2 passa a ser **la lectura de govern**: els 12 KPIs amb rang comarcal (`gorra-alcalde-pobla.md`) — incloent-hi **l'avís honest** que el nostre model de presència falla a la Pobla | D5 + D4 | — |
 | 3 | **Xat en directe**: una resposta traçada (font+fórmula) i **una abstenció amb motiu** | X2 (API viva) + catàleg carregat | mode offline honest (pantalla dissenyada) o es narra sense clicar |
 | 4 | **El correu del radar** d'aquell matí, amb convocatòries reals | R4 corrent + perfil de la Pobla actiu | s'ensenya un correu arxivat d'un matí anterior (dir-ho) |
 | 5 | **Canvi a Castellar amb un clic** (multi-poble = 1 YAML) → tancament: *els ~177 municipis <5.000 hab. de la demarcació són el mateix pipeline* | C3 (perfils) + D5 multi-muni | es narra amb el YAML a la pantalla |
@@ -48,7 +51,7 @@ La finestra de l'spec és **setmana 6–8**. El que la fixa:
 
 **Recomanació de Talaia: setmana 8.** Motiu: anem a ensenyar honestedat mesurada; presentar-hi un número escapçat contradiu el missatge. Les úniques raons per anar a la 6 serien externes (l'agenda de la Magda, o que la finestra es tanqui) — i llavors es diu el que és, sense maquillar.
 
-**Riscos de calendari, dits clars:** D6 depèn d'un tercer (l'Ajuntament) i pot no arribar a temps — el moment 2 té pla B. R4 depèn que el banc C4 passi la porta; si el banc surt DECEBEDOR o pitjor, **no hi ha correu a la demo** (porta innegociable) i el moment 4 cau: la demo es reenfoca al dashboard + xat, i el radar es presenta com a recerca en curs amb el seu número tal com va sortir.
+**Riscos, dits clars:** (D6 ja no és risc: és fase 2 per decisió de Bea.) R4 depèn que el banc C4 passi la porta; si el banc surt DECEBEDOR o pitjor, **no hi ha correu a la demo** (porta innegociable) i el moment 4 cau: la demo es reenfoca al dashboard + xat, i el radar es presenta com a recerca en curs amb el seu número tal com va sortir.
 
 ## 5. Què li demanem (el següent pas)
 
