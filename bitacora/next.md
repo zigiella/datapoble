@@ -53,9 +53,31 @@ publicable per si sola.*
 >   un índex que aplana 47 municipis al cim, informa? (dades, no jurisdicció meva).
 >   **➡️ Handoff a: Talaia** — el contracte fa servir dues claus per al caveat (`nota:`/`caveat:`);
 >   el codi ja llegeix les dues, però unificar-ho estalviaria la propera esquerda.
-> **▶️ TRET DE SORTIDA DONAT PER BEA (2026-07-16).** Latido passat a **Sondeig** (→R1) i **Brúixola** (→X1).
-> **DIAL D'AUTONOMIA: UNA tasca per front i para** (mode segur per torns; no encadeneu). D1 queda a la cua de
-> Sondeig per al proper latido, o si Bea puja el dial a «un lot». Talaia verifica adversarialment i fusiona.
+> **▶️ EN MARXA (tret de sortida de Bea, 2026-07-16).** **R1 ✅ (#247, Sondeig)** · **X1 ✅ (#248, Brúixola)** —
+> verificats adversarialment per Talaia i fusionats. Les tres decisions de R1, **RATIFICADES** (§ bitàcola).
+>
+> **🔴 COLA DE SONDEIG (per ordre; un latido = una tasca):**
+> 1. **D1** — connector atur SEPE (`docs/ajuntaments/tasques-especificades.md` §D1; C1 §1.1 esmenat:
+>    la font Socrata NO existeix; doctrina del «<5» = interval [1,4]).
+> 2. **`main` ÉS VERMELL — arreglar `test_licitacions.py::test_real_parquet_cobertura_i_conservacio`**
+>    (desquadre de ~7,67 M€ en la conservació d'imports). Preexistent a R1; ningú ho veia perquè **cap
+>    test de `signals` corria a CI** (només s'hi lintava). Descobert per Sondeig a R1, reportat i no tapat.
+>    **En tancar-lo: treure l'acotació del pas de CI** que R1 va deixar (ara només corre el seu fitxer) i
+>    fer que CI corri **tots** els tests de `signals`. Fins llavors, la porta de main té aquest forat obert.
+> 3. **Saturació dels índexs** (handoff de Brúixola, X1): **47 municipis empatats a `index_turisme = 100`**
+>    i 6 a `IETR = 100` — els índexs topen. El xat ja no menteix (X1 ho arregla al determinista: empat →
+>    no s'afirma guanyador), però la pregunta de dades és seva: **un índex que satura 47 municipis al
+>    màxim, informa?** Recalibrar o declarar-ne el límit.
+> 4. **R2** — filtre dur + puntuació de perfil (C3; inclou crear `config/municipis/08166-lillet.yaml`).
+>
+> **🔵 COLA DE BRÚIXOLA:** X3 (catàleg govern) queda darrere de D1/D4 (necessita les mètriques noves).
+>
+> **🟣 TALAIA:** unificar `nota:`/`caveat:` al contracte semàntic (X1 va destapar que **el codi llegia
+> `nota:` i el contracte escriu `caveat:` a 14 mètriques — TOTES les inferències**: producció servia les
+> inferències sense el seu caveat obligat, «852 habitants (est.)» inclòs. X1 ja llegeix les dues claus;
+> unificar estalvia la propera esquerda) · esmena C3 §2 bis (termini ambigu) ✅ · etiquetatge del banc C4
+> quan Bea vulgui (26 fixtures reals de R1 esperant, **sense cap golden posat per un agent**).
+> **DIAL: UNA tasca per front i para** (mode segur per torns). Talaia verifica adversarialment i fusiona.
 
 > **🧪 TRACK ACTIU (2026-07-01): experiment RAG geoespacial honest (Berguedà).** Carta a
 > `docs/experiment-rag-geo/00-arrencada.md`. Decisions de Bea: **DuckDB-first** (avisar Rapaz de la

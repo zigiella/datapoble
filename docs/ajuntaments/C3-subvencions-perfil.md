@@ -21,11 +21,30 @@ Tota font (BDNS, CIDO, les que vinguin) normalitza a **exactament** aquests camp
 | `import` | float \| NULL | € de la convocatòria; NULL si la font no el dona |
 | `cofinancament` | float \| NULL | % a càrrec del beneficiari; NULL si no consta |
 | `data_publicacio` | date | — |
-| `termini` | date \| NULL | fi del termini de sol·licitud |
+| `termini` | date \| NULL | fi del termini de sol·licitud. **`NULL` vol dir «la font no en dona data estructurada», MAI «no hi ha termini»** (esmena de R1, §2 bis) |
+| `termini_text` | text \| NULL | el termini **tal com el diu la font**, literal, quan no és una data (p. ex. «Finaliza el 15 de septiembre de 2026», «15 Dies Hàbils»). Es transcriu; **no es parseja** |
 | `enllac` | str | URL canònica de la convocatòria |
 | `estat` | enum | `oberta` \| `tancada` \| `anul·lada` (vocabulari tancat; derivat de font + termini) |
 
 **Materialització:** `data/subvencions/subvencions_bergueda.parquet` via DuckDB amb casts explícits (mateix patró que `events.py`) + `_provenance.json` per càrrega (patró `write_provenance`). BDNS i CIDO s'alta al registre `SOURCES` de `datapoble_signals/config.py` amb organisme, URL i llicència, com contractació i sequera.
+
+## 2 bis. El `termini` ambigu — esmena de R1 (Talaia, 2026-07-16)
+
+**Mesurat en viu per Sondeig sobre 26 convocatòries reals de la BDNS:** només **8/26** porten data
+estructurada (`fechaFinSolicitud`); **11/26** la porten **en prosa** (`textFin`: «Finaliza el 15 de
+septiembre de 2026», «15 Dies Hàbils»…); la resta, res.
+
+**Decisió (ratifica la negativa de Sondeig a escriure un parser):**
+- `termini` (date) només s'omple des del camp **estructurat** de la font. **Cap parser de prosa.**
+  Deduir una data d'un text lliure seria **inferència servida com a fet, al camp que decideix si s'hi
+  és a temps** — el pitjor lloc possible per inventar.
+- El text literal es transcriu a **`termini_text`** (nou). La UI i el correu poden mostrar-lo tal qual.
+- **`termini: NULL` ≠ «no hi ha termini».** Vol dir «la font no en dona data». **R2 NO pot descartar
+  per `termini` NULL** (seria un FN de sistema, C4 §1) i **R4 ha de marcar-les com a «termini per
+  confirmar — mira l'enllaç»**: és una mirada humana, no un descart automàtic.
+- `estat` (`oberta|tancada|anul·lada`) **no es deriva d'un `termini` NULL**: sense data, l'estat el
+  mana la font o queda indeterminat; mai «tancada» per absència de dada.
+- El dedupe no canvia: la clau normalitzada ja preveia el literal `sense-termini` per al NULL.
 
 ## 2. La clau d'identitat (dedupe interfonts) — decisió tancada
 
