@@ -1,0 +1,2376 @@
+{
+ "_meta": {
+  "font": "Sistema Nacional de Publicidad de Subvenciones y Ayudas Publicas (BDNS)",
+  "endpoint_busqueda": "https://www.infosubvenciones.es/bdnstrans/api/convocatorias/busqueda",
+  "endpoint_detall": "https://www.infosubvenciones.es/bdnstrans/api/convocatorias?numConv=<codigoBDNS>",
+  "params_busqueda": {
+   "vpd": "GE",
+   "order": "fechaRecepcion",
+   "direccion": "desc",
+   "fechaDesde": "01/01/2026",
+   "fechaHasta": "15/07/2026",
+   "regiones": [
+    "49,50,51,52,53 (Catalunya + 4 provincies)",
+    "1 (ES - ESPANA, ambit estatal)"
+   ]
+  },
+  "fetched_at": "2026-07-16T18:13:20+00:00",
+  "n_convocatories": 26,
+  "nota": "Captura literal de la font (cap camp afegit ni editat), retallada a una mostra variada. Cada entrada porta la fila de 'busqueda' (plana) i la fitxa de 'detall' (niuada). Els tests la consumeixen OFFLINE. Candidates al banc C4 (l'etiquetatge daurat es de Bea, mai d'un model).",
+  "avis_legal_font": "La reutilitzacio de les dades del SNPSAP esta subjecta a l'avis legal de https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal i les dades poden ser corregides o eliminades a posteriori (camp 'advertencia' de cada fitxa)."
+ },
+ "convocatories": [
+  {
+   "busqueda": {
+    "id": 1119039,
+    "mrr": false,
+    "numeroConvocatoria": "917478",
+    "descripcion": "SUBVENCIÓN NOMINATIVA A CASA NATALICIA DE S. VICENTE FERRER ",
+    "descripcionLeng": null,
+    "fechaRecepcion": "2026-07-07",
+    "nivel1": "LOCAL",
+    "nivel2": "VALENCIA",
+    "nivel3": "AYUNTAMIENTO DE VALENCIA",
+    "codigoInvente": null
+   },
+   "detall": {
+    "id": 1119039,
+    "organo": {
+     "nivel1": "LOCAL",
+     "nivel2": "VALENCIA",
+     "nivel3": "AYUNTAMIENTO DE VALENCIA"
+    },
+    "sedeElectronica": null,
+    "codigoBDNS": "917478",
+    "fechaRecepcion": "2026-07-07",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concesión directa - instrumental",
+    "presupuestoTotal": 25000,
+    "mrr": false,
+    "descripcion": "SUBVENCIÓN NOMINATIVA A CASA NATALICIA DE S. VICENTE FERRER ",
+    "descripcionLeng": null,
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PERSONAS JURÍDICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "Actividades de creación artística y artes escénicas",
+      "codigo": "90"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES - ESPAÑA "
+     }
+    ],
+    "descripcionFinalidad": "Cultura",
+    "descripcionBasesReguladoras": "ORDENANZA GENERAL DE SUBVENCIONES DEL AYUNTAMIENTO DE VALENCIA Y SUS ORGANISMOS PÚBLICOS",
+    "urlBasesReguladoras": "https://sede.valencia.es/sede/ordenanzas/index.xhtml",
+    "sePublicaDiarioOficial": false,
+    "abierto": true,
+    "fechaInicioSolicitud": null,
+    "fechaFinSolicitud": null,
+    "textInicio": null,
+    "textFin": null,
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1488908,
+      "descripcion": "Texto en castellano de la convocatoria",
+      "nombreFic": "ACUERDO_CONCESION_S.N.__REGIMEN_JURIDICO-PEGUIS_.pdf",
+      "long": 87202,
+      "datMod": "2026-07-07",
+      "datPublicacion": "2026-07-07"
+     }
+    ],
+    "anuncios": [],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1119620,
+    "mrr": false,
+    "numeroConvocatoria": "918059",
+    "descripcion": "IV Edición de ayudas de la Cátedra de Joventut al mejor proyecto de investigación relacionado con la mejora de la salud mental y la promoción del bienestar en jóvenes",
+    "descripcionLeng": "IV Edició d'ajudes de la Càtedra de Joventut al millor projecte d'investigació relacionat amb la millora de la salut mental i la promoció del benestar en joves",
+    "fechaRecepcion": "2026-07-08",
+    "nivel1": "OTROS",
+    "nivel2": "UNIVERSITAT DE VALÈNCIA (ESTUDI GENERAL)",
+    "nivel3": null,
+    "codigoInvente": "INV00005380"
+   },
+   "detall": {
+    "id": 1119620,
+    "organo": {
+     "nivel1": "OTROS",
+     "nivel2": "UNIVERSITAT DE VALÈNCIA (ESTUDI GENERAL)",
+     "nivel3": null
+    },
+    "sedeElectronica": "https://www.uv.es/sede-electronica/es/sede-electronica-uv.html",
+    "codigoBDNS": "918059",
+    "fechaRecepcion": "2026-07-08",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concurrencia competitiva - canónica",
+    "presupuestoTotal": 3000,
+    "mrr": false,
+    "descripcion": "IV Edición de ayudas de la Cátedra de Joventut al mejor proyecto de investigación relacionado con la mejora de la salud mental y la promoción del bienestar en jóvenes",
+    "descripcionLeng": "IV Edició d'ajudes de la Càtedra de Joventut al millor projecte d'investigació relacionat amb la millora de la salut mental i la promoció del benestar en joves",
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PERSONAS FÍSICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "Actividades auxiliares a la educación",
+      "codigo": "85.6"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES - ESPAÑA "
+     }
+    ],
+    "descripcionFinalidad": "Educación",
+    "descripcionBasesReguladoras": "Resolución 6 julio 2026, del Rectorado de la UV, por la que se convoca la IV Ed. de ayudas de la UV a través de la Cátedra de Joventut al mejor proyecto de investigación relacionado con la mejora de la salud mental y promoción del bienestar en jóvenes",
+    "urlBasesReguladoras": "https://ir.uv.es/0dsAug9",
+    "sePublicaDiarioOficial": true,
+    "abierto": false,
+    "fechaInicioSolicitud": null,
+    "fechaFinSolicitud": null,
+    "textInicio": "Inicia a partir del día siguiente de la publicación del extracto en el DOGV",
+    "textFin": "Finaliza el 15 de septiembre de 2026",
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1490520,
+      "descripcion": "Texto en otra lengua de la convocatoria",
+      "nombreFic": "resolucio_i_bases_convoc-val.pdf",
+      "long": 716834,
+      "datMod": "2026-07-08",
+      "datPublicacion": "2026-07-08"
+     },
+     {
+      "id": 1490519,
+      "descripcion": "Texto en castellano de la convocatoria",
+      "nombreFic": "resolucion_y_bases_convoc-cas.pdf",
+      "long": 784727,
+      "datMod": "2026-07-08",
+      "datPublicacion": "2026-07-08"
+     }
+    ],
+    "anuncios": [
+     {
+      "numAnuncio": 216615,
+      "titulo": "Resolución de 6 de julio de 2026, del Rectorado de la Universitat de València, por la que se convoca la IV edición de ayudas de la Universitat de València a través de la Cátedra de Joventut al mejor proyecto de investigación relacionado con la mejora de la salud mental y la promoción del bienestar en jóvenes (de 12 a 30 años)",
+      "tituloLeng": "Resolució de 6 de juliol de 2026, del Rectorat de la Universitat de València, per la qual es convoca la IV edició d’ajudes de la Universitat de València a través de la Càtedra de Joventut al millor projecte d’investigació relacionat amb la millora de la salut mental i la promoció del benestar en joves (12 a 30 anys)",
+      "texto": "<p>Primero. Beneficiarios:\n</p><p>Pueden ser beneficiarios/as de las ayudas de la IV edición de ayudas de investigación de Cátedra de Juventud de la Universidad de Valencia cualquier investigador/a o equipo de investigación integrado en total o en parte por investigadores/as adscritos/as a centros de investigación. La investigadora o el investigador principal debe tener la categoría de doctor/a.\n</p><p>\n</p><p>Segundo. Objeto:\n</p><p>La Universidad de Valencia a través de la Cátedra de Juventud, convoca la IV edición de ayudas de investigación de la Cátedra de Juventud al mejor proyecto de investigación orientado a la mejora de la salud mental y la promoción del bienestar en adolescentes y jóvenes entre 12 y 30 años. \n</p><p>\n</p><p>En esta convocatoria se pueden presentar proyectos enmarcados dentro de dos modalidades distintas:\n</p><p>Modalidad A. Ayuda a la creación e implementación de un proyecto de investigación sobre la salud mental y/o el bienestar de los adolescentes y jóvenes en la Comunitat Valenciana.\n</p><p>Modalidad B. Ayuda a la aplicación y transferencia de investigaciones llevadas a cabo en los últimos tres años sobre salud mental y/o bienestar de los adolescentes y jóvenes en la Comunitat Valenciana.\n</p><p>\n</p><p>Tercero. Bases reguladoras:\n</p><p>https://ir.uv.es/0dsAug9   \n</p><p>\n</p><p>Cuarto. Cuantía:\n</p><p>Se concede una única ayuda por importe de 3.000 euros para la persona o el equipo de investigación que haya presentado el proyecto ganador. \n</p><p>La ayuda estará sujeto a las retenciones legalmente establecidas de acuerdo con la legislación fiscal. La ayuda será otorgada al investigador o investigadora principal del proyecto ganador para su financiación y se abonará a la institución a la que esté adscrito/a y que será la misma en la que se lleva a cabo la investigación.\n</p><p>\n</p><p>Quinto. Plazo de presentación de solicitudes:\n</p><p>Las solicitudes se podrán presentar a partir del día siguiente de la publicación del extracto de esta resolución en el Diario Oficial de la Generalitat Valenciana (DOGV) hasta el 15 de septiembre de 2026.\n</p>",
+      "textoLeng": "<p>Primer. Beneficiaris:\n</p><p>Poden ser beneficiaris/àries de les ajudes de la IV edició  de recerca de Càtedra de Joventut de la Universitat de València qualsevol investigador/a o equip de recerca integrat en total o en part per investigadors/es adscrits/des a centres de recerca. La investigadora o investigador principal ha de tindre la categoria de doctor/a.\n</p><p>\n</p><p>Segon. Objecte:\n</p><p>La Universitat de València a través de la Càtedra de Joventut, convoca la IV edició d'ajudes d'investigació de la Càtedra de Joventut al millor projecte d'investigació relacionat amb la millora de la salut mental i la promoció del benestar en adolescents i joves entre 12 i 30 anys.\n</p><p>\n</p><p>En aquesta convocatòria es poden presentar projectes emmarcats dins de dues modalitats diferents:\n</p><p>Modalitat A. Ajuda a la creació i la implementació d'un projecte de recerca sobre la salut mental i/o el benestar dels adolescents i joves a la Comunitat Valenciana.\n</p><p>Modalitat B. Ajuda a l'aplicació i transferència d'investigacions dutes a terme en els darrers tres anys sobre salut mental i/o benestar dels adolescents i joves a la Comunitat Valenciana.\n</p><p>\n</p><p>Tercer. Bases reguladores:\n</p><p>https://anar.uv.es/43DOB1q   \t\n</p><p>\n</p><p>Quarta. Quantia:\n</p><p>Es concedeix una única ajuda per import de 3.000 euros per a la persona o equip d'investigació que haja presentat el projecte guanyador. \n</p><p>L’ajut estarà subjecte a les retencions legalment establertes d’acord amb la legislació fiscal. \n</p><p>L'ajut serà atorgat a l'investigador o investigadora principal del projecte guanyador per al seu finançament i s'abonarà a la institució a què estiga adscrit/a i que serà la mateixa en què es duu a terme la investigació.\n</p><p>\n</p><p>Quint. Termini de presentació de sol·licituds:\n</p><p>Les sol·licituds es podran presentar a partir de l'endemà de la publicació de l'extracte d'aquesta resolució al Diari Oficial de la Generalitat Valenciana (DOGV) fins al 15 de setembre del 2026.\n</p>",
+      "url": "https://dogv.gva.es/va/resultat-dogv?signatura=2026/23641",
+      "cve": "DOGV-V-2026-23641",
+      "desDiarioOficial": "DOCV. D.O. DE LA COMUNITAT VALENCIANA",
+      "datPublicacion": "2026-07-14"
+     }
+    ],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1119913,
+    "mrr": false,
+    "numeroConvocatoria": "918352",
+    "descripcion": "Convocatoria de subvenciones para actividades municipales y comarcales de artes escénicas, música i artes visuales en el ámbito de la enseñanza reglada",
+    "descripcionLeng": "Convocatòria de subvencions per a activitats municipals i comarcals d'arts escèniques, música i arts visuals en l'àmbit de l'ensenyament reglat",
+    "fechaRecepcion": "2026-07-09",
+    "nivel1": "AUTONOMICA",
+    "nivel2": "CATALUÑA",
+    "nivel3": "OFICINA DE SUPORT A LA INICIATIVA CULTURAL",
+    "codigoInvente": null
+   },
+   "detall": {
+    "id": 1119913,
+    "organo": {
+     "nivel1": "AUTONOMICA",
+     "nivel2": "CATALUÑA",
+     "nivel3": "OFICINA DE SUPORT A LA INICIATIVA CULTURAL"
+    },
+    "sedeElectronica": null,
+    "codigoBDNS": "918352",
+    "fechaRecepcion": "2026-07-09",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concurrencia competitiva - canónica",
+    "presupuestoTotal": 250000,
+    "mrr": false,
+    "descripcion": "Convocatoria de subvenciones para actividades municipales y comarcales de artes escénicas, música i artes visuales en el ámbito de la enseñanza reglada",
+    "descripcionLeng": "Convocatòria de subvencions per a activitats municipals i comarcals d'arts escèniques, música i arts visuals en l'àmbit de l'ensenyament reglat",
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PERSONAS JURÍDICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "Actividades de creación artística y artes escénicas",
+      "codigo": "90"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES51 - CATALUÑA"
+     }
+    ],
+    "descripcionFinalidad": "Cultura",
+    "descripcionBasesReguladoras": "Bases específicas de las subvenciones para actividades municipales y comarcales de artes escénicas, música y artes visuales en el ámbito de la enseñanza reglada",
+    "urlBasesReguladoras": "https://portaldogc.gencat.cat/utilsEADOP/PDF/9703/2160336.pdf",
+    "sePublicaDiarioOficial": true,
+    "abierto": false,
+    "fechaInicioSolicitud": "2026-07-17",
+    "fechaFinSolicitud": "2026-10-08",
+    "textInicio": null,
+    "textFin": null,
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1494806,
+      "descripcion": "Texto en otra lengua de la convocatoria",
+      "nombreFic": "CrrgtConvoCLT092_signed_CA.pdf",
+      "long": 182700,
+      "datMod": "2026-07-16",
+      "datPublicacion": "2026-07-16"
+     },
+     {
+      "id": 1494805,
+      "descripcion": "Texto en castellano de la convocatoria",
+      "nombreFic": "CrrgtConvoCLT092ES.pdf",
+      "long": 110000,
+      "datMod": "2026-07-16",
+      "datPublicacion": "2026-07-16"
+     }
+    ],
+    "anuncios": [
+     {
+      "numAnuncio": 217243,
+      "titulo": "Procedimiento Beta",
+      "tituloLeng": null,
+      "texto": "Procedimiento Beta",
+      "textoLeng": null,
+      "url": "https://dogc.gencat.cat/es/document-del-dogc/index.html?documentId=1050049",
+      "cve": null,
+      "desDiarioOficial": "DOGC. D.O. DE LA GENERALITAT DE CATALUNYA",
+      "datPublicacion": "2026-07-16"
+     }
+    ],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1120033,
+    "mrr": false,
+    "numeroConvocatoria": "918472",
+    "descripcion": "Suport a entitats del municipi pel desenvolupament de programes i activitats d’interès\nambiental per a la ciutat i per al medi ambient, emmarcats dins de l’àmbit de l’educació\nambiental a les escoles i de l’agricultura de producció integrada",
+    "descripcionLeng": "Suport a entitats del municipi pel desenvolupament de programes i activitats d’interès\nambiental per a la ciutat i per al medi ambient, emmarcats dins de l’àmbit de l’educació\nambiental a les escoles i de l’agricultura de producció integrada",
+    "fechaRecepcion": "2026-07-10",
+    "nivel1": "LOCAL",
+    "nivel2": "SANT JOAN DESPÍ",
+    "nivel3": "AYUNTAMIENTO DE SANT JOAN DESPÍ",
+    "codigoInvente": null
+   },
+   "detall": {
+    "id": 1120033,
+    "organo": {
+     "nivel1": "LOCAL",
+     "nivel2": "SANT JOAN DESPÍ",
+     "nivel3": "AYUNTAMIENTO DE SANT JOAN DESPÍ"
+    },
+    "sedeElectronica": "https://sjdespi.cat/sites/default/files/2024-11/ANNEX_5_0.pdf",
+    "codigoBDNS": "918472",
+    "fechaRecepcion": "2026-07-10",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concurrencia competitiva - canónica",
+    "presupuestoTotal": 30500,
+    "mrr": false,
+    "descripcion": "Suport a entitats del municipi pel desenvolupament de programes i activitats d’interès\nambiental per a la ciutat i per al medi ambient, emmarcats dins de l’àmbit de l’educació\nambiental a les escoles i de l’agricultura de producció integrada",
+    "descripcionLeng": "Suport a entitats del municipi pel desenvolupament de programes i activitats d’interès\nambiental per a la ciutat i per al medi ambient, emmarcats dins de l’àmbit de l’educació\nambiental a les escoles i de l’agricultura de producció integrada",
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PERSONAS JURÍDICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "Educación",
+      "codigo": "85"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES511 - Barcelona"
+     }
+    ],
+    "descripcionFinalidad": "Educación",
+    "descripcionBasesReguladoras": "Suport a entitats del municipi pel desenvolupament de programes i activitats d’interès\nambiental per a la ciutat i per al medi ambient, emmarcats dins de l’àmbit de l’educació\nambiental a les escoles i de l’agricultura de producció integrada",
+    "urlBasesReguladoras": "https://sjdespi.cat/sites/default/files/2024-11/ANNEX_5_0.pdf",
+    "sePublicaDiarioOficial": true,
+    "abierto": true,
+    "fechaInicioSolicitud": null,
+    "fechaFinSolicitud": null,
+    "textInicio": null,
+    "textFin": null,
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1491567,
+      "descripcion": "Texto en castellano de la convocatoria",
+      "nombreFic": "Acord Aprovacio bases 2025.pdf",
+      "long": 375573,
+      "datMod": "2026-07-10",
+      "datPublicacion": "2026-07-10"
+     },
+     {
+      "id": 1491570,
+      "descripcion": "Edicte publicació Bases",
+      "nombreFic": "Edicte publicació Bases 2025.pdf",
+      "long": 1083591,
+      "datMod": "2026-07-10",
+      "datPublicacion": "2026-07-10"
+     },
+     {
+      "id": 1491569,
+      "descripcion": "bases",
+      "nombreFic": "BASES ESPECÍFIQUES I ANNEXES 2025.pdf",
+      "long": 1247595,
+      "datMod": "2026-07-10",
+      "datPublicacion": "2026-07-10"
+     },
+     {
+      "id": 1491568,
+      "descripcion": "Acord aprovacio  bases",
+      "nombreFic": "Acord aprovació bases JGL 141024.pdf",
+      "long": 375573,
+      "datMod": "2026-07-10",
+      "datPublicacion": "2026-07-10"
+     }
+    ],
+    "anuncios": [],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1120167,
+    "mrr": false,
+    "numeroConvocatoria": "918606",
+    "descripcion": "Subvención nominativa Ciclo Vipsbalsound 2026",
+    "descripcionLeng": "Subvenció nominativa Cicle Vipsbalsound 2026",
+    "fechaRecepcion": "2026-07-10",
+    "nivel1": "LOCAL",
+    "nivel2": "BISBAL D'EMPORDÀ, LA",
+    "nivel3": "AYUNTAMIENTO DE BISBAL D'EMPORDÀ, LA",
+    "codigoInvente": null
+   },
+   "detall": {
+    "id": 1120167,
+    "organo": {
+     "nivel1": "LOCAL",
+     "nivel2": "BISBAL D'EMPORDÀ, LA",
+     "nivel3": "AYUNTAMIENTO DE BISBAL D'EMPORDÀ, LA"
+    },
+    "sedeElectronica": "www.labisbal.cat",
+    "codigoBDNS": "918606",
+    "fechaRecepcion": "2026-07-10",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concesión directa - instrumental",
+    "presupuestoTotal": 9234,
+    "mrr": false,
+    "descripcion": "Subvención nominativa Ciclo Vipsbalsound 2026",
+    "descripcionLeng": "Subvenció nominativa Cicle Vipsbalsound 2026",
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PYME Y PERSONAS FÍSICAS QUE DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "ACTIVIDADES ARTÍSTICAS, DEPORTIVAS Y DE ENTRETENIMIENTO",
+      "codigo": "S"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES512 - Girona"
+     }
+    ],
+    "descripcionFinalidad": "Cultura",
+    "descripcionBasesReguladoras": "Ordenanza General de Subvenciones del Ajuntament de la Bisbal",
+    "urlBasesReguladoras": "www.labisbal.cat",
+    "sePublicaDiarioOficial": false,
+    "abierto": true,
+    "fechaInicioSolicitud": null,
+    "fechaFinSolicitud": null,
+    "textInicio": null,
+    "textFin": null,
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1492026,
+      "descripcion": "Decreto de concesión",
+      "nombreFic": "Decret Vipsbalsound.pdf",
+      "long": 305705,
+      "datMod": "2026-07-10",
+      "datPublicacion": "2026-07-10"
+     },
+     {
+      "id": 1492025,
+      "descripcion": "Documento de la convocatoria en español",
+      "nombreFic": "2026.05.14 DEC MODIFICACIO PLA ESTRATEGIC 24-27.pdf",
+      "long": 924181,
+      "datMod": "2026-07-10",
+      "datPublicacion": "2026-07-10"
+     }
+    ],
+    "anuncios": [],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1120226,
+    "mrr": false,
+    "numeroConvocatoria": "918665",
+    "descripcion": "CONCEDER UNA SUBVENCIÓN NOMINATIVA, POR IMPORTE DE 12.600,00 EUROS A LA ENTIDAD AMPA COLEGIO PÙBLICO ESTEL-CAN BORI PARA LA EJECUCIÓN DEL PROYECTO \"TERAPIA CON PERROS\".",
+    "descripcionLeng": "CONCEDIR UNA SUBVENCIÓ NOMINATIVA, PER IMPORT DE 12.600,00 EUROS A L'ENTITAT AMPA COL·LEGI PUBLIC ESTEL-CAN BORI PER A L'EXECUCIÓ DEL PROJECTE \"TERÀPIA GOSSOS\".",
+    "fechaRecepcion": "2026-07-10",
+    "nivel1": "LOCAL",
+    "nivel2": "HOSPITALET DE LLOBREGAT, L'",
+    "nivel3": "AYUNTAMIENTO DE HOSPITALET DE LLOBREGAT, L'",
+    "codigoInvente": null
+   },
+   "detall": {
+    "id": 1120226,
+    "organo": {
+     "nivel1": "LOCAL",
+     "nivel2": "HOSPITALET DE LLOBREGAT, L'",
+     "nivel3": "AYUNTAMIENTO DE HOSPITALET DE LLOBREGAT, L'"
+    },
+    "sedeElectronica": "https://seuelectronica.l-h.cat/tramits/r/detallTramit.aspx?1jcWXh1JeQeSGhIRtMTZDF1fU7DDNMKYIvfTMMvOU2WoqazB",
+    "codigoBDNS": "918665",
+    "fechaRecepcion": "2026-07-10",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concesión directa - instrumental",
+    "presupuestoTotal": 12600,
+    "mrr": false,
+    "descripcion": "CONCEDER UNA SUBVENCIÓN NOMINATIVA, POR IMPORTE DE 12.600,00 EUROS A LA ENTIDAD AMPA COLEGIO PÙBLICO ESTEL-CAN BORI PARA LA EJECUCIÓN DEL PROYECTO \"TERAPIA CON PERROS\".",
+    "descripcionLeng": "CONCEDIR UNA SUBVENCIÓ NOMINATIVA, PER IMPORT DE 12.600,00 EUROS A L'ENTITAT AMPA COL·LEGI PUBLIC ESTEL-CAN BORI PER A L'EXECUCIÓ DEL PROJECTE \"TERÀPIA GOSSOS\".",
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PERSONAS JURÍDICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "EDUCACIÓN",
+      "codigo": "Q"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES511 - Barcelona"
+     }
+    ],
+    "descripcionFinalidad": "Educación",
+    "descripcionBasesReguladoras": "El dia 27 de enero de 2026 queda aprobado definitivamente el Presupuesto General Municipal para el año 2026 según anuncio publicado en el BOPBCN el 28 de Enero de 2026",
+    "urlBasesReguladoras": "https://seu-e.cat/ca/web/hospitaletdellobregat/govern-obert-i-transparencia/contractes-convenis-i-subvencions",
+    "sePublicaDiarioOficial": false,
+    "abierto": true,
+    "fechaInicioSolicitud": null,
+    "fechaFinSolicitud": null,
+    "textInicio": null,
+    "textFin": null,
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1492158,
+      "descripcion": "Documento de la convocatoria en lengua cooficial",
+      "nombreFic": "20260710_ESTEL CAN BORI_Resolucio Catala.pdf",
+      "long": 485394,
+      "datMod": "2026-07-10",
+      "datPublicacion": "2026-07-10"
+     },
+     {
+      "id": 1492157,
+      "descripcion": "Documento de la convocatoria en español",
+      "nombreFic": "20260710_ESTEL CAN BORI_Resolucion Castellano.pdf",
+      "long": 809323,
+      "datMod": "2026-07-10",
+      "datPublicacion": "2026-07-10"
+     }
+    ],
+    "anuncios": [],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1120407,
+    "mrr": false,
+    "numeroConvocatoria": "918846",
+    "descripcion": "APROBACIÓN DE LA ANUALIDAD 2026 DEL PLAN DE SERVICIOS DERIVADO DEL CONVENIO DE ENCOMIENDA AL CONSEJO COMARCAL PARA LA ASISTENCIA TÉCNICA EN LA GESTIÓN DE COLONIAS FELINAS",
+    "descripcionLeng": "APROVACIO DE L'ANUALITAT 2026 DEL PLA DE SERVEIS DERIVAT DEL CONVENI D'ENCARREC AL CONSELL COMARCAL PER A L'ASSISTENCIA TÈCNICA EN LA GESTIO DE COLONIES FELINES",
+    "fechaRecepcion": "2026-07-13",
+    "nivel1": "LOCAL",
+    "nivel2": "LLORET DE MAR",
+    "nivel3": "AYUNTAMIENTO DE LLORET DE MAR",
+    "codigoInvente": null
+   },
+   "detall": {
+    "id": 1120407,
+    "organo": {
+     "nivel1": "LOCAL",
+     "nivel2": "LLORET DE MAR",
+     "nivel3": "AYUNTAMIENTO DE LLORET DE MAR"
+    },
+    "sedeElectronica": null,
+    "codigoBDNS": "918846",
+    "fechaRecepcion": "2026-07-13",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concesión directa - instrumental",
+    "presupuestoTotal": 6670,
+    "mrr": false,
+    "descripcion": "APROBACIÓN DE LA ANUALIDAD 2026 DEL PLAN DE SERVICIOS DERIVADO DEL CONVENIO DE ENCOMIENDA AL CONSEJO COMARCAL PARA LA ASISTENCIA TÉCNICA EN LA GESTIÓN DE COLONIAS FELINAS",
+    "descripcionLeng": "APROVACIO DE L'ANUALITAT 2026 DEL PLA DE SERVEIS DERIVAT DEL CONVENI D'ENCARREC AL CONSELL COMARCAL PER A L'ASSISTENCIA TÈCNICA EN LA GESTIO DE COLONIES FELINES",
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PERSONAS JURÍDICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "OTROS SERVICIOS",
+      "codigo": "T"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES512 - Girona"
+     }
+    ],
+    "descripcionFinalidad": "Otras Prestaciones económicas",
+    "descripcionBasesReguladoras": "APROVACIO DE L'ANUALITAT 2026 DEL PLA DE SERVEIS DERIVAT DEL CONVENI D'ENCARREC AL CONSELL COMARCAL PER A L'ASSISTENCIA TÈCNICA EN LA GESTIO DE COLONIES FELINES",
+    "urlBasesReguladoras": "https://www.lloret.cat/ajuntament/subvencions-i-ajuts-1",
+    "sePublicaDiarioOficial": false,
+    "abierto": false,
+    "fechaInicioSolicitud": null,
+    "fechaFinSolicitud": null,
+    "textInicio": "Sin plazo de solicitud",
+    "textFin": "Sin plazo de solicitud",
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1492649,
+      "descripcion": "Documento de la convocatoria en lengua cooficial",
+      "nombreFic": "ACORD JGL.pdf",
+      "long": 131768,
+      "datMod": "2026-07-13",
+      "datPublicacion": "2026-07-13"
+     },
+     {
+      "id": 1492648,
+      "descripcion": "Documento de la convocatoria en español",
+      "nombreFic": "CASTELLANO.docx",
+      "long": 48086,
+      "datMod": "2026-07-13",
+      "datPublicacion": "2026-07-13"
+     }
+    ],
+    "anuncios": [],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1120506,
+    "mrr": false,
+    "numeroConvocatoria": "918945",
+    "descripcion": "subvención directa a la asociación Be Wild Be Proud para la realización de la Ruta al Exilio,",
+    "descripcionLeng": null,
+    "fechaRecepcion": "2026-07-13",
+    "nivel1": "ESTADO",
+    "nivel2": "MINISTERIO DE JUVENTUD E INFANCIA",
+    "nivel3": "INSTITUTO DE LA JUVENTUD",
+    "codigoInvente": "INV00004173"
+   },
+   "detall": {
+    "id": 1120506,
+    "organo": {
+     "nivel1": "ESTADO",
+     "nivel2": "MINISTERIO DE JUVENTUD E INFANCIA",
+     "nivel3": "INSTITUTO DE LA JUVENTUD"
+    },
+    "sedeElectronica": null,
+    "codigoBDNS": "918945",
+    "fechaRecepcion": "2026-07-13",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concesión directa - instrumental",
+    "presupuestoTotal": 60000,
+    "mrr": false,
+    "descripcion": "subvención directa a la asociación Be Wild Be Proud para la realización de la Ruta al Exilio,",
+    "descripcionLeng": null,
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PERSONAS JURÍDICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "ACTIVIDADES SANITARIAS Y DE SERVICIOS SOCIALES",
+      "codigo": "R"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES - ESPAÑA "
+     }
+    ],
+    "descripcionFinalidad": "Servicios Sociales y Promoción Social",
+    "descripcionBasesReguladoras": "Real Decreto 567/2026, de 8 de julio, por el que se regula la concesión directa de una subvención a la asociación Be Wild Be Proud para la realización de la Ruta al Exilio.",
+    "urlBasesReguladoras": "https://boe.es/boe/dias/2026/07/09/pdfs/BOE-A-2026-14881.pdf",
+    "sePublicaDiarioOficial": false,
+    "abierto": false,
+    "fechaInicioSolicitud": "2026-07-10",
+    "fechaFinSolicitud": "2026-07-24",
+    "textInicio": null,
+    "textFin": null,
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1492875,
+      "descripcion": "Documento de la convocatoria en español",
+      "nombreFic": "BOE-A-2026-14881.pdf",
+      "long": 261152,
+      "datMod": "2026-07-13",
+      "datPublicacion": "2026-07-13"
+     }
+    ],
+    "anuncios": [],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1120542,
+    "mrr": false,
+    "numeroConvocatoria": "918981",
+    "descripcion": "Ayudas extraescolar deportivas curso 2026-2027",
+    "descripcionLeng": "Ajuts extraescolar esportiva curs 2026-2027",
+    "fechaRecepcion": "2026-07-14",
+    "nivel1": "LOCAL",
+    "nivel2": "SANT SALVADOR DE GUARDIOLA",
+    "nivel3": "AYUNTAMIENTO DE SANT SALVADOR DE GUARDIOLA",
+    "codigoInvente": null
+   },
+   "detall": {
+    "id": 1120542,
+    "organo": {
+     "nivel1": "LOCAL",
+     "nivel2": "SANT SALVADOR DE GUARDIOLA",
+     "nivel3": "AYUNTAMIENTO DE SANT SALVADOR DE GUARDIOLA"
+    },
+    "sedeElectronica": null,
+    "codigoBDNS": "918981",
+    "fechaRecepcion": "2026-07-14",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concurrencia competitiva - canónica",
+    "presupuestoTotal": 2000,
+    "mrr": false,
+    "descripcion": "Ayudas extraescolar deportivas curso 2026-2027",
+    "descripcionLeng": "Ajuts extraescolar esportiva curs 2026-2027",
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PERSONAS FÍSICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "Actividades deportivas",
+      "codigo": "93.1"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES511 - Barcelona"
+     }
+    ],
+    "descripcionFinalidad": "Servicios Sociales y Promoción Social",
+    "descripcionBasesReguladoras": "Bases reguladoras para la concesión de ayudas extraescolares deportivas en regimen de concurrencia competitiva para niños de 3 a 16 años",
+    "urlBasesReguladoras": "https://bop.diba.cat/anunci/3776452/aprovacio-definitiva-de-les-bases-reguladores-per-l-annex-6-del-reglament-per-a-la-concessio-de-prestacions-economiques-de-caracter-social-versio-en-catala-i-castella-ajuntament-de-sant-salvador-de-guardiola",
+    "sePublicaDiarioOficial": true,
+    "abierto": false,
+    "fechaInicioSolicitud": "2026-07-15",
+    "fechaFinSolicitud": "2026-09-15",
+    "textInicio": "desde la publicación del extracto de la convocatoria en el BOPB",
+    "textFin": "Hasta el 15 de setiembre de 2026",
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1492979,
+      "descripcion": "Documento de la convocatoria en español",
+      "nombreFic": "Convocatoria_ayudas_extraescolares_deportivas_CAST .pdf",
+      "long": 584610,
+      "datMod": "2026-07-14",
+      "datPublicacion": "2026-07-14"
+     },
+     {
+      "id": 1492989,
+      "descripcion": "Solicitud convocatoria",
+      "nombreFic": "Instància sol·licitud ajuts-beques esports.pdf",
+      "long": 416184,
+      "datMod": "2026-07-14",
+      "datPublicacion": "2026-07-14"
+     },
+     {
+      "id": 1492983,
+      "descripcion": "Certificat acord junta de govern signat",
+      "nombreFic": "Certificat d.pdf",
+      "long": 952510,
+      "datMod": "2026-07-14",
+      "datPublicacion": "2026-07-14"
+     },
+     {
+      "id": 1492981,
+      "descripcion": "Documento de la convocatoria en lengua cooficial",
+      "nombreFic": "Convocatòria ajuts extraescolars esportius_ Català.pdf",
+      "long": 565835,
+      "datMod": "2026-07-14",
+      "datPublicacion": "2026-07-14"
+     }
+    ],
+    "anuncios": [],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1120570,
+    "mrr": false,
+    "numeroConvocatoria": "919009",
+    "descripcion": "Subvenciones del programa de ayudas para deportistas individuales \"Embajadores del deporte en Sant Salvador de Guardiola\"",
+    "descripcionLeng": "Subvencions del programa d'ajuts per a esportistes individuals \"Ambaixadors de l'esport de Sant Salvador de Guardiola\"",
+    "fechaRecepcion": "2026-07-14",
+    "nivel1": "LOCAL",
+    "nivel2": "SANT SALVADOR DE GUARDIOLA",
+    "nivel3": "AYUNTAMIENTO DE SANT SALVADOR DE GUARDIOLA",
+    "codigoInvente": null
+   },
+   "detall": {
+    "id": 1120570,
+    "organo": {
+     "nivel1": "LOCAL",
+     "nivel2": "SANT SALVADOR DE GUARDIOLA",
+     "nivel3": "AYUNTAMIENTO DE SANT SALVADOR DE GUARDIOLA"
+    },
+    "sedeElectronica": null,
+    "codigoBDNS": "919009",
+    "fechaRecepcion": "2026-07-14",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concurrencia competitiva - canónica",
+    "presupuestoTotal": 1500,
+    "mrr": false,
+    "descripcion": "Subvenciones del programa de ayudas para deportistas individuales \"Embajadores del deporte en Sant Salvador de Guardiola\"",
+    "descripcionLeng": "Subvencions del programa d'ajuts per a esportistes individuals \"Ambaixadors de l'esport de Sant Salvador de Guardiola\"",
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PERSONAS FÍSICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "Actividades deportivas",
+      "codigo": "93.1"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES511 - Barcelona"
+     }
+    ],
+    "descripcionFinalidad": "Otras Prestaciones económicas",
+    "descripcionBasesReguladoras": "Bases reguladoras para la concesión de premios en régimen de concurrencia competitiva para deportistas individuales \"Embajadores del deporte de Sant Salvador de Guardiola\"",
+    "urlBasesReguladoras": "http://bop.diba.cat/anunci/3650910/aprovacio-definitiva-de-les-bases-reguladores-per-a-la-concessio-d-ajuts-a-esportistes-individuals-ambaixadors-de-l-esport-ajuntament-de-sant-salvador-de-guardiola",
+    "sePublicaDiarioOficial": true,
+    "abierto": false,
+    "fechaInicioSolicitud": "2026-10-01",
+    "fechaFinSolicitud": "2026-10-15",
+    "textInicio": "Desde el 1 de Octubre de 2026",
+    "textFin": "Hasta el 15 de Octubre de 2026",
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1493044,
+      "descripcion": "Documento de la convocatoria en español",
+      "nombreFic": "Convocatoria Embajadores deportivos _ Castellano.pdf",
+      "long": 318201,
+      "datMod": "2026-07-14",
+      "datPublicacion": "2026-07-14"
+     },
+     {
+      "id": 1493052,
+      "descripcion": "Certificado acuerdo de la junta de gobierno local",
+      "nombreFic": "Certificat d.pdf",
+      "long": 699741,
+      "datMod": "2026-07-14",
+      "datPublicacion": "2026-07-14"
+     },
+     {
+      "id": 1493047,
+      "descripcion": "Sol.licitud Ajuts",
+      "nombreFic": "Formulari sol·licitud d.pdf",
+      "long": 204301,
+      "datMod": "2026-07-14",
+      "datPublicacion": "2026-07-14"
+     },
+     {
+      "id": 1493043,
+      "descripcion": "Documento de la convocatoria en lengua cooficial",
+      "nombreFic": "Convocatòria Ambaixadors de l'Esports _ Català.pdf",
+      "long": 348344,
+      "datMod": "2026-07-14",
+      "datPublicacion": "2026-07-14"
+     }
+    ],
+    "anuncios": [],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1120646,
+    "mrr": false,
+    "numeroConvocatoria": "919085",
+    "descripcion": "Subvención concesión directa año 2026 a favor de la BIBLIOTECA NACIONAL - Primera Experiencia Profesional en las Administraciones Públicas",
+    "descripcionLeng": null,
+    "fechaRecepcion": "2026-07-14",
+    "nivel1": "ESTADO",
+    "nivel2": "MINISTERIO DE TRABAJO Y ECONOMÍA SOCIAL",
+    "nivel3": "SERVICIO PÚBLICO DE EMPLEO ESTATAL",
+    "codigoInvente": "INV00005059"
+   },
+   "detall": {
+    "id": 1120646,
+    "organo": {
+     "nivel1": "ESTADO",
+     "nivel2": "MINISTERIO DE TRABAJO Y ECONOMÍA SOCIAL",
+     "nivel3": "SERVICIO PÚBLICO DE EMPLEO ESTATAL"
+    },
+    "sedeElectronica": null,
+    "codigoBDNS": "919085",
+    "fechaRecepcion": "2026-07-14",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concesión directa - instrumental",
+    "presupuestoTotal": 966430,
+    "mrr": false,
+    "descripcion": "Subvención concesión directa año 2026 a favor de la BIBLIOTECA NACIONAL - Primera Experiencia Profesional en las Administraciones Públicas",
+    "descripcionLeng": null,
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PERSONAS JURÍDICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "Administración pública y de la política económica, social y medioambiental",
+      "codigo": "84.1"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES - ESPAÑA "
+     }
+    ],
+    "descripcionFinalidad": "Fomento del Empleo",
+    "descripcionBasesReguladoras": "Orden TES/1077/2023, de 28 de septiembre, por la que se establecen las bases reguladoras para la concesión de subvenciones destinadas a la financiación de programas de políticas activas de empleo previstos en el Real Decreto 818/2021, de 28 de septiembre,",
+    "urlBasesReguladoras": "www.boe.es/boe/dias/2023/09/29/pdfs/BOE-A-2023-20296.pdf",
+    "sePublicaDiarioOficial": false,
+    "abierto": false,
+    "fechaInicioSolicitud": null,
+    "fechaFinSolicitud": null,
+    "textInicio": "Desde la fecha de entrada en vigor del decreto",
+    "textFin": "Plazo máximo de dos meses desde la fecha de entrad",
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1493242,
+      "descripcion": "Texto en castellano de la convocatoria",
+      "nombreFic": "BOE RD 370-2026.pdf",
+      "long": 346208,
+      "datMod": "2026-07-14",
+      "datPublicacion": "2026-07-14"
+     }
+    ],
+    "anuncios": [],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1120687,
+    "mrr": false,
+    "numeroConvocatoria": "919126",
+    "descripcion": "TRANSFERENCIA INSTITUTO UNIVERSITARIO GUTIÉRREZ MELLADO",
+    "descripcionLeng": null,
+    "fechaRecepcion": "2026-07-14",
+    "nivel1": "ESTADO",
+    "nivel2": "MINISTERIO DE DEFENSA",
+    "nivel3": "SECRETARÍA GENERAL DE POLÍTICA DE DEFENSA",
+    "codigoInvente": null
+   },
+   "detall": {
+    "id": 1120687,
+    "organo": {
+     "nivel1": "ESTADO",
+     "nivel2": "MINISTERIO DE DEFENSA",
+     "nivel3": "SECRETARÍA GENERAL DE POLÍTICA DE DEFENSA"
+    },
+    "sedeElectronica": null,
+    "codigoBDNS": "919126",
+    "fechaRecepcion": "2026-07-14",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concesión directa - instrumental",
+    "presupuestoTotal": 200000,
+    "mrr": false,
+    "descripcion": "TRANSFERENCIA INSTITUTO UNIVERSITARIO GUTIÉRREZ MELLADO",
+    "descripcionLeng": null,
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PERSONAS JURÍDICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "ADMINISTRACIÓN PÚBLICA Y DEFENSA; SEGURIDAD SOCIAL OBLIGATORIA",
+      "codigo": "P"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES - ESPAÑA "
+     }
+    ],
+    "descripcionFinalidad": "Defensa",
+    "descripcionBasesReguladoras": "PRESUPUESTOS GENERALES DEL ESTADO (PRORROGADOS 2025) Y AUTORIZACIÓN MODIFICACIÓN PRESUPUESTARIA (INCREMENTO)",
+    "urlBasesReguladoras": "https://www.sepg.pap.hacienda.gob.es/Presup/PGE2025Prorroga/MaestroDocumentos/PGE-ROM/doc/1/2/13/1/1/N_25P_E_R_31_114_1_1_1_1121M_2.PDF",
+    "sePublicaDiarioOficial": false,
+    "abierto": false,
+    "fechaInicioSolicitud": "2026-01-01",
+    "fechaFinSolicitud": "2026-12-31",
+    "textInicio": null,
+    "textFin": null,
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1493432,
+      "descripcion": "Documento de la convocatoria en español",
+      "nombreFic": "PGE 2025-P y Resol Hda modificación.pdf",
+      "long": 222945,
+      "datMod": "2026-07-14",
+      "datPublicacion": "2026-07-14"
+     }
+    ],
+    "anuncios": [],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1120845,
+    "mrr": false,
+    "numeroConvocatoria": "919284",
+    "descripcion": "Ayudas en régimen de exención a la adquisición de maquinaria y equipos para reducir el uso de herbicidas en el control de las malas hierbas para el año 2026",
+    "descripcionLeng": "Ajuts en règim d'exempció a l'adquisició de maquinària i equips per reduir l'ús d'herbicides en el control de les males herbes per a l'any 2026",
+    "fechaRecepcion": "2026-07-15",
+    "nivel1": "AUTONOMICA",
+    "nivel2": "CATALUÑA",
+    "nivel3": "DEPARTAMENT D'AGRICULTURA, RAMADERIA, PESCA I ALIMENTACIÓ",
+    "codigoInvente": null
+   },
+   "detall": {
+    "id": 1120845,
+    "organo": {
+     "nivel1": "AUTONOMICA",
+     "nivel2": "CATALUÑA",
+     "nivel3": "DEPARTAMENT D'AGRICULTURA, RAMADERIA, PESCA I ALIMENTACIÓ"
+    },
+    "sedeElectronica": null,
+    "codigoBDNS": "919284",
+    "fechaRecepcion": "2026-07-15",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concurrencia competitiva - canónica",
+    "presupuestoTotal": 299951.9,
+    "mrr": false,
+    "descripcion": "Ayudas en régimen de exención a la adquisición de maquinaria y equipos para reducir el uso de herbicidas en el control de las malas hierbas para el año 2026",
+    "descripcionLeng": "Ajuts en règim d'exempció a l'adquisició de maquinària i equips per reduir l'ús d'herbicides en el control de les males herbes per a l'any 2026",
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "GRAN EMPRESA"
+     },
+     {
+      "descripcion": "PYME Y PERSONAS FÍSICAS QUE DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "AGRICULTURA, GANADERÍA, SILVICULTURA Y PESCA",
+      "codigo": "A"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES51 - CATALUÑA"
+     }
+    ],
+    "descripcionFinalidad": "Agricultura, Pesca y Alimentación",
+    "descripcionBasesReguladoras": "Bases reguladoras que deben regir las ayudas a la adquisición de maquinaria y equipos para reducir el uso de herbicidas en el control de las malas hierbas",
+    "urlBasesReguladoras": "https://dogc.gencat.cat/es/document-del-dogc/index.html?documentId=1040711",
+    "sePublicaDiarioOficial": true,
+    "abierto": false,
+    "fechaInicioSolicitud": null,
+    "fechaFinSolicitud": null,
+    "textInicio": "Des de l’endemà de la publicació en el diari oficial de la convocatòria inicial",
+    "textFin": "15 Dies Hàbils",
+    "ayudaEstado": "SA.122943",
+    "urlAyudaEstado": "https://competition-cases.ec.europa.eu/cases/SA.122943",
+    "fondos": [],
+    "reglamento": {
+     "descripcion": "PRODUCCIÓN AGRÍCOLA PRIMARIA - REG (UE) 2022/2472, de 14 DE DICIEMBRE, de exención de notificación (vigente desde 01-01-2023)",
+     "orden": null
+    },
+    "objetivos": [
+     {
+      "descripcion": "ART. 14 AYUDAS DESTINADAS A LAS INVERSIONES EN EXPLOTACIONES AGRÍCOLAS VINCULADAS A LA PRODUCCIÓN AGRÍCOLA PRIMARIA"
+     }
+    ],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1493760,
+      "descripcion": "Texto en otra lengua de la convocatoria",
+      "nombreFic": "RESOLUCIÓ AJUDES HERBICIDES EXEMPCIÓ.pdf",
+      "long": 521518,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     },
+     {
+      "id": 1493759,
+      "descripcion": "Texto en castellano de la convocatoria",
+      "nombreFic": "RESOLUCIÓN AYUDAS HERBICIDAS EXENCIÓN.pdf",
+      "long": 186675,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     }
+    ],
+    "anuncios": [],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1120864,
+    "mrr": false,
+    "numeroConvocatoria": "919303",
+    "descripcion": "Ayudas de minimis a la adquisición de maquinaria y equipos para reducir el uso de herbicidas en el control de las malas hierbas para el año 2026",
+    "descripcionLeng": "Ajuts de minimis a l'adquisició de maquinària i equips per reduir l'ús d'herbicides en el control de les males herbes per a l'any 2026",
+    "fechaRecepcion": "2026-07-15",
+    "nivel1": "AUTONOMICA",
+    "nivel2": "CATALUÑA",
+    "nivel3": "DEPARTAMENT D'AGRICULTURA, RAMADERIA, PESCA I ALIMENTACIÓ",
+    "codigoInvente": null
+   },
+   "detall": {
+    "id": 1120864,
+    "organo": {
+     "nivel1": "AUTONOMICA",
+     "nivel2": "CATALUÑA",
+     "nivel3": "DEPARTAMENT D'AGRICULTURA, RAMADERIA, PESCA I ALIMENTACIÓ"
+    },
+    "sedeElectronica": null,
+    "codigoBDNS": "919303",
+    "fechaRecepcion": "2026-07-15",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concurrencia competitiva - canónica",
+    "presupuestoTotal": 200000,
+    "mrr": false,
+    "descripcion": "Ayudas de minimis a la adquisición de maquinaria y equipos para reducir el uso de herbicidas en el control de las malas hierbas para el año 2026",
+    "descripcionLeng": "Ajuts de minimis a l'adquisició de maquinària i equips per reduir l'ús d'herbicides en el control de les males herbes per a l'any 2026",
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "GRAN EMPRESA"
+     },
+     {
+      "descripcion": "PYME Y PERSONAS FÍSICAS QUE DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "AGRICULTURA, GANADERÍA, SILVICULTURA Y PESCA",
+      "codigo": "A"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES51 - CATALUÑA"
+     }
+    ],
+    "descripcionFinalidad": "Agricultura, Pesca y Alimentación",
+    "descripcionBasesReguladoras": "Bases reguladoras que deben regir las ayudas a la adquisición de maquinaria y equipos para reducir el uso de herbicidas en el control de las malas hierbas",
+    "urlBasesReguladoras": "https://dogc.gencat.cat/es/document-del-dogc/index.html?documentId=1040711",
+    "sePublicaDiarioOficial": true,
+    "abierto": false,
+    "fechaInicioSolicitud": null,
+    "fechaFinSolicitud": null,
+    "textInicio": "Des de l’endemà de la publicació en el diari oficial de la convocatòria inicial",
+    "textFin": "15 Dies Hàbils",
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": {
+     "descripcion": "REG (UE) 2023/2831 de minimis, General",
+     "orden": null
+    },
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1493812,
+      "descripcion": "Texto en otra lengua de la convocatoria",
+      "nombreFic": "RESOLUCIÓ AJUDES HERBICIDES MINIMIS.pdf",
+      "long": 523564,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     },
+     {
+      "id": 1493811,
+      "descripcion": "Texto en castellano de la convocatoria",
+      "nombreFic": "RESOLUCIÓN AYUDAS HERBICIDAS MINIMIS.pdf",
+      "long": 177092,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     }
+    ],
+    "anuncios": [],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1120914,
+    "mrr": false,
+    "numeroConvocatoria": "919353",
+    "descripcion": "Lastor Media, SL (2026/7969)",
+    "descripcionLeng": null,
+    "fechaRecepcion": "2026-07-15",
+    "nivel1": "LOCAL",
+    "nivel2": "DIPUTACIÓN PROV. DE GIRONA",
+    "nivel3": "DIPUTACIÓN PROVINCIAL DE GIRONA",
+    "codigoInvente": null
+   },
+   "detall": {
+    "id": 1120914,
+    "organo": {
+     "nivel1": "LOCAL",
+     "nivel2": "DIPUTACIÓN PROV. DE GIRONA",
+     "nivel3": "DIPUTACIÓN PROVINCIAL DE GIRONA"
+    },
+    "sedeElectronica": null,
+    "codigoBDNS": "919353",
+    "fechaRecepcion": "2026-07-15",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concesión directa - instrumental",
+    "presupuestoTotal": 80000,
+    "mrr": false,
+    "descripcion": "Lastor Media, SL (2026/7969)",
+    "descripcionLeng": null,
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PYME Y PERSONAS FÍSICAS QUE DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "Actividades cinematográficas, de vídeo y de programas de televisión",
+      "codigo": "59.1"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES512 - Girona"
+     }
+    ],
+    "descripcionFinalidad": "Cultura",
+    "descripcionBasesReguladoras": "BASES CONCESSIÓ DIRECTA 2026",
+    "urlBasesReguladoras": "https://www.ddgi.cat/basescast/2023/ordenanza_general_subvenciones_SL_16_1scc.pdf",
+    "sePublicaDiarioOficial": false,
+    "abierto": false,
+    "fechaInicioSolicitud": "2026-01-01",
+    "fechaFinSolicitud": "2026-11-13",
+    "textInicio": null,
+    "textFin": null,
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1493996,
+      "descripcion": "Texto en castellano de la convocatoria",
+      "nombreFic": "ORDENANZA_GENERAL_DE_SUBVENCIONES.pdf",
+      "long": 259307,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     }
+    ],
+    "anuncios": [],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1120917,
+    "mrr": false,
+    "numeroConvocatoria": "919356",
+    "descripcion": "Associació de Professors d¿EOI de Catalunya-EOICAT (2026/7125)",
+    "descripcionLeng": null,
+    "fechaRecepcion": "2026-07-15",
+    "nivel1": "LOCAL",
+    "nivel2": "DIPUTACIÓN PROV. DE GIRONA",
+    "nivel3": "DIPUTACIÓN PROVINCIAL DE GIRONA",
+    "codigoInvente": null
+   },
+   "detall": {
+    "id": 1120917,
+    "organo": {
+     "nivel1": "LOCAL",
+     "nivel2": "DIPUTACIÓN PROV. DE GIRONA",
+     "nivel3": "DIPUTACIÓN PROVINCIAL DE GIRONA"
+    },
+    "sedeElectronica": null,
+    "codigoBDNS": "919356",
+    "fechaRecepcion": "2026-07-15",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concesión directa - instrumental",
+    "presupuestoTotal": 3000,
+    "mrr": false,
+    "descripcion": "Associació de Professors d¿EOI de Catalunya-EOICAT (2026/7125)",
+    "descripcionLeng": null,
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PERSONAS JURÍDICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "EDUCACIÓN",
+      "codigo": "Q"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES512 - Girona"
+     }
+    ],
+    "descripcionFinalidad": "Educación",
+    "descripcionBasesReguladoras": "BASES CONCESSIÓ DIRECTA 2026",
+    "urlBasesReguladoras": "https://www.ddgi.cat/basescast/2023/ordenanza_general_subvenciones_SL_16_1scc.pdf",
+    "sePublicaDiarioOficial": false,
+    "abierto": false,
+    "fechaInicioSolicitud": "2026-01-01",
+    "fechaFinSolicitud": "2026-11-13",
+    "textInicio": null,
+    "textFin": null,
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1494015,
+      "descripcion": "Texto en castellano de la convocatoria",
+      "nombreFic": "ORDENANZA_GENERAL_DE_SUBVENCIONES.pdf",
+      "long": 259307,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     }
+    ],
+    "anuncios": [],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1120953,
+    "mrr": false,
+    "numeroConvocatoria": "919392",
+    "descripcion": "Resolución por la que la Universidad Politécnica de Catalunya concede una subvención a la Asociación Cultural TGK.",
+    "descripcionLeng": "Resolució per la que la Universitat Politècnica de Catalunya concedeix una subvenció a la Associació Cultural TGK.",
+    "fechaRecepcion": "2026-07-15",
+    "nivel1": "OTROS",
+    "nivel2": "UNIVERSIDAD POLITÉCNICA DE CATALUÑA",
+    "nivel3": null,
+    "codigoInvente": "INV00005382"
+   },
+   "detall": {
+    "id": 1120953,
+    "organo": {
+     "nivel1": "OTROS",
+     "nivel2": "UNIVERSIDAD POLITÉCNICA DE CATALUÑA",
+     "nivel3": null
+    },
+    "sedeElectronica": null,
+    "codigoBDNS": "919392",
+    "fechaRecepcion": "2026-07-15",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concesión directa - instrumental",
+    "presupuestoTotal": 35000,
+    "mrr": false,
+    "descripcion": "Resolución por la que la Universidad Politécnica de Catalunya concede una subvención a la Asociación Cultural TGK.",
+    "descripcionLeng": "Resolució per la que la Universitat Politècnica de Catalunya concedeix una subvenció a la Associació Cultural TGK.",
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PERSONAS JURÍDICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "Actividades deportivas, recreativas y de entretenimiento",
+      "codigo": "93"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES51 - CATALUÑA"
+     }
+    ],
+    "descripcionFinalidad": "Cultura",
+    "descripcionBasesReguladoras": "Resolución por la que la Universidad Politécnica de Catalunya concede una subvención a la Asociación Cultural TGK.",
+    "urlBasesReguladoras": "https://www.telecogresca.com/",
+    "sePublicaDiarioOficial": false,
+    "abierto": true,
+    "fechaInicioSolicitud": null,
+    "fechaFinSolicitud": null,
+    "textInicio": null,
+    "textFin": null,
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1494119,
+      "descripcion": "Documento de la convocatoria en lengua cooficial",
+      "nombreFic": "RESOLUCIÓ Telecogresca 2026 cat.docx",
+      "long": 17439,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     },
+     {
+      "id": 1494118,
+      "descripcion": "Documento de la convocatoria en español",
+      "nombreFic": "RESOLUCIÓN- cast.docx",
+      "long": 2116093,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     }
+    ],
+    "anuncios": [],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1120958,
+    "mrr": false,
+    "numeroConvocatoria": "919397",
+    "descripcion": "RESOLUCIÓN por la que se abre el procedimiento de convocatoria pública para la concesión de subvenciones en centros educativos, para el desarrollo de programas de formación e inserción para el curso 2026-2027",
+    "descripcionLeng": "RESOLUCIÓ per la qual s'aprova la convocatòria derivada de les bases reguladoresque han de regir la concessió de subvencions a centres educatius, per al desenvolupament deprogrames de formació i inserció, durant el curs 2026-2027",
+    "fechaRecepcion": "2026-07-15",
+    "nivel1": "AUTONOMICA",
+    "nivel2": "CATALUÑA",
+    "nivel3": "DEPARTAMENT D'EDUCACIÓ I FORMACIÓ PROFESSIONAL",
+    "codigoInvente": null
+   },
+   "detall": {
+    "id": 1120958,
+    "organo": {
+     "nivel1": "AUTONOMICA",
+     "nivel2": "CATALUÑA",
+     "nivel3": "DEPARTAMENT D'EDUCACIÓ I FORMACIÓ PROFESSIONAL"
+    },
+    "sedeElectronica": null,
+    "codigoBDNS": "919397",
+    "fechaRecepcion": "2026-07-15",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concurrencia competitiva - canónica",
+    "presupuestoTotal": 2625000,
+    "mrr": false,
+    "descripcion": "RESOLUCIÓN por la que se abre el procedimiento de convocatoria pública para la concesión de subvenciones en centros educativos, para el desarrollo de programas de formación e inserción para el curso 2026-2027",
+    "descripcionLeng": "RESOLUCIÓ per la qual s'aprova la convocatòria derivada de les bases reguladoresque han de regir la concessió de subvencions a centres educatius, per al desenvolupament deprogrames de formació i inserció, durant el curs 2026-2027",
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PERSONAS JURÍDICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     },
+     {
+      "descripcion": "PYME Y PERSONAS FÍSICAS QUE DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "EDUCACIÓN",
+      "codigo": "Q"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES51 - CATALUÑA"
+     }
+    ],
+    "descripcionFinalidad": "Educación",
+    "descripcionBasesReguladoras": "Orden EDF/59/2026, de 14 de abril, por la que se aprueban las bases reguladoras que tienen que regir la concesión de subvenciones a centros educativos, para el desarrollo de programas de formación e inserción, durante el curso 2026-2027",
+    "urlBasesReguladoras": "https://dogc.gencat.cat/es/document-del-dogc/?documentId=1042131",
+    "sePublicaDiarioOficial": true,
+    "abierto": false,
+    "fechaInicioSolicitud": null,
+    "fechaFinSolicitud": null,
+    "textInicio": "Des de l’endemà de la publicació en el diari oficial de la convocatòria inicial",
+    "textFin": "10 Dies Hàbils",
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1494148,
+      "descripcion": "Texto en otra lengua de la convocatoria",
+      "nombreFic": "20260714_Resolucio_convo_PFI_26_27_CAT.pdf",
+      "long": 298428,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     },
+     {
+      "id": 1494147,
+      "descripcion": "Texto en castellano de la convocatoria",
+      "nombreFic": "20260714_Resolucio_convo_PFI_26_27_ES.pdf",
+      "long": 316238,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     }
+    ],
+    "anuncios": [],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1120974,
+    "mrr": false,
+    "numeroConvocatoria": "919413",
+    "descripcion": "Subvención concesión directa año 2026 a favor de la Fundación Ciudad de la Energía CIUDEN",
+    "descripcionLeng": null,
+    "fechaRecepcion": "2026-07-15",
+    "nivel1": "ESTADO",
+    "nivel2": "MINISTERIO DE TRABAJO Y ECONOMÍA SOCIAL",
+    "nivel3": "SERVICIO PÚBLICO DE EMPLEO ESTATAL",
+    "codigoInvente": "INV00005059"
+   },
+   "detall": {
+    "id": 1120974,
+    "organo": {
+     "nivel1": "ESTADO",
+     "nivel2": "MINISTERIO DE TRABAJO Y ECONOMÍA SOCIAL",
+     "nivel3": "SERVICIO PÚBLICO DE EMPLEO ESTATAL"
+    },
+    "sedeElectronica": null,
+    "codigoBDNS": "919413",
+    "fechaRecepcion": "2026-07-15",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concesión directa - instrumental",
+    "presupuestoTotal": 281880,
+    "mrr": false,
+    "descripcion": "Subvención concesión directa año 2026 a favor de la Fundación Ciudad de la Energía CIUDEN",
+    "descripcionLeng": null,
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PERSONAS JURÍDICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "Administración pública y de la política económica, social y medioambiental",
+      "codigo": "84.1"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES - ESPAÑA "
+     }
+    ],
+    "descripcionFinalidad": "Fomento del Empleo",
+    "descripcionBasesReguladoras": "Orden TES/1077/2023, de 28 de septiembre, por la que se establecen las bases reguladoras para la concesión de subvenciones destinadas a la financiación de programas de políticas activas de empleo previstos en el Real Decreto 818/2021, de 28 de septiembre,",
+    "urlBasesReguladoras": "www.boe.es/boe/dias/2023/09/29/pdfs/BOE-A-2023-20296.pdf",
+    "sePublicaDiarioOficial": false,
+    "abierto": false,
+    "fechaInicioSolicitud": null,
+    "fechaFinSolicitud": null,
+    "textInicio": "Día siguiente a su publicación en BOE",
+    "textFin": "2 meses a partir día siguiente publicación",
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1494187,
+      "descripcion": "Texto en castellano de la convocatoria",
+      "nombreFic": "Real Decreto 370_2026, de 6 de may.pdf",
+      "long": 346884,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     }
+    ],
+    "anuncios": [],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1121005,
+    "mrr": false,
+    "numeroConvocatoria": "919444",
+    "descripcion": "OTORGAMIENTO DE AYUDAS ECONÓMICAS A ENTIDADES: ASOCACIÓN ÚLTIMA VÉRTEBRA ACTIVIDADES AÑO 2026",
+    "descripcionLeng": "ATORGAMENT D'AJUTS ECONÒMICS A ENTITATS: ASSOCIACIÓ ÚLTIMA VÈRTEBRA ACTIVITATS ANY 2026",
+    "fechaRecepcion": "2026-07-15",
+    "nivel1": "LOCAL",
+    "nivel2": "RIUDELLOTS DE LA SELVA",
+    "nivel3": "AYUNTAMIENTO DE RIUDELLOTS DE LA SELVA",
+    "codigoInvente": null
+   },
+   "detall": {
+    "id": 1121005,
+    "organo": {
+     "nivel1": "LOCAL",
+     "nivel2": "RIUDELLOTS DE LA SELVA",
+     "nivel3": "AYUNTAMIENTO DE RIUDELLOTS DE LA SELVA"
+    },
+    "sedeElectronica": null,
+    "codigoBDNS": "919444",
+    "fechaRecepcion": "2026-07-15",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concesión directa - instrumental",
+    "presupuestoTotal": 4500,
+    "mrr": false,
+    "descripcion": "OTORGAMIENTO DE AYUDAS ECONÓMICAS A ENTIDADES: ASOCACIÓN ÚLTIMA VÉRTEBRA ACTIVIDADES AÑO 2026",
+    "descripcionLeng": "ATORGAMENT D'AJUTS ECONÒMICS A ENTITATS: ASSOCIACIÓ ÚLTIMA VÈRTEBRA ACTIVITATS ANY 2026",
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PERSONAS JURÍDICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "ACTIVIDADES ARTÍSTICAS, DEPORTIVAS Y DE ENTRETENIMIENTO",
+      "codigo": "S"
+     },
+     {
+      "descripcion": "ADMINISTRACIÓN PÚBLICA Y DEFENSA; SEGURIDAD SOCIAL OBLIGATORIA",
+      "codigo": "P"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES512 - Girona"
+     }
+    ],
+    "descripcionFinalidad": "Otras Prestaciones económicas",
+    "descripcionBasesReguladoras": "CONVOCATORIA DE SUBVENCIONES PARA ENTIDADES PARA EL AÑO 2026",
+    "urlBasesReguladoras": "https://tauler.seu-e.cat/detall?idEns=1715010007&idEdicte=1715010007_711687",
+    "sePublicaDiarioOficial": false,
+    "abierto": false,
+    "fechaInicioSolicitud": null,
+    "fechaFinSolicitud": null,
+    "textInicio": "15/01/26",
+    "textFin": "31/03/26",
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1494248,
+      "descripcion": "Documento de la convocatoria en español",
+      "nombreFic": "CERT BASES X2026000427.pdf",
+      "long": 169900,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     },
+     {
+      "id": 1494251,
+      "descripcion": "ORDENANZA MUNICIPAL SUBVENCION",
+      "nombreFic": "ordenança municipal subvencions any 2016.pdf",
+      "long": 3210343,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     },
+     {
+      "id": 1494249,
+      "descripcion": "Documento de la convocatoria en lengua cooficial",
+      "nombreFic": "CERT BASES  X2026000427.pdf",
+      "long": 246662,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     }
+    ],
+    "anuncios": [],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1121012,
+    "mrr": false,
+    "numeroConvocatoria": "919451",
+    "descripcion": "Subvención a favor del CIDOB para el proyecto \"Impulso de la prospectiva sobre metrópolis digitales\" (Exp. 2026/900552)",
+    "descripcionLeng": "Subvenció a favor del CIDOB per al projecte \"Impuls de la prospectiva sobre metròpolis digitals\" (Exp. 2026/900552)",
+    "fechaRecepcion": "2026-07-15",
+    "nivel1": "LOCAL",
+    "nivel2": "AREA METROPOLITANA DE BARCELONA",
+    "nivel3": "ÀREA METROPOLITANA DE BARCELONA",
+    "codigoInvente": null
+   },
+   "detall": {
+    "id": 1121012,
+    "organo": {
+     "nivel1": "LOCAL",
+     "nivel2": "AREA METROPOLITANA DE BARCELONA",
+     "nivel3": "ÀREA METROPOLITANA DE BARCELONA"
+    },
+    "sedeElectronica": null,
+    "codigoBDNS": "919451",
+    "fechaRecepcion": "2026-07-15",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concesión directa - instrumental",
+    "presupuestoTotal": 31563.37,
+    "mrr": false,
+    "descripcion": "Subvención a favor del CIDOB para el proyecto \"Impulso de la prospectiva sobre metrópolis digitales\" (Exp. 2026/900552)",
+    "descripcionLeng": "Subvenció a favor del CIDOB per al projecte \"Impuls de la prospectiva sobre metròpolis digitals\" (Exp. 2026/900552)",
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PERSONAS JURÍDICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "Administración pública y de la política económica, social y medioambiental",
+      "codigo": "84.1"
+     },
+     {
+      "descripcion": "Investigación y desarrollo experimental en ciencias sociales y humanidades",
+      "codigo": "72.2"
+     },
+     {
+      "descripcion": "ORGANISMOS EXTRATERRITORIALES",
+      "codigo": "V"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES511 - Barcelona"
+     }
+    ],
+    "descripcionFinalidad": "Cooperación internacional para el desarrollo y cultural",
+    "descripcionBasesReguladoras": "Subvención a favor del CIDOB para el proyecto \"Impulso de la prospectiva sobre metrópolis digitales\" (Exp. 2026/900552)",
+    "urlBasesReguladoras": "https://www.amb.cat/es/web/amb/govern-metropolita/economia-i-inversions/subvencions",
+    "sePublicaDiarioOficial": false,
+    "abierto": false,
+    "fechaInicioSolicitud": null,
+    "fechaFinSolicitud": null,
+    "textInicio": " ",
+    "textFin": " ",
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1494293,
+      "descripcion": "Documento de la convocatoria en español",
+      "nombreFic": "Ordenanza General de Subvenciones AMB (901487_24).pdf",
+      "long": 267207,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     }
+    ],
+    "anuncios": [],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1121021,
+    "mrr": false,
+    "numeroConvocatoria": "919460",
+    "descripcion": "OTORGAMIENTO DE AYUDAS ECONÓMICAS A ENTIDADES: CLUB PETANCA RIUDELLOTS AÑO 2026",
+    "descripcionLeng": "ATORGAMENT D’AJUT ECONÒMIC A ENTITATS: CLUB PETANCA RIUDELLOTS ANY 2026",
+    "fechaRecepcion": "2026-07-15",
+    "nivel1": "LOCAL",
+    "nivel2": "RIUDELLOTS DE LA SELVA",
+    "nivel3": "AYUNTAMIENTO DE RIUDELLOTS DE LA SELVA",
+    "codigoInvente": null
+   },
+   "detall": {
+    "id": 1121021,
+    "organo": {
+     "nivel1": "LOCAL",
+     "nivel2": "RIUDELLOTS DE LA SELVA",
+     "nivel3": "AYUNTAMIENTO DE RIUDELLOTS DE LA SELVA"
+    },
+    "sedeElectronica": null,
+    "codigoBDNS": "919460",
+    "fechaRecepcion": "2026-07-15",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concesión directa - instrumental",
+    "presupuestoTotal": 2200,
+    "mrr": false,
+    "descripcion": "OTORGAMIENTO DE AYUDAS ECONÓMICAS A ENTIDADES: CLUB PETANCA RIUDELLOTS AÑO 2026",
+    "descripcionLeng": "ATORGAMENT D’AJUT ECONÒMIC A ENTITATS: CLUB PETANCA RIUDELLOTS ANY 2026",
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PERSONAS JURÍDICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "ACTIVIDADES ARTÍSTICAS, DEPORTIVAS Y DE ENTRETENIMIENTO",
+      "codigo": "S"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES512 - Girona"
+     }
+    ],
+    "descripcionFinalidad": "Otras Prestaciones económicas",
+    "descripcionBasesReguladoras": "CONVOCATORIA DE SUBVENCIONES PARA ENTIDADES PARA EL AÑO 2026",
+    "urlBasesReguladoras": "https://tauler.seu-e.cat/detall?idEns=1715010007&idEdicte=1715010007_711687",
+    "sePublicaDiarioOficial": false,
+    "abierto": false,
+    "fechaInicioSolicitud": null,
+    "fechaFinSolicitud": null,
+    "textInicio": "15/01/26",
+    "textFin": "31/03/26",
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1494321,
+      "descripcion": "Documento de la convocatoria en español",
+      "nombreFic": "CERT BASES X2026000430.pdf",
+      "long": 158555,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     },
+     {
+      "id": 1494323,
+      "descripcion": "ORDENANZA MUNICIPAL SUBVENCION",
+      "nombreFic": "ordenança municipal subvencions any 2016.pdf",
+      "long": 3210343,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     },
+     {
+      "id": 1494317,
+      "descripcion": "Documento de la convocatoria en lengua cooficial",
+      "nombreFic": "CERT BASES X2026000430.pdf",
+      "long": 231603,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     }
+    ],
+    "anuncios": [],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1121046,
+    "mrr": false,
+    "numeroConvocatoria": "919485",
+    "descripcion": "Convenio de colaboración entre la Asociación de Familias de Alumnos de la Escuela Lluís Viñas y el Ayuntamiento de Mora d'Ebre",
+    "descripcionLeng": "Conveni de col·laboració entre l'Associació de Famílies d'Alumnes de l'Escola Lluís Viñas i l'Ajuntament de Móra d'Ebre",
+    "fechaRecepcion": "2026-07-15",
+    "nivel1": "LOCAL",
+    "nivel2": "MÓRA D'EBRE",
+    "nivel3": "AYUNTAMIENTO DE MÓRA D’EBRE",
+    "codigoInvente": null
+   },
+   "detall": {
+    "id": 1121046,
+    "organo": {
+     "nivel1": "LOCAL",
+     "nivel2": "MÓRA D'EBRE",
+     "nivel3": "AYUNTAMIENTO DE MÓRA D’EBRE"
+    },
+    "sedeElectronica": null,
+    "codigoBDNS": "919485",
+    "fechaRecepcion": "2026-07-15",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concesión directa - instrumental",
+    "presupuestoTotal": 1000,
+    "mrr": false,
+    "descripcion": "Convenio de colaboración entre la Asociación de Familias de Alumnos de la Escuela Lluís Viñas y el Ayuntamiento de Mora d'Ebre",
+    "descripcionLeng": "Conveni de col·laboració entre l'Associació de Famílies d'Alumnes de l'Escola Lluís Viñas i l'Ajuntament de Móra d'Ebre",
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PERSONAS JURÍDICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "Actividades asociativas",
+      "codigo": "94"
+     },
+     {
+      "descripcion": "EDUCACIÓN",
+      "codigo": "Q"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES514 - Tarragona"
+     }
+    ],
+    "descripcionFinalidad": "Educación",
+    "descripcionBasesReguladoras": "Convenio de colaboración entre la Asociación de Familias de Alumnos de la Escuela Lluís Viñas y el Ayuntamiento de Mora d'Ebre",
+    "urlBasesReguladoras": "https://www.moradebre.cat/wp-content/uploads/REGLAMENT-SUBVENCIONS.pdf",
+    "sePublicaDiarioOficial": false,
+    "abierto": false,
+    "fechaInicioSolicitud": null,
+    "fechaFinSolicitud": null,
+    "textInicio": "Sin plazo de solicitud",
+    "textFin": "Sin plazo de solicitud",
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1494411,
+      "descripcion": "Documento de la convocatoria en lengua cooficial",
+      "nombreFic": "Conveni AFA LLuis Viñas 2025.pdf",
+      "long": 496372,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     },
+     {
+      "id": 1494394,
+      "descripcion": "Documento de la convocatoria en español",
+      "nombreFic": "CONVENIO AFA ESCUELA LLUÍS VIÑAS.pdf",
+      "long": 1349750,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     }
+    ],
+    "anuncios": [],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1121075,
+    "mrr": false,
+    "numeroConvocatoria": "919514",
+    "descripcion": "MILLORA LOCAL C/ PREVISIÓ",
+    "descripcionLeng": null,
+    "fechaRecepcion": "2026-07-15",
+    "nivel1": "LOCAL",
+    "nivel2": "SANT JOAN DESPÍ",
+    "nivel3": "AYUNTAMIENTO DE SANT JOAN DESPÍ",
+    "codigoInvente": null
+   },
+   "detall": {
+    "id": 1121075,
+    "organo": {
+     "nivel1": "LOCAL",
+     "nivel2": "SANT JOAN DESPÍ",
+     "nivel3": "AYUNTAMIENTO DE SANT JOAN DESPÍ"
+    },
+    "sedeElectronica": null,
+    "codigoBDNS": "919514",
+    "fechaRecepcion": "2026-07-15",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concesión directa - instrumental",
+    "presupuestoTotal": 15000,
+    "mrr": false,
+    "descripcion": "MILLORA LOCAL C/ PREVISIÓ",
+    "descripcionLeng": null,
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PERSONAS JURÍDICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "Otras actividades asociativas",
+      "codigo": "94.9"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES511 - Barcelona"
+     }
+    ],
+    "descripcionFinalidad": "Otras actuaciones de carácter económico",
+    "descripcionBasesReguladoras": "MILLORA LOCAL C/ PREVISIÓ",
+    "urlBasesReguladoras": "https://bop.diba.cat/scripts/ftpisa.aspx?fnew?bop2010&11/022010033681.pdf&1",
+    "sePublicaDiarioOficial": false,
+    "abierto": true,
+    "fechaInicioSolicitud": null,
+    "fechaFinSolicitud": null,
+    "textInicio": null,
+    "textFin": null,
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1494599,
+      "descripcion": "Informe",
+      "nombreFic": "Informe_AAVV_El_Pi.pdf",
+      "long": 897254,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     },
+     {
+      "id": 1494594,
+      "descripcion": "Texto en castellano de la convocatoria",
+      "nombreFic": "Conveni_AAVV_El_Pi.pdf",
+      "long": 50175,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     },
+     {
+      "id": 1494598,
+      "descripcion": "Acord Aprovació",
+      "nombreFic": "Conveni_AAVV_El_Pi.pdf",
+      "long": 50175,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     },
+     {
+      "id": 1494597,
+      "descripcion": "publicacio_bases_subvencions",
+      "nombreFic": "BOPB_16_novembre_2018_modificacio_Annex 2.1.pdf",
+      "long": 52955,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     },
+     {
+      "id": 1494595,
+      "descripcion": "Bases Especifiques",
+      "nombreFic": "BASES_2018_ok.pdf",
+      "long": 1622321,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     },
+     {
+      "id": 1494596,
+      "descripcion": "publicacio_bases_subvencions",
+      "nombreFic": "BOPB_22_novembre_2018_publicacio_bases_subvencions_2019.pdf",
+      "long": 98083,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     }
+    ],
+    "anuncios": [],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1121089,
+    "mrr": false,
+    "numeroConvocatoria": "919528",
+    "descripcion": "Subvencions a l’associacionisme en la participació d’activitats de lleure: Colònies i campaments 2018",
+    "descripcionLeng": null,
+    "fechaRecepcion": "2026-07-15",
+    "nivel1": "LOCAL",
+    "nivel2": "SANT JOAN DESPÍ",
+    "nivel3": "AYUNTAMIENTO DE SANT JOAN DESPÍ",
+    "codigoInvente": null
+   },
+   "detall": {
+    "id": 1121089,
+    "organo": {
+     "nivel1": "LOCAL",
+     "nivel2": "SANT JOAN DESPÍ",
+     "nivel3": "AYUNTAMIENTO DE SANT JOAN DESPÍ"
+    },
+    "sedeElectronica": "http://www.despientitats.cat/wp-content/uploads/2017/11/Annex-1.2.pdf",
+    "codigoBDNS": "919528",
+    "fechaRecepcion": "2026-07-15",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concurrencia competitiva - canónica",
+    "presupuestoTotal": 14661,
+    "mrr": false,
+    "descripcion": "Subvencions a l’associacionisme en la participació d’activitats de lleure: Colònies i campaments 2018",
+    "descripcionLeng": null,
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PERSONAS JURÍDICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "Otra educación",
+      "codigo": "85.5"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES511 - Barcelona"
+     }
+    ],
+    "descripcionFinalidad": "Educación",
+    "descripcionBasesReguladoras": "Potenciar la participació d’infants i joves a les activitats de colònies i campaments que organitzen les entitats\nd’esplai del municipi.\n",
+    "urlBasesReguladoras": "http://www.despientitats.cat/wp-content/uploads/2017/11/Annex-1.2.pdf",
+    "sePublicaDiarioOficial": true,
+    "abierto": true,
+    "fechaInicioSolicitud": null,
+    "fechaFinSolicitud": null,
+    "textInicio": null,
+    "textFin": null,
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1494690,
+      "descripcion": "Bases Especifiques",
+      "nombreFic": "BASES_2018_ok.pdf",
+      "long": 1622321,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     },
+     {
+      "id": 1494689,
+      "descripcion": "Acord Aprovació",
+      "nombreFic": "X2018005043 Certificat JGL 12 novembre 2018 aprovació bases subvencions 2019.pdf",
+      "long": 451303,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     },
+     {
+      "id": 1494692,
+      "descripcion": "publicacio_bases_subvencions",
+      "nombreFic": "BOPB_22_novembre_2018_publicacio_bases_subvencions_2019.pdf",
+      "long": 98083,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     },
+     {
+      "id": 1494691,
+      "descripcion": "publicacio_bases_subvencions",
+      "nombreFic": "BOPB_16_novembre_2018_modificacio_Annex 2.1.pdf",
+      "long": 52955,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     },
+     {
+      "id": 1494688,
+      "descripcion": "Texto en castellano de la convocatoria",
+      "nombreFic": "X2018005043 Certificat JGL 12 novembre 2018 aprovació bases subvencions 2019.pdf",
+      "long": 451303,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     }
+    ],
+    "anuncios": [],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1121120,
+    "mrr": false,
+    "numeroConvocatoria": "919559",
+    "descripcion": "Directe a club triatló Nan Oliveras team per la organització de la marxa BTT volcanolímits bike.",
+    "descripcionLeng": null,
+    "fechaRecepcion": "2026-07-15",
+    "nivel1": "LOCAL",
+    "nivel2": "DIPUTACIÓN PROV. DE GIRONA",
+    "nivel3": "DIPUTACIÓN PROVINCIAL DE GIRONA",
+    "codigoInvente": null
+   },
+   "detall": {
+    "id": 1121120,
+    "organo": {
+     "nivel1": "LOCAL",
+     "nivel2": "DIPUTACIÓN PROV. DE GIRONA",
+     "nivel3": "DIPUTACIÓN PROVINCIAL DE GIRONA"
+    },
+    "sedeElectronica": null,
+    "codigoBDNS": "919559",
+    "fechaRecepcion": "2026-07-15",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concesión directa - instrumental",
+    "presupuestoTotal": 2000,
+    "mrr": false,
+    "descripcion": "Directe a club triatló Nan Oliveras team per la organització de la marxa BTT volcanolímits bike.",
+    "descripcionLeng": null,
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "GRAN EMPRESA"
+     },
+     {
+      "descripcion": "PERSONAS FÍSICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     },
+     {
+      "descripcion": "PERSONAS JURÍDICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     },
+     {
+      "descripcion": "PYME Y PERSONAS FÍSICAS QUE DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "Actividades deportivas",
+      "codigo": "93.1"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES512 - Girona"
+     }
+    ],
+    "descripcionFinalidad": "Otras actuaciones de carácter económico",
+    "descripcionBasesReguladoras": "BASES CONCESSIÓ DIRECTA 2026",
+    "urlBasesReguladoras": "https://www.ddgi.cat/basescast/2023/ordenanza_general_subvenciones_SL_16_1scc.pdf",
+    "sePublicaDiarioOficial": false,
+    "abierto": false,
+    "fechaInicioSolicitud": "2026-01-01",
+    "fechaFinSolicitud": "2026-12-31",
+    "textInicio": null,
+    "textFin": null,
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1494759,
+      "descripcion": "Texto en castellano de la convocatoria",
+      "nombreFic": "ORDENANZA_GENERAL_DE_SUBVENCIONES_-_DDGI.pdf",
+      "long": 258484,
+      "datMod": "2026-07-15",
+      "datPublicacion": "2026-07-15"
+     }
+    ],
+    "anuncios": [],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  }
+ ]
+}

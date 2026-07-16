@@ -37,9 +37,21 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install (dbt-duckdb + verifiers)
-        run: pip install dbt-duckdb duckdb pandas pyarrow pyyaml ruff
+        run: pip install dbt-duckdb duckdb pandas pyarrow pyyaml ruff pytest requests
       - name: Lint (ruff) · transform + ingestion + signals
         run: ruff check packages/transform packages/ingestion packages/signals
+      # R1 · radar de subvencions: el connector BDNS corre 100% OFFLINE sobre les
+      # fixtures reals arxivades (tests/fixtures/bdns_convocatories.json) i una
+      # sessió HTTP falsa. Cap crida de xarxa, cap clau. Guarda la trampa de les
+      # regions NUTS (la pare no cascada), que és una regressió silenciosa: no
+      # peta, només retorna menys senyal del compte.
+      # ABAST: només aquest fitxer. La resta de la suite de `signals` no ha estat
+      # mai al CI i avui té 1 test vermell sobre dades versionades
+      # (test_licitacions.py::test_real_parquet_cobertura_i_conservacio, la
+      # conservació de l'import no quadra) — és anterior a R1 i queda REPORTAT a
+      # la bitàcola, no tapat aquí: cablejar-la sencera és una tasca pròpia.
+      - name: R1 · connector BDNS (offline, sobre fixtures)
+        run: pytest packages/signals/tests/test_subvencions_bdns.py -q
       - name: dbt parse (plantilla + schema vàlids)
         run: dbt parse --project-dir packages/transform --profiles-dir packages/transform
       - name: Verify marts (ancoratges + Spearman)
