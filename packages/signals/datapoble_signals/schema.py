@@ -85,3 +85,39 @@ MIN_REQUIRED = (
     "font", "font_url", "tipus_senyal", "fase", "objecte", "import",
     "categoria", "confianca",
 )
+
+# --- El contracte germà: la fitxa de SUBVENCIÓ (C3) ---------------------------
+# Vegeu `docs/ajuntaments/C3-subvencions-perfil.md` (vinculant). Una convocatòria
+# **no és un event**: un event és immutable i té un `event_id`; una convocatòria
+# muta (`estat`) i pot acumular N procedències (BDNS + CIDO). Per això taula
+# pròpia i no `EVENT_COLUMNS` — mateixa disciplina, esquema distint.
+
+# Vocabulari tancat de l'estat d'una convocatòria (C3 §1).
+# NOTA HONESTA (verificada en viu): la BDNS **no publica cap camp d'anul·lació**
+# — corregeix i esborra registres a posteriori, sense marcar-los. Per tant el
+# connector BDNS **mai emet `anul·lada`**: queda reservada per a una font que
+# declari l'anul·lació explícitament (p. ex. CIDO, R5). No inventem l'estat.
+ESTATS_SUBVENCIO = ("oberta", "tancada", "anul·lada")
+
+# Àmbit territorial declarat (C3 §1). La BDNS només baixa fins a **NUTS3
+# (província)**: `comarca` i `municipi` són valors legítims del vocabulari però
+# el connector BDNS no els pot emetre mai (els portarà CIDO, R5).
+AMBITS_SUBVENCIO = ("estatal", "CAT", "provincia", "comarca", "municipi")
+
+# Ordre canònic de columnes de la taula `subvencions`. C3 §1 diu **exactament**
+# aquests camps: cap font hi afegeix columnes pròpies (si en calgués una, és una
+# esmena del contracte — de l'owner, no del connector).
+SUBVENCIO_COLUMNS: tuple[str, ...] = (
+    "id_bdns",           # str|None — codi BDNS quan la font el dona; MAI inventat
+    "fonts",             # list[{font_clau, font_url, data_vista}] — ≥1; font_url MAI NULL
+    "organisme",         # str  — convocant, tal com el publica la font
+    "objecte",           # str  — títol/objecte de la convocatòria
+    "beneficiaris",      # str  — tipus de beneficiari segons la font
+    "ambit_territorial", # str  — un de AMBITS_SUBVENCIO
+    "import",            # float|None — € de la convocatòria; NULL si la font no el dona
+    "cofinancament",     # float|None — % a càrrec del beneficiari; NULL si no consta
+    "data_publicacio",   # date — data de publicació/recepció a la font
+    "termini",           # date|None — fi del termini de sol·licitud
+    "enllac",            # str  — URL canònica de la convocatòria (MAI NULL)
+    "estat",             # str  — un de ESTATS_SUBVENCIO
+)

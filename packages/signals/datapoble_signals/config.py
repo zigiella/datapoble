@@ -45,7 +45,33 @@ SOURCES: dict[str, dict] = {
         "kind": "socrata",
         "tipus_senyal_default": "aigua_sequera",
     },
+    # Radar de subvencions (C3/C4). NO és Socrata: API pròpia del SNPSAP.
+    # `dataset_id` = None a propòsit: la BDNS no té id de dataset (no inventem).
+    "subvencions_bdns": {
+        "organisme": (
+            "Ministerio de Hacienda — Sistema Nacional de Publicidad de "
+            "Subvenciones y Ayudas Públicas (SNPSAP/BDNS)"
+        ),
+        "producte": "Convocatòries de subvencions i ajuts públics (API de consulta)",
+        "dataset_id": None,
+        "url": "https://www.infosubvenciones.es/bdnstrans/api/convocatorias/busqueda",
+        # Llicència: la BDNS no publica una llicència oberta tipus CC; publica un
+        # AVÍS LEGAL amb restriccions de reutilització. Es cita literalment (i cada
+        # fitxa porta el seu camp `advertencia`) en comptes d'inventar-ne una.
+        "llicencia": (
+            "Avís legal del SNPSAP "
+            "(https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal) — "
+            "reutilització subjecta a restriccions; dades dinàmiques, subjectes a "
+            "correccions i eliminacions posteriors a l'extracció"
+        ),
+        "kind": "bdns",
+        "tipus_senyal_default": None,  # una convocatòria no és un event del cabal
+    },
 }
+
+# Carpeta versionada de la taula de subvencions (C3 §1: materialització a
+# `data/subvencions/…parquet` + `_provenance.json` per càrrega).
+SUBVENCIONS_DIR = DATA_DIR / "subvencions"
 
 
 def raw_path(source: str) -> Path:
@@ -59,3 +85,9 @@ def events_path(name: str) -> Path:
     """Ruta d'un parquet d'events (carpeta creada si cal)."""
     EVENTS_DIR.mkdir(parents=True, exist_ok=True)
     return EVENTS_DIR / name
+
+
+def subvencions_path(name: str) -> Path:
+    """Ruta d'un artefacte de la taula de subvencions (carpeta creada si cal)."""
+    SUBVENCIONS_DIR.mkdir(parents=True, exist_ok=True)
+    return SUBVENCIONS_DIR / name
