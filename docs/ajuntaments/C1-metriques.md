@@ -8,10 +8,12 @@
 
 ## 1. Famílies noves (6) — font, llicència i freqüència exactes
 
-### 1.1 `atur_registrat` — font PRIMÀRIA, mensual
-- **Font:** Observatori del Treball i Model Productiu (Generalitat), atur registrat per municipis, via Socrata (`analisi.transparenciacatalunya.cat`). **Llicència:** Dades Obertes de Catalunya. **Freqüència:** mensual.
-- El `dataset_id` **no s'inventa aquí**: el fixa Sondeig a D1 amb consulta en viu i byte-match de 3 municipis contra la font (llistó de D1). Cap mètrica pot citar `source: otreball` fins que el bloc `sources:` porti `organisme`, `producte`, `dataset_id` i `llicencia` complets.
-- **Client (E5):** es reutilitza el client Socrata de `packages/signals` (`datapoble_signals/socrata.py`). **Prohibit** escriure'n un tercer.
+### 1.1 `atur_registrat` — font PRIMÀRIA, mensual — **FONT ESMENADA (verificació en viu 2026-07-16)**
+- **La premissa Socrata de l'spec era falsa**: verificat en viu (Discovery API + categoria «Treball» sencera d'`analisi.transparenciacatalunya.cat`), **no existeix cap dataset Socrata d'atur registrat municipal mensual** — l'Observatori del Treball només publica XLSX de premsa (maquetació inestable) i consulta interactiva. Cap connector pot apuntar a un `dataset_id` que no existeix.
+- **Font real:** SEPE, «Paro registrado por municipios» — CSV mensual verificat en viu: `https://sede.sepe.gob.es/es/portaltrabaja/resources/sede/datos_abiertos/datos/Paro_por_municipios_<ANY>_csv.csv` (un fitxer per any amb tots els mesos; cobertura des de 2006; sense clau). **Llicència:** dades obertes SEPE (Sondeig la verifica literalment a D1 i la registra a `sources:`). **Freqüència:** mensual (primers dies del mes següent).
+- **Doctrina del «<5» (VINCULANT):** des de gener 2022 el SEPE emmascara els valors 1–4 com a `<5`. Als municipis petits del Berguedà això és freqüent. Un `<5` és un **interval [1,4]**, MAI un zero ni un NaN silenciós — es modela com a interval (la cel·la buida del projecte, un cop més) i la UI el mostra com a «<5», mai com a número inventat.
+- **Joins:** `Codigo Municipio` del SEPE és INE **sense zeros a l'esquerra** → zero-pad a 5 obligatori; recordar que Idescat usa 6 dígits (5 INE + control). Test de la trampa de codis obligatori (C3 §5). El fitxer és tot Espanya sense filtre server-side: descàrrega completa + filtre local `Codigo Provincia=8`.
+- El client Socrata de `packages/signals` **no aplica a aquesta família** (queda per a les altres fonts SODA del repo); el connector D1 és un lector CSV amb fixture arxivada.
 - Destí: `mart_pols_mensual`. Camp `date` en format **`"YYYY-MM"`** (darrer mes carregat, actualitzat pel workflow existent) — primera mètrica mensual del catàleg; el format queda fixat aquí.
 
 ### 1.2 Les cinc d'HERMES — font SECUNDÀRIA (agregador), anuals

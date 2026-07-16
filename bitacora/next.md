@@ -27,6 +27,17 @@ publicable per si sola.*
 >   `packages/ai` · X2 (activar render.yaml dorment, Trazo) · X3 (catàleg govern + preguntes suggerides).
 > **El geo-rag NO es toca** (congelat com a annex de recerca fins a X1); els seus pendents propis
 > (banc de confirmació de Bea · ★ · paper) queden fora d'aquesta spec (E6), seqüenciats post-demo.
+>
+> **ESTAT (2026-07-16): contractes C1–C6 FUSIONATS (#240–#243). Primeres tasques ESPECIFICADES amb
+> àncores verificades en viu a `docs/ajuntaments/tasques-especificades.md`:**
+> - **R1 (Sondeig)** — connector BDNS: API verificada (endpoint real, paginació, trampa de les
+>   regions NUTS que NO cascada — sempre 49,50,51,52,53), mapa complet a la fitxa C3, fixtures→banc C4.
+> - **D1 (Sondeig)** — connector atur: **FONT ESMENADA a C1 §1.1** — el Socrata de l'spec NO EXISTEIX
+>   (verificat en viu); font real = CSV mensual del SEPE, amb la doctrina del «<5» = interval [1,4]
+>   (mai zero silenciós) i zero-pad de codis INE.
+> - **X1 (Brúixola)** — collita C5: doctrina + gàbia RE-VALIDANT (validador v2, fallback determinista),
+>   politics.py mana per sobre de tot.
+> **⏸ CAP FRONT COMENÇA FINS AL TRET DE SORTIDA DE BEA (latido pendent — decisió seva explícita).**
 
 > **🧪 TRACK ACTIU (2026-07-01): experiment RAG geoespacial honest (Berguedà).** Carta a
 > `docs/experiment-rag-geo/00-arrencada.md`. Decisions de Bea: **DuckDB-first** (avisar Rapaz de la
