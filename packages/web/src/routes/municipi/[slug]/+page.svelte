@@ -2,18 +2,21 @@
 	/**
 	 * FITXA DE MUNICIPI (`/municipi/[ine5]` · `/es/municipi/[ine5]`).
 	 *
-	 * Generalitza a QUALSEVOL dels 31 municipis del Berguedà la fitxa rica que el Resum només
-	 * donava als dos extrems (Berga 08022, Castellar de n'Hug 08052). Mateixa presentació i
-	 * mateixa honestedat: nom + pastilla de TIPOLOGIA (arquetip categòric) + bandera de CONFIANÇA
-	 * i score auditable 0-100, i TOTES les mètriques del municipi agrupades editorialment (KPI
-	 * bàsics, senyals físics per càpita, les 3 capes inferides, IETR + stock/impact, energia,
-	 * política), cadascuna amb la seva PROCEDÈNCIA (punt mesura/inferència) i la unitat del
-	 * contracte.
+	 * Fitxa amb DADES OFICIALS per a qualsevol municipi de Catalunya: totes les mètriques del
+	 * municipi agrupades editorialment (demografia i habitatge, transformació demogràfica,
+	 * turisme reglat, senyals físics), cadascuna amb la seva PROCEDÈNCIA (punt mesura/inferència)
+	 * i la unitat del contracte.
 	 *
-	 * Disciplina de dades (com al Resum/Mapa/Glossari): CAP xifra, etiqueta, unitat ni font es
+	 * EL MODEL D'ESTIMACIÓ DE PERNOCTA ESTÀ APARCAT del web (vot de Bea 2026-07-16 ·
+	 * `docs/ajuntaments/gorra-alcalde-pobla.md` §1): cap banda, cap registre, cap veu del gap.
+	 * La presència es mostra NOMÉS com a dada oficial (ETCA, Idescat) o «sense dada oficial»
+	 * als municipis on Idescat no la publica (<1.000 hab). El rastre metodològic del model viu
+	 * a /metodologia (annex de recerca) i a l'experiment geo-rag.
+	 *
+	 * Disciplina de dades (com al Mapa/Glossari): CAP xifra, etiqueta, unitat ni font es
 	 * codifica a la UI — tot surt del dataset real (= contracte semàntic) via `formatMetric`/`pick`.
-	 * La procedència (slate=mesurada, porpra=inferència) la dedueix `provenanceOf` del `source`. Les
-	 * 3 capes són inferència; el 0 d'OSM de la restauració es mostra «sense dada», no «0,0» (honestedat).
+	 * La procedència (slate=mesurada, porpra=inferència) la dedueix `provenanceOf` del `source`.
+	 * El 0 d'OSM de la restauració es mostra «sense dada», no «0,0» (honestedat).
 	 *
 	 * Si l'`ine5` no és al dataset (resta de Catalunya) → estat AMABLE «sense dades encara» (mateix
 	 * gest que el tooltip «fora del Berguedà» del mapa), mai una fitxa buida ni un error lleig.
@@ -25,7 +28,6 @@
 	import ContourField from '$lib/components/ContourField.svelte';
 	import { currentLocale, pick, localizeHref } from '$lib/i18n';
 	import { formatMetric, formatDecimal, formatInteger } from '$lib/format';
-	import { SIGNED_PCT_KEYS } from '$lib/map/classify';
 	import { provenanceOf } from '$lib/map/provenance';
 	import { toSlug, slugForIne5 } from '$lib/contract/slug';
 	import Espina from '$lib/components/Espina.svelte';
@@ -39,29 +41,9 @@
 	const dataset = $derived(data.dataset);
 	const row = $derived(data.row);
 	const ine5 = $derived(data.ine5);
-	const pernocta = $derived(data.pernocta); // presència estimada EN RANG (munis coberts fora del Berguedà)
-	// COL·LISIÓ DEL MODEL (doctrina geo-rag §7 del paper): municipis amb estimació+banda IDÈNTIQUES.
-	// Si n'hi ha, la fitxa ho adverteix — la xifra no es pot llegir com a específica del municipi.
-	const collisions = $derived(data.collisions ?? []);
-	const collisioNoms = $derived.by<string>(() => {
-		if (!collisions.length) return '';
-		return new Intl.ListFormat(locale === 'es' ? 'es-ES' : 'ca-ES', {
-			style: 'long',
-			type: 'conjunction'
-		}).format(collisions.map((c) => c.nom));
-	});
-	// Coda ETCA: si aquest muni I algun peer tenen dada oficial, Idescat SÍ que els distingeix.
-	const collisioEtca = $derived.by<{ self: string; peers: string } | null>(() => {
-		const selfEtca = pernocta?.etca_oficial;
-		if (typeof selfEtca !== 'number') return null;
-		const peers = collisions.filter((c) => typeof c.etca_oficial === 'number');
-		if (!peers.length) return null;
-		const f = (v: number) => formatInteger(v, locale);
-		return {
-			self: f(selfEtca),
-			peers: peers.map((c) => `${c.nom} ${f(c.etca_oficial as number)}`).join(' · ')
-		};
-	});
+	// PRESÈNCIA OFICIAL (ETCA, Idescat): l'única dada de presència que la fitxa mostra (model
+	// aparcat). null = Idescat no la publica (<1.000 hab) → «sense dada oficial».
+	const etca = $derived(data.etca ?? null);
 	const isBergueda = $derived(data.isBergueda ?? false); // pilot profund vs espina CAT (lede honest)
 	// Espina territorial: comarca/vegueria del muni + municipis veïns de la comarca (navegació).
 	const territori = $derived(data.territori);
@@ -190,31 +172,9 @@
 			title: () => m.muni_blk_fisics(),
 			sub: () => m.resum_grp_fisics(),
 			keys: ['kg_hab_any', 'kwh_hab', 'vidre_hab', 'restauracio_estab', 'restauracio_per_1000hab']
-		},
-		{
-			ref: 'E',
-			title: () => m.muni_blk_capes(),
-			sub: () => m.muni_blk_capes_sub(),
-			keys: [
-				'poblacio_pernocta_est',
-				'gap_pernocta',
-				'gap_pernocta_pct',
-				'carrega_total_est',
-				'carrega_funcional_est',
-				'index_turisme'
-			]
 		}
 	];
-
-	// Files ressaltades: els proxies de pernocta/no-principal i la mètrica estrella (gap pernocta,
-	// la població invisible) + l'IETR. Mateix criteri editorial que el Resum.
-	// Alerta de divergència L1>L2: la pernocta elèctrica supera la càrrega per residus
-	// (residus/càpita baixos o base mal calibrada) → la càrrega per residus no és un sostre.
-	const l1GtL2 = $derived(
-		typeof row?.values.poblacio_pernocta_est === 'number' &&
-			typeof row?.values.carrega_total_est === 'number' &&
-			row.values.poblacio_pernocta_est > row.values.carrega_total_est
-	);
+	// (El bloc E «les 3 capes» —pernocta, càrrega, índex de turisme— està APARCAT amb el model.)
 
 	// Infra-mapeig OSM: vidre alt amb restauració = 0 → el 0 és buit de mapa, no absència real.
 	const osmSospita = $derived(
@@ -222,108 +182,12 @@
 			row.values.vidre_hab > 30 &&
 			(row?.values.restauracio_estab === 0 || row?.values.restauracio_estab == null)
 	);
-	// Ràtio de càrrega: equivalents de presència per cada empadronat (denominador funcional / padró).
-	const ratioCarrega = $derived.by<number | null>(() => {
-		const c = row?.values.carrega_funcional_est;
-		const p = row?.values.poblacio;
-		return typeof c === 'number' && typeof p === 'number' && p > 0 ? c / p : null;
-	});
-	// «Lectura per a serveis» (consultor #4): quin denominador hauria d'usar cada servei municipal.
-	const serveisLectura = $derived.by(() => {
-		const v = row?.values ?? {};
-		const num = (k: MetricKey) => (typeof v[k] === 'number' ? (v[k] as number) : null);
-		return [
-			{ servei: m.muni_serv_residus(), denom: m.muni_serv_d_carrega(), val: num('carrega_funcional_est'), unit: 'hab.' },
-			{ servei: m.muni_serv_aigua(), denom: m.muni_serv_d_l1(), val: num('poblacio_pernocta_est'), unit: 'hab.' },
-			{ servei: m.muni_serv_vivenda(), denom: m.muni_serv_d_padro_np(), val: null, unit: '' },
-			{ servei: m.muni_serv_turisme(), denom: m.muni_serv_d_turisme(), val: null, unit: '' },
-			{ servei: m.muni_serv_socials(), denom: m.muni_serv_d_socials(), val: null, unit: '' },
-			{ servei: m.muni_serv_seguretat(), denom: m.muni_serv_d_seguretat(), val: null, unit: '' }
-		];
-	});
 
 	const highlightRows = new Set<MetricKey>([
 		'pct_noprincipal',
 		'rtc_per_1000hab',
-		'bretxa_naturalitzacio',
-		'gap_pernocta_pct',
-		'carrega_funcional_est'
+		'bretxa_naturalitzacio'
 	]);
-
-	// ——— Pas 0 · «el rang és la dada» + TRES REGISTRES (vot 2026-06-29 · 05-vot-tres-registres) ———
-	// La família pernocta (qui dorm / gap) és inferència: es mostra en RANG. La banda és la REAL
-	// calibrada (p10–p90 held-out per tipus, eixamplada ×1,5 als <1.000) de pernocta-catalunya.json
-	// (rang_baix/alt) — substitueix la interina ±10%. Tres registres segons la banda (mateix criteri
-	// que tools/senyal_sub1000.py):
-	//   · oficial → té ETCA (≥1.000 hab): la font oficial mana.
-	//   · senyal  → l'interval EXCLOU el padró: afirmem el gap, amb veu graduada per magnitud.
-	//   · soroll  → l'interval INCLOU el padró: no es distingeix del marge → no n'afirmem el gap.
-	// Si el muni no és a pernocta-catalunya.json, cau a la banda interina ±10% (no trenca la vitrina).
-	const GAP_SENSITIVITY = 0.1;
-	const VEU_FERMA_PCT = 20; // marge relatiu del padró a la vora de la banda per a «veu ferma»
-	const PERNOCTA_RANGE_KEYS = new Set<MetricKey>([
-		'poblacio_pernocta_est',
-		'gap_pernocta',
-		'gap_pernocta_pct'
-	]);
-	const pernoctaBand = $derived.by(() => {
-		const padro = row?.values.poblacio;
-		if (typeof padro !== 'number' || padro <= 0) return null;
-		let estLow: number, estHigh: number, est: number;
-		let etca: number | null = null;
-		if (
-			pernocta &&
-			typeof pernocta.rang_baix === 'number' &&
-			typeof pernocta.rang_alt === 'number' &&
-			typeof pernocta.estimacio === 'number'
-		) {
-			estLow = pernocta.rang_baix;
-			estHigh = pernocta.rang_alt;
-			est = pernocta.estimacio;
-			etca = typeof pernocta.etca_oficial === 'number' ? pernocta.etca_oficial : null;
-		} else {
-			const e = row?.values.poblacio_pernocta_est; // fallback: banda interina ±10%
-			if (typeof e !== 'number') return null;
-			estLow = e / (1 + GAP_SENSITIVITY);
-			estHigh = e / (1 - GAP_SENSITIVITY);
-			est = e;
-		}
-		const direccio = estLow > padro ? 'mes' : estHigh < padro ? 'menys' : null;
-		const registre = etca !== null ? 'oficial' : direccio ? 'senyal' : 'soroll';
-		const marge =
-			direccio === 'mes'
-				? ((estLow - padro) / padro) * 100
-				: direccio === 'menys'
-					? ((padro - estHigh) / padro) * 100
-					: 0;
-		return {
-			registre,
-			direccio,
-			veu: marge >= VEU_FERMA_PCT ? 'ferm' : 'prudent',
-			etca,
-			etcaPct: etca !== null ? (etca / padro - 1) * 100 : null,
-			inconcludent: registre === 'soroll',
-			estLow, estHigh, est,
-			gapAbsLow: estLow - padro, gapAbsHigh: estHigh - padro, gapAbs: est - padro,
-			pctLow: (estLow / padro - 1) * 100, pctHigh: (estHigh / padro - 1) * 100,
-			pct: (est / padro - 1) * 100
-		};
-	});
-	// Veu graduada (registre senyal): com parla el gap segons direcció i magnitud. La còpia és de Bea.
-	const veuText = $derived.by<string | null>(() => {
-		if (!pernoctaBand || pernoctaBand.registre !== 'senyal' || !pernoctaBand.direccio) return null;
-		const f = pernoctaBand.veu === 'ferm';
-		if (pernoctaBand.direccio === 'mes')
-			return f ? m.muni_gap_veu_ferm_mes() : m.muni_gap_veu_prudent_mes();
-		return f ? m.muni_gap_veu_ferm_menys() : m.muni_gap_veu_prudent_menys();
-	});
-	// Enter localitzat (recomptes) i amb signe explícit (gaps), 0 decimals.
-	const fInt = (v: number): string => formatDecimal(v, locale, 0);
-	const fSign = (v: number): string =>
-		new Intl.NumberFormat(locale === 'es' ? 'es-ES' : 'ca-ES', {
-			signDisplay: 'exceptZero',
-			maximumFractionDigits: 0
-		}).format(v);
 
 	// Mètriques on un 0 NO és dada sinó absència de mapeig (recompte mínim d'OSM, no cens): es
 	// mostren «sense dada», no «0,0». Mateixa regla d'honestedat que el Resum i el mapa.
@@ -336,10 +200,6 @@
 		hab_total: 'hab.',
 		hab_principal: 'hab.',
 		hab_noprincipal: 'hab.',
-		poblacio_pernocta_est: 'hab.',
-		carrega_total_est: 'hab.',
-		carrega_funcional_est: 'hab.',
-		gap_pernocta: 'hab.',
 		poblacio_nascuda_catalunya: 'hab.',
 		poblacio_nascuda_resta_espanya: 'hab.',
 		poblacio_nascuda_estranger: 'hab.',
@@ -368,19 +228,9 @@
 		return formatMetric(value, def, locale) ?? m.value_not_available();
 	}
 
-	// Valor d'una mètrica per al municipi, formatat al locale (sense unitat). Cas especial: les
-	// desviacions amb signe (gaps de pernocta) amb +/− explícit; el valor ja ve 0-100, no es reescala.
-	// Mateix conveni que el Resum i el mapa.
+	// Valor d'una mètrica per al municipi, formatat al locale (sense unitat).
 	function fmt(r: MunicipiRow, key: MetricKey): string {
-		const value = effectiveValue(r, key);
-		if (SIGNED_PCT_KEYS.has(key) && typeof value === 'number') {
-			const loc = locale === 'es' ? 'es-ES' : 'ca-ES';
-			return new Intl.NumberFormat(loc, {
-				signDisplay: 'exceptZero',
-				maximumFractionDigits: 0
-			}).format(value);
-		}
-		return fmtValue(value, dataset.metrics[key]);
+		return fmtValue(effectiveValue(r, key), dataset.metrics[key]);
 	}
 
 	// Procedència d'una mètrica per al municipi (per pintar el punt). Valor absent (incl. 0-OSM) →
@@ -395,51 +245,15 @@
 		return def.date ? `${def.source} · ${def.date}` : def.source;
 	}
 
-	// ── Capçalera del municipi: confiança (idèntica lectura que el Resum) ─────────
 	// Pobles mirall a escala Catalunya: bessons funcionals (no geogràfics) de tot el país, resolts al
 	// loader des de l'artefacte `municipis-mirall.json` (Nivell C). Per a QUALSEVOL muni, no només Berguedà.
+	// (La confiança del model —score, divergència, validats— està APARCADA amb el model: les dades
+	// oficials porten font i data, no bandera.)
 	const miralls = $derived(data.miralls ?? []);
-	const score = $derived.by<number | null>(() => {
-		const s = row?.values.confianca_score;
-		return typeof s === 'number' && Number.isFinite(s) ? s : null;
-	});
-	const confFlag = $derived(row?.values.confianca as string | undefined);
-	// Estatut de VALIDACIÓ (té ETCA?): capa la confiança de la pernocta. Sense ETCA, cap «alta» —la
-	// validació mana sobre l'heurística interna (no es poden contradir dues pàgines).
-	const validat = $derived(data.validat ?? false);
-	const confLabel = $derived.by<string | null>(() => {
-		if (confFlag === 'alta') return m.map_confidence_high();
-		if (confFlag === 'mitjana') return m.map_confidence_mid();
-		if (confFlag === 'baixa') return m.map_confidence_low();
-		return null;
-	});
 
-	// Divergència dels senyals (0-100): 0 concordants · 100 màxima discrepància. El «per què»
-	// AUDITABLE de la confiança (el component de concordança del score, exposat sol).
-	const diverg = $derived.by<number | null>(() => {
-		const v = row?.values.divergencia_senyals;
-		return typeof v === 'number' && Number.isFinite(v) ? v : null;
-	});
-	// «Per què» de la confiança: fragments de la DADA real (concordança dels senyals + mida del padró).
-	const confWhy = $derived.by<string[]>(() => {
-		const out: string[] = [];
-		if (diverg !== null)
-			out.push(
-				diverg <= 33 ? m.conf_sig_converg() : diverg >= 67 ? m.conf_sig_diverg() : m.conf_sig_partial()
-			);
-		const pop = row?.values.poblacio;
-		if (typeof pop === 'number' && pop < 200) out.push(m.conf_padro_small());
-		return out;
-	});
-
-	// IETR retirat de la capçalera de la fitxa (passada d'overpromise): no s'entén a escala i la
-	// capçalera ha de liderar amb la dada OFICIAL (població de padró), no amb un índex d'inferència.
-
-	// Nom del municipi (topònim, igual en ambdós locales): del dataset (Berguedà), del rang (cobert)
-	// o del CATÀLEG de tota Catalunya (`data.nom`, qualsevol poble); en últim cas, el codi.
-	const muniNom = $derived(row?.nom ?? pernocta?.nom ?? data.nom ?? ine5 ?? '');
-	// Enter localitzat per a les xifres del rang.
-	const fNum = (v: number) => formatInteger(v, locale);
+	// Nom del municipi (topònim, igual en ambdós locales): del dataset (Berguedà) o del CATÀLEG de
+	// tota Catalunya (`data.nom`, qualsevol poble); en últim cas, el codi.
+	const muniNom = $derived(row?.nom ?? data.nom ?? ine5 ?? '');
 
 	// ── Selector de municipi: salta a un altre dels 31 (ordenat per nom, localitzat) ──────────
 	// Es deriva del dataset (no llista codificada). El canvi navega a la fitxa corresponent.
@@ -459,7 +273,7 @@
 		{ cx: 1078, cy: 300, r0: 13, step: 20, rings: 8, sq: 1.06, seed: 2.7, lt: 0.1 }
 	];
 	const heroDivis = { cx: 768, cy: 228, r: 150, sq: 1.18, seed: 1.2 };
-	const heroLabels = ['INE', 'tipologia', 'confiança', '31', 'mètriques', 'procedència', 'fitxa'];
+	const heroLabels = ['INE', 'padró', 'font', '947', 'mètriques', 'procedència', 'fitxa'];
 </script>
 
 <!-- Una fila d'indicador (clau + punt de procedència + valor amb unitat curta). Reutilitza la
@@ -473,31 +287,10 @@
 			><span class="pd {provDotClass(prov(r, key))}"></span><span>{pick(def.label, locale)}</span
 			></span
 		>
-		{#if PERNOCTA_RANGE_KEYS.has(key) && pernoctaBand}
-			{#if pernoctaBand.registre === 'soroll' && (key === 'gap_pernocta' || key === 'gap_pernocta_pct')}
-				<span class="val val--neutral">{m.muni_gap_soroll()}</span>
-			{:else if key === 'poblacio_pernocta_est'}
-				<span class="val"
-					>{fInt(pernoctaBand.estLow)} … {fInt(pernoctaBand.estHigh)}<span class="u">hab.</span>
-					<span class="val-mid">({m.ficha_midpoint()} {fInt(pernoctaBand.est)})</span></span
-				>
-			{:else if key === 'gap_pernocta'}
-				<span class="val"
-					>{fSign(pernoctaBand.gapAbsLow)} … {fSign(pernoctaBand.gapAbsHigh)}<span class="u">hab.</span>
-					<span class="val-mid">({m.ficha_midpoint()} {fSign(pernoctaBand.gapAbs)})</span></span
-				>
-			{:else}
-				<span class="val"
-					>{fSign(pernoctaBand.pctLow)} … {fSign(pernoctaBand.pctHigh)}<span class="u">%</span>
-					<span class="val-mid">({m.ficha_midpoint()} {fSign(pernoctaBand.pct)})</span></span
-				>
-			{/if}
-		{:else}
-			<span class="val"
-				>{fmt(r, key)}{#if isPct}<span class="u">%</span>{:else if unit}<span class="u">{unit}</span
-					>{/if}</span
-			>
-		{/if}
+		<span class="val"
+			>{fmt(r, key)}{#if isPct}<span class="u">%</span>{:else if unit}<span class="u">{unit}</span
+				>{/if}</span
+		>
 	</div>
 {/snippet}
 
@@ -505,29 +298,6 @@
 	<title>{muniNom} · {m.muni_title()} · {m.app_name()}</title>
 	<meta name="description" content={m.muni_meta_desc({ nom: muniNom })} />
 </svelte:head>
-
-{#snippet collisioAlert()}
-	<!-- Advertència de COL·LISIÓ DEL MODEL (mai el número nu): estimació+banda idèntiques a
-	     altres municipis → la xifra no és específica. Si hi ha ETCA a banda i banda, la font
-	     oficial SÍ que els distingeix (i es diu). Terme diferent de la col·lisió de slug. -->
-	{#if collisions.length}
-		<div class="alert warn" style="margin-top:10px">
-			<span class="bar"></span>
-			<div>
-				<strong>{m.muni_collisio_title()}:</strong>
-				{m.muni_collisio_body({ peers: collisioNoms })}
-				{#if collisioEtca}
-					{m.muni_collisio_etca({ self: collisioEtca.self, peers: collisioEtca.peers })}
-				{/if}
-				<ul class="veins" style="margin:8px 0 0">
-					{#each collisions as c (c.slug)}
-						<li><a class="veins__chip" href={localizeHref(`/municipi/${c.slug}`)}>{c.nom}</a></li>
-					{/each}
-				</ul>
-			</div>
-		</div>
-	{/if}
-{/snippet}
 
 <section data-view="municipi" class="on">
 	<div class="ap-hero">
@@ -587,9 +357,8 @@
 				</section>
 			{/if}
 
-			<!-- Capçalera de dades: rang IETR + valor gran, tipologia (pastilla) i confiança + score.
-			     És la MATEIXA lectura destacada que les fitxes dels extrems del Resum, ara per a
-			     qualsevol municipi. -->
+			<!-- Capçalera de dades: la dada OFICIAL gran (padró) + identificadors. Les dades oficials
+			     porten font i data, no bandera de confiança (el model i la seva confiança, aparcats). -->
 			<section class="ds-sec">
 				<div class="muni-card">
 					<div class="muni-card__top">
@@ -605,35 +374,6 @@
 						<span>INE {ine5}</span>
 						{#if row.idescat6}<span>Idescat {row.idescat6}</span>{/if}
 					</p>
-
-
-					<!-- Confiança (consultor #2): bandera GRAN + «per què» (concordança/padró) + divergència
-					     dels senyals 0-100 + riscos. Que ningú confongui la qualitat amb una xifra opaca. -->
-					{#if confLabel || score !== null}
-						<div class="muni-card__conf">
-							<div class="muni-card__conf-head">
-								<span class="muni-card__conf-lbl">{m.map_confidence_label()}</span>
-								{#if !validat}<span class="muni-card__conf-flag muni-card__conf-flag--baixa">{m.muni_conf_sense_validacio()}</span>{:else if confLabel}<span class="muni-card__conf-flag muni-card__conf-flag--{confFlag}">{confLabel}</span>{/if}
-								{#if validat && score !== null}<span class="muni-card__conf-global" title={m.map_confidence_score_label()}>{m.conf_global_label()} {formatDecimal(score, locale, 0)}<span class="muni-card__conf-scale">/100</span></span>{/if}
-							</div>
-							{#if confWhy.length}
-								<p class="muni-card__conf-line">
-									<span class="muni-card__conf-k">{m.conf_why_label()}</span>
-									{#each confWhy as w}<span class="muni-card__conf-chip">{w}</span>{/each}
-								</p>
-							{/if}
-							{#if diverg !== null}
-								<p class="muni-card__conf-line">
-									<span class="muni-card__conf-k">{m.conf_diverg_label()}</span>
-									<span class="muni-card__conf-diverg">{formatDecimal(diverg, locale, 0)}<span class="muni-card__conf-scale">/100</span></span>
-								</p>
-							{/if}
-							<p class="muni-card__conf-line">
-								<span class="muni-card__conf-k">{m.conf_risks_label()}</span>
-								<span class="muni-card__conf-v">{m.conf_risk_noseries()} · {m.conf_risk_osm()}</span>
-							</p>
-						</div>
-					{/if}
 				</div>
 			</section>
 
@@ -687,22 +427,22 @@
 				</section>
 			{/if}
 
-			<!-- P2 · L'EVIDÈNCIA: els cinc números (del dataset). El «qui hi dorm» és inferència i
-			     es mostra en RANG (el rang és la dada, spec §10). -->
+			<!-- P2 · L'EVIDÈNCIA: els números que manen (del dataset). La presència, NOMÉS com a dada
+			     oficial: ETCA (Idescat) on n'hi ha; «sense dada oficial» on Idescat no la publica. -->
 			<section class="ds-sec">
-				<div class="ds-sec__hd"><span class="ref">5</span><h2>{m.muni_5num_title()}</h2></div>
+				<div class="ds-sec__hd"><span class="ref">№</span><h2>{m.muni_nums_title()}</h2></div>
 				<div class="muni-5num tnum">
 					<div class="n5">
 						<span class="n5__lab"><span class="pd dot--measured"></span>{m.muni_num_padro()}</span>
 						<span class="n5__v">{typeof row.values.poblacio === 'number' ? formatInteger(row.values.poblacio, locale) : '—'}</span>
 					</div>
 					<div class="n5">
-						<span class="n5__lab"><span class="pd dot--derived"></span>{m.muni_num_dorm()}</span>
-						<span class="n5__v">{#if pernoctaBand}{fInt(pernoctaBand.estLow)}–{fInt(pernoctaBand.estHigh)}{:else}—{/if}</span>
-					</div>
-					<div class="n5">
-						<span class="n5__lab"><span class="pd dot--derived"></span>{m.muni_num_carrega()}</span>
-						<span class="n5__v">{typeof row.values.carrega_total_est === 'number' ? fInt(row.values.carrega_total_est) : '—'}</span>
+						<span class="n5__lab"><span class="pd dot--measured"></span>{m.muni_num_etca()}</span>
+						{#if etca !== null}
+							<span class="n5__v">{formatInteger(etca, locale)}<span class="n5__u">hab.</span></span>
+						{:else}
+							<span class="n5__v n5__v--absent">{m.muni_sense_dada_oficial()}</span>
+						{/if}
 					</div>
 					<div class="n5">
 						<span class="n5__lab"><span class="pd dot--measured"></span>{m.muni_num_nop()}</span>
@@ -713,18 +453,7 @@
 						<span class="n5__v">{typeof row.values.renda_neta_persona === 'number' ? formatInteger(row.values.renda_neta_persona, locale) : '—'}<span class="n5__u">€</span></span>
 					</div>
 				</div>
-				<!-- Veu del gap (tres registres): senyal → veu graduada; soroll → es replega a base oficial.
-				     Només fora del Berguedà (la vitrina té la seva narració-IA). -->
-				{#if !isBergueda && pernoctaBand}
-					{#if veuText}
-						<p class="muni-gap-veu" class:is-ferm={pernoctaBand.veu === 'ferm'}>{veuText}</p>
-					{:else if pernoctaBand.registre === 'soroll'}
-						<p class="muni-gap-veu is-soroll">{m.muni_gap_soroll()}</p>
-					{:else if pernoctaBand.registre === 'oficial' && pernoctaBand.etcaPct !== null}
-						<p class="muni-gap-veu is-oficial">{m.muni_gap_oficial({ pct: fSign(pernoctaBand.etcaPct), rang: `${fInt(pernoctaBand.estLow)}–${fInt(pernoctaBand.estHigh)}` })}</p>
-					{/if}
-				{/if}
-				{@render collisioAlert()}
+				<p class="muni-sec__src">{m.muni_etca_srcline()}</p>
 			</section>
 
 			<!-- P3 · LA MAQUINÀRIA: la fitxa completa, plegada en acordions (oberts amb «mode dades»).
@@ -747,14 +476,6 @@
 							{@render fichaRow(row, key)}
 						{/each}
 					</div>
-					{#if block.ref === 'E'}
-						<p class="muni-sec__rangenote">{m.ficha_range_note()}</p>
-					{/if}
-					{#if block.ref === 'E' && l1GtL2}
-						<div class="alert" style="margin-top:10px">
-							<span class="bar"></span><div>{m.muni_capes_divergence()}</div>
-						</div>
-					{/if}
 					{#if block.ref === 'D' && osmSospita}
 						<div class="alert warn" style="margin-top:10px">
 							<span class="bar"></span><div>{m.muni_osm_sospita()}</div>
@@ -764,21 +485,8 @@
 				</details>
 			{/each}
 
-			<section class="ds-sec">
-				<div class="ds-sec__hd"><span class="ref">⚙</span><h2>{m.muni_serv_title()}</h2></div>
-				<p class="muni-sec__sub">{m.muni_serv_sub()}</p>
-				{#if ratioCarrega}
-					<p class="muni-serv__punch">{m.muni_serv_ratio({ x: formatDecimal(ratioCarrega, locale, 1) })}</p>
-				{/if}
-				<dl class="muni-serv">
-					{#each serveisLectura as s (s.servei)}
-						<div class="muni-serv__row">
-							<dt>{s.servei}</dt>
-							<dd>{s.denom}{#if s.val != null} · <strong>{formatDecimal(s.val, locale, 0)}</strong>{#if s.unit} {s.unit}{/if}{/if}</dd>
-						</div>
-					{/each}
-				</dl>
-			</section>
+			<!-- «Lectura per a serveis» APARCADA amb el model: els seus denominadors eren les
+			     estimacions de pernocta/càrrega. Tornarà, si torna, amb dades oficials. -->
 
 			<!-- Pobles mirall: ara és la constel·lació cat-escala, fora del bloc {#if row} (per a TOTS
 			     els munis). Vegeu la secció més avall, després dels veïns de comarca. -->
@@ -807,48 +515,6 @@
 					<div class="alert"><span class="bar"></span><div>{m.muni_honesty()}</div></div>
 				</div>
 				<p class="srcline">{m.muni_srcline()}</p>
-			</section>
-		{:else if pernocta}
-			<!-- Municipi COBERT pel Nivell C (fora del Berguedà): encara no té la fitxa completa, però
-			     sí una PRESÈNCIA ESTIMADA EN RANG. Honestedat: el rang és la dada, no la xifra; l'ETCA
-			     oficial es mostra com a validació; tot enllaça a la metodologia. -->
-			<section class="ds-sec">
-				<div class="muni-rang">
-					<p class="muni-rang__badge">{m.muni_rang_badge()}</p>
-					<p class="muni-rang__lede">{m.muni_rang_lede()}</p>
-					<div class="muni-rang__big tnum">
-						{#if pernocta.etca_oficial != null}
-							<!-- On hi ha ETCA oficial (≥1.000 hab), ella és el titular (presència real oficial);
-							     la nostra estimació en rang va com a mètode propi validat. -->
-							<span class="muni-rang__k">{m.muni_rang_etca_label()}</span>
-							<span class="muni-rang__range">{fNum(pernocta.etca_oficial)}</span>
-							<span class="muni-rang__central"
-								>{m.muni_rang_model()}: {fNum(pernocta.rang_baix)} – {fNum(pernocta.rang_alt)}</span
-							>
-						{:else}
-							<!-- Sense ETCA (munis <1.000 hab): el nostre rang és l'estimació de presència. -->
-							<span class="muni-rang__k">{m.muni_rang_label()}</span>
-							<span class="muni-rang__range">{fNum(pernocta.rang_baix)} – {fNum(pernocta.rang_alt)}</span>
-							<span class="muni-rang__central">{m.muni_rang_central()} {fNum(pernocta.estimacio)}</span>
-						{/if}
-					</div>
-					{#if pernocta.padro != null}
-						<dl class="muni-serv">
-							<div class="muni-serv__row">
-								<dt>{m.muni_num_padro()}</dt>
-								<dd class="tnum">{fNum(pernocta.padro)}</dd>
-							</div>
-						</dl>
-					{/if}
-					<div class="alert" style="margin-top:12px">
-						<span class="bar"></span><div>{m.muni_rang_caveat()}</div>
-					</div>
-					{@render collisioAlert()}
-					<div class="muni-empty__actions" style="margin-top:14px">
-						<a class="muni-empty__link" href={localizeHref('/metodologia')}>{m.muni_rang_method_link()}</a>
-						<a class="muni-empty__link muni-empty__link--alt" href={localizeHref('/mapa')}>{m.muni_pick_map()}</a>
-					</div>
-				</div>
 			</section>
 		{:else}
 			<!-- Municipi de FORA del Berguedà: estat AMABLE «sense dades encara» (mateixa honestedat que
@@ -902,8 +568,7 @@
 <style>
 	/* Chrome (.ap-hero, .ds-main, .ds-sec, .prov-key, .caveats, .ex__row/.ex__rows…) ve del
 	   design-system; aquí només els elements propis de la fitxa: el selector, la capçalera de
-	   dades del municipi (pastilla de tipologia + confiança, reusant el gest del Resum), els
-	   subtítols de bloc i l'estat «sense dades». */
+	   dades del municipi, els subtítols de bloc i l'estat «sense dades». */
 
 	/* Selector de municipi. */
 	.muni-pick {
@@ -975,75 +640,6 @@
 		color: var(--dp-text-muted);
 	}
 
-
-	/* Bloc de confiança (consultor #2): bandera + per què + divergència + riscos, en files.
-	   Que ningú confongui la qualitat (bandera) amb una puntuació opaca. Gest mono del Resum. */
-	.muni-card__conf {
-		margin: 12px 0 0;
-		font-family: var(--dp-font-mono);
-		font-size: 0.68rem;
-		display: grid;
-		gap: 4px;
-	}
-	.muni-card__conf-head {
-		display: flex;
-		align-items: baseline;
-		gap: 8px;
-		flex-wrap: wrap;
-	}
-	.muni-card__conf-lbl {
-		text-transform: uppercase;
-		letter-spacing: 0.06em;
-		color: var(--dp-text-subtle);
-	}
-	.muni-card__conf-flag {
-		font-weight: 700;
-		color: var(--dp-text);
-	}
-	.muni-card__conf-flag--alta {
-		color: var(--dp-success, #2f6b4f);
-	}
-	.muni-card__conf-flag--baixa {
-		color: var(--dp-warning, #b5612a);
-	}
-	.muni-card__conf-global {
-		margin-left: auto;
-		color: var(--dp-text-subtle);
-		font-feature-settings: 'tnum' 1;
-	}
-	.muni-card__conf-line {
-		margin: 0;
-		display: flex;
-		gap: 6px;
-		flex-wrap: wrap;
-		align-items: baseline;
-		line-height: 1.5;
-	}
-	.muni-card__conf-k {
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		color: var(--dp-text-subtle);
-		min-width: 8.5em;
-	}
-	.muni-card__conf-v {
-		color: var(--dp-text-muted);
-	}
-	.muni-card__conf-chip {
-		color: var(--dp-text);
-		background: var(--dp-surface-2, color-mix(in srgb, var(--dp-text) 6%, transparent));
-		border-radius: var(--dp-radius-sm);
-		padding: 1px 7px;
-	}
-	.muni-card__conf-diverg {
-		font-weight: 700;
-		color: var(--dp-text);
-		font-feature-settings: 'tnum' 1;
-	}
-	.muni-card__conf-scale {
-		font-weight: 500;
-		color: var(--dp-text-subtle);
-	}
-
 	/* Subtítol de bloc (distingeix mesura d'inferència, com els subgrups del Resum). */
 	.muni-sec__sub {
 		margin: -2px 0 10px;
@@ -1051,24 +647,6 @@
 		font-size: 0.66rem;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
-		color: var(--dp-text-subtle);
-	}
-	/* Pas 0 · nota de rang (família pernocta): explica que la inferència es publica en rang. */
-	.muni-sec__rangenote {
-		margin: 8px 0 0;
-		font-size: 0.74rem;
-		line-height: 1.4;
-		color: var(--dp-text-muted);
-	}
-	/* Valor «no concloent» (rang que creua 0): neutre, sense signe. */
-	.val--neutral {
-		color: var(--dp-text-subtle);
-		font-weight: 600;
-	}
-	/* Punt mig (cortesia): el rang és la dada; el punt, secundari. */
-	.val-mid {
-		font-size: 0.82em;
-		font-weight: 500;
 		color: var(--dp-text-subtle);
 	}
 	/* Línia de font per bloc. */
@@ -1080,30 +658,11 @@
 		line-height: 1.45;
 	}
 
-	/* P2 · els cinc números. */
+	/* P2 · els números que manen. */
 	.muni-5num {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
 		gap: 10px;
-	}
-	/* Veu del gap (tres registres): senyal graduat (ferm/prudent) · soroll replegat. */
-	.muni-gap-veu {
-		margin: 12px 0 0;
-		font-size: 0.92rem;
-		line-height: 1.45;
-		color: var(--dp-text-muted);
-	}
-	.muni-gap-veu.is-ferm {
-		color: var(--dp-text);
-		font-weight: 600;
-	}
-	.muni-gap-veu.is-soroll {
-		font-style: italic;
-	}
-	.muni-gap-veu.is-oficial {
-		color: var(--dp-text);
-		border-left: 2px solid var(--dp-border-strong);
-		padding-left: 9px;
 	}
 	.n5 {
 		background: var(--dp-surface);
@@ -1133,6 +692,14 @@
 		font-size: 1.4rem;
 		line-height: 1;
 		color: var(--dp-text);
+	}
+	/* «Sense dada oficial»: honest i apagat, mai un zero fingit ni un guió mut. */
+	.n5__v--absent {
+		font-family: var(--dp-font-sans);
+		font-weight: 600;
+		font-size: 0.88rem;
+		line-height: 1.3;
+		color: var(--dp-text-muted);
 	}
 	.n5__u {
 		font-family: var(--dp-font-mono);
@@ -1376,49 +943,6 @@
 		transform: rotate(-135deg);
 	}
 
-	/* Caixeta «Lectura per a serveis» (consultor #4): quin denominador toca a cada servei. */
-	.muni-serv__punch {
-		margin: 4px 0 12px;
-		font-size: 0.92rem;
-		line-height: 1.5;
-		color: var(--dp-text);
-	}
-	.muni-serv {
-		margin: 0;
-		display: grid;
-		gap: 1px;
-		background: var(--dp-border);
-		border: 1px solid var(--dp-border);
-		border-radius: var(--dp-radius-md);
-		overflow: hidden;
-	}
-	.muni-serv__row {
-		display: flex;
-		justify-content: space-between;
-		gap: 14px;
-		align-items: baseline;
-		background: var(--dp-surface);
-		padding: 9px 13px;
-	}
-	.muni-serv__row dt {
-		font-family: var(--dp-font-mono);
-		font-size: 0.64rem;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		color: var(--dp-text-subtle);
-		white-space: nowrap;
-	}
-	.muni-serv__row dd {
-		margin: 0;
-		text-align: right;
-		font-size: 0.84rem;
-		color: var(--dp-text-muted);
-	}
-	.muni-serv__row dd strong {
-		color: var(--dp-text);
-		font-feature-settings: 'tnum' 1;
-	}
-
 	/* Estat «sense dades encara» (fora del Berguedà). To apagat i amable; cap xifra. */
 	.muni-empty {
 		max-width: 56ch;
@@ -1458,53 +982,6 @@
 		color: var(--dp-text-subtle);
 	}
 
-	/* Targeta de PRESÈNCIA ESTIMADA EN RANG (munis coberts pel Nivell C, fora del Berguedà). */
-	.muni-rang {
-		max-width: 60ch;
-	}
-	.muni-rang__badge {
-		display: inline-block;
-		margin: 0 0 10px;
-		font-family: var(--dp-font-mono);
-		font-size: 0.66rem;
-		text-transform: uppercase;
-		letter-spacing: 0.06em;
-		color: var(--dp-text-muted);
-		border: 1px solid var(--dp-border-strong);
-		border-radius: var(--dp-radius-sm);
-		padding: 3px 9px;
-	}
-	.muni-rang__lede {
-		margin: 0 0 16px;
-		font-size: 0.95rem;
-		line-height: 1.55;
-		color: var(--dp-text-muted);
-	}
-	.muni-rang__big {
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-		margin: 0 0 16px;
-	}
-	.muni-rang__k {
-		font-family: var(--dp-font-mono);
-		font-size: 0.66rem;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		color: var(--dp-text-subtle);
-	}
-	.muni-rang__range {
-		font-family: 'Archivo', var(--dp-font-display);
-		font-weight: 800;
-		font-size: 2rem;
-		line-height: 1.05;
-		color: var(--dp-text);
-	}
-	.muni-rang__central {
-		font-family: var(--dp-font-mono);
-		font-size: 0.74rem;
-		color: var(--dp-text-subtle);
-	}
 	.muni-empty__actions {
 		display: flex;
 		gap: 18px;

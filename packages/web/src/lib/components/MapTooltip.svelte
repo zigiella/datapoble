@@ -4,29 +4,23 @@
 	 * La procedència fa servir la signatura `.prov` del design-system (sistema.css):
 	 * cada número arrossega el seu origen (contracte editorial). "Sense dada" és explícit.
 	 *
-	 * Per a la família d'estimació de població (gap / presència real) afegeix, a més:
-	 *  - la CONFIANÇA del municipi (alta/mitjana/baixa, clau `confianca` del contracte);
-	 *  - un recordatori que és INFERÈNCIA (no cens), reforçant la procedència morada.
+	 * FASE NOVA · MODEL APARCAT (vot de Bea 2026-07-16): fora la banda de pernocta, la costura
+	 * amb Idescat del gap i la confiança del model — el tooltip només parla d'indicadors
+	 * OFICIALS. (Les branques de tipologia queden dorments: cap indicador categòric al selector.)
 	 */
 	import type { MetricDef, MetricKey } from '$lib/contract/types';
-	import type { PernoctaMuni } from '$lib/contract/pernocta';
 	import { makeMetricFormatter } from '$lib/map/classify';
 	import { provenanceOf } from '$lib/map/provenance';
 	import { isCategorical, tipologiaLabel, tipologiaBlurb } from '$lib/map/tipologia';
-	import { formatDecimal, formatInteger } from '$lib/format';
 	import { pick, currentLocale } from '$lib/i18n';
 	import { m } from '$lib/paraglide/messages';
 
 	interface Props {
 		nom: string;
-		/** Clau de la mètrica activa (per al format específic del gap i el caveat d'inferència). */
+		/** Clau de la mètrica activa (per al format específic per clau). */
 		metricKey: MetricKey;
 		def: MetricDef;
 		value: number | string | null;
-		/** Confiança de l'estimació (clau `confianca`); només es mostra per a estimacions. */
-		conf?: string | null;
-		/** Confiança auditable 0-100 (`confianca_score`); complementa la bandera. */
-		confScore?: number | null;
 		/** Posició en píxels dins del contenidor del mapa. */
 		x: number;
 		y: number;
@@ -36,38 +30,11 @@
 		href?: string | null;
 		/** Tàctil: la targeta capta el toc (pointer-events) perquè el CTA «obrir fitxa» sigui tocable. */
 		touchMode?: boolean;
-		/** Presència estimada EN RANG (Nivell C) dels munis coberts fora del Berguedà: si hi és, el
-		 * tooltip hi afegeix la banda rang_baix–rang_alt + ETCA (la presència és inferència, no cens). */
-		pernocta?: PernoctaMuni | null;
-		/** Costura del gap: si el valor pintat és el d'Idescat (cobert ≥1.000 hab), la NOSTRA estimació
-		 * (%) arriba aquí com a CONTRAST. Quan hi és, el tooltip etiqueta el principal com a Idescat. */
-		gapNostra?: number | null;
-		/** Validació (té ETCA?): sense ETCA, la confiança de la pernocta passa a «sense validació oficial». */
-		validat?: boolean;
 	}
-	let {
-		nom,
-		metricKey,
-		def,
-		value,
-		conf = null,
-		confScore = null,
-		x,
-		y,
-		hint = null,
-		href = null,
-		touchMode = false,
-		pernocta = null,
-		gapNostra = null,
-		validat = true
-	}: Props = $props();
+	let { nom, metricKey, def, value, x, y, hint = null, href = null, touchMode = false }: Props =
+		$props();
 
 	const locale = $derived(currentLocale());
-	// Costura del gap: el valor pintat és d'Idescat (oficial) i la nostra estimació és el contrast.
-	const isGapOverride = $derived(typeof gapNostra === 'number' && metricKey === 'gap_pernocta_pct');
-	const gapNostraTxt = $derived(
-		typeof gapNostra === 'number' ? `${gapNostra > 0 ? '+' : ''}${gapNostra}%` : ''
-	);
 	// La tipologia és CATEGÒRICA: el valor és una cadena d'arquetip → es mostra l'etiqueta HUMANA
 	// (no el snake_case) i una frase curta del que vol dir. La resta de mètriques, format numèric.
 	const isTipologia = $derived(isCategorical(metricKey));
@@ -84,40 +51,10 @@
 	/** Frase curta de l'arquetip de tipologia (només en mode tipologia). */
 	const tipoBlurb = $derived(isTipologia && typeof value === 'string' ? tipologiaBlurb(value) : '');
 
-	/**
-	 * És una mètrica d'ESTIMACIÓ de les 3 capes (inferència)? En aquest cas el tooltip recorda
-	 * que és inferència (no cens) i mostra la confiança del municipi. Inclou les tres capes del
-	 * model v2 (pernocta/càrrega/pressió turística) i els àlies de compatibilitat.
-	 */
-	const ESTIMATE_KEYS = new Set<MetricKey>([
-		'tipologia',
-		'gap_pernocta_pct',
-		'gap_pernocta',
-		'poblacio_pernocta_est',
-		'carrega_total_est',
-		'index_turisme',
-		'gap_pct',
-		'gap_abs',
-		'poblacio_real_est',
-		'poblacio_real_rel'
-	]);
-	const isEstimate = $derived(ESTIMATE_KEYS.has(metricKey));
-	// Sense ETCA (no validat): la confiança de la pernocta passa a «sense validació oficial» (la
-	// validació mana sobre l'heurística interna — coherent amb la fitxa i /metodologia).
-	const senseValidacioMap = $derived(isEstimate && metricKey === 'gap_pernocta_pct' && !validat && hasVal);
-	/** Hi ha score auditable 0-100 a mostrar? Es complementa amb la bandera (no la substitueix). */
-	const hasScore = $derived(typeof confScore === 'number' && Number.isFinite(confScore));
-	/** Etiqueta localitzada del nivell de confiança (alta/mitjana/baixa). */
-	const confLabel = $derived.by(() => {
-		if (conf === 'alta') return m.map_confidence_high();
-		if (conf === 'mitjana') return m.map_confidence_mid();
-		if (conf === 'baixa') return m.map_confidence_low();
-		return null;
-	});
 	const unit = $derived(pick(def.unit, locale));
 	// Mostra la unitat només quan és un nom de magnitud (habitants, establiments, kg/hab/any…).
 	// L'amaga per a percentatges (ja duen %), rànquings i escales d'índex ("0-100", "posició"),
-	// on enganxar la "unitat" al número el faria confús (p. ex. IETR "41,00 0-100").
+	// on enganxar la "unitat" al número el faria confús.
 	const showUnit = $derived(
 		hasVal &&
 			(def.format === 'integer' || def.format === 'decimal' || def.format === 'ratio') &&
@@ -142,7 +79,7 @@
 	aria-live="polite"
 >
 	<div class="tip__place">{nom}</div>
-	<div class="tip__metric">{isGapOverride ? m.map_gap_idescat_metric() : pick(def.label, locale)}</div>
+	<div class="tip__metric">{pick(def.label, locale)}</div>
 	{#if hasVal}
 		<div class="tip__val tnum" class:tip__val--cat={isTipologia}>
 			{formatted}{#if showUnit}<span class="tip__unit"> {unit}</span>{/if}
@@ -155,67 +92,12 @@
 		<div class="tip__val tip__val--nodata">{m.map_tooltip_nodata()}</div>
 	{/if}
 
-	{#if isGapOverride && hasVal}
-		<!-- La capçalera és Idescat (oficial); la NOSTRA estimació baixa a contrast clarament etiquetat. -->
-		<p class="tip__contrast">
-			{m.map_gap_nostra_tag()} (pernocta): <b class="tnum">{gapNostraTxt}</b>
-		</p>
-	{/if}
-
-	{#if senseValidacioMap}
-		<!-- Sense ETCA: la validació mana → cap «confiança alta» sobre la pernocta (coherent amb la
-		     fitxa i /metodologia). -->
-		<div class="tip__conf tip__conf--baixa">
-			<span class="tip__conf-val">{m.muni_conf_sense_validacio()}</span>
-		</div>
-	{:else if isEstimate && hasVal && !isGapOverride && (confLabel || hasScore)}
-		<!-- Confiança: la BANDERA (alta/mitjana/baixa) i el SCORE auditable 0-100 es mostren TOTS
-		     DOS — poden divergir (Castellar: bandera «alta» però score ≈ 33 per senyals que es
-		     contradiuen). Veure els dos és l'honestedat: el score és el costat fi de la tensió. -->
-		<div class="tip__conf tip__conf--{conf}">
-			{#if confLabel}
-				<span class="tip__conf-lbl">{m.map_confidence_label()}:</span>
-				<span class="tip__conf-val">{confLabel}</span>
-			{/if}
-			{#if hasScore}
-				<span class="tip__conf-score" title={m.map_confidence_score_label()}
-					>· {formatDecimal(confScore as number, locale, 0)}<span class="tip__conf-score-scale"
-						>/100</span
-					></span
-				>
-			{/if}
-		</div>
-	{/if}
-
-	{#if pernocta}
-		<!-- Presència estimada EN RANG (Nivell C) per als munis coberts: la inferència es comunica com a
-		     BANDA (mai punt), amb l'ETCA oficial al costat com a validació quan n'hi ha. Mateix tooltip
-		     que el Berguedà (indicador + confiança), amb aquest afegit honest de presència. -->
-		<div class="tip__range-block">
-			<span class="tip__range-lbl">{isGapOverride ? m.map_range_eyebrow_nostra() : m.map_range_eyebrow()}</span>
-			<span class="tip__range tnum"
-				>{formatInteger(pernocta.rang_baix, locale)}–{formatInteger(pernocta.rang_alt, locale)}<span
-					class="tip__range-unit"
-				>
-					{m.map_range_unit()}</span
-				></span
-			>
-			{#if pernocta.etca_oficial != null && !isGapOverride}
-				<span class="tip__range-etca"
-					>{m.map_range_etca()}: <b class="tnum">{formatInteger(pernocta.etca_oficial, locale)}</b></span
-				>
-			{/if}
-		</div>
-	{/if}
-
-	<div class="prov prov--{isGapOverride ? 'measured' : prov}">
-		<span class="dot"></span>{isGapOverride ? m.map_prov_measured() : provLabel}
+	<div class="prov prov--{prov}">
+		<span class="dot"></span>{provLabel}
 	</div>
 
 	{#if hasVal && isTipologia}
 		<p class="tip__caveat">{m.map_tipologia_tooltip_caveat()}</p>
-	{:else if isEstimate && hasVal}
-		<p class="tip__caveat">{m.map_gap_tooltip_caveat()}</p>
 	{/if}
 
 	{#if hint}
@@ -301,83 +183,6 @@
 		font-size: 0.72rem;
 		line-height: 1.35;
 		color: var(--dp-text-muted);
-	}
-	/* Score auditable 0-100 al costat de la bandera de confiança. */
-	.tip__conf-score {
-		font-weight: 700;
-		color: var(--dp-text);
-	}
-	.tip__conf-score-scale {
-		font-weight: 500;
-		color: var(--dp-text-subtle);
-	}
-	.tip__conf {
-		display: flex;
-		align-items: baseline;
-		gap: 5px;
-		font-family: var(--dp-font-mono);
-		font-size: 0.62rem;
-		margin: 0 0 6px;
-	}
-	.tip__conf-lbl {
-		color: var(--dp-text-subtle);
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
-	}
-	.tip__conf-val {
-		font-weight: 700;
-		color: var(--dp-text);
-	}
-	/* La confiança baixa es marca en càlid d'avís perquè es llegeixi com a senyal feble. */
-	.tip__conf--baixa .tip__conf-val {
-		color: var(--dp-warning, #b5612a);
-	}
-	.tip__conf--alta .tip__conf-val {
-		color: var(--dp-success, #2f6b4f);
-	}
-	/* Bloc de presència en rang (munis coberts, Nivell C): banda + ETCA, discret sota el valor. */
-	.tip__range-block {
-		display: flex;
-		flex-direction: column;
-		gap: 1px;
-		margin: 0 0 6px;
-	}
-	.tip__range-lbl {
-		font-family: var(--dp-font-mono);
-		font-size: 0.56rem;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		color: var(--dp-text-subtle);
-	}
-	.tip__range {
-		font-family: var(--dp-font-display);
-		font-weight: 700;
-		font-size: 0.98rem;
-		color: var(--dp-text);
-		line-height: 1.1;
-	}
-	.tip__range-unit {
-		font-family: var(--dp-font-sans);
-		font-size: 0.62rem;
-		font-weight: 600;
-		color: var(--dp-text-subtle);
-	}
-	.tip__range-etca {
-		font-family: var(--dp-font-mono);
-		font-size: 0.58rem;
-		color: var(--dp-text-subtle);
-	}
-	/* Contrast de la costura: la nostra estimació al costat del valor oficial d'Idescat. */
-	.tip__contrast {
-		margin: 0 0 6px;
-		font-family: var(--dp-font-mono);
-		font-size: 0.62rem;
-		color: var(--dp-text-subtle);
-		line-height: 1.35;
-	}
-	.tip__contrast-tag {
-		font-weight: 700;
-		color: var(--dp-success, #2f6b4f);
 	}
 	.tip__caveat {
 		margin: 7px 0 0;

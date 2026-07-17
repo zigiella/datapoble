@@ -1,17 +1,17 @@
 /**
  * Pàgina de COMARCA (`/comarca/[slug]` · `/es/comarca/[slug]`) — nivell intermedi de l'espina
  * territorial (§5). Dona destí navegable al breadcrumb (Catalunya › vegueria › COMARCA › municipi)
- * i una vista de la comarca: els seus municipis (enllaç a fitxa) + el seu gap padró↔presència.
+ * i una vista de la comarca: mapa + els seus municipis (enllaç a fitxa).
  *
- * Tot des d'artefactes estàtics (prerender-safe): `comarques.json` (agrupació), `municipis-cataleg`
- * (noms) i `pernocta-catalunya` (gap). Slug = `toSlug(nom de la comarca)`.
+ * Tot des d'artefactes estàtics (prerender-safe): `comarques.json` (agrupació) i
+ * `municipis-cataleg` (noms). Slug = `toSlug(nom de la comarca)`.
+ * (El gap padró↔presència del model està APARCAT: la pàgina no carrega pernocta.)
  */
 import { toSlug } from '$lib/contract/slug';
 import { error } from '@sveltejs/kit';
 import { loadMunicipisDataset } from '$lib/data/dataset';
 import type { ComarquesData } from '$lib/contract/comarques';
 import type { CatalegData } from '$lib/contract/cataleg';
-import type { PernoctaData, PernoctaMuni } from '$lib/contract/pernocta';
 import type { IndicadorsCatData } from '$lib/contract/indicadors';
 import type { FeatureCollection } from 'geojson';
 import type { EntryGenerator, PageLoad } from './$types';
@@ -42,13 +42,11 @@ export const entries: EntryGenerator = async () => {
 };
 
 export const load: PageLoad = async ({ fetch, params }) => {
-	const [comRes, catRes, pernRes, munGeoRes, comGeoRes, vegGeoRes, dataset] = await Promise.all([
+	const [comRes, catRes, munGeoRes, comGeoRes, dataset] = await Promise.all([
 		fetch('/data/comarques.json'),
 		fetch('/data/municipis-cataleg.json'),
-		fetch('/data/pernocta-catalunya.json'),
 		fetch('/geo/catalunya-municipis.geojson'),
 		fetch('/geo/catalunya-comarques.geojson'),
-		fetch('/geo/catalunya-vegueries.geojson'),
 		loadMunicipisDataset(fetch)
 	]);
 	const data = (await comRes.json()) as ComarquesData;
@@ -57,30 +55,20 @@ export const load: PageLoad = async ({ fetch, params }) => {
 
 	const cataleg = catRes.ok ? ((await catRes.json()) as CatalegData) : [];
 	const nomByIne5 = new Map(cataleg.map((mn) => [mn.ine5, mn.nom]));
-	const pern: Record<string, PernoctaMuni> = pernRes.ok
-		? ((await pernRes.json()) as PernoctaData).munis
-		: {};
 
-	// Municipis de la comarca: nom + slug + gap (si cobert pel Nivell C).
+	// Municipis de la comarca: nom + slug (enllaç a la fitxa; tota la resta viu allà).
 	const munis = comarca.ine5s
 		.map((ine5) => {
 			const nom = nomByIne5.get(ine5) ?? ine5;
-			const p = pern[ine5];
-			const gap = p && p.padro ? ((p.estimacio - p.padro) / p.padro) * 100 : null;
-			return { ine5, nom, slug: toSlug(nom), gap, cobert: !!p };
+			return { ine5, nom, slug: toSlug(nom) };
 		})
 		.sort((a, b) => a.nom.localeCompare(b.nom, 'ca'));
-
-	// Subconjunt de pernocta de la comarca (per al beeswarm del gap).
-	const pernSub: Record<string, PernoctaMuni> = {};
-	for (const ine5 of comarca.ine5s) if (pern[ine5]) pernSub[ine5] = pern[ine5];
 
 	// Geometria + indicadors per al MAPA de la comarca (mateixos artefactes que /mapa). El mapa
 	// enquadra als municipis de la comarca (comarca.ine5s) i pinta el Berguedà (dataset) o la resta
 	// (catValues) pel mateix indicador. No-fatals.
 	const geojson = (await munGeoRes.json()) as FeatureCollection;
 	const comarquesGeo = (await comGeoRes.json()) as FeatureCollection;
-	const vegueries = (await vegGeoRes.json()) as FeatureCollection;
 	let catValues: IndicadorsCatData = {};
 	try {
 		const r = await fetch('/data/indicadors-catalunya.json');
@@ -88,25 +76,13 @@ export const load: PageLoad = async ({ fetch, params }) => {
 	} catch {
 		catValues = {};
 	}
-	let validats: string[] = [];
-	try {
-		const r = await fetch('/data/validats.json');
-		if (r.ok) validats = (await r.json()) as string[];
-	} catch {
-		validats = [];
-	}
 
 	return {
 		comarca: { nom: comarca.nom, vegueria: comarca.vegueria, ine5s: comarca.ine5s },
 		munis,
-		pernSub,
-		coberts: Object.keys(pernSub).length,
 		dataset,
 		geojson,
 		comarques: comarquesGeo,
-		vegueries,
-		pernocta: pern,
-		catValues,
-		validats
+		catValues
 	};
 };

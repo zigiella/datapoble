@@ -69,14 +69,20 @@
 		label: () => string;
 		entries: MetricDef[];
 	}
-	// Indicadors retirats del públic (no surten al diccionari): l'IETR i la seva família (retirat del
-	// mapa i col·lapsat de la fitxa), el model d'una sola capa antic (duplicats confusos del gap
-	// reenquadrat) i els scores interns (massa tècnics per a un diccionari). La dada segueix al
-	// contracte; només no es publica aquí.
+	// Indicadors retirats del públic (no surten al diccionari): l'IETR i la seva família, el model
+	// d'una sola capa antic, els scores interns i — FASE NOVA (model aparcat, vot de Bea
+	// 2026-07-16) — TOTA la família del model d'estimació de pernocta (gap_pernocta*,
+	// poblacio_pernocta_est, carrega_*, index_turisme, ràtios de base, bandera de confiança i
+	// tipologia derivada). La dada segueix al contracte; només no es publica aquí.
 	const HIDDEN = new Set<string>([
 		'IETR', 'IETR_rank', 'IETR_stock', 'IETR_impact',
 		'poblacio_real_est', 'gap_abs', 'gap_pct', 'poblacio_real_rel',
-		'confianca_score', 'divergencia_senyals'
+		'confianca_score', 'divergencia_senyals',
+		// Família del model aparcat (A8 · fase-nova-aparcaments.md):
+		'gap_pernocta', 'gap_pernocta_pct', 'poblacio_pernocta_est',
+		'carrega_total_est', 'carrega_funcional_est', 'index_turisme',
+		'kwh_base_ratio', 'residu_base_ratio', 'vidre_base_ratio',
+		'confianca', 'tipologia'
 	]);
 	const groups = $derived.by<Group[]>(() => {
 		const all = Object.values(dataset.metrics);
@@ -87,8 +93,9 @@
 		}
 		return out;
 	});
-	// Recompte per a la línia de capçalera (tot des del dataset).
-	const totalMetrics = $derived(Object.keys(dataset.metrics).length);
+	// Recompte per a la línia de capçalera: NOMÉS els indicadors publicats al diccionari (els
+	// HIDDEN no hi compten — dir «50» mostrant-ne menys seria un recompte fals).
+	const totalMetrics = $derived(groups.reduce((n, g) => n + g.entries.length, 0));
 	const totalDims = $derived(groups.length);
 
 	// Procedència (oficial 🟦 / inferència 🟪) per la mateixa regla que metodologia/mapa.
@@ -210,29 +217,9 @@
 			</section>
 		{/each}
 
-		<!-- COM LLEGIM LA INCERTESA — doctrina de lectura (experiment geo-rag), NO mètriques del
-		     contracte: per això és una secció a part i el seu copy és i18n (el principi «zero
-		     codificat a mà» aplica al diccionari de mètriques de dalt). La fitxa i el beeswarm ja
-		     APLIQUEN aquests conceptes; aquí se'ls dona nom. -->
-		<section class="ds-sec">
-			<div class="ds-sec__hd">
-				<span class="ref">σ</span><h2>{m.glo_doctrina_title()}</h2>
-			</div>
-			<p class="lead glo-distinct">{m.glo_doctrina_sub()}</p>
-			<dl class="glo-list">
-				{#each [
-					{ term: m.glo_doc_banda_term, def: m.glo_doc_banda_def },
-					{ term: m.glo_doc_registre_term, def: m.glo_doc_registre_def },
-					{ term: m.glo_doc_collisio_term, def: m.glo_doc_collisio_def },
-					{ term: m.glo_doc_disting_term, def: m.glo_doc_disting_def }
-				] as e (e.term)}
-					<div class="glo-term prov-edge--derived">
-						<dt class="glo-term__hd"><span class="glo-term__name">{e.term()}</span></dt>
-						<dd class="glo-term__body"><p class="glo-term__def">{e.def()}</p></dd>
-					</div>
-				{/each}
-			</dl>
-		</section>
+		<!-- (La secció «Com llegim la incertesa» — banda, registres, col·lisió, distingibilitat —
+		     està APARCADA amb el model: descrivia una doctrina de lectura que el web ja no aplica.
+		     La doctrina segueix viva a /metodologia (annex) i a l'experiment geo-rag.) -->
 
 		<section class="ds-sec">
 			<p class="srcline">{m.glo_srcline()}</p>

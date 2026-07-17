@@ -80,11 +80,15 @@
 	};
 
 	// Blocs editorials de la metodologia (referència + títol + llista de claus, en ordre).
+	// `annex`: el bloc documenta el MODEL D'ESTIMACIÓ DE PERNOCTA, aparcat del web (vot de Bea
+	// 2026-07-16). NO s'esborra — la metodologia és el rastre honest — però s'etiqueta com a
+	// annex de recerca perquè ningú el llegeixi com a part del producte viu.
 	interface Block {
 		ref: string;
 		title: () => string;
 		intro?: () => string;
 		keys: MetricKey[];
+		annex?: boolean;
 	}
 	const blocks: Block[] = [
 		{
@@ -101,6 +105,7 @@
 			ref: 'C',
 			title: () => m.met_block_capes(),
 			intro: () => m.met_capes_intro(),
+			annex: true,
 			keys: ['kwh_hab', 'kwh_base_ratio', 'gap_pernocta_pct', 'kg_hab_any', 'residu_base_ratio', 'carrega_total_est', 'carrega_funcional_est', 'vidre_hab', 'vidre_base_ratio', 'index_turisme', 'restauracio_per_1000hab', 'restauracio_estab', 'confianca']
 		},
 		{
@@ -185,7 +190,11 @@
 			<section class="ds-sec" class:first={block.ref === 'A'}>
 				<div class="ds-sec__hd">
 					<span class="ref">{block.ref}</span><h2>{block.title()}</h2>
+					{#if block.annex}<span class="met-annex-badge">{m.met_annex_badge()}</span>{/if}
 				</div>
+				{#if block.annex}
+					<p class="met-annex-note">{m.met_annex_note()}</p>
+				{/if}
 				{#if block.intro}
 					<p class="lead">{block.intro()}</p>
 				{/if}
@@ -220,7 +229,9 @@
 			<section class="ds-sec">
 				<div class="ds-sec__hd">
 					<span class="ref">G</span><h2>{m.met_model_title()}</h2>
+					<span class="met-annex-badge">{m.met_annex_badge()}</span>
 				</div>
+				<p class="met-annex-note">{m.met_annex_note()}</p>
 				<p class="lead">{m.met_model_intro()}</p>
 				<MetodologiaModel {model} />
 			</section>
@@ -231,7 +242,9 @@
 			<section class="ds-sec">
 				<div class="ds-sec__hd">
 					<span class="ref">H</span><h2>{m.met_block_validacio()}</h2>
+					<span class="met-annex-badge">{m.met_annex_badge()}</span>
 				</div>
+				<p class="met-annex-note">{m.met_annex_note()}</p>
 				<p class="lead">{m.met_validacio_intro()}</p>
 				<div class="val-headline" class:val-headline--ok={s.passa}>
 					<span class="val-headline__metric"
@@ -284,7 +297,9 @@
 		<section class="ds-sec">
 			<div class="ds-sec__hd">
 				<span class="ref">I</span><h2>{m.met_rang_title()}</h2>
+				<span class="met-annex-badge">{m.met_annex_badge()}</span>
 			</div>
+			<p class="met-annex-note">{m.met_annex_note()}</p>
 			<p class="lead">{m.met_rang_1()}</p>
 			<p class="lead">{m.met_rang_2()}</p>
 			<p class="lead">{m.met_rang_3()}</p>
@@ -323,6 +338,28 @@
 	/* La primera secció no duu la vora superior (ja la separa el hero). */
 	.ds-sec.first {
 		border-top: none;
+	}
+
+	/* «Model aparcat (annex de recerca)»: la pastilla que marca les seccions del model. La
+	   metodologia és el rastre honest — no s'esborra, s'etiqueta. */
+	.met-annex-badge {
+		font-family: var(--dp-font-mono);
+		font-size: 0.6rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		font-weight: 700;
+		color: var(--dp-warning, #b5612a);
+		border: 1px solid currentColor;
+		border-radius: var(--dp-radius-sm);
+		padding: 2px 8px;
+		white-space: nowrap;
+	}
+	.met-annex-note {
+		margin: 6px 0 12px;
+		font-size: 0.84rem;
+		line-height: 1.5;
+		color: var(--dp-text-muted);
+		max-width: 64ch;
 	}
 
 	.met-grid {

@@ -80,9 +80,9 @@
 			<span class="sub">{m.brand_sub()}</span>
 		</span>
 	</a>
-	<!-- Menú principal de CINC entrades (reconducció · brief de home): Inici · Resum · Mapa ·
-	     Pregunta-li · Metodologia. Política i Excursionista de dia (day-tripper) i Exposició (índex)
-	     surten de la nav. Metodologia PUJA a la capçalera: per a l'avaluador tècnic és la peça que
+	<!-- Menú principal: Inici · Mapa · Metodologia (el drawer mòbil hi afegeix Glossari).
+	     Els stubs morts /index (IETR) i /day-tripper es van ELIMINAR amb el lot d'aparcaments
+	     (fase nova, A10). Metodologia a la capçalera: per a l'avaluador tècnic és la peça que
 	     converteix → visible des del primer píxel. Licitacions segueix només al peu. -->
 	<nav class="ds-nav" aria-label="Primary">
 		<a href={localizeHref('/')} class:on={isActive('/')} aria-current={isActive('/') ? 'page' : undefined}>

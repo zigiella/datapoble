@@ -1,21 +1,11 @@
 /**
- * Indicadors seleccionables al mapa coroplètic (model de 3 capes · v2).
+ * Indicadors seleccionables al mapa coroplètic — APARADOR OFICIAL.
  *
- * L'indicador estrella de riusdegent ha evolucionat a TRES CAPES (docs/poblacio-real-metode.md v2)
- * que separen fenòmens diferents i NO s'han de confondre:
- *  - **L1 gap_pernocta_pct** — la «població invisible»: qui PERNOCTA al territori sense constar
- *    al padró (via consum elèctric domèstic). És una desviació amb signe → DIVERGENT centrat a 0
- *    (rampa teal↔porpra --dp-div2; porpra = positiu = població que el padró no veu). DEFECTE.
- *  - **L2 carrega_total_est** — la càrrega humana TOTAL (via residus, inclou excursionistes de
- *    dia). NO és «població»: és càrrega. Magnitud crua → seqüencial terra --dp-exposure (Jenks).
- *  - **L3 index_turisme** — la PRESSIÓ turística (hostaleria, via vidre/hab, 0-100). NO és
- *    població ni càrrega de persones. Índex normalitzat → seqüencial terra --dp-exposure.
- *
- * A més, la lectura territorial clàssica: IETR (índex), % habitatge no principal i residus kg/hab.
- *
- * S'ha RETIRAT del selector el `gap_pct` antic (gap de CÀRREGA d'una sola capa): ara és redundant
- * amb `carrega_total_est` i, dit «gap», es confondria amb el gap de pernocta. Queda al contracte
- * com a àlies de compatibilitat, però no es pinta (evitem dos «gap» al mapa).
+ * FASE NOVA · MODEL APARCAT (vot de Bea 2026-07-16 · `docs/ajuntaments/gorra-alcalde-pobla.md` §1
+ * + `docs/ajuntaments/fase-nova-aparcaments.md` §A6): el model d'estimació de pernocta (les 3
+ * capes) surt del web. El /mapa ES MANTÉ, podat (decisió §F.3): només indicadors OFICIALS amb
+ * dada a tot Catalunya. El gap de pernocta i la resta de capes del model no es pinten; el seu
+ * rastre metodològic viu a /metodologia (annex de recerca) i a l'experiment geo-rag.
  *
  * Les ETIQUETES no es codifiquen aquí: l'etiqueta editorial curta ve dels missatges i18n
  * (mapa/+page.svelte → INDICATOR_LABEL); la del contracte (MetricDef.label) és el fallback.
@@ -25,33 +15,14 @@
 import type { MetricKey } from '$lib/contract/types';
 
 /**
- * Claus de mètrica pintables al MAPA PÚBLIC DE CATALUNYA, en ordre editorial.
- *
- * RECONDUCCIÓ · FASE 0 (2026-06, `docs/dossier-consultoria-2026-06/01-reconduccio.md` §4): el mapa
- * públic NOMÉS mostra el que aguanta **sense llegenda defensiva**. Dels 11 indicadors que es
- * pintaven a tot CAT en queden TRES:
- *   1. `gap_pernocta_pct` — la població invisible (l'estrella, reenquadrada com a hipòtesi). DEFECTE.
- *   2. `pct_noprincipal` — % habitatge no principal (oficial, llegible d'un cop d'ull).
- *   3. `kg_hab_any` — residus kg/hab/any (mesura directa ARC, amb caveat).
- *
- * RETIRATS del mapa públic CAT (baixen a Berguedà o a context de fitxa en fases posteriors —no es
- * perden, es curen):
- *   · `tipologia` — els llindars no generalitzen fora del Berguedà (Barcelona=excursió). → Berguedà.
- *   · `index_turisme` — el proxy no capta la gran ciutat («Barcelona no té pressió»). → Berguedà/fora.
- *   · `carrega_total_est` — es confon amb el gap; difícil d'explicar. → fitxa interna/fora.
- *   · `restauracio_per_1000hab` — OSM infra-mapa el rural: mínim observat, no cens. → context de fitxa.
- *   · `IETR` — no s'entén a escala Catalunya. → Berguedà/fitxa.
- *   · `densitat_hab_km2` — Barcelona domina l'escala lineal; tornarà al mapa amb escala log (Fase 3).
- *   · `renda_neta_persona` — aporta poc al conjunt del mapa; distreu. → fitxa.
- *   · `divergencia_senyals` — no s'entén com a mapa; reconvertir en bandera interna de confiança.
- *
- * Les etiquetes/caveats d'aquests indicadors es conserven a `mapa/+page.svelte` perquè es reutilitzin
- * quan tornin a la vista Berguedà o a la fitxa; aquí, la llista és l'única font del que s'ofereix.
+ * Claus de mètrica pintables al MAPA PÚBLIC DE CATALUNYA, en ordre editorial. Totes OFICIALS:
+ *   1. `pct_noprincipal` — % habitatge no principal (Cens 2021, llegible d'un cop d'ull). DEFECTE.
+ *   2. `kg_hab_any` — residus kg/hab/any (mesura directa ARC, amb caveat).
  */
-export const MAP_INDICATORS: MetricKey[] = ['gap_pernocta_pct', 'pct_noprincipal', 'kg_hab_any'];
+export const MAP_INDICATORS: MetricKey[] = ['pct_noprincipal', 'kg_hab_any'];
 
-/** Indicador per defecte en obrir el mapa: la població invisible (gap de pernocta, L1). */
-export const DEFAULT_INDICATOR: MetricKey = 'gap_pernocta_pct';
+/** Indicador per defecte en obrir el mapa: % habitatge no principal (oficial). */
+export const DEFAULT_INDICATOR: MetricKey = 'pct_noprincipal';
 
 /**
  * HONESTEDAT CARTOGRÀFICA — el 0 d'OSM NO és «sense hostaleria».
