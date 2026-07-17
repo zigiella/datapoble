@@ -65,7 +65,7 @@ Cap KPI hi és perquè el tinguem. Cada un respon a una cosa que l'alcalde pot f
 **B · Les cases (el nus)**
 5. **% habitatge no principal** (52,07% · 10/31) — *decisió: política d'habitatge; 515 cases són estoc mort o segona residència.*
 6. **Habitatges d'ús turístic (RTC)** (24 de 31 registres) — *decisió: quanta de l'ocupació no-principal és turisme reglat.*
-7. **Índex de turisme** (66,4 · 17/31) — *decisió: pressió vs oportunitat.*
+7. **Energia domèstica per habitant** (1.375 kWh · oficial ICAEN) — *decisió: pols de consum i eficiència.* *(Substitueix l'índex de turisme — vot de Bea 2026-07-16: l'índex compost SATURA a 100 en 47 municipis i no discrimina; els crus 5 i 6 ja porten la lectura turística. `index_turisme` s'aparca amb la resta d'índexs.)*
 
 **C · El pols i l'economia**
 8. **Atur registrat mensual** (D1, SEPE) — *decisió: l'únic número que es mou cada mes; el pols del poble.* ⚠️ Amb la **doctrina del «<5»** (interval [1,4], mai zero) — a la Pobla és probable que hi surti.
@@ -74,7 +74,7 @@ Cap KPI hi és perquè el tinguem. Cada un respon a una cosa que l'alcalde pot f
 
 **D · Els diners i el que gastem**
 11. **Radar de subvencions** (track R) — *decisió: l'acció. Diners que entren.*
-12. **Licitacions** (ja existent) + **residus/energia per habitant** (458 kg · 1.375 kWh) — *decisió: contractes i despesa.*
+12. **Licitacions** (ja existent) + **residus per habitant** (458 kg) — *decisió: contractes i despesa.*
 
 ## 4. El que NO hi posem (i per què)
 
@@ -94,12 +94,18 @@ Cap KPI hi és perquè el tinguem. Cada un respon a una cosa que l'alcalde pot f
 la mateixa fitxa per a tothom). Cobertura verificada dels 12 KPIs als primers candidats — completa
 a tots; el que canvia per mida:
 
-| | Pobla | Castellar de n'Hug | Guardiola | Gósol | Berga | Avià |
-|---|---|---|---|---|---|---|
-| Padró | 1.106 | 166 | 962 | 207 | 17.539 | 2.263 |
-| ETCA oficial | 1.121 | **no existeix** | 1.005 | **no existeix** | 17.057 | 1.990 |
-| Envelliment | 407 | 467 | 287 | 311 | 182 | 168 |
-| % no principal | 52% | **74%** | 41% | **68%** | 24% | 26% |
+| | Pobla | Castellar de n'Hug | Guardiola | Gósol | Berga | Avià | **Gombrèn** |
+|---|---|---|---|---|---|---|---|
+| Padró | 1.106 | 166 | 962 | 207 | 17.539 | 2.263 | **206** |
+| ETCA oficial | 1.121 | **no existeix** | 1.005 | **no existeix** | 17.057 | 1.990 | **no existeix** |
+| Envelliment | 407 | 467 | 287 | 311 | 182 | 168 | 217 |
+| % no principal | 52% | **74%** | 41% | **68%** | 24% | 26% | 59% |
+
+**Gombrèn (confirmat per Bea):** ine5 **17080** — **Ripollès, província de Girona**. Veí de la Pobla
+a l'altra banda del límit comarcal, RTC altíssim (82,5/1.000). Conseqüència de disseny (bona): el
+tauler deixa de ser «els 31» i passa a ser **qualsevol municipi de Catalunya** — les 947 fitxes ja
+existeixen; D1 carrega Catalunya sencera i D4 calcula el rang contra **la comarca del municipi**
+(Gombrèn → k de 19 del Ripollès), mai contra una llista fixa.
 
 - Als **<1.000** (Castellar, Gósol): presència = «sense dada oficial»; l'**atur SEPE sortirà sovint
   «<5»** (interval [1,4], doctrina C1) — el tauler petit és més silenci honest, i està bé que es vegi.
