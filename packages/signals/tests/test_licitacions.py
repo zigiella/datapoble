@@ -251,6 +251,26 @@ def test_per_poblacio_sense_mart_cau_a_igualitari():
     assert len(pob) == len(BERGUEDA_INE5)
 
 
+def test_per_poblacio_ignora_poblacio_de_fora_de_la_comarca():
+    # REGRESSIÓ del vermell de main (destapat a R1, arreglat 2026-07-17): des de
+    # F2 el mart_municipi cobreix Catalunya sencera (947 munis) i _load_population
+    # retorna TOT el país. El denominador del per_poblacio ha de ser NOMÉS la
+    # població dels municipis on es reparteix (els 31): amb sum(pop.values())
+    # les quotes sumaven pop(31)/pop(CAT) ≈ 0,5% i es perdien ~7,67 M€ en silenci.
+    enriched = _synthetic_enriched()
+    pop_catalunya = {**_POP_SYN, "08019": 1_600_000, "17079": 100_000}  # BCN i Girona
+    alloc = lic.build_allocation(enriched, pop_catalunya)
+    pob = alloc[(alloc["event_id"] == "c_pob") & (alloc["ine5"].notna())]
+    # Cap euro no marxa fora dels 31: les quotes sumen 1 i l'import es conserva.
+    assert set(pob["ine5"]) <= set(BERGUEDA_INE5)
+    assert abs(pob["allocation_share"].sum() - 1.0) < 1e-6
+    assert abs(pob["import_assignat"].sum() - pob["import_total"].iloc[0]) < 0.5
+    # I les quotes són les de la població COMARCAL (Berga 8000/10000 = 0.8),
+    # no les diluïdes per Catalunya.
+    berga = pob[pob["ine5"] == "08022"].iloc[0]
+    assert abs(berga["allocation_share"] - 0.8) < 1e-6
+
+
 # =============================================================================
 # 3) Indicador dependencia_supramunicipal (sobre events sintètics)
 # =============================================================================
