@@ -220,7 +220,11 @@ def build_metrics(contract: dict) -> dict[str, dict]:
         definicio = _localized(spec.get("definicio"))
         if definicio:
             m["definicio"] = definicio
-        note = _localized(spec.get("nota"))
+        # Unificació 2026-07-17: la clau del contracte és `caveat` (nota queda com a
+        # fallback llegat). El camp del JSON web segueix dient-se `note` (contracte del
+        # frontend, no es toca): ara hi arriben els 27 caveats, inclosos els que abans
+        # es perdien (note:/caveat: mai llegits per aquest export).
+        note = _localized(spec.get("caveat") or spec.get("nota"))
         if note:
             m["note"] = note
         # status: explícit al contracte (planned) o public per defecte (visibility).
