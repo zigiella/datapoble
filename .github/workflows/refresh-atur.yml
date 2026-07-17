@@ -1,0 +1,47 @@
+name: refresh atur (mensual)
+
+# Refresh mensual de l'atur registrat SEPE (D1). El SEPE publica el mes anterior
+# els primers dies de mes → cron el dia 5 (marge). MAI al CI de PR: el CI és
+# 100% offline sobre fixtures; aquest workflow és l'ÚNIC que toca la xarxa per
+# a aquesta font. NO committeja (regla de la porta del PR): puja els artefactes
+# regenerats i Talaia els baixa i els committeja per PR (mateix patró que
+# gen-fitxa). Si el refresh falla, el workflow queda en vermell = soroll.
+on:
+  schedule:
+    # dia 5 de cada mes, 06:12 UTC (hora baixa; el SEPE ja ha publicat)
+    - cron: "12 6 5 * *"
+  workflow_dispatch: {}     # refresh manual / de prova
+
+permissions:
+  contents: read
+
+concurrency:
+  group: refresh-atur
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    name: ingesta SEPE + dbt build + verificació
+    runs-on: ubuntu-latest
+    env:
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install (connector + dbt-duckdb + verificadors)
+        run: |
+          pip install requests pandas pyarrow dbt-duckdb duckdb pyyaml
+      - name: Refresh atur (ingesta 2006→avui + dbt build + verify + bump date)
+        run: python tools/refresh_atur.py
+      - name: Upload artefactes regenerats (mart + metrics.yml + provenança)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: refresh-atur
+          path: |
+            data/marts/mart_pols_mensual.parquet
+            semantic/metrics.yml
+            data/raw/atur_sepe/_provenance.json
+          if-no-files-found: warn

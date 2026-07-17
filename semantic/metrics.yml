@@ -10,6 +10,14 @@
 #     Quien muestre el VALOR muestra el caveat (UI y chat); la jaula lo exige (caveat_esborrat).
 #   · sources.<clave>.nota    — nota descriptiva de la FUENTE (otra entidad; no es un caveat).
 #   · Ninguna métrica usa ya note:/nota: — si reaparecen, es un error de contrato (test).
+#
+# CONVENCIÓ (C1 §3, vinculant — dos camps, no dos noms del mateix):
+#   · `visibility` (en)  = ESTAT DE PUBLICACIÓ: public | planned.
+#   · `visibilitat` (ca) = CAPA DE DADES (Convención de visibilidad, docs/data-sources.md §0):
+#     verd = pot sortir al producte · vermell = capa interna, mai s'exporta, només agregada.
+#     Regla del join heretada: qualsevol creuament verd × vermell dona vermell.
+#     Obligatori a les mètriques noves des de C1 (2026-07-16); el backfill de les
+#     anteriors és un chore separat (owner Talaia).
 
 meta:
   project: datapoble
@@ -76,6 +84,12 @@ sources:
     producte: Atlas de distribución de renta de los hogares (ADRH) — renda neta per persona
     acces: "https://www.ine.es/ (ADRH, taula municipal)"
     llicencia: "INE, reutilització amb atribució"
+  sepe:
+    organisme: SEPE — Servicio Público de Empleo Estatal
+    producte: Paro registrado por municipios (CSV mensual, un fitxer per any, des de 2006)
+    acces: "https://sede.sepe.gob.es/es/portaltrabaja/resources/sede/datos_abiertos/datos/Paro_por_municipios_{any}_csv.csv"
+    llicencia: "Datos abiertos SEPE — reutilització comercial i no comercial (art. 7 RD 1495/2011, que desplega la Llei 37/2007); cita obligada: «Origen de los datos: Servicio Público de Empleo Estatal» + data d'actualització. Verificada literalment a l'avís legal de la seu (2026-07-17)."
+    nota: "FONT ESMENADA (C1 §1.1, 2026-07-16): la premissa Socrata de l'spec era falsa — no existeix cap dataset Socrata d'atur municipal mensual. Filtre pel CATÀLEG de Catalunya sencer (947 ine5), MAI per província (Gósol=25100 Lleida, Gombrèn=17080 Girona). Doctrina del «<5»: interval [1,4], mai zero ni NaN silenciós."
   datapoble:
     organisme: indicador derivat
     producte: vegeu la metodologia
@@ -1019,6 +1033,29 @@ metrics:
       ca: "Relativa a la comarca (z-scores). Alta divergència sol venir de proxies confosos (p. ex. calefacció de llenya: residus alts però elèctric baix), no necessàriament d'un error: és un senyal per llegir amb cura, no un veto. Lectura ECOLÒGICA."
       es: "Relativa a la comarca (z-scores). Alta divergencia suele venir de proxies confundidos (p. ej. calefacción de leña: residuos altos pero eléctrico bajo), no necesariamente de un error: es una señal para leer con cuidado, no un veto. Lectura ECOLÓGICA."
     synonyms: {ca: [divergència de senyals, discrepància, concordança], es: [divergencia de señales, discrepancia, concordancia]}
+
+  # --- Treball (C1 §1.1 — primera mètrica MENSUAL del catàleg; el format
+  #     date "YYYY-MM" queda fixat aquí) ---
+  atur_registrat:
+    label: {ca: Atur registrat, es: Paro registrado}
+    definicio:
+      ca: "Persones registrades com a aturades a les oficines d'ocupació (SOC/SEPE) el darrer dia del mes."
+      es: "Personas registradas como paradas en las oficinas de empleo (SOC/SEPE) el último día del mes."
+    dimension: treball
+    unit: {ca: persones, es: personas}
+    formula: directe
+    source: sepe
+    date: "2026-06"          # YYYY-MM, darrer mes carregat (l'actualitza el workflow refresh-atur)
+    table: mart_pols_mensual
+    column: atur_registrat
+    visibility: public
+    visibilitat: verd
+    # caveat (no note:) per la doctrina de claus unificada (2026-07-17): C1 §2
+    # deia `note`, però el repo mana — advertència de lectura ⇒ caveat.
+    caveat:
+      ca: "Cobertura: els 947 municipis de Catalunya (filtre pel catàleg sencer, mai per província), sèrie mensual des de 2006. Doctrina del «<5» (C1 §1.1): des de gener 2022 el SEPE emmascara els valors 1–4 com a «<5» → interval [1,4] (columnes atur_registrat_min/max + atur_emmascarat), MAI zero ni NaN silenciós; la UI mostra «<5»."
+      es: "Cobertura: los 947 municipios de Cataluña (filtro por el catálogo entero, nunca por provincia), serie mensual desde 2006. Doctrina del «<5» (C1 §1.1): desde enero de 2022 el SEPE enmascara los valores 1–4 como «<5» → intervalo [1,4] (columnas atur_registrat_min/max + atur_emmascarat), NUNCA cero ni NaN silencioso; la UI muestra «<5»."
+    synonyms: {ca: [atur, aturats, desocupació, atur registrat], es: [paro, parados, desempleo, paro registrado]}
 
   # --- Política (visible, lectura ecològica) ---
   pct_indep:

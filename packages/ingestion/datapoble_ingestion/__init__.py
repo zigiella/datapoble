@@ -24,6 +24,11 @@ Scope d'aquest PR: Berguedà (31 municipis). Fonts actives:
     NACIONALITAT i per LLOC DE NAIXEMENT (foto darrer any, EMEX) + SÈRIE
     municipal 2021→ de població estrangera (deltes). Lectura ECOLÒGICA;
     secret estadístic dels micromunicipis respectat (NULL). Cablejat a `all`.
+  - atur_sepe (atur registrat mensual, D1)          · SEPE, CSV anual (des de 2006)
+    Primera família MENSUAL. Filtre pel CATÀLEG de Catalunya sencer (947
+    ine5), MAI per província (Gósol=25100 Lleida, Gombrèn=17080 Girona).
+    Doctrina del «<5» (C1 §1.1): interval [1,4], mai zero ni NaN silenciós.
+    Zero-pad de codis INE obligatori. Cablejat a `all`.
 
 Cada connector deixa les dades crues a ``data/raw/<source>/`` i un sidecar
 ``_provenance.json`` (source, url, dataset_id, fetched_at, llicència, files).

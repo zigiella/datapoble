@@ -291,6 +291,55 @@ models:
           - between:
               arguments: { min_value: 0, max_value: 1000000000 }
 
+  - name: mart_pols_mensual
+    description: >
+      El pols MENSUAL del municipi (C1 §1.1): format llarg, 1 fila per (ine5,
+      date), date = "YYYY-MM" — primera taula mensual del catàleg. Família
+      inaugural: atur_registrat (SEPE, sèrie des de 2006, els 947 municipis de
+      Catalunya — filtre pel CATÀLEG sencer, mai per província: Gósol és Lleida
+      25100 i Gombrèn és Girona 17080). Doctrina del «<5»: interval [1,4], mai
+      zero ni NaN silenciós (atur_registrat NULL + min/max + atur_emmascarat).
+    columns:
+      - name: ine5
+        description: Codi INE de 5 dígits (clau de join del contracte).
+        data_tests:
+          - not_null
+      - name: codi6
+        description: Codi Idescat de 6 dígits (del registre dels 947).
+        data_tests:
+          - not_null
+      - name: municipi
+        description: Nom oficial del municipi (registre versionat, no el del SEPE).
+        data_tests:
+          - not_null
+      - name: date
+        description: Mes de la dada, format "YYYY-MM" (C1 §1.1, fixat aquí).
+        data_tests:
+          - not_null
+      - name: atur_registrat
+        description: >
+          Persones aturades registrades el darrer dia del mes. NULL quan la font
+          serveix '<5' (mai s'inventa el punt: l'interval és la dada).
+        data_tests:
+          - between:
+              arguments: { min_value: 0, max_value: 1000000 }
+      - name: atur_registrat_min
+        description: Extrem inferior de l'interval (= valor exacte, o 1 si emmascarat).
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 0, max_value: 1000000 }
+      - name: atur_registrat_max
+        description: Extrem superior de l'interval (= valor exacte, o 4 si emmascarat).
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 0, max_value: 1000000 }
+      - name: atur_emmascarat
+        description: true = la font servia '<5' (secret estadístic SEPE des de 2022-01).
+        data_tests:
+          - not_null
+
   - name: mart_electoral
     description: >
       Resultats electorals agregats per municipi (clau ine5), Parlament de

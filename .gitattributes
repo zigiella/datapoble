@@ -3,3 +3,6 @@
 *.jpg binary
 *.parquet binary
 *.duckdb binary
+# Fixtures arxivades BYTE A BYTE (CSV reals del SEPE: ISO-8859-1 + CRLF).
+# Sense normalitzacio EOL: els bytes SON la fixture (byte-match als tests).
+packages/ingestion/tests/fixtures/*.csv -text

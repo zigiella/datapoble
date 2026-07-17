@@ -39,6 +39,22 @@ models:
         data_tests: [not_null]
       - name: any_consum
         data_tests: [not_null]
+  - name: stg_atur_sepe
+    description: >
+      Atur registrat SEPE (D1), 1 fila/municipi×mes, Catalunya sencera (filtre pel
+      catàleg dels 947 al connector, mai per província). date = "YYYY-MM". Doctrina
+      del «<5» (C1 §1.1): atur_registrat NULL quan emmascarat + interval [1,4]
+      (atur_registrat_min/max) + atur_emmascarat; total_literal conserva el text
+      de la font ('<5' inclòs).
+    columns:
+      - name: ine5
+        data_tests: [not_null]
+      - name: date
+        data_tests: [not_null]
+      - name: atur_registrat_min
+        data_tests: [not_null]
+      - name: atur_registrat_max
+        data_tests: [not_null]
   - name: stg_restauracio_osm
     description: >
       Establiments de restauració per municipi (Berguedà), 1 fila/municipi. Ve JA
