@@ -83,8 +83,16 @@ publicable per si sola.*
 >
 > **🔵 COLA DE BRÚIXOLA:** X3 (catàleg govern) queda darrere de D1/D4 (necessita les mètriques noves) ·
 > B3 (re-basar xips de /pregunta-li en KPIs oficials) quan Bea voti els aparcaments.
-> **🟡 COLA DE MIRADOR (nova):** executar els aparcaments A1–A10 + D5 (vista govern) — **BLOQUEJAT
-> fins al vot de Bea peça a peça** (`fase-nova-aparcaments.md` §A).
+> **🟡 COLA DE MIRADOR — DESBLOQUEJADA (vot de Bea 2026-07-16: «sentit comú — el que s'ha d'aparcar,
+> s'ha d'aparcar»):** 1) executar els aparcaments A1–A10 (`fase-nova-aparcaments.md` §A; criteri =
+> el doc + sentit comú; el /mapa es decideix allà mateix) · 2) D5 (vista govern, C6 + gorra — 12 KPIs
+> definitius amb energia en lloc de l'índex de turisme) DARRERE de D4.
+> **Decisions noves de Bea (2a tanda):** «Gobrem» = **GOMBRÈN (17080, Ripollès/Girona)** → el tauler
+> és per a QUALSEVOL municipi de Catalunya; D1 passa a carregar Catalunya sencera (esmena a
+> tasques-especificades) i D4 calcula rangs contra la comarca del municipi · `index_turisme` FORA del
+> tauler (satura; substituït per energia/hab) · Render ja era STARTER (drift tancat a render.yaml) ·
+> noindex ES QUEDA fins que el mode govern doni valor · **full d'etiquetatge del banc C4 LLEST per a
+> Bea: `docs/ajuntaments/banc-c4-etiquetatge.md`** (26 candidates, criteri operatiu, 3 columnes).
 >
 > **🟣 TALAIA:** unificar `nota:`/`caveat:` al contracte semàntic (X1 va destapar que **el codi llegia
 > `nota:` i el contracte escriu `caveat:` a 14 mètriques — TOTES les inferències**: producció servia les

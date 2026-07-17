@@ -19,7 +19,7 @@ services:
     repo: https://github.com/zigiella/datapoble
     branch: main
     region: frankfurt            # EU (latència + tractament a la UE; sense PII igualment)
-    plan: free                   # → always-on quan es publiciti
+    plan: starter  # always-on (~7$/mes) — decisió de Bea 2026-07-16; el free s'adormia                   # → always-on quan es publiciti
     dockerfilePath: ./packages/ai/Dockerfile
     dockerContext: .             # context = arrel del repo (l'agent llegeix semantic/ + data/marts/)
     healthCheckPath: /health

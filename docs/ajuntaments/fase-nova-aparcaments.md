@@ -58,12 +58,19 @@ executats → B1–B3 regenerats. **Radar:** R2 (filtre + `config/`) → R3 (sem
 → banc C4 (**les etiquetes de Bea es poden demanar JA — és la palanca més barata del calendari**) →
 1 mes de validació paral·lela. **Xat:** X3 (catàleg govern) darrere de D1/D4.
 
-## F. Dubtes oberts (per a Bea o per als fronts)
+## F. Dubtes oberts — RESOLTS per Bea (2026-07-16, segona tanda)
 
-1. **«Gobrem»** — ¿Gósol o Gironella? (cap perfil fins a confirmar).
-2. **`index_turisme` com a KPI 7 de la gorra**: satura a 100 en 47 municipis (2 dels 6 candidats
-   nostres al topall!). ¿El substituïm pel parell cru (RTC/1000 + % no principal, que ja hi són) i
-   l'índex compost s'aparca amb els altres? *(Recomanació de Talaia: sí — un índex que satura no
-   discrimina, i el tauler ja porta els dos crus.)*
-3. **El /mapa tot-Catalunya**: ¿aparador públic (mantenir podat) o fora de la fase (aparcar)?
-4. **Les 26 fixtures de R1** esperen l'etiquetatge daurat de Bea (criteri escrit a punt quan vulgui).
+1. ~~«Gobrem»~~ → **GOMBRÈN (17080, Ripollès, Girona)** — el tauler passa a ser per a qualsevol
+   municipi de Catalunya (vegeu gorra §5).
+2. ~~`index_turisme`~~ → **FORA del tauler** («ok» de Bea): satura a 100 en 47 municipis; el
+   substitueix l'energia per habitant (cru, oficial); l'índex compost s'aparca amb els altres.
+3. **El /mapa tot-Catalunya**: pendent — es decideix quan Mirador executi els aparcaments (amb
+   sentit comú, com la resta).
+4. **Aparcaments A1–A10**: **vot de Bea DONAT — «sentit comú: el que s'ha d'aparcar, s'ha
+   d'aparcar»**. Mirador queda DESBLOQUEJAT per executar-los tots, amb el criteri d'aquest doc.
+5. **Render**: ja era **starter (~7 $/mes, always-on)** — risc del cold start RESOLT; `render.yaml`
+   alineat (free→starter, el drift tancat).
+6. **noindex**: ES QUEDA («invisible fins que sigui de valor pels municipis») — decisió registrada;
+   es reobre quan el mode govern estigui viu.
+7. **Les 26 fixtures de R1**: full d'etiquetatge PREPARAT per a Bea →
+   **`docs/ajuntaments/banc-c4-etiquetatge.md`** (criteri operatiu + taula amb 3 columnes per omplir).
