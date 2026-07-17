@@ -56,13 +56,15 @@ la secció sencera abans de començar).
 `total Paro Registrado` + desagregació sexe×edat i per sector).
 
 **Llistó:**
-1. Descàrrega completa + filtre local `Codigo Provincia=8` → sèrie mensual dels 31 municipis del
-   Berguedà → `mart_pols_mensual` (camp `date` `"YYYY-MM"`, C1 §1.1).
+1. Descàrrega completa + **filtre local per `BERGUEDA_INE5` (els 31 codis), MAI per província**:
+   ⚠️ **Gósol és província de Lleida (25100)** tot i ser Berguedà — «província=8» el perdria en
+   silenci (esmena de Talaia, 2026-07-16). → `mart_pols_mensual` (camp `date` `"YYYY-MM"`, C1 §1.1).
 2. **Doctrina del «<5» (C1, vinculant):** els valors emmascarats `<5` es modelen com a interval [1,4] —
    MAI zero, MAI NaN silenciós; el mart els porta com a interval i la UI els mostra «<5». Test amb un
    municipi petit real que en tingui.
 3. **Zero-pad del codi INE a 5** (el SEPE els serveix sense zeros) + test de la trampa de codis
-   (08052/08166; Idescat 6 dígits amb control → tall `[:5]`).
+   (08052/08166; Idescat 6 dígits amb control → tall `[:5]`; **i Gósol 25100 present a la sèrie** —
+   la guarda del filtre per llista).
 4. Byte-match de 3 municipis contra el CSV font (llistó del contracte).
 5. Fixture arxivada (mes real, retallada a la província 8) — CI offline; refresh al workflow existent
    (`daily-report` o equivalent), MAI al CI de PR.

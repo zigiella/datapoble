@@ -22,14 +22,13 @@ contracte llest i dorment; D3 i D6 es difereixen.
 
 *(Verificat: `pernocta-catalunya.json` → `dins_banda: false`; és l'únic dels 9 oficials del Berguedà.)*
 
-**Conseqüència de disseny, vinculant:** el mode govern de la Pobla **no pot encapçalar-se amb la
-nostra estimació de presència**. La xifra de presència que mana és l'**ETCA oficial (1.121)**; la
-nostra estimació hi surt amb **els dos avisos** (col·lisió + fora de la banda oficial), o no hi surt.
-
-**Conseqüència narrativa (i és bona):** això no és un problema a amagar, és **la tesi en acció**.
-Un observatori que diu «el meu model falla al teu poble, i t'ensenyo el rebut» és exactament el que
-volem vendre a una oficina de dades. Però **no pot ser el titular** del tauler: el titular ha de ser
-útil, i el caveat, honest.
+**DECISIÓ DE BEA (2026-07-16, ratificada sobre aquesta troballa): EL MODEL S'APARCA per a aquest
+track.** El mode govern treballa **només amb dades oficials i consolidades** (padró, ETCA on existeix,
+atur SEPE, renda, cens d'habitatges, RTC, residus, energia…). La nostra estimació de pernocta **no
+surt al mode govern** — ni com a titular ni com a secundària. On no hi ha dada oficial de presència
+(pobles <1.000, sense ETCA), el tauler diu **«sense dada oficial»** — el gest honest de sempre, ara
+sense model pel mig. El model i la seva doctrina queden vius a l'experiment (geo-rag, annex de
+recerca) i a la resta del web fins que es decideixi el contrari; **aquí, aparcat**.
 
 ## 2. El poble, vist des de la gorra (no el que jo suposava)
 
@@ -60,8 +59,8 @@ Cap KPI hi és perquè el tinguem. Cada un respon a una cosa que l'alcalde pot f
 **A · Qui hi ha (i qui hi haurà)**
 1. **Índex d'envelliment** (407,1 · 6/31) — *decisió: escola, serveis a la gent gran, ¿el poble té relleu?*
 2. **Padró + tendència** (1.106 · 8/31) — *decisió: la base de finançament; ¿puja o baixa?*
-3. **Població estrangera i la seva variació** (9,58% · +5,61) — *decisió: acollida i arrelament; és l'única entrada.*
-4. **Presència oficial ETCA** (1.121) — *decisió: dimensionar serveis.* **Amb la nostra estimació al costat i els seus dos avisos** (§1).
+3. **Nova població / origen divers** (9,58% · +5,61) — *decisió: acollida i arrelament; és l'única entrada de gent nova.* ⚠️ **Nota narrativa VINCULANT (Bea, 2026-07-16): aquest indicador es tracta amb cura.** El marc és **renovació demogràfica** (qui fa possible que el poble tingui futur), mai «pressió» ni cap marc problematitzant; l'etiqueta pública, el text de la fitxa i qualsevol frase del xat sobre aquest KPI passen pel **vot narratiu de Bea** abans de publicar-se.
+4. **Presència oficial ETCA** (1.121) — *decisió: dimensionar serveis.* **Només la dada oficial** (§1: model aparcat). Als municipis <1.000 (sense ETCA): **«sense dada oficial»**, honest i sense substitut.
 
 **B · Les cases (el nus)**
 5. **% habitatge no principal** (52,07% · 10/31) — *decisió: política d'habitatge; 515 cases són estoc mort o segona residència.*
@@ -86,16 +85,26 @@ Cap KPI hi és perquè el tinguem. Cada un respon a una cosa que l'alcalde pot f
 - **`carrega_funcional_est`** — duplicat de `carrega_total_est` per a la Pobla (1.237 tots dos).
 - **Res electoral** — capa 🔴, no es toca ni es creua.
 
-## 5. La pregunta oberta per a Bea
+## 5. RESOLT (Bea, 2026-07-16) + el pas a multi-municipi
 
-La Pobla és, dels 9 oficials, **on el nostre model falla més fort**. Tres camins:
+**Camí triat: cap dels tres — el model s'aparca** (§1) i el tauler va només amb dades oficials.
+**Els 12 KPIs: aprovats** (amb la nota narrativa del KPI 3).
 
-1. **Mantenir la Pobla i fer del fall una demostració** — el tauler va amb el sòlid (envelliment,
-   habitatge, atur, radar) i la presència es tracta amb els dos avisos. **← recomanat: és la tesi.**
-2. **Afegir un segon poble de contrast** — el moment «canvi a Castellar amb un clic» que el guió de
-   la demo ja té pot fer de contrapunt (un poble on el número sí que aguanta).
-3. **Canviar de poble insígnia** — **no ho recomano**: triar el poble on el número queda bonic és
-   exactament el cherry-picking que aquest projecte no fa.
+**Multi-municipi des d'ara.** El disseny ja ho suporta (un perfil YAML per poble; el mode govern és
+la mateixa fitxa per a tothom). Cobertura verificada dels 12 KPIs als primers candidats — completa
+a tots; el que canvia per mida:
 
-**El que necessito de tu:** el vot sobre aquests 12 (afegir/treure/reordenar — tu coneixes la Pobla),
-i quin dels tres camins del §5.
+| | Pobla | Castellar de n'Hug | Guardiola | Gósol | Berga | Avià |
+|---|---|---|---|---|---|---|
+| Padró | 1.106 | 166 | 962 | 207 | 17.539 | 2.263 |
+| ETCA oficial | 1.121 | **no existeix** | 1.005 | **no existeix** | 17.057 | 1.990 |
+| Envelliment | 407 | 467 | 287 | 311 | 182 | 168 |
+| % no principal | 52% | **74%** | 41% | **68%** | 24% | 26% |
+
+- Als **<1.000** (Castellar, Gósol): presència = «sense dada oficial»; l'**atur SEPE sortirà sovint
+  «<5»** (interval [1,4], doctrina C1) — el tauler petit és més silenci honest, i està bé que es vegi.
+- ⚠️ **Gósol és província de LLEIDA (ine5 25100)** tot i ser Berguedà — el filtre «província=8» de la
+  spec D1 **el perdia en silenci**; esmenat: el filtre és per `BERGUEDA_INE5` (els 31), i el test de
+  la trampa de codis incorpora Gósol.
+- **El radar segueix actiu NOMÉS a la Pobla** (porta C4 intacta): multi-municipi al dashboard ≠
+  multi-perfil actiu al radar. Escalar el radar = activar perfils, després de la porta.

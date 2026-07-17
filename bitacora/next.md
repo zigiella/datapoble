@@ -70,7 +70,21 @@ publicable per si sola.*
 >    màxim, informa?** Recalibrar o declarar-ne el límit.
 > 4. **R2** — filtre dur + puntuació de perfil (C3; inclou crear `config/municipis/08166-lillet.yaml`).
 >
-> **🔵 COLA DE BRÚIXOLA:** X3 (catàleg govern) queda darrere de D1/D4 (necessita les mètriques noves).
+> **⚡ FASE NOVA (Bea, 2026-07-16): tot al dashboard útil + radar; el model de pernocta APARCAT del
+> mode govern (dades oficials i consolidades); multi-municipi des d'ara (radar segueix només la Pobla);
+> KPI «nova població» amb cura narrativa (vot de Bea al copy). Inventari d'aparcaments i mancances:
+> `docs/ajuntaments/fase-nova-aparcaments.md` — les retirades VISIBLES (A1–A10) esperen el vot de Bea
+> peça a peça; les regeneracions (B1–B3) es faran als fronts que toquin. Sorpreses de l'auditoria:
+> el web JA és online (riusdegent.cat) i X2 JA està fet de facto (Render viu) — la cua de Trazo es
+> buida (queda higiene de comentaris rancis «DORMENT»). Riscos oberts: Render free s'adorm (always-on
+> ~7$/mes, decisió Bea pre-demo) · noindex actiu · drift render.yaml↔Dashboard · cap workflow refresca
+> dades (cron mensual nou al llistó de D1) · D1 esmenada: filtre per BERGUEDA_INE5, MAI província
+> (Gósol és Lleida, 25100).**
+>
+> **🔵 COLA DE BRÚIXOLA:** X3 (catàleg govern) queda darrere de D1/D4 (necessita les mètriques noves) ·
+> B3 (re-basar xips de /pregunta-li en KPIs oficials) quan Bea voti els aparcaments.
+> **🟡 COLA DE MIRADOR (nova):** executar els aparcaments A1–A10 + D5 (vista govern) — **BLOQUEJAT
+> fins al vot de Bea peça a peça** (`fase-nova-aparcaments.md` §A).
 >
 > **🟣 TALAIA:** unificar `nota:`/`caveat:` al contracte semàntic (X1 va destapar que **el codi llegia
 > `nota:` i el contracte escriu `caveat:` a 14 mètriques — TOTES les inferències**: producció servia les
