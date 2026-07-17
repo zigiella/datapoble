@@ -5,9 +5,11 @@
  * les dades disponibles, en aquest ordre:
  *  - **Berguedà (31)** → fitxa completa amb TOTES les mètriques i procedència (dataset real de
  *    Sondeig, `data/web/municipis.bergueda.json`).
- *  - **Coberts pel Nivell C (rang)** → targeta de presència EN RANG (`pernocta-catalunya.json`).
- *  - **Resta** → estat AMABLE «sense dades encara» amb el NOM real del municipi (mai una fitxa
+ *  - **Resta de Catalunya** → espina de dades oficials per muni (`static/data/muni/<ine5>.json`).
+ *  - **Sense res** → estat AMABLE «sense dades encara» amb el NOM real del municipi (mai una fitxa
  *    buida ni un error lleig; honestedat: no fingim dada on no n'hi ha).
+ * La presència només es mostra com a dada OFICIAL (ETCA d'Idescat) o «sense dada oficial»: el
+ * model d'estimació de pernocta està APARCAT del web (vot de Bea 2026-07-16).
  *
  * La join key és l'`ine5`; el slug públic es resol del nom oficial (`toSlug`). La columna vertebral
  * de «tota Catalunya» és el CATÀLEG (`data/municipis-cataleg.json`, cens de noms+codis dels 947,
@@ -20,9 +22,8 @@
 import { loadMunicipisDataset } from '$lib/data/dataset';
 import type { MunicipiRow } from '$lib/contract/types';
 import { buildSlugIndex, toSlug } from '$lib/contract/slug';
-import { collisionPeers } from '$lib/contract/distinguish';
 import type { LecturesData, LecturaEntry } from '$lib/contract/lectures';
-import type { PernoctaData, PernoctaMuni } from '$lib/contract/pernocta';
+import type { PernoctaData } from '$lib/contract/pernocta';
 import type { CatalegData } from '$lib/contract/cataleg';
 import type { TerritoriData, MuniTerritori } from '$lib/contract/territori';
 import type { MirallData, MirallVei } from '$lib/contract/mirall';
@@ -110,35 +111,25 @@ export const load: PageLoad = async ({ fetch, params }) => {
 		}
 	}
 
-	// Presència estimada EN RANG (Nivell C) + banda real calibrada (rang_baix/alt) i ETCA oficial.
-	// Es carrega per a TOTS els munis (no només els !row): la fitxa la fa servir per classificar els
-	// TRES REGISTRES (oficial ≥1.000 · senyal <1.000 que exclou el padró · soroll) amb la banda real,
-	// no la interina ±10% (vot 2026-06-29 · `05-vot-tres-registres.md`). Prerender-safe.
-	// COL·LISIÓ DEL MODEL (doctrina geo-rag): del MATEIX fetch (el dict sencer que abans es
-	// descartava) es deriven els municipis amb estimació+banda IDÈNTIQUES — si n'hi ha, la fitxa
-	// ho adverteix: la xifra no és específica del municipi. Mai el número nu (§7 del paper).
-	let pernocta: PernoctaMuni | null = null;
-	let collisions: { nom: string; slug: string; etca_oficial: number | null }[] = [];
+	// PRESÈNCIA OFICIAL (ETCA, Idescat): l'única cosa que la fitxa llegeix de
+	// `pernocta-catalunya.json` des que EL MODEL D'ESTIMACIÓ ESTÀ APARCAT (decisió de Bea,
+	// 2026-07-16 · `docs/ajuntaments/gorra-alcalde-pobla.md` §1): ni banda, ni registres, ni
+	// col·lisions — només la dada oficial `etca_oficial` (municipis ≥1.000 hab). On Idescat no
+	// la publica, la fitxa diu «sense dada oficial». El model i la seva doctrina queden vius a
+	// l'experiment geo-rag i a l'annex de /metodologia; aquí, aparcats.
+	// (`$lib/contract/distinguish` es conserva DORMENT com a candau per a rànquings futurs.)
+	let etca: number | null = null;
 	if (ine5) {
 		try {
 			const res = await fetch('/data/pernocta-catalunya.json');
 			if (res.ok) {
 				const all = (await res.json()) as PernoctaData;
-				pernocta = all.munis[ine5] ?? null;
-				if (pernocta && !nom) nom = pernocta.nom;
-				if (pernocta) {
-					// El nom del peer es resol via CATÀLEG (forma pública «la Pobla de Lillet», no
-					// la d'arxiu «Pobla de Lillet, la») — mateix patró que els miralls; el slug en surt.
-					const nomByIne5 = new Map(cataleg.map((mn) => [mn.ine5, mn.nom]));
-					collisions = collisionPeers(all.munis, ine5).map((p) => {
-						const pnom = nomByIne5.get(p.ine5) ?? p.nom;
-						return { nom: pnom, slug: toSlug(pnom), etca_oficial: p.etca_oficial };
-					});
-				}
+				const p = all.munis[ine5] ?? null;
+				if (p && !nom) nom = p.nom;
+				etca = typeof p?.etca_oficial === 'number' ? p.etca_oficial : null;
 			}
 		} catch {
-			pernocta = null;
-			collisions = [];
+			etca = null;
 		}
 	}
 
@@ -203,18 +194,5 @@ export const load: PageLoad = async ({ fetch, params }) => {
 		}
 	}
 
-	// Estatut de VALIDACIÓ (té ETCA oficial d'Idescat?): capa la confiança de la pernocta a la fitxa
-	// —cap municipi sense ETCA pot mostrar «confiança alta» (la validació mana sobre l'heurística
-	// interna)—. Senyal precís (els 9 munis del Berguedà amb ETCA hi són; els 22 petits, no). Prerender-safe.
-	let validat = false;
-	if (ine5) {
-		try {
-			const res = await fetch('/data/validats.json');
-			if (res.ok) validat = ((await res.json()) as string[]).includes(ine5);
-		} catch {
-			validat = false;
-		}
-	}
-
-	return { dataset, ine5, nom, row, isBergueda, lectura, pernocta, collisions, territori, veins, veinsTotal, miralls, validat };
+	return { dataset, ine5, nom, row, isBergueda, lectura, etca, territori, veins, veinsTotal, miralls };
 };

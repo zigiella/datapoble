@@ -31,6 +31,15 @@ const DEST_DIR = resolve(__dirname, '../static/data');
 
 // Actius de dades a copiar (font → nom a static/data). El dataset és l'únic imprescindible;
 // la validació ETCA és opcional (la genera `tools/validacio_etca.py`).
+//
+// FASE NOVA · MODEL APARCAT (vot de Bea 2026-07-16): el web ja no consumeix el model
+// d'estimació de pernocta. La frontera de consum actual de cada actiu:
+//  · pernocta-catalunya.json — NOMÉS el camp oficial `etca_oficial` (fitxa de municipi);
+//    l'estimació/banda del model ja no es llegeix enlloc del web.
+//  · etca-validacio.json + metodologia-model.json — només /metodologia, seccions etiquetades
+//    «model aparcat (annex de recerca)».
+//  · lectures.bergueda.json (B1) i municipis-mirall.json (B2) — pendents de REGENERAR sobre
+//    dades oficials (fora d'aquest lot; vegeu fase-nova-aparcaments.md §B).
 const FILES = [
 	{ src: resolve(REPO_ROOT, 'data/web/municipis.bergueda.json'), name: 'municipis.bergueda.json' },
 	{ src: resolve(REPO_ROOT, 'data/web/municipis.catalunya.json'), name: 'municipis.catalunya.json' },
@@ -264,30 +273,8 @@ function buildMetodologiaModel() {
 
 buildMetodologiaModel();
 
-/**
- * `validats.json` — el conjunt d'ine5 que tenen ETCA oficial (Idescat), derivat de
- * `pernocta-catalunya.json` (`etca_oficial != null`). És el senyal de VALIDACIÓ per municipi:
- * la fitxa l'usa per no mostrar mai «confiança alta» sobre la pernocta a un municipi sense ETCA
- * (regla de la passada d'overpromise: la validació mana sobre l'heurística interna). Inclou els 9
- * municipis del Berguedà amb ETCA; els 22 petits no hi són → «estimació sense validació oficial».
- */
-function buildValidats() {
-	const src = resolve(REPO_ROOT, 'data/web/pernocta-catalunya.json');
-	if (!existsSync(src)) {
-		console.warn(`[copy-data] AVÍS: no s'ha trobat ${src}; no es genera validats.json.`);
-		return;
-	}
-	const munis = JSON.parse(readFileSync(src, 'utf8')).munis;
-	const validats = Object.entries(munis)
-		.filter(([, v]) => v.etca_oficial != null)
-		.map(([ine5]) => ine5)
-		.sort();
-	const dest = resolve(DEST_DIR, 'validats.json');
-	writeFileSync(dest, JSON.stringify(validats));
-	console.log(`[copy-data] OK: validats.json → static/data/ (${validats.length} munis amb ETCA)`);
-}
-
-buildValidats();
+// (`validats.json` — el conjunt d'ine5 amb ETCA — ja NO es genera: només servia per capar la
+// confiança del model, i el model està aparcat. Si mai cal, git en recorda el builder.)
 
 for (const f of FILES) {
 	if (!existsSync(f.src)) {

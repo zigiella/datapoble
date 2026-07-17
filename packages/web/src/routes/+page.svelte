@@ -2,16 +2,18 @@
 	/**
 	 * HOME «La Llera» (cercador primer) — la portada de riusdegent.
 	 *
-	 * S'articula sobre BUSCADOR + MAPA + WAVEFORM + PORTES. Aquí: hero amb el cercador com a heroi
+	 * S'articula sobre BUSCADOR + MAPA + PORTES. Aquí: hero amb el cercador com a heroi
 	 * (MuniSearch, tota Catalunya), MAPA coroplètic de TOT CATALUNYA per % habitatge no principal
-	 * (oficial; clic → fitxa), WAVEFORM del gap (Beeswarm, tota Catalunya) i PORTES DE COMARCA
-	 * (Berguedà → /comarca/bergueda, el nucli que treballem a fons). Cap xifra sense procedència.
+	 * (oficial; clic → fitxa) i PORTES DE COMARCA (Berguedà → /comarca/bergueda, el nucli que
+	 * treballem a fons). Cap xifra sense procedència.
+	 *
+	 * El WAVEFORM del gap (Beeswarm) està APARCAT amb el model d'estimació de pernocta (vot de
+	 * Bea 2026-07-16 · `docs/ajuntaments/gorra-alcalde-pobla.md` §1): la home va només amb oficials.
 	 */
 	import { goto } from '$app/navigation';
 	import ContourField from '$lib/components/ContourField.svelte';
 	import ChoroplethMap from '$lib/components/ChoroplethMap.svelte';
 	import MuniSearch from '$lib/components/MuniSearch.svelte';
-	import Beeswarm from '$lib/components/Beeswarm.svelte';
 	import { classify, methodFor } from '$lib/map/classify';
 	import { mapValue } from '$lib/map/indicators';
 	import { slugForIne5, toSlug } from '$lib/contract/slug';
@@ -24,15 +26,10 @@
 	const dataset = $derived(data.dataset);
 	const geojson = $derived(data.geojson);
 	const comarques = $derived(data.comarques);
-	const vegueries = $derived(data.vegueries);
-	// Presència estimada EN RANG (Nivell C): munis coberts fora del Berguedà (clau ine5). Pinten al
-	// mapa a granularitat municipi i el clic hi navega (la fitxa mostra el rang).
-	const pernocta = $derived(data.pernocta?.munis);
-	// Catàleg de tots els munis de Catalunya (cerca a tot el país).
+	// Catàleg de tots els munis de Catalunya (cerca a tot el país + navegació del mapa).
 	const cataleg = $derived(data.cataleg);
-	// Indicadors a escala Catalunya (pinten TOTS els municipis) + validació (capa la confiança del tooltip).
+	// Indicadors OFICIALS a escala Catalunya (pinten TOTS els municipis).
 	const catValues = $derived(data.catValues);
-	const validats = $derived(new Set(data.validats ?? []));
 
 	// Mapa de la home: TOTA CATALUNYA per % habitatge no principal (oficial, llegible a escala CAT i
 	// amb dada per a tots els munis). NO tipologia —els llindars no generalitzen («Barcelona =
@@ -58,9 +55,10 @@
 			goto(localizeHref(`/municipi/${slugForIne5(ine5, dataset)}`));
 			return;
 		}
-		// Muni cobert en rang (Nivell C): la fitxa existeix amb la banda → hi naveguem també.
-		const cov = pernocta?.[ine5];
-		if (cov) goto(localizeHref(`/municipi/${toSlug(cov.nom)}`));
+		// Qualsevol altre municipi de Catalunya: la fitxa existeix (947 prerenderitzades, dades
+		// oficials per muni) → hi naveguem via el catàleg de noms.
+		const hit = cataleg.find((c) => c.ine5 === ine5);
+		if (hit) goto(localizeHref(`/municipi/${toSlug(hit.nom)}`));
 	}
 
 
@@ -100,27 +98,15 @@
 					{dataset}
 					{geojson}
 					{comarques}
-					{vegueries}
 					{indicator}
 					{classification}
-					{pernocta}
 					{catValues}
-					{validats}
 					fitTo="catalunya"
 					onselect={navTo}
 				/>
 			</div>
 			<p class="home-map__more"><a href={localizeHref('/mapa')}>{m.home_map_more()} →</a></p>
 		</section>
-
-		<!-- BEESWARM · el gap padró↔presència de tota Catalunya, d'un cop d'ull (§4 viz) -->
-		{#if pernocta}
-			<section class="ds-sec">
-				<div class="ds-sec__hd"><span class="ref">∿</span><h2>{m.beeswarm_title()}</h2></div>
-				<p class="lead">{m.beeswarm_lead()}</p>
-				<Beeswarm munis={pernocta} />
-			</section>
-		{/if}
 
 		<!-- PORTES DE COMARCA · el Berguedà aterra a /comarca/bergueda (la vitrina passa a les fitxes) -->
 		<section class="ds-sec">

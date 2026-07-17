@@ -1,10 +1,12 @@
 <script lang="ts">
 	/**
-	 * Pàgina de COMARCA (§5): breadcrumb navegable + el gap de la comarca (beeswarm) + els seus
-	 * municipis (enllaç a fitxa). Nivell intermedi de l'espina territorial; tot SVG/HTML verificable.
+	 * Pàgina de COMARCA (§5): breadcrumb navegable + mapa de la comarca + els seus municipis
+	 * (enllaç a fitxa). Nivell intermedi de l'espina territorial.
+	 *
+	 * El beeswarm del gap i el gap per municipi estan APARCATS amb el model d'estimació de
+	 * pernocta (vot de Bea 2026-07-16): la pàgina va només amb dades oficials.
 	 */
 	import Espina from '$lib/components/Espina.svelte';
-	import Beeswarm from '$lib/components/Beeswarm.svelte';
 	import ChoroplethMap from '$lib/components/ChoroplethMap.svelte';
 	import { goto } from '$app/navigation';
 	import { localizeHref } from '$lib/i18n';
@@ -18,18 +20,13 @@
 	let { data }: { data: PageData } = $props();
 	const comarca = $derived(data.comarca);
 	const munis = $derived(data.munis);
-	const pernSub = $derived(data.pernSub);
-	const coberts = $derived(data.coberts);
 
 	// Mapa de la comarca (mateix component que la home i /mapa), enquadrat als seus municipis. Pinta
 	// el Berguedà (dataset) o la resta (catValues) pel % habitatge no principal (oficial); clic → fitxa.
 	const dataset = $derived(data.dataset);
 	const geojson = $derived(data.geojson);
 	const comarquesGeo = $derived(data.comarques);
-	const vegueries = $derived(data.vegueries);
 	const catValues = $derived(data.catValues);
-	const validats = $derived(new Set(data.validats ?? []));
-	const pernocta = $derived(data.pernocta);
 	const indicator = 'pct_noprincipal' as MetricKey;
 	const series = $derived(
 		geojson.features.map((f: import('geojson').Feature) => {
@@ -47,8 +44,9 @@
 			goto(localizeHref(`/municipi/${slugForIne5(ine5, dataset)}`));
 			return;
 		}
-		const cov = pernocta?.[ine5];
-		if (cov) goto(localizeHref(`/municipi/${toSlug(cov.nom)}`));
+		// Qualsevol municipi té fitxa (dades oficials per muni): naveguem pel nom del catàleg.
+		const hit = munis.find((mu) => mu.ine5 === ine5);
+		if (hit) goto(localizeHref(`/municipi/${hit.slug}`));
 	}
 
 	const trail = $derived([
@@ -56,8 +54,6 @@
 		{ label: comarca.vegueria, href: localizeHref(`/vegueria/${toSlug(comarca.vegueria)}`) },
 		{ label: comarca.nom }
 	]);
-
-	const gapTxt = (g: number | null) => (g === null ? '—' : `${g > 0 ? '+' : ''}${Math.round(g)}%`);
 </script>
 
 <svelte:head>
@@ -72,7 +68,7 @@
 		<header class="com-hd">
 			<p class="ap-eyebrow"><span>{m.comarca_eyebrow()}</span><span class="sep">/</span><span>{comarca.vegueria}</span></p>
 			<h1>{comarca.nom}</h1>
-			<p class="lead">{m.comarca_sub({ total: String(munis.length), coberts: String(coberts) })}</p>
+			<p class="lead">{m.comarca_sub({ total: String(munis.length) })}</p>
 		</header>
 
 		<section class="ds-sec">
@@ -82,24 +78,14 @@
 					{dataset}
 					{geojson}
 					comarques={comarquesGeo}
-					{vegueries}
 					{indicator}
 					{classification}
-					{pernocta}
 					{catValues}
-					{validats}
 					fitTo={comarca.ine5s}
 					onselect={navTo}
 				/>
 			</div>
 		</section>
-
-		{#if coberts >= 3}
-			<section class="ds-sec">
-				<div class="ds-sec__hd"><span class="ref">∿</span><h2>{m.comarca_gap_title()}</h2></div>
-				<Beeswarm munis={pernSub} />
-			</section>
-		{/if}
 
 		<section class="ds-sec">
 			<div class="ds-sec__hd"><span class="ref">▦</span><h2>{m.comarca_munis_title({ n: String(munis.length) })}</h2></div>
@@ -108,7 +94,6 @@
 					<li>
 						<a class="com-muni" href={localizeHref(`/municipi/${mu.slug}`)}>
 							<span class="com-muni__nom">{mu.nom}</span>
-							<span class="com-muni__gap" class:on={mu.gap !== null}>{gapTxt(mu.gap)}</span>
 						</a>
 					</li>
 				{/each}
@@ -149,15 +134,6 @@
 	.com-muni__nom {
 		font-weight: 500;
 		font-size: 0.9rem;
-	}
-	.com-muni__gap {
-		font-family: var(--dp-font-mono);
-		font-size: 0.74rem;
-		color: var(--dp-text-subtle);
-		font-variant-numeric: tabular-nums;
-	}
-	.com-muni__gap.on {
-		color: var(--dp-text-muted);
 	}
 	.com-foot {
 		margin: 14px 0 0;
