@@ -260,6 +260,10 @@
         "ca": "Pes de la població nascuda fora d'Espanya sobre el total. Mesura de BIOGRAFIA migratòria, no de nacionalitat actual.",
         "es": "Peso de la población nacida fuera de España sobre el total. Medida de BIOGRAFÍA migratoria, no de nacionalidad actual."
       },
+      "note": {
+        "ca": "Llegeix-ho SEMPRE contra el context (comarca i Catalunya, al costat). Lectura ECOLÒGICA. NO és «extranjería»: molts nascuts fora són ciutadans espanyols (vegeu bretxa de naturalització).",
+        "es": "Léelo SIEMPRE contra el contexto (comarca y Cataluña, al lado). Lectura ECOLÓGICA. NO es «extranjería»: muchos nacidos fuera son ciudadanos españoles (ver brecha de naturalización)."
+      },
       "status": "public"
     },
     "pct_nacionalitat_estrangera": {
@@ -279,6 +283,10 @@
       "definicio": {
         "ca": "Pes de la població amb nacionalitat estrangera (passaport no espanyol) sobre el total. NO és lloc de naixement: és situació administrativa, reversible amb la naturalització.",
         "es": "Peso de la población con nacionalidad extranjera (pasaporte no español) sobre el total. NO es lugar de nacimiento: es situación administrativa, reversible con la naturalización."
+      },
+      "note": {
+        "ca": "Sempre ≤ % nascuts a l'estranger: la diferència són els qui s'han naturalitzat. Lectura ECOLÒGICA, mai individual.",
+        "es": "Siempre ≤ % nacidos en el extranjero: la diferencia son quienes se han naturalizado. Lectura ECOLÓGICA, nunca individual."
       },
       "status": "public"
     },
@@ -300,6 +308,10 @@
         "ca": "% nascuts a l'estranger − % nacionalitat estrangera. Aproxima qui va arribar de fora i JA té nacionalitat espanyola: senyal d'ARRELAMENT (gent que ve, es queda i s'arrela), no un recompte de «forasters».",
         "es": "% nacidos en el extranjero − % nacionalidad extranjera. Aproxima a quien llegó de fuera y YA tiene nacionalidad española: señal de ARRAIGO (gente que viene, se queda y se arraiga), no un recuento de «forasteros»."
       },
+      "note": {
+        "ca": "Com més alta, més població d'origen estranger ARRELADA (naturalitzada). Dona la volta al marc de l'«extranjería»: mesura integració, no amenaça. Lectura ecològica.",
+        "es": "Cuanto más alta, más población de origen extranjero ARRAIGADA (naturalizada). Da la vuelta al marco de la «extranjería»: mide integración, no amenaza. Lectura ecológica."
+      },
       "status": "public"
     },
     "delta_pct_estrangera_finestra": {
@@ -319,6 +331,10 @@
       "definicio": {
         "ca": "Variació en punts del % de població de nacionalitat estrangera dins la finestra homogènia 2021→ (Cens anual). L'EVOLUCIÓ, no la foto.",
         "es": "Variación en puntos del % de población de nacionalidad extranjera dentro de la ventana homogénea 2021→ (Censo anual). La EVOLUCIÓN, no la foto."
+      },
+      "note": {
+        "ca": "NOMÉS 2021→ (Cens anual homogeni); no es barreja amb el Padró pre-2021 (ruptura de font). NULL on el secret estadístic suprimeix la sèrie.",
+        "es": "SOLO 2021→ (Censo anual homogéneo); no se mezcla con el Padrón pre-2021 (ruptura de fuente). NULL donde el secreto estadístico suprime la serie."
       },
       "status": "public"
     },
@@ -558,6 +574,10 @@
         "ca": "Nombre de locals de restauració (restaurants, bars, cafeteries, menjars ràpids, pubs; CCAE-56) mapejats a OpenStreetMap dins el municipi. 2n proxy d'hostaleria (capacitat), complement del vidre.",
         "es": "Número de locales de restauración (restaurantes, bares, cafeterías, comidas rápidas, pubs; CCAE-56) mapeados en OpenStreetMap dentro del municipio. 2º proxy de hostelería (capacidad), complemento del vidrio."
       },
+      "note": {
+        "ca": "MÍNIM observat, NO un cens: OSM INFRA-MAPEJA les zones rurals (la completesa del mapejat varia entre municipis), per això 6 micromunicipis surten amb 0 tot i tenir senyal de vidre. És una MESURA (no inferència); la lectura de «pressió turística» que se'n fa SÍ és inferència. El contrast oficial Idescat (ee, CCAE-56) no és municipal per API oberta (secret estadístic). Llicència ODbL (atribució + compartir-igual).",
+        "es": "MÍNIMO observado, NO un censo: OSM INFRAMAPEA las zonas rurales (la completitud del mapeo varía entre municipios), por eso 6 micromunicipios salen con 0 pese a tener señal de vidrio. Es una MEDIDA (no inferencia); la lectura de «presión turística» que se hace SÍ es inferencia. El contraste oficial Idescat (ee, CCAE-56) no es municipal por API abierta (secreto estadístico). Licencia ODbL (atribución + compartir-igual)."
+      },
       "status": "public"
     },
     "restauracio_per_1000hab": {
@@ -577,6 +597,10 @@
       "definicio": {
         "ca": "Densitat d'establiments de restauració per cada 1000 habitants empadronats. Intensitat d'hostaleria per càpita (stock), 2n senyal de la capa L3.",
         "es": "Densidad de establecimientos de restauración por cada 1000 habitantes empadronados. Intensidad de hostelería per cápita (stock), 2ª señal de la capa L3."
+      },
+      "note": {
+        "ca": "Densitat per càpita: aïlla l'orientació a visitants de la mida del municipi (Berga té el màxim absolut d'establiments però queda baixa per càpita; els pobles de muntanya turístics queden alts). Hereta el caveat de completesa d'OSM (MÍNIM, no cens): als micromunicipis no mapejats subestima. Validat com a 2n proxy independent del vidre (Spearman ≈ 0,54 amb vidre_hab i amb index_turisme, N=31, p<0,01).",
+        "es": "Densidad per cápita: aísla la orientación a visitantes del tamaño del municipio (Berga tiene el máximo absoluto de establecimientos pero queda baja per cápita; los pueblos de montaña turísticos quedan altos). Hereda el caveat de completitud de OSM (MÍNIMO, no censo): en los micromunicipios no mapeados subestima. Validado como 2º proxy independiente del vidrio (Spearman ≈ 0,54 con vidre_hab y con index_turisme, N=31, p<0,01)."
       },
       "status": "public"
     },
@@ -598,6 +622,10 @@
         "ca": "Nombre d'establiments de comerç quotidià (supermercat, botiga de conveniència, forn, carnisseria, fruiteria, ferreteria…) i serveis essencials (banc, farmàcia, oficina de correus, ajuntament, benzinera, metge/clínica…) mapejats a OpenStreetMap dins el municipi. Senyal de CENTRALITAT funcional: mesura si el municipi és un centre de serveis real.",
         "es": "Número de establecimientos de comercio cotidiano (supermercado, tienda de conveniencia, panadería, carnicería, frutería, ferretería…) y servicios esenciales (banco, farmacia, oficina de correos, ayuntamiento, gasolinera, médico/clínica…) mapeados en OpenStreetMap dentro del municipio. Señal de CENTRALIDAD funcional: mide si el municipio es un centro de servicios real."
       },
+      "note": {
+        "ca": "El senyal de CENTRALITAT és el COMPTE ABSOLUT (no la densitat): un poble és capçalera per TENIR supermercat/farmàcia/banc, independentment de la mida. MÍNIM observat, NO un cens: OSM INFRA-MAPEJA les zones rurals (la completesa varia entre municipis). És una MESURA; la lectura de «centre de serveis» que se'n fa (regla capital_serveis) SÍ és inferència. El contrast oficial Idescat (CCAE-47 comerç, serveis) no és municipal per API oberta (secret estadístic; l'EMEX només dóna 'serveis' agregat). A escala Catalunya el senyal s'ha de z-scoritzar PER COMARCA (signatures molt diferents Vallès/Pirineu/costa). Llicència ODbL (atribució + compartir-igual).",
+        "es": "La señal de CENTRALIDAD es el RECUENTO ABSOLUTO (no la densidad): un pueblo es cabecera por TENER supermercado/farmacia/banco, independientemente del tamaño. MÍNIMO observado, NO un censo: OSM INFRAMAPEA las zonas rurales (la completitud varía entre municipios). Es una MEDIDA; la lectura de «centro de servicios» que se hace (regla capital_serveis) SÍ es inferencia. El contraste oficial Idescat (CCAE-47 comercio, servicios) no es municipal por API abierta (secreto estadístico; el EMEX solo da 'servicios' agregado). A escala Cataluña la señal debe z-scorizarse POR COMARCA (firmas muy distintas Vallès/Pirineo/costa). Licencia ODbL (atribución + compartir-igual)."
+      },
       "status": "public"
     },
     "serveis_per_1000hab": {
@@ -617,6 +645,10 @@
       "definicio": {
         "ca": "Densitat d'establiments de comerç i serveis essencials per cada 1000 habitants empadronats. Context secundari del senyal de centralitat (el senyal primari és el compte absolut): aïlla la dotació de serveis de la mida del municipi.",
         "es": "Densidad de establecimientos de comercio y servicios esenciales por cada 1000 habitantes empadronados. Contexto secundario de la señal de centralidad (la señal primaria es el recuento absoluto): aísla la dotación de servicios del tamaño del municipio."
+      },
+      "note": {
+        "ca": "Densitat per càpita: complementa el compte absolut (que és el senyal de capçalera). Un micromunicipi amb pocs serveis però molt pocs habitants pot sortir alt per càpita sense ser capçalera; per això la regla capital_serveis usa el COMPTE ABSOLUT (z-score), no la densitat. Hereta el caveat de completesa d'OSM (MÍNIM, no cens).",
+        "es": "Densidad per cápita: complementa el recuento absoluto (que es la señal de cabecera). Un micromunicipio con pocos servicios pero muy pocos habitantes puede salir alto per cápita sin ser cabecera; por eso la regla capital_serveis usa el RECUENTO ABSOLUTO (z-score), no la densidad. Hereda el caveat de completitud de OSM (MÍNIMO, no censo)."
       },
       "status": "public"
     },
@@ -638,6 +670,10 @@
         "ca": "La població que DORM al territori sense constar al padró (residents no registrats, segona residència, estacionals que hi pernocten), estimada a partir del consum elèctric domèstic per habitant.",
         "es": "La población que DUERME en el territorio sin constar en el padrón (residentes no registrados, segunda residencia, estacionales que pernoctan), estimada a partir del consumo eléctrico doméstico por habitante."
       },
+      "note": {
+        "ca": "INFERÈNCIA, no cens. L'elèctric és un proxy de PERNOCTA, però el confonen la calefacció (a muntanya es crema llenya/gas → consum baix malgrat presència, p. ex. Castellar de n'Hug), la mida de la llar i l'eficiència → la xifra es llegeix com a RANG + confiança. NO inclou els excursionistes de dia (per a la pressió total, càrrega humana total). Lectura ECOLÒGICA (sobre el municipi, mai sobre individus).",
+        "es": "INFERENCIA, no censo. El eléctrico es un proxy de PERNOCTA, pero lo confunden la calefacción (en montaña se quema leña/gas → consumo bajo pese a presencia, p. ej. Castellar de n'Hug), el tamaño del hogar y la eficiencia → la cifra se lee como RANGO + confianza. NO incluye los excursionistas de día (para la presión total, carga humana total). Lectura ECOLÓGICA (sobre el municipio, nunca sobre individuos)."
+      },
       "status": "public"
     },
     "gap_pernocta": {
@@ -657,6 +693,10 @@
       "definicio": {
         "ca": "Població invisible: població real estimada (pernocta) − padró. La 'gent dels rius de gent' que dorm al territori sense constar.",
         "es": "Población invisible: población real estimada (pernocta) − padrón. La 'gente de los ríos de gente' que duerme en el territorio sin constar."
+      },
+      "note": {
+        "ca": "Derivat de poblacio_pernocta_est: hereta la seva incertesa (rang). Pot ser negatiu (calefacció no elèctrica, eficiència). Es concentra a les muntanyes turístiques, no a les viles. Lectura ecològica.",
+        "es": "Derivado de poblacio_pernocta_est: hereda su incertidumbre (rango). Puede ser negativo (calefacción no eléctrica, eficiencia). Se concentra en las montañas turísticas, no en las villas. Lectura ecológica."
       },
       "status": "public"
     },
@@ -678,6 +718,10 @@
         "ca": "Gap de pernocta relatiu sobre el padró: quant per cent més de gent dorm al territori de la registrada.",
         "es": "Gap de pernocta relativo sobre el padrón: cuánto por ciento más de gente duerme en el territorio de la registrada."
       },
+      "note": {
+        "ca": "Percentatge sobre el padró (+12 = +12% més gent que dorm al territori). Volàtil als micromunicipis (denominador petit) i sensible a la calefacció → mirar sempre la bandera confianca. Inferència, lectura ecològica.",
+        "es": "Porcentaje sobre el padrón (+12 = +12% más gente que duerme en el territorio). Volátil en micromunicipios (denominador pequeño) y sensible a la calefacción → mirar siempre la bandera confianza. Inferencia, lectura ecológica."
+      },
       "status": "public"
     },
     "carrega_total_est": {
@@ -697,6 +741,10 @@
       "definicio": {
         "ca": "Càrrega que suggereixen els RESIDUS (residents + 2a residència + estacionals + excursionistes de dia), via residus per habitant. NO és població ni un sostre: pot quedar PER SOTA de la pernocta (L1). Per al sostre realista useu carrega_funcional_est.",
         "es": "Carga que sugieren los RESIDUOS (residentes + 2ª residencia + estacionales + excursionistas de día), vía residuos por habitante. NO es población ni un techo: puede quedar POR DEBAJO de la pernoctación (L1). Para el techo realista usad carrega_funcional_est."
+      },
+      "note": {
+        "ca": "INFERÈNCIA, no cens, i NO és «població». Els residus porten part de COMERÇ. ⚠️ NO sempre ≥ la pernocta: a 16/31 munis del pilot la càrrega per residus queda PER SOTA de la pernocta elèctrica (residus/càpita baixos, recollida atípica o base mal calibrada) → senyal de DIVERGÈNCIA, no una mesura tancada. Per governar, useu carrega_funcional_est = max(L1, L2). Lectura ECOLÒGICA. Vegeu confianca.",
+        "es": "INFERENCIA, no censo, y NO es «población». Los residuos llevan parte de COMERCIO. ⚠️ NO siempre ≥ la pernoctación: en 16/31 munis del piloto la carga por residuos queda POR DEBAJO de la pernoctación eléctrica (residuos/cápita bajos, recogida atípica o base mal calibrada) → señal de DIVERGENCIA, no una medida cerrada. Para gobernar, usad carrega_funcional_est = max(L1, L2). Lectura ECOLÓGICA. Véase confianza."
       },
       "status": "public"
     },
@@ -718,6 +766,10 @@
         "ca": "El SOSTRE realista de càrrega humana: el màxim entre el padró, la pernocta (L1, via elèctric) i la càrrega per residus (L2). El «denominador per governar» — el nombre amb què dimensionar serveis (residus, aigua, neteja) en lloc del padró, i que MAI hi queda per sota.",
         "es": "El TECHO realista de carga humana: el máximo entre el padrón, la pernoctación (L1, vía eléctrico) y la carga por residuos (L2). El «denominador para gobernar» — el número con el que dimensionar servicios (residuos, agua, limpieza) en lugar del padrón, y que NUNCA queda por debajo."
       },
+      "note": {
+        "ca": "INFERÈNCIA (combina el padró amb dos rastres físics). Pren el més alt de padró/L1/L2: resol la contradicció L2<L1 i té el padró com a sòl (mai per sota dels residents registrats). És el denominador recomanat per a serveis municipals; NO és «població» (que es compta amb el padró). Lectura ECOLÒGICA.",
+        "es": "INFERENCIA (combina el padrón con dos rastros físicos). Toma el más alto de padrón/L1/L2: resuelve la contradicción L2<L1 y tiene el padrón como suelo (nunca por debajo de los residentes registrados). Es el denominador recomendado para servicios municipales; NO es «población» (que se cuenta con el padrón). Lectura ECOLÓGICA."
+      },
       "status": "public"
     },
     "index_turisme": {
@@ -737,6 +789,10 @@
       "definicio": {
         "ca": "Intensitat d'activitat de visitants (hostaleria), via vidre per habitant: z-score comarcal del vidre/hab portat a 0–100 (50 = mitjana comarcal). Proxy d'hostaleria, NO població.",
         "es": "Intensidad de actividad de visitantes (hostelería), vía vidrio por habitante: z-score comarcal del vidrio/hab llevado a 0–100 (50 = media comarcal). Proxy de hostelería, NO población."
+      },
+      "note": {
+        "ca": "NO és població ni càrrega de persones: és INTENSITAT d'hostaleria (el vidre el genera el bar/restaurant que serveix el visitant). És RELATIU a la comarca (z-score): 50 = un municipi mitjà del Berguedà, no un valor absolut. Granularitat anual (no capta estacionalitat). Inferència, lectura ecològica.",
+        "es": "NO es población ni carga de personas: es INTENSIDAD de hostelería (el vidrio lo genera el bar/restaurante que sirve al visitante). Es RELATIVO a la comarca (z-score): 50 = un municipio medio del Berguedà, no un valor absoluto. Granularidad anual (no capta estacionalidad). Inferencia, lectura ecológica."
       },
       "status": "public"
     },
@@ -758,6 +814,10 @@
         "ca": "Bandera de fiabilitat de les estimacions de les 3 capes: alta/mitjana/baixa segons la corroboració entre els senyals físics (residus, elèctric domèstic/hab, % habitatge no principal) i la mida del municipi. Quan els 3 senyals coincideixen la confiança és alta; quan divergeixen, baixa.",
         "es": "Bandera de fiabilidad de las estimaciones de las 3 capas: alta/mitjana/baixa según la corroboración entre las señales físicas (residuos, eléctrico doméstico/hab, % vivienda no principal) y el tamaño del municipio. Cuando las 3 señales coinciden la confianza es alta; cuando divergen, baja."
       },
+      "note": {
+        "ca": "Un buit honest val més que un fals precís: 'baixa' marca micromunicipis (secret estadístic, soroll de denominador) i casos on els senyals divergeixen (p. ex. residus alts però elèctric baix per calefacció de llenya a muntanya, com Castellar de n'Hug). L'elèctric NO es pondera igual que els residus (és corroborador, no senyal primari).",
+        "es": "Un vacío honesto vale más que un falso preciso: 'baixa' marca micromunicipios (secreto estadístico, ruido de denominador) y casos donde las señales divergen (p. ej. residuos altos pero eléctrico bajo por calefacción de leña en montaña, como Castellar de n'Hug). El eléctrico NO se pondera igual que los residuos (es corroborador, no señal primaria)."
+      },
       "status": "public"
     },
     "poblacio_real_est": {
@@ -777,6 +837,10 @@
       "definicio": {
         "ca": "ÀLIES de carrega_total_est (mateixa fórmula residus/410). REENQUADRAT: NO és «població real» sinó CÀRREGA humana total (inclou excursionistes). Es conserva per no trencar consumidors; per la població real que pernocta, useu poblacio_pernocta_est.",
         "es": "ALIAS de carrega_total_est (misma fórmula residuos/410). REENCUADRADO: NO es «población real» sino CARGA humana total (incluye excursionistas). Se conserva para no romper consumidores; para la población real que pernocta, usad poblacio_pernocta_est."
+      },
+      "note": {
+        "ca": "DEPRECAT com a «població»: és l'antic indicador d'una capa, ara reenquadrat com a càrrega humana total (== carrega_total_est). Migrar a poblacio_pernocta_est (L1, població que dorm) o carrega_total_est (L2, pressió total). Inferència, lectura ecològica.",
+        "es": "DEPRECADO como «población»: es el antiguo indicador de una capa, ahora reencuadrado como carga humana total (== carrega_total_est). Migrar a poblacio_pernocta_est (L1, población que duerme) o carrega_total_est (L2, presión total). Inferencia, lectura ecológica."
       },
       "status": "public"
     },
@@ -798,6 +862,10 @@
         "ca": "carrega_total_est − padró (gap de CÀRREGA, inclou visitants de dia). Es conserva per compatibilitat; per la població invisible que pernocta, useu gap_pernocta.",
         "es": "carrega_total_est − padrón (gap de CARGA, incluye visitantes de día). Se conserva por compatibilidad; para la población invisible que pernocta, usad gap_pernocta."
       },
+      "note": {
+        "ca": "Gap de CÀRREGA (no de pernocta): inclou els excursionistes de dia. Pot ser negatiu. Es concentra a les muntanyes turístiques. Per al gap de població que dorm, gap_pernocta. Lectura ecològica.",
+        "es": "Gap de CARGA (no de pernocta): incluye los excursionistas de día. Puede ser negativo. Se concentra en las montañas turísticas. Para el gap de población que duerme, gap_pernocta. Lectura ecológica."
+      },
       "status": "public"
     },
     "gap_pct": {
@@ -818,6 +886,10 @@
         "ca": "Gap de càrrega relatiu sobre el padró: quant per cent més de càrrega humana (inclòs el dia) hi ha de la registrada. Per al gap de pernocta, gap_pernocta_pct.",
         "es": "Gap de carga relativo sobre el padrón: cuánto por ciento más de carga humana (incluido el día) hay de la registrada. Para el gap de pernocta, gap_pernocta_pct."
       },
+      "note": {
+        "ca": "Percentatge sobre el padró (+12 = +12%). Gap de CÀRREGA (inclou dia), no de pernocta. Volàtil als micromunicipis → mirar la bandera confianca. Inferència, lectura ecològica.",
+        "es": "Porcentaje sobre el padrón (+12 = +12%). Gap de CARGA (incluye día), no de pernocta. Volátil en micromunicipios → mirar la bandera confianza. Inferencia, lectura ecológica."
+      },
       "status": "public"
     },
     "poblacio_real_rel": {
@@ -837,6 +909,10 @@
       "definicio": {
         "ca": "Presència estimada amb base comarcal (mitjana pop-ponderada). Vista espacial: qui acull més DINS la comarca (≈ suma zero, redistribució).",
         "es": "Presencia estimada con base comarcal (media pop-ponderada). Vista espacial: quién acoge más DENTRO de la comarca (≈ suma cero, redistribución)."
+      },
+      "note": {
+        "ca": "Tall RELATIU: conserva el total comarcal (suma zero) → mostra distribució espacial, NO sub-recompte global (per a això, poblacio_real_est). Inferència, lectura ecològica.",
+        "es": "Corte RELATIVO: conserva el total comarcal (suma cero) → muestra distribución espacial, NO sub-recuento global (para eso, poblacio_real_est). Inferencia, lectura ecológica."
       },
       "status": "public"
     },
@@ -967,6 +1043,10 @@
         "ca": "Classificació amb NOM de com s'habita el municipi, llegida dels senyals físics (no «més/menys»): dormitori_invisible, excursio, segona_residencia, capital_serveis, buit_administratiu o indeterminat. Classificador basat en regles sobre z-scores comarcals (vegeu docs/tipologia-municipal.md).",
         "es": "Clasificación con NOMBRE de cómo se habita el municipio, leída de las señales físicas (no «más/menos»): dormitori_invisible, excursio, segona_residencia, capital_serveis, buit_administratiu o indeterminat. Clasificador basado en reglas sobre z-scores comarcales (véase docs/tipologia-municipal.md)."
       },
+      "note": {
+        "ca": "És una LECTURA, no un cens ni una etiqueta oficial: assigna l'arquetip que millor encaixa amb els senyals físics inferits del municipi (lectura ECOLÒGICA, sobre l'agregat). On els senyals són ambigus o contradictoris → 'indeterminat' (honestedat: no es força una etiqueta). Els llindars són comarcals (z-scores sobre el Berguedà); a escala Catalunya seran per comarca. Volàtil en micromunicipis: creuar SEMPRE amb confianca / confianca_score.",
+        "es": "Es una LECTURA, no un censo ni una etiqueta oficial: asigna el arquetipo que mejor encaja con las señales físicas inferidas del municipio (lectura ECOLÓGICA, sobre el agregado). Donde las señales son ambiguas o contradictorias → 'indeterminat' (honestidad: no se fuerza una etiqueta). Los umbrales son comarcales (z-scores sobre el Berguedà); a escala Cataluña serán por comarca. Volátil en micromunicipios: cruzar SIEMPRE con confianza / confianca_score."
+      },
       "status": "public"
     },
     "confianca_score": {
@@ -987,6 +1067,10 @@
         "ca": "Puntuació auditable 0-100 de la fiabilitat de les estimacions del municipi, que COMPLEMENTA (no substitueix) la bandera `confianca`. Suma quatre components: mida del denominador (padró), concordança dels senyals físics de presència, cobertura dels senyals i penalització d'outlier. Com més alt, més fiable. L'etiqueta es deriva amb talls documentats (<45 baixa · 45–65 mitjana · ≥65 alta).",
         "es": "Puntuación auditable 0-100 de la fiabilidad de las estimaciones del municipio, que COMPLEMENTA (no sustituye) la bandera `confianza`. Suma cuatro componentes: tamaño del denominador (padrón), concordancia de las señales físicas de presencia, cobertura de las señales y penalización de outlier. Cuanto más alto, más fiable. La etiqueta se deriva con cortes documentados (<45 baja · 45–65 media · ≥65 alta)."
       },
+      "note": {
+        "ca": "Auditable per construcció: cada punt ve d'un component explícit (mida, concordança, cobertura, outlier). POT divergir de la bandera `confianca` —i és intencionat— precisament on la concordança o el denominador desmenteixen un 'alta' binari: p. ex. Castellar de n'Hug surt baix perquè els senyals divergeixen (calefacció de llenya → residus alts però elèctric baix). El score és el costat HONEST d'aquesta tensió. Relatiu a la comarca (z-scores).",
+        "es": "Auditable por construcción: cada punto viene de un componente explícito (tamaño, concordancia, cobertura, outlier). PUEDE divergir de la bandera `confianza` —y es intencionado— precisamente donde la concordancia o el denominador desmienten un 'alta' binario: p. ej. Castellar de n'Hug sale bajo porque las señales divergen (calefacción de leña → residuos altos pero eléctrico bajo). El score es el lado HONESTO de esa tensión. Relativo a la comarca (z-scores)."
+      },
       "status": "public"
     },
     "divergencia_senyals": {
@@ -1006,6 +1090,10 @@
       "definicio": {
         "ca": "Com de DISCREPANTS són els tres senyals físics de presència (residus, elèctric, % habitatge no principal) un cop normalitzats a la comarca. 0 = concordants (estimació fiable) · 100 = màxima discrepància (llegir amb prudència). És el component de concordança del `confianca_score`, exposat sol perquè el «per què» de la confiança sigui auditable.",
         "es": "Cómo de DISCREPANTES son las tres señales físicas de presencia (residuos, eléctrico, % vivienda no principal) una vez normalizadas a la comarca. 0 = concordantes (estimación fiable) · 100 = máxima discrepancia (leer con prudencia). Es el componente de concordancia del `confianca_score`, expuesto solo para que el «por qué» de la confianza sea auditable."
+      },
+      "note": {
+        "ca": "Relativa a la comarca (z-scores). Alta divergència sol venir de proxies confosos (p. ex. calefacció de llenya: residus alts però elèctric baix), no necessàriament d'un error: és un senyal per llegir amb cura, no un veto. Lectura ECOLÒGICA.",
+        "es": "Relativa a la comarca (z-scores). Alta divergencia suele venir de proxies confundidos (p. ej. calefacción de leña: residuos altos pero eléctrico bajo), no necesariamente de un error: es una señal para leer con cuidado, no un veto. Lectura ECOLÓGICA."
       },
       "status": "public"
     }
