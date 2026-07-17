@@ -71,3 +71,31 @@ def test_origen_metrics_are_held_back_from_agent(catalog):
     sentinel = catalog.metric("pct_nascuda_estranger")
     assert sentinel is not None and sentinel.dimension == "origen"
     assert sentinel.is_available() is False
+
+
+# --- Guarda de la unificació de claus (2026-07-17) -----------------------------------
+# Dins de `metrics:` l'ÚNICA clau d'advertència és `caveat` (la doctrina és al capçal
+# del contracte). Abans convivien note/nota/caveat i cap lector les llegia totes: el
+# «INFERÈNCIA, no cens» no arribava mai al lector. Si note:/nota: reapareixen en una
+# mètrica, és un error de contracte i aquest test el fa VERMELL.
+
+
+def test_cap_metrica_amb_note_o_nota_nomes_caveat():
+    import yaml
+
+    from datapoble_ai.catalog import _repo_root
+
+    raw = yaml.safe_load(
+        (_repo_root() / "semantic" / "metrics.yml").read_text(encoding="utf-8")
+    )
+    infractores = [
+        k for k, v in raw["metrics"].items()
+        if isinstance(v, dict) and ("note" in v or "nota" in v)
+    ]
+    assert infractores == [], (
+        f"metrics amb note:/nota: (la clau del contracte és caveat:): {infractores}"
+    )
+    n_caveats = sum(
+        1 for v in raw["metrics"].values() if isinstance(v, dict) and "caveat" in v
+    )
+    assert n_caveats >= 27  # les 27 de la unificació; poden créixer, mai baixar

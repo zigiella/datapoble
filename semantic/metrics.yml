@@ -2,6 +2,14 @@
 # Fuente de verdad de las métricas. La consumen: pipeline (transform), IA (Brúixola) y frontend (Mirador).
 # Multilingüe: label/definicio en ca + es (en/fr se añaden vía catálogos i18n del producto).
 # Regla: ninguna métrica sin fórmula, fuente y fecha. Ningún número sin procedencia.
+#
+# DOCTRINA DE CLAVES (unificación 2026-07-17, Talaia — antes convivían note/nota/caveat y
+# ningún lector las leía todas: el aviso «INFERÈNCIA, no cens» no llegaba nunca al lector):
+#   · metrics.<clave>.caveat  — ÚNICA clave de advertencia de lectura de una métrica.
+#     Obligatoria en toda inferencia; recomendada donde la lectura ingenua engaña.
+#     Quien muestre el VALOR muestra el caveat (UI y chat); la jaula lo exige (caveat_esborrat).
+#   · sources.<clave>.nota    — nota descriptiva de la FUENTE (otra entidad; no es un caveat).
+#   · Ninguna métrica usa ya note:/nota: — si reaparecen, es un error de contrato (test).
 
 meta:
   project: datapoble
@@ -277,7 +285,7 @@ metrics:
     table: mart_demografia
     column: pct_nascuda_estranger
     visibility: public
-    note:
+    caveat:
       ca: "Llegeix-ho SEMPRE contra el context (comarca i Catalunya, al costat). Lectura ECOLÒGICA. NO és «extranjería»: molts nascuts fora són ciutadans espanyols (vegeu bretxa de naturalització)."
       es: "Léelo SIEMPRE contra el contexto (comarca y Cataluña, al lado). Lectura ECOLÓGICA. NO es «extranjería»: muchos nacidos fuera son ciudadanos españoles (ver brecha de naturalización)."
 
@@ -294,7 +302,7 @@ metrics:
     table: mart_demografia
     column: pct_nacionalitat_estrangera
     visibility: public
-    note:
+    caveat:
       ca: "Sempre ≤ % nascuts a l'estranger: la diferència són els qui s'han naturalitzat. Lectura ECOLÒGICA, mai individual."
       es: "Siempre ≤ % nacidos en el extranjero: la diferencia son quienes se han naturalizado. Lectura ECOLÓGICA, nunca individual."
 
@@ -312,7 +320,7 @@ metrics:
     table: mart_demografia
     column: bretxa_naturalitzacio
     visibility: public
-    note:
+    caveat:
       ca: "Com més alta, més població d'origen estranger ARRELADA (naturalitzada). Dona la volta al marc de l'«extranjería»: mesura integració, no amenaça. Lectura ecològica."
       es: "Cuanto más alta, más población de origen extranjero ARRAIGADA (naturalizada). Da la vuelta al marco de la «extranjería»: mide integración, no amenaza. Lectura ecológica."
 
@@ -329,7 +337,7 @@ metrics:
     table: mart_demografia
     column: delta_pct_estrangera_finestra
     visibility: public
-    note:
+    caveat:
       ca: "NOMÉS 2021→ (Cens anual homogeni); no es barreja amb el Padró pre-2021 (ruptura de font). NULL on el secret estadístic suprimeix la sèrie."
       es: "SOLO 2021→ (Censo anual homogéneo); no se mezcla con el Padrón pre-2021 (ruptura de fuente). NULL donde el secreto estadístico suprime la serie."
 
@@ -528,7 +536,7 @@ metrics:
     table: mart_municipi
     column: restauracio_estab
     visibility: public
-    note:
+    caveat:
       ca: "MÍNIM observat, NO un cens: OSM INFRA-MAPEJA les zones rurals (la completesa del mapejat varia entre municipis), per això 6 micromunicipis surten amb 0 tot i tenir senyal de vidre. És una MESURA (no inferència); la lectura de «pressió turística» que se'n fa SÍ és inferència. El contrast oficial Idescat (ee, CCAE-56) no és municipal per API oberta (secret estadístic). Llicència ODbL (atribució + compartir-igual)."
       es: "MÍNIMO observado, NO un censo: OSM INFRAMAPEA las zonas rurales (la completitud del mapeo varía entre municipios), por eso 6 micromunicipios salen con 0 pese a tener señal de vidrio. Es una MEDIDA (no inferencia); la lectura de «presión turística» que se hace SÍ es inferencia. El contraste oficial Idescat (ee, CCAE-56) no es municipal por API abierta (secreto estadístico). Licencia ODbL (atribución + compartir-igual)."
     synonyms: {ca: [restauració, bars, restaurants, hostaleria, locals], es: [restauración, bares, restaurantes, hostelería, locales]}
@@ -547,7 +555,7 @@ metrics:
     table: mart_municipi
     column: restauracio_per_1000hab
     visibility: public
-    note:
+    caveat:
       ca: "Densitat per càpita: aïlla l'orientació a visitants de la mida del municipi (Berga té el màxim absolut d'establiments però queda baixa per càpita; els pobles de muntanya turístics queden alts). Hereta el caveat de completesa d'OSM (MÍNIM, no cens): als micromunicipis no mapejats subestima. Validat com a 2n proxy independent del vidre (Spearman ≈ 0,54 amb vidre_hab i amb index_turisme, N=31, p<0,01)."
       es: "Densidad per cápita: aísla la orientación a visitantes del tamaño del municipio (Berga tiene el máximo absoluto de establecimientos pero queda baja per cápita; los pueblos de montaña turísticos quedan altos). Hereda el caveat de completitud de OSM (MÍNIMO, no censo): en los micromunicipios no mapeados subestima. Validado como 2º proxy independiente del vidrio (Spearman ≈ 0,54 con vidre_hab y con index_turisme, N=31, p<0,01)."
     synonyms: {ca: [densitat restauració, restaurants per habitant, hostaleria per càpita], es: [densidad restauración, restaurantes por habitante, hostelería per cápita]}
@@ -571,7 +579,7 @@ metrics:
     table: mart_municipi
     column: serveis_estab
     visibility: public
-    note:
+    caveat:
       ca: "El senyal de CENTRALITAT és el COMPTE ABSOLUT (no la densitat): un poble és capçalera per TENIR supermercat/farmàcia/banc, independentment de la mida. MÍNIM observat, NO un cens: OSM INFRA-MAPEJA les zones rurals (la completesa varia entre municipis). És una MESURA; la lectura de «centre de serveis» que se'n fa (regla capital_serveis) SÍ és inferència. El contrast oficial Idescat (CCAE-47 comerç, serveis) no és municipal per API oberta (secret estadístic; l'EMEX només dóna 'serveis' agregat). A escala Catalunya el senyal s'ha de z-scoritzar PER COMARCA (signatures molt diferents Vallès/Pirineu/costa). Llicència ODbL (atribució + compartir-igual)."
       es: "La señal de CENTRALIDAD es el RECUENTO ABSOLUTO (no la densidad): un pueblo es cabecera por TENER supermercado/farmacia/banco, independientemente del tamaño. MÍNIMO observado, NO un censo: OSM INFRAMAPEA las zonas rurales (la completitud varía entre municipios). Es una MEDIDA; la lectura de «centro de servicios» que se hace (regla capital_serveis) SÍ es inferencia. El contraste oficial Idescat (CCAE-47 comercio, servicios) no es municipal por API abierta (secreto estadístico; el EMEX solo da 'servicios' agregado). A escala Cataluña la señal debe z-scorizarse POR COMARCA (firmas muy distintas Vallès/Pirineo/costa). Licencia ODbL (atribución + compartir-igual)."
     synonyms: {ca: [serveis, comerç, centralitat, supermercat, farmàcia, banc, capçalera], es: [servicios, comercio, centralidad, supermercado, farmacia, banco, cabecera]}
@@ -590,7 +598,7 @@ metrics:
     table: mart_municipi
     column: serveis_per_1000hab
     visibility: public
-    note:
+    caveat:
       ca: "Densitat per càpita: complementa el compte absolut (que és el senyal de capçalera). Un micromunicipi amb pocs serveis però molt pocs habitants pot sortir alt per càpita sense ser capçalera; per això la regla capital_serveis usa el COMPTE ABSOLUT (z-score), no la densitat. Hereta el caveat de completesa d'OSM (MÍNIM, no cens)."
       es: "Densidad per cápita: complementa el recuento absoluto (que es la señal de cabecera). Un micromunicipio con pocos servicios pero muy pocos habitantes puede salir alto per cápita sin ser cabecera; por eso la regla capital_serveis usa el RECUENTO ABSOLUTO (z-score), no la densidad. Hereda el caveat de completitud de OSM (MÍNIMO, no censo)."
     synonyms: {ca: [densitat serveis, serveis per habitant, dotació de serveis], es: [densidad servicios, servicios por habitante, dotación de servicios]}
@@ -877,7 +885,7 @@ metrics:
     table: mart_municipi
     column: IETR
     visibility: public
-    nota:
+    caveat:
       ca: "L'exposició combina dues cares: 0,5·capacitat (estructura preparada) + 0,5·impacte (empremta realitzada). Per al desglossament, vegeu Capacitat i Impacte."
       es: "La exposición combina dos caras: 0,5·capacidad (estructura preparada) + 0,5·impacto (huella realizada). Para el desglose, ved Capacidad e Impacto."
     synonyms: {ca: [índex, exposició, ietr], es: [índice, exposición, ietr]}
@@ -916,7 +924,7 @@ metrics:
     table: mart_municipi
     column: IETR_stock
     visibility: public
-    nota:
+    caveat:
       ca: "Desglossament de l'IETR (no una mesura nova): exposició STOCK, no pressió realitzada. Alt a municipis amb molt habitatge secundari/buit encara que el turisme reglat sigui baix (Gósol, Castellar). Relatiu a la comarca (winsoritzat). Inferència."
       es: "Desglose del IETR (no una medida nueva): exposición STOCK, no presión realizada. Alto en municipios con mucha vivienda secundaria/vacía aunque el turismo reglado sea bajo (Gósol, Castellar). Relativo a la comarca (winsorizado). Inferencia."
     synonyms: {ca: [ietr estructural, stock, exposició latent, habitatge buit], es: [ietr estructural, stock, exposición latente, vivienda vacía]}
@@ -939,7 +947,7 @@ metrics:
     table: mart_municipi
     column: IETR_impact
     visibility: public
-    nota:
+    caveat:
       ca: "Desglossament de l'IETR (no una mesura nova): pressió REALITZADA, no stock. Pot ser alt amb poc habitatge buit si hi ha molta oferta reglada activa (Capolat, Sagàs). Relatiu a la comarca (winsoritzat). Inferència."
       es: "Desglose del IETR (no una medida nueva): presión REALIZADA, no stock. Puede ser alto con poca vivienda vacía si hay mucha oferta reglada activa (Capolat, Sagàs). Relativo a la comarca (winsorizado). Inferencia."
     synonyms: {ca: [ietr impacte, pressió viva, oferta reglada, rtc], es: [ietr impacto, presión viva, oferta reglada, rtc]}
@@ -1026,7 +1034,7 @@ metrics:
     table: mart_electoral
     column: pct_indep_A20241
     visibility: public
-    nota:
+    caveat:
       ca: "Lectura ECOLÒGICA (no individual; falàcia ecològica). Volàtil en micromunicipis (N petit)."
       es: "Lectura ECOLÓGICA (no individual; falacia ecológica). Volátil en micromunicipios (N pequeño)."
 
@@ -1058,7 +1066,7 @@ metrics:
     column: pct_extrema_dreta
     visibility: public
     status: planned
-    nota:
+    caveat:
       ca: "Lectura ecològica. Aliança Catalana és el focus (extrema dreta independentista, emergent i rural)."
       es: "Lectura ecológica. Aliança Catalana es el foco (extrema derecha independentista, emergente y rural)."
 

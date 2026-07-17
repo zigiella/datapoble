@@ -187,11 +187,13 @@ class Metric:
         reader. Found during the X1 harvest (contract C5): the cage cannot enforce
         an obligated caveat that the catalog refuses to surface.
 
-        Both keys are read; ``nota`` wins if a metric ever declares both.
+        Since the 2026-07-17 contract unification, ``caveat`` is the ONLY
+        metric-level key (27 metrics carry it); ``nota`` remains as a legacy
+        fallback so a stray key never silently drops a warning again.
         """
-        value = self.raw.get("nota")
+        value = self.raw.get("caveat")
         if value is None:
-            value = self.raw.get("caveat")
+            value = self.raw.get("nota")
         return localized(value, locale)
 
     def synonyms(self, locale: str = DEFAULT_LOCALE) -> list[str]:
