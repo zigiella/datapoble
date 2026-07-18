@@ -90,7 +90,10 @@ registral és la Instrumental de cooperació local (fila 54) · IDAE+«alumbrado
 naturales» (MAPA) = 0 · «senders» = 0 · PUOSC fora de finestra i tancat (memòria de cicle, R-FUNC
 §5) · Consell Comarcal del Berguedà = 0 convocatòries a BDNS (el forat comarcal del R-FUNC §2,
 re-verificat en viu) · la 918352 (OSIC arts escèniques municipals i comarcals) la troba la consulta
-però JA és la **#3 de la capa A**: no es duplica.
+però JA és la **#3 de la capa A**: no es duplica. **Decisió de contracte (Talaia, C4 §2 v2):
+s'etiqueta UNA sola vegada (a la fila #3), i com que la troba la consulta de programes de la capa B,
+la seva etiqueta COMPTA AL DENOMINADOR B** (si surt elegible o frontera) — a la capa A segueix
+comptant per al FP-rate del flux, amb la mateixa etiqueta.
 
 | # | BDNS | Convocant | Objecte | Beneficiaris (segons font) | Àmbit | Termini | **golden** | **semafor** | **motiu (1 línia)** |
 |---|---|---|---|---|---|---|---|---|---|
@@ -138,6 +141,8 @@ però JA és la **#3 de la capa A**: no es duplica.
 ## Quan acabis
 
 Guarda el fitxer i digue'm «etiquetat». Jo: transcric al JSON del banc → et porto el recompte
-(elegibles/descartables/frontera) per confirmar → **congelem amb data** → i a partir d'aquell moment
-el banc no es toca mai més (la guarda mecànica ho vigila). Si el mix queda lluny del 8/8/4 previst
-pel C4, reescalo els llindars ABANS de la primera passada, tal com mana el contracte.
+(elegibles/descartables/frontera per capa) per confirmar → **congelem amb data** → i a partir
+d'aquell moment el banc no es toca mai més (la guarda mecànica ho vigila). El recall i els nivells
+s'apliquen a la CAPA B amb el denominador que surti de les teves etiquetes, **tal com sigui** — la
+clàusula de reescalar de la v1 està SUPRIMIDA (C4 §2 v2): si B no arriba a 8 elegibles clares, es
+reporta el denominador real, mai s'infla.
