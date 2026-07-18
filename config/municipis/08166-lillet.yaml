@@ -1,0 +1,37 @@
+# Perfil municipal del radar de subvencions — la Pobla de Lillet (INE5 08166)
+# ==========================================================================
+# PROPOSTA, PENDENT DE VALIDACIÓ DE BEA AMB L'AJUNTAMENT (R-FUNC §3: pesos i
+# cartera proposats per Marea; la llista de projectes la valida l'equip de
+# govern — «quines són les tres feines que més temps us mengen?»).
+#
+# Contracte: docs/ajuntaments/C3-subvencions-perfil.md §3 (esquema tancat,
+# validació fail-fast) i §6bis (destinataris = CLAUS SIMBÒLIQUES, mai correus:
+# el mapa clau→adreça viu NOMÉS als secrets del workflow, p. ex. RADAR_DEST_BEA).
+# Els pesos NO filtren (el filtre dur és determinista): ordenen el correu i
+# graduen el semàfor dels casos frontera.
+tipus_beneficiari: ajuntament
+poblacio: 1106
+poblacio_any: 2025          # padró citat (catàleg canònic del repo)
+territori:
+  - "municipi:08166"
+  - "comarca:bergueda"
+  - "provincia:barcelona"
+  - catalunya
+  - estatal
+materies:
+  - { nom: "turisme i patrimoni",                pes: 0.9 }   # Jardins Artigas, tren, monestir
+  - { nom: "envelliment i serveis socials",      pes: 0.9 }   # 35% +65: prioritat social
+  - { nom: "eficiencia energetica i enllumenat", pes: 0.8 }
+  - { nom: "digitalitzacio i administracio",     pes: 0.8 }   # SeTDIBA, videoactes, dades
+  - { nom: "cultura i memoria",                  pes: 0.7 }   # arxiu, memòria oral
+  - { nom: "camins, natura i espais publics",    pes: 0.7 }
+  - { nom: "habitatge",                          pes: 0.6 }   # tesi datapoble: pressió residencial
+  - { nom: "ocupacio i promocio economica",      pes: 0.5 }
+projectes_en_cartera:       # llista VIVA — l'actualitza l'equip de govern, no el radar
+  - "guia turística QR multilingüe (amb Castellar de n'Hug)"
+  - "digitalització d'arxiu i memòria oral"
+  - "millora enllumenat públic"
+  - "videoactes i transparència del ple"
+cofinancament_max: 20000    # € — llindar prudent; a validar amb intervenció
+destinataris: [BEA]         # clau simbòlica (C3 §6bis) — una «@» aquí és un error de load
+actiu: true                 # únic perfil actiu de la v1 (C3 §3)
