@@ -198,8 +198,8 @@ metrics:
   index_envelliment:
     label: {ca: Índex d'envelliment, es: Índice de envejecimiento}
     definicio:
-      ca: "Població 65+ per cada 100 de 0-14. Eix demogràfic per a l'anàlisi extrema dreta × edat."
-      es: "Población 65+ por cada 100 de 0-14. Eje demográfico para el análisis extrema derecha × edad."
+      ca: "Població de 65 anys o més per cada 100 habitants de 0 a 14. Mesura el relleu generacional: per sobre de 100, hi ha més gent gran que canalla."
+      es: "Población de 65 años o más por cada 100 habitantes de 0 a 14. Mide el relevo generacional: por encima de 100, hay más gente mayor que niños."
     dimension: demografia
     unit: {ca: "65+/0-14 ×100", es: "65+/0-14 ×100"}
     formula: "poblacio_65_mes / poblacio_0_14 * 100"
@@ -208,7 +208,6 @@ metrics:
     table: mart_municipi
     column: index_envelliment
     visibility: public
-    status: planned
 
   densitat_hab_km2:
     label: {ca: Densitat de població, es: Densidad de población}
