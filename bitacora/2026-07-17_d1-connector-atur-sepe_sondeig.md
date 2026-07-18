@@ -38,5 +38,27 @@ Tasca 1 del latido (dial: lot de dues). Spec: `docs/ajuntaments/tasques-especifi
 - El rang comarcal és de **D4** (contra la comarca del municipi via `municipis-territori.json`), no d'aquest PR.
 - `date:` de la mètrica = darrer mes carregat ("2026-06"); l'actualitza `tools/refresh_atur.py` (edició quirúrgica del YAML, els comentaris-contracte no es toquen).
 
+## Post-mortem del forat (2026-07-18)
+El check `ai evals (offline)` del PR petava: la porta offline de `packages/ai`
+fixa el warehouse a les seed fixtures (`use_fixtures=True`), i tota taula
+referenciada per una mètrica disponible del contracte ha de tenir la seva
+fixture a `packages/ai/fixtures/` — `atur_registrat` hi va portar
+`mart_pols_mensual` sense seed. Tancat així:
+- `packages/ai/fixtures/mart_pols_mensual.csv` — **12 files ALL-REAL** (transcrites
+  del parquet verificat, `is_real=1`), retallades a UN mes (2026-06, el `date:`
+  del contracte) perquè el lookup determinista no és month-aware; 4 files «<5»
+  reals (Castellar de n'Hug, Gisclareny, Gombrèn, Gósol) exerceixen la doctrina.
+- `evals/cases.yml` — el guardrail `es_out_of_catalog` preguntava per «la tasa de
+  paro»: D1 la va portar DINS del catàleg (el cas era correcte quan es va
+  escriure; ara la premissa ha quedat obsoleta). Reapuntat a «esperanza de vida» (segueix
+  fora) + 2 casos nous d'atur (ca/es, Berga = 760, valor real byte-matched).
+- **Vora coneguda, NO tapada:** «tasa de paro» (taxa, %) ara resol al RECOMPTE de
+  persones — el router determinista no distingeix taxa de recompte. Deixat
+  anotat a `cases.yml`, sense enshrinar-ho com a comportament esperat; és feina
+  del track D (p. ex. D4) o d'una mètrica `taxa_atur` amb contracte propi.
+- Rebase sobre main (conflicte real a `ci.yml` amb el #255: el pas D1 conviu ara
+  amb la suite completa de signals). Suites locals: ingestion 14/14 ·
+  verify_pols_mensual OK · signals 125/125 · ai 190/190.
+
 ## Handoff
 - **Talaia:** el workflow `refresh-atur.yml` NO committeja (porta del PR respectada) — el dia 5 de cada mes deixa els artefactes llestos; algú (tu) els baixa i obre PR. Si mai vols que committegi sol, és decisió teva, no meva.
