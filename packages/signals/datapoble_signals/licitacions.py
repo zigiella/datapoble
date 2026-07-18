@@ -254,7 +254,13 @@ def build_allocation(df_enriched: pd.DataFrame, pop: dict[str, int]) -> pd.DataF
     generen **una** fila amb ``ine5=NULL`` i share 0 (es preserven per a la
     traçabilitat i el recompte; no sumen a cap municipi).
     """
-    total_pop = sum(pop.values()) or 0
+    # DENOMINADOR = la població dels municipis ON ES REPARTEIX (els 31), MAI la
+    # de tot el diccionari: des de F2 el mart_municipi cobreix Catalunya sencera
+    # (947 munis) i sum(pop.values()) és la població de tot el país. Amb el
+    # denominador gros, les quotes per_poblacio sumaven pop(31)/pop(CAT) ≈ 0,5%
+    # i es perdien ~7,67 M€ (86% del que reparteix el Consell) en silenci — el
+    # vermell de test_real_parquet_cobertura_i_conservacio, destapat a R1.
+    total_pop = sum(pop.get(i, 0) for i in BERGUEDA_INE5)
     rows: list[dict] = []
     comarcal = df_enriched[df_enriched["ambit"] == "comarcal"]
 

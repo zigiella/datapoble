@@ -40,18 +40,16 @@ jobs:
         run: pip install dbt-duckdb duckdb pandas pyarrow pyyaml ruff pytest requests
       - name: Lint (ruff) · transform + ingestion + signals
         run: ruff check packages/transform packages/ingestion packages/signals
-      # R1 · radar de subvencions: el connector BDNS corre 100% OFFLINE sobre les
-      # fixtures reals arxivades (tests/fixtures/bdns_convocatories.json) i una
-      # sessió HTTP falsa. Cap crida de xarxa, cap clau. Guarda la trampa de les
-      # regions NUTS (la pare no cascada), que és una regressió silenciosa: no
-      # peta, només retorna menys senyal del compte.
-      # ABAST: només aquest fitxer. La resta de la suite de `signals` no ha estat
-      # mai al CI i avui té 1 test vermell sobre dades versionades
-      # (test_licitacions.py::test_real_parquet_cobertura_i_conservacio, la
-      # conservació de l'import no quadra) — és anterior a R1 i queda REPORTAT a
-      # la bitàcola, no tapat aquí: cablejar-la sencera és una tasca pròpia.
-      - name: R1 · connector BDNS (offline, sobre fixtures)
-        run: pytest packages/signals/tests/test_subvencions_bdns.py -q
+      # Suite COMPLETA de `signals`, 100% OFFLINE (fixtures reals arxivades +
+      # sessions HTTP falses + parquets versionats; cap crida de xarxa, cap clau).
+      # Cobreix: BDNS/R1 (la trampa de les regions NUTS — la pare no cascada),
+      # licitacions (conservació de l'import del repartiment comarcal — el vermell
+      # que R1 va destapar, arreglat el 2026-07-17: el denominador del per_poblacio
+      # prenia la població de TOT el mart quan F2 el va escalar a 947 munis),
+      # events, sequera i convergència. L'acotació que R1 va deixar (només el seu
+      # fitxer) queda RETIRADA: la porta de main torna a cobrir tota la suite.
+      - name: Suite signals (offline, completa)
+        run: pytest packages/signals/tests -q
       - name: dbt parse (plantilla + schema vàlids)
         run: dbt parse --project-dir packages/transform --profiles-dir packages/transform
       - name: Verify marts (ancoratges + Spearman)
