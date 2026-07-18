@@ -47,6 +47,10 @@ contracte: el banc del geo-rag (06/07) es va COMPOSAR, no mostrejar — aquesta 
 - Les convocatòries de capa B poden tenir `estat: tancada` (són de mesos enrere): el banc avalua el
   JUDICI del pipeline (elegibilitat/semàfor), no la vigència — la data de referència de cada fitxa
   és la seva `data_publicacio`, i el filtre de termini s'avalua contra aquella data, no contra avui.
+- **Solapament A∩B (decisió tancada):** si una convocatòria del flux cru (A) també la troba la
+  consulta de programes (B), s'etiqueta UNA sola vegada; l'etiqueta compta al denominador B (si és
+  elegible/frontera) i al FP-rate d'A alhora. Mai doble etiquetatge, mai doble recompte dins d'una
+  mateixa mètrica.
 - **Idioma segons la font real:** la BDNS publica majoritàriament en castellà — el banc (les dues
   capes) manté la distribució real, no la llengua còmoda del desenvolupador.
 - **Criteri d'etiquetatge ESCRIT ABANS d'etiquetar:** Bea rep una pàgina amb la definició
