@@ -40,6 +40,17 @@ jobs:
         run: pip install dbt-duckdb duckdb pandas pyarrow pyyaml ruff pytest requests
       - name: Lint (ruff) · transform + ingestion + signals
         run: ruff check packages/transform packages/ingestion packages/signals
+      # D1 · connector atur SEPE: 100% OFFLINE sobre les fixtures reals arxivades
+      # (bytes exactes del CSV del SEPE). Guarda les esmenes del contracte: filtre
+      # pel CATÀLEG sencer (Gósol 25100 i Gombrèn 17080 presents, mai per
+      # província), doctrina del «<5» = interval [1,4], zero-pad de codis i
+      # byte-match de 3 municipis. --no-deps: el test no necessita dlt.
+      - name: D1 · connector atur SEPE (offline, sobre fixtures)
+        run: |
+          pip install -e packages/ingestion --no-deps
+          pytest packages/ingestion/tests/test_atur_sepe.py -q
+      - name: Verify mart_pols_mensual (àncores byte-match + doctrina <5 · offline)
+        run: python packages/transform/verify_pols_mensual.py
       # Suite COMPLETA de `signals`, 100% OFFLINE (fixtures reals arxivades +
       # sessions HTTP falses + parquets versionats; cap crida de xarxa, cap clau).
       # Cobreix: BDNS/R1 (la trampa de les regions NUTS — la pare no cascada),

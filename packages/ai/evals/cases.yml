@@ -98,10 +98,16 @@ cases:
     expect: refusal
     reason: out_of_catalog
 
+  # La pregunta original («¿Cuál es la tasa de paro de Berga?») va deixar de ser
+  # out-of-catalog el 2026-07: D1 va portar l'atur SEPE al contracte
+  # (atur_registrat, sinònims es: paro/parados/desempleo). El guardrail es manté
+  # amb una pregunta que SEGUEIX fora del catàleg. NOTA (vora coneguda, no
+  # enshrinada aquí): «tasa de paro» ara resol al COMPTADOR de persones — el
+  # router determinista no distingeix taxa (%) de recompte; queda per al track D.
   - id: es_out_of_catalog
     locale: es
     source: guardrail
-    question: "¿Cuál es la tasa de paro de Berga?"
+    question: "¿Cuál es la esperanza de vida en Berga?"
     expect: refusal
     reason: out_of_catalog
 
@@ -118,3 +124,24 @@ cases:
     question: "Quin municipi té menys establiments turístics?"
     expect: answer
     metric: rtc_total
+
+  # ---- D1 · atur SEPE (mart_pols_mensual, primera taula mensual) -----------
+  # La fixture és ALL-REAL (12 files, 2026-06, transcrites del parquet
+  # verificat); 760 és el valor real de Berga al CSV del SEPE de juny 2026.
+  - id: ca_atur_lookup
+    locale: ca
+    source: extra
+    question: "Quant atur registrat té Berga?"
+    expect: answer
+    metric: atur_registrat
+    municipality: "Berga"
+    contains: ["760"]
+
+  - id: es_atur_lookup
+    locale: es
+    source: extra
+    question: "¿Cuánto paro registrado tiene Berga?"
+    expect: answer
+    metric: atur_registrat
+    municipality: "Berga"
+    contains: ["760"]

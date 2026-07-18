@@ -9,6 +9,7 @@
     python -m datapoble_ingestion restauracio_osm
     python -m datapoble_ingestion serveis_osm
     python -m datapoble_ingestion demografia_origen
+    python -m datapoble_ingestion atur_sepe
 """
 from __future__ import annotations
 
@@ -17,6 +18,7 @@ import json
 import sys
 
 from . import (
+    atur_sepe,
     demografia_origen,
     electoral,
     icaen_consum,
@@ -32,7 +34,7 @@ from .municipis import BERGUEDA, BERGUEDA_INE5, CATALUNYA
 # Ordre canònic de fonts.
 SOURCE_NAMES = [
     "rtc", "residus", "idescat_emex", "electoral", "icaen_consum",
-    "restauracio_osm", "serveis_osm", "demografia_origen",
+    "restauracio_osm", "serveis_osm", "demografia_origen", "atur_sepe",
 ]
 
 # OSM encara no està des-acotat a Catalunya (cal bbox CAT + geometria 947 → F1.2b).
@@ -57,6 +59,12 @@ def _invoke(name: str, scope: str, provincia: str | None = None):
     """Crida el connector amb l'abast triat. `bergueda` = pilot (comportament previ);
     `catalunya` = sense filtre / registre dels 947 (per-muni: opcionalment per `--provincia`)."""
     berg = scope == "bergueda"
+    if name == "atur_sepe":
+        # SEMPRE el catàleg de Catalunya sencer (947 ine5), sigui quin sigui
+        # l'scope: el contracte C1 §1.1 PROHIBEIX el filtre per província o
+        # comarca (Gósol és Lleida 25100, Gombrèn és Girona 17080) i el volum
+        # és trivial. El tall Berguedà, si mai cal, és cosa de transform.
+        return atur_sepe.run()
     if name == "rtc":
         return rtc.run(COMARCA_CODI_PILOT if berg else None)
     if name == "residus":

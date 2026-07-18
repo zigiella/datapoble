@@ -34,6 +34,14 @@ IDESCAT_EMEX_BASE = "https://api.idescat.cat/emex/v1/dades.json"
 # (l'EMEX només dóna el darrer any). Vegeu docs/demografia-origen-fonts.md.
 IDESCAT_POBESTR_BASE = "https://www.idescat.cat/poblacioestrangera/"
 
+# SEPE «Paro registrado por municipios» — CSV anual-amb-mesos, un fitxer per any
+# des de 2006, sense clau (verificat en viu 2026-07-17). {any} = any de 4 xifres.
+# La font Socrata de l'spec original NO existeix (C1 §1.1, esmenat 2026-07-16).
+SEPE_ATUR_URL_TEMPLATE = (
+    "https://sede.sepe.gob.es/es/portaltrabaja/resources/sede/datos_abiertos/"
+    "datos/Paro_por_municipios_{any}_csv.csv"
+)
+
 # Overpass API (OpenStreetMap) — POIs d'amenity per a la densitat de restauració
 # (2n proxy d'hostaleria, complement del vidre). Sense auth. Llista de miralls per
 # robustesa (el primari respon 406 sense User-Agent → cal capçalera; vegeu connector).
@@ -86,6 +94,23 @@ SOURCES: dict[str, dict] = {
         "url": f"{IDESCAT_EMEX_BASE}?id={{codi6}}",
         "llicencia": "Idescat, reutilització amb atribució",
         "kind": "idescat_emex",
+    },
+    # D1 (2026-07-17): atur registrat mensual. Font REAL = SEPE (la Socrata de
+    # l'spec no existeix — C1 §1.1 esmenat). Filtre pel CATÀLEG de Catalunya
+    # sencer (947 ine5), MAI per província: Gósol és Lleida (25100) i Gombrèn és
+    # Girona (17080). Llicència verificada literalment a l'avís legal de la seu
+    # del SEPE (datos abiertos): art. 7 RD 1495/2011 (Llei 37/2007).
+    "atur_sepe": {
+        "organisme": "SEPE — Servicio Público de Empleo Estatal",
+        "producte": "Paro registrado por municipios (CSV mensual, un fitxer per any, des de 2006)",
+        "dataset_id": None,
+        "url": SEPE_ATUR_URL_TEMPLATE,
+        "llicencia": (
+            "Datos abiertos SEPE — reutilització comercial i no comercial (art. 7 "
+            "RD 1495/2011, que desplega la Llei 37/2007); cita obligada: «Origen "
+            "de los datos: Servicio Público de Empleo Estatal» + data d'actualització"
+        ),
+        "kind": "csv",
     },
     # Composició i arrelament (origen) — TRANSFORMACIÓ DEMOGRÀFICA. Dues vies
     # Idescat complementàries, totes municipals i obertes (verificades en viu

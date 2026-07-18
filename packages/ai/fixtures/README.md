@@ -43,6 +43,20 @@ Every row carries an `is_real` flag.
   have the estimate and I disown it, with a reason" — rather than only the happy
   path. La Nou de Berguedà is the second such case.
 
+- **`mart_pols_mensual` is all-real (`is_real = 1`)**: 12 rows transcribed
+  verbatim from the verified `data/marts/mart_pols_mensual.parquet` (D1, atur
+  SEPE, byte-matched against the source CSV), trimmed to a **single month**
+  (`2026-06`, the contract's `date:` for `atur_registrat`) so a naive lookup
+  stays deterministic — the router is not month-aware yet. Four rows are
+  genuine «<5» doctrine rows (`atur_registrat` NULL + interval [1,4] +
+  `atur_emmascarat = true`), including both province edge cases (Gombrèn
+  17080/Girona, Gósol 25100/Lleida). **Identity caveat**: these rows carry the
+  *official* register codes and names (Bagà = `08016`, `la Nou de Berguedà` =
+  `08142`…), which differ from the synthetic `ine5` placeholders above (Bagà
+  is `08009` in `mart_municipi`). The warehouse queries each table
+  independently — never joins them — so the mismatch is harmless, and the real
+  rows stay real rather than bending to the synthetic spine.
+
 The agent itself does not read `is_real`; it is documentation for humans and a
 hook for a future "fixture vs production" provenance flag.
 
@@ -54,6 +68,9 @@ builder can select `metric.column` straight from `metric.table`:
 - `mart_municipi` — demografia, vivenda, turisme, pressió, energia, índex.
 - `mart_electoral` — política (columns are suffixed `_A20241` = Parlament 2024,
   matching the contract).
+- `mart_pols_mensual` — treball (mensual, format llarg: 1 row per `ine5` +
+  `date` "YYYY-MM"); columns mirror the real mart exactly
+  (`atur_registrat`/`_min`/`_max`/`atur_emmascarat`), plus `is_real`.
 
 `planned` metrics (`index_envelliment`, `pct_extrema_dreta`) are intentionally
 **absent** — the contract marks them not-yet-computed, and the agent refuses to
