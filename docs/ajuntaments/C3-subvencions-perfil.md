@@ -63,7 +63,7 @@ septiembre de 2026», «15 Dies Hàbils»…); la resta, res.
 | `materies` | llista `{nom, pes}` amb `pes` ∈ [0,1] |
 | `projectes_en_cartera` | llista de str lliures |
 | `cofinancament_max` | float (% màxim assumible) |
-| `destinataris` | llista de correus de sortida (v1: només Bea, per R4) |
+| `destinataris` | llista de CLAUS SIMBÒLIQUES (p. ex. `[BEA]`), MAI correus en clar — §6 bis |
 | `actiu` | bool **obligatori** (cap default implícit) |
 
 **Semàntica EXACTA d'`actiu`:** la ingesta (R1/R5) i el filtre+puntuació (R2) corren per a **tots** els perfils, actius o no; les **sortides** (correu R4 i qualsevol futura publicació) es generen **només** per als perfils `actiu: true`. **v1: actiu només `08166-lillet`; `08052-castellar` i `_default` preparats i dorments** (`actiu: false`).
@@ -81,6 +81,20 @@ Relació fixada: **els perfils NO substitueixen `BERGUEDA_INE5` en v1.** La llis
 - Castellar de n'Hug = **08052** (INE/Idescat; el Cadastre diu 08051 — el test verifica que cap join usa 08051).
 - la Pobla de Lillet = **08166** (Idescat 6 dígits: **081666** — el test verifica el tall `[:5]` i que 081666 mai apareix com a clau).
 - Amb fixtures reals arxivades; CI verd offline, cap test depèn de xarxa.
+
+## 6 bis. Seguretat de la sortida (esmena 2026-07-18, dels forats detectats al R-FUNC §9.1–9.2)
+
+1. **Cap correu en clar al repo públic.** El camp `destinataris` del perfil porta claus simbòliques;
+   el mapa clau→adreça viu NOMÉS als secrets del workflow (p. ex. `RADAR_DEST_BEA`). Validació del
+   load: una `@` a `destinataris` → error.
+2. **El correu del radar MAI com a artifact d'Actions**: en un repo públic, els artifacts són
+   públics de facto (qualsevol usuari loguejat els baixa). En dev el correu s'escriu a fitxer local
+   gitignorat; en real s'envia per SMTP des del workflow. És E1 aplicat als artifacts.
+3. **El flux del radar és PRIVAT per disseny** (decisió de Bea, R-FUNC §9): mai al web públic — els
+   `projectes_en_cartera` són estratègia municipal. Públics només: agregats no accionables amb
+   retard, i l'arxiu de convocatòries tancades. El disseny preveu l'overlay privat del perfil (v2).
+4. **Anti-relay** (per a la futura ruta /radar): el botó «envia-m'ho» només envia als `destinataris`
+   del perfil, mai a una adreça lliure.
 
 ## 6. La porta humana (§1.1 de l'spec) — innegociable
 

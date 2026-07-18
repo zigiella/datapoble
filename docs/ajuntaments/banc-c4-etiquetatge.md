@@ -1,4 +1,13 @@
-# Banc C4 — full d'etiquetatge per a Bea (26 candidates reals de R1)
+# Banc C4 — full d'etiquetatge per a Bea · v2: DUES CAPES (C4 §2 v2)
+
+**⚠️ REORIENTAT (2026-07-18):** l'objecció de Marea (comentari a #258) és ACCEPTADA i el C4 esmenat.
+Les 26 de sota són ara la **CAPA A (flux cru)**: mesuren FP-rate i filtre dur — CAP titular de recall
+en surt. El recompte previ de Marea (0 elegibles clares; la #3 OSIC com a molt frontera) fa esperar
+majoria de `descartable`: **és el resultat correcte d'aquesta capa, no un problema**. Etiquetatge
+exprés (~10 min): el teu criteri contra el soroll real. La **CAPA B** (les 8 elegibles clares + 4–6
+fronteres del perfil — el denominador del recall) l'està composant Sondeig (tasca R1.5) per llista de
+programes, SENSE pre-etiquetar; quan arribi, s'afegeix aquí com a segona taula i etiquetes el conjunt.
+
 
 **Com funciona (5 minuts de lectura, ~1 hora de feina):** per a cada convocatòria, omple les
 tres columnes finals de la taula. Res més. Jo transcriuré mecànicament les teves etiquetes al banc
