@@ -1,0 +1,27 @@
+# Perfil municipal del radar de subvencions — Castellar de n'Hug (INE5 08052)
+# ==========================================================================
+# DORMENT (actiu: false — C3 §3: «v1: actiu només 08166-lillet»). El filtre i la
+# puntuació CORREN igualment per a aquest perfil (el log mostra els seus matches);
+# cap sortida (correu R4, publicació) es genera mentre actiu sigui false.
+#
+# ESBORRANY mínim per exercir el circuit multi-perfil: matèries i cartera es
+# fixaran amb la conversa amb l'ajuntament. Cas XS extrem (~166 hab): R-FUNC §9
+# preveu per a v2 els camps `inversio_minima_max` i `bestreta`, que NO són a
+# l'esquema v1 (C3 §3) i per això NO apareixen aquí.
+tipus_beneficiari: ajuntament
+poblacio: 166
+poblacio_any: 2025          # padró citat (àncora verificada de docs/data-sources.md)
+territori:
+  - "municipi:08052"
+  - "comarca:bergueda"
+  - "provincia:barcelona"
+  - catalunya
+  - estatal
+materies:
+  - { nom: "turisme i patrimoni",                pes: 0.9 }   # Fonts del Llobregat, clickania
+  - { nom: "eficiencia energetica i enllumenat", pes: 0.7 }
+projectes_en_cartera:
+  - "guia turística QR multilingüe (amb la Pobla de Lillet)"
+cofinancament_max: 5000     # € — micropressupost; a validar amb l'ajuntament
+destinataris: [BEA]         # clau simbòlica (C3 §6bis)
+actiu: false                # dorment per disseny (C3 §3)

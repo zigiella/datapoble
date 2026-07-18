@@ -52,3 +52,7 @@ CAJON/
 
 # Sortides de l'eval de models (locals, mai committejades)
 data/eval/
+
+# Dry-run local del radar de subvencions (R-FUNC §9.1: en dev el radar no envia,
+# ESCRIU aquí; el correu real és R4 i mai un artifact d'Actions — C3 §6bis)
+out/

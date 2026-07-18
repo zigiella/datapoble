@@ -1,0 +1,536 @@
+{
+ "_meta": {
+  "proposit": "DEV SET del filtre R2 (C4 §4: el banc mesura, no entrena — el filtre es desenvolupa AQUI, mai contra les 66 del banc)",
+  "seleccio": "cerca busqueda BDNS 15-31/01/2025 (finestra ANTERIOR a la composicio 6-12 mesos de la capa B), triades per Sondeig el 2026-07-18 per exercir regles concretes del filtre; cap etiqueta daurada: els comentaris son expectatives de DEV, no golden de Bea",
+  "disjuncio": "cap id present a les fixtures del banc (bdns_convocatories.json capa A · bdns_capa_b.json capa B) — test mecanic test_dev_set_disjunt_del_banc",
+  "data_vista": "2026-07-18",
+  "casos": {
+   "812061": "Diputacio de Barcelona, ambit provincia BCN, termini datat 2025-03-06, beneficiaris juridiques-no-economiques: VIVA a referencia 2025-02-01 (flag tancada posterior a la referencia)",
+   "812098": "Diputacio de Barcelona, cultura popular: viva a referencia 2025-02-01; exercita matching de materia cultura",
+   "811428": "Generalitat (AUTONOMICA CATALUNA), NextGenerationEU rehabilitacio, termini 2025-12-31: viva; materia habitatge/energia",
+   "809331": "Diputacio de LLEIDA, memoria democratica: DESCARTADA per la regla de diputacio de una altra provincia (tot i materia memoria del perfil)",
+   "810662": "Ajuntament de ORIS (Osona), eficiencia energetica per a VEINS del municipi: DESCARTADA per convocant municipal alie (la trampa: la materia encaixa amb el perfil pero el convocant no es per a nosaltres)"
+  }
+ },
+ "convocatories": [
+  {
+   "busqueda": {
+    "id": 1013621,
+    "mrr": false,
+    "numeroConvocatoria": "812061",
+    "descripcion": "SUBVENCIONES DESTINADAS A FINANCIAR LAS ACTUACIONES A REALIZAR DENTRO DE LA DEMARCACIÓN DE LA DIPUTACIÓN DE BARCELONA DURANTE EN 2025 POR LAS FEDERACIONES QUE AGLUTINAN ENTIDADES DEDICADAS A FOMENTAR Y DIFUNDIR LA CULTURA POPULAR Y TRADICIONAL",
+    "descripcionLeng": "SUBVENCIONS DESTINADES A FINANÇAR LES ACTUACIONS A REALITZAR DINS DE LA DEMARCACIÓ DE LA DIPUTACIÓ DE BARCELONA DURANT L’ANY 2025 PER LES FEDERACIONS QUE AGLUTINEN ENTITATS DEDICADES A FOMENTAR I DIFONDRE LA CULTURA POPULAR I TRADICIONAL",
+    "fechaRecepcion": "2025-01-30",
+    "nivel1": "LOCAL",
+    "nivel2": "DIPUTACIÓN PROV. DE BARCELONA",
+    "nivel3": "DIPUTACIÓN PROVINCIAL DE BARCELONA",
+    "codigoInvente": null
+   },
+   "detall": {
+    "id": 1013621,
+    "organo": {
+     "nivel1": "LOCAL",
+     "nivel2": "DIPUTACIÓN PROV. DE BARCELONA",
+     "nivel3": "DIPUTACIÓN PROVINCIAL DE BARCELONA"
+    },
+    "sedeElectronica": null,
+    "codigoBDNS": "812061",
+    "fechaRecepcion": "2025-01-30",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concurrencia competitiva - canónica",
+    "presupuestoTotal": 150000,
+    "mrr": false,
+    "descripcion": "SUBVENCIONES DESTINADAS A FINANCIAR LAS ACTUACIONES A REALIZAR DENTRO DE LA DEMARCACIÓN DE LA DIPUTACIÓN DE BARCELONA DURANTE EN 2025 POR LAS FEDERACIONES QUE AGLUTINAN ENTIDADES DEDICADAS A FOMENTAR Y DIFUNDIR LA CULTURA POPULAR Y TRADICIONAL",
+    "descripcionLeng": "SUBVENCIONS DESTINADES A FINANÇAR LES ACTUACIONS A REALITZAR DINS DE LA DEMARCACIÓ DE LA DIPUTACIÓ DE BARCELONA DURANT L’ANY 2025 PER LES FEDERACIONS QUE AGLUTINEN ENTITATS DEDICADES A FOMENTAR I DIFONDRE LA CULTURA POPULAR I TRADICIONAL",
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PERSONAS JURÍDICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "Actividades de bibliotecas, archivos, museos y otras actividades culturales",
+      "codigo": "91"
+     },
+     {
+      "descripcion": "Actividades de creación artística y artes escénicas",
+      "codigo": "90"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES511 - Barcelona"
+     }
+    ],
+    "descripcionFinalidad": "Cultura",
+    "descripcionBasesReguladoras": "Ordenanza General de Subvenciones",
+    "urlBasesReguladoras": "https://www.diba.cat/documents/446885/0/Ordenan%C3%A7a+General+Subvencions+17.pdf/01e71b5c-561b-4c94-a7a9-584247c623e5",
+    "sePublicaDiarioOficial": true,
+    "abierto": false,
+    "fechaInicioSolicitud": null,
+    "fechaFinSolicitud": "2025-03-06",
+    "textInicio": "El día seguiente a la publicación del extracto de la convocatoria en el BOPB.",
+    "textFin": null,
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1199362,
+      "descripcion": "Documento de la convocatoria en lengua cooficial",
+      "nombreFic": "Bases convocatòria català.pdf",
+      "long": 260926,
+      "datMod": "2025-01-30",
+      "datPublicacion": "2025-01-30"
+     },
+     {
+      "id": 1199361,
+      "descripcion": "Documento de la convocatoria en español",
+      "nombreFic": "Bases convocatòria castellà.pdf",
+      "long": 228577,
+      "datMod": "2025-01-30",
+      "datPublicacion": "2025-01-30"
+     }
+    ],
+    "anuncios": [
+     {
+      "numAnuncio": 174320,
+      "titulo": "EXTRACTO DEL ACUERDO DE 30 DE ENERO DE 2025 DE LA JUNTA DE GOBIERNO DE LA DIPUTACIÓN DE BARCELONA POR EL QUE SE APRUEBA LA CONVOCATORIA Y LAS BASES ESPECIFICAS PARA EL OTORGAMIENTO DE SUBVENCIONES, EN RÉGIMEN DE CONCURRENCIA COMPETITIVA, DESTINADAS A FINANCIAR ACTUACIONES A REALIZAR DENTRO DE LA DEMARCACIÓN DE LA DIPUTACIÓN DE BARCELONA DURANTE EL AÑO 2025 POR LAS FEDERACIONES QUE AGLUTINAN A ENTIDADES DEDICADAS A FOMENTAR Y DIFUNDIR LA CULTURA POPULAR Y TRADICIONAL SIN ÁNIMO DE LUCRO.",
+      "tituloLeng": "EXTRACTE DE L’ACORD DE 30 DE GENER DE 2025 DE LA JUNTA DE GOVERN DE LA DIPUTACIÓ DE BARCELONA PEL QUAL S’APROVA LA CONVOCATÒRIA I LES BASES ESPECIFIQUES  PER A L’ATORGAMENT DE SUBVENCIONS, EN RÈGIM DE CONCURRENCIA COMPETITIVA, DESTINADES A FINANÇAR ACTUACIONS A REALITZAR DINS DE LA DEMARCACIÓ DE LA DIPUTACIÓ DE BARCELONA DURANT L’ANY 2025 PER LES FEDERACIONS QUE AGLUTINEN ENTITATS DEDICADES A FOMENTAR I DIFONDRE LA CULTURA POPULAR I TRADICIONAL SENSE FINALITAT DE LUCRE.",
+      "texto": "<p>El texto íntegro de la convocatoria y los modelos normalizados de solicitud y justificación de las subvenciones se puede encontrar en http://www.diba.cat/web/cultura/subvencions.</p><p> </p><p>Primero. Beneficiarios .</p><p> </p><p>Podrán ser beneficiarias de estas subvenciones las personas jurídicas privadas sin ánimo de lucro, legalmente constituidas y debidamente inscritas en el registro correspondiente, que realicen la actividad que fundamenta su otorgamiento y que realicen actividades que cumplan con el objeto de la convocatoria especificado en el artículo 2.2, siempre que no estén afectadas por ninguna de las prohibiciones contenidas en el art. 13 de la ley 38/2003, de 17 de noviembre, General de Subvenciones (en adelante LGS). Los beneficiarios seran:</p><p> </p><p>- Federaciones, coordinadoras y/o agrupaciones de entidades dedicadas al fomento, difusión y protección de la cultura popular y tradicional y que representen a entidades dedicadas a la práctica y difusión de la cultura popular y tradicional.</p><p> </p><p>Quedan excluidas aquellas federaciones y coordinadoras de entidades que aborden los aspectos culturales de forma secundaria en sus actividades.</p><p> </p><p>También quedan excluidas de estas subvenciones las confederaciones, entendidas como las entidades de tercer nivel en las que se asocian y organizan las federaciones.</p><p> </p><p>Segundo. Objeto.</p><p> </p><p>El objeto de la presente convocatoria es regular y fijar los criterios y el procedimiento de solicitud, tramitación, concesión, justificación y pago de las subvenciones que otorgue la Diputación de Barcelona a través de la Gerencia de Servicios de Cultura del Área de Cultura, destinadas a financiar las actuaciones de las federaciones que aglutinan a entidades dedicadas a fomentar y difundir la cultura popular y tradicional, durante el año 2025.</p><p> </p><p>En concreto, esta línea de subvenciones quiere promover actividades, llevadas a cabo por las federaciones, que apoyen a las diferentes entidades de primer nivel que formen parte (federadas y asociadas). Este objeto está regulado en la ley 11/2023 del fomento de asociacionismo en los artículos 6.3, 8.2 y 17.9.</p><p> </p><p>Las actividades presentadas por las federaciones deben tener como finalidad la mejora, apoyo, asesoramiento, reconocimiento, o coordinación de sus asociados y/o federados, entidades dedicadas a difundir la cultura popular y tradicional.</p><p> </p><p>Las bases de la presente convocatoria se integran en el Plan estratégico de subvenciones de la Diputación de Barcelona para el ejercicio 2025, y contribuyen en la consecución de los objetivos del susodicho Plan dado que sólo serán objeto de subvención la organización y/ o participación en una actividad o diversas actividades dentro de un mismo proyecto de cultura popular y tradicional en la demarcación de la Diputación de Barcelona, con vinculación a:</p><p> </p><p>- Apoyar y/o asesorar a sus asociados en materia de fomento de la cultura popular y tradicional y/o en la mejora de procesos de las entidades. Se incluye el apoyo a la implementación de medios on- line .</p><p>- Actividades de cultura popular y tradicional, presenciales y en formato virtual, realizadas y/o previstas, como encuentros, jornadas, charlas, formaciones, talleres, cursos y otras actuaciones donde los principales destinatarios sean las entidades de cultura popular y tradicional.</p><p>- Implementación de herramientas de comunicación y difusión en materia de cultura popular y tradicional como publicaciones, estudios, páginas web y emisiones de actividades por televisión y canales on-line.</p><p>- Trabajos de coordinación en actividades de cultura popular y tradicional.</p><p> </p><p>No serán objeto de subvención las siguientes actividades:</p><p> </p><p>- Salidas, viajes o intercambios no vinculados al objeto de la convocatoria.</p><p>- Salidas, viajes o intercambios fuera de la demarcación de la Diputación de Barcelona, aunque estén vinculados al objeto de la convocatoria.</p><p>- Comidas populares.</p><p>- Actividades de tipo deportivo, escolar y colonias infantiles.</p><p>- Las fiestas mayores y otras fiestas del ciclo festivo de carácter local.</p><p>- Actividades dirigidas exclusivamente a la promoción comercial o turística.</p><p>- La adquisición de bienes muebles que supongan un incremento en el patrimonio de la entidad.</p><p>- Las actividades que no tengan relación con el marco de actuación establecido en la Ley 2/1993, de 5 de marzo, de fomento y protección de la cultura popular y tradicional y del asociacionismo cultural.</p><p> </p><p>Tercero.</p><p> </p><p>Ordenanza General de Subvenciones de la Diputación de Barcelona (Boletín Oficial de la Provincia de Barcelona de 9 de mayo de 2017).</p><p> </p><p>Cuarto. Cuantía.</p><p> </p><p>El importe que se destinará para la concesión de las subvenciones reguladas en la presente convocatoria será de CIENTO CINCUENTA Y MIL EUROS (150.000- EUR) con cargo a la aplicación presupuestaria G/40100/33400/48903 del ejercicio presupuestario 2025, destinada a subvencionar actuaciones a realizar por federaciones que aglutinan a entidades dedicadas a fomentar y difundir la cultura popular y tradicional.</p><p> </p><p>No podrán otorgarse subvenciones por importe superior a la citada consignación presupuestaria.</p><p> </p><p>El importe a conceder a cada uno de los proyectos subvencionados se determinará de forma proporcional entre todas las entidades solicitantes, en relación con los puntos asignados. El valor medio del punto resultará de la división del importe de la convocatoria entre el monto total de valoraciones iguales o superiores a quince puntos.</p><p> </p><p>Se adjudicarán las ayudas entre todas las solicitudes estimadas, comenzando por el proyecto con una puntuación superior hasta agotar la partida presupuestaria.</p><p> </p><p>No se otorgarán subvenciones por importe superior a 10.000 euros.</p><p> </p><p>El importe y porcentaje de las subvenciones que se otorguen no excederá, en cualquier caso, del 50% del coste total del proyecto o actividad subvencionada.</p><p> </p><p>Quinto. Plazo de presentación de solicitudes.</p><p> </p><p>El plazo de presentación de las solicitudes empezará al día siguiente de la publicación de un extracto de la presente convocatoria en el Boletín Oficial de la Provincia de Barcelona, a través de la Base de Datos Nacional de Subvenciones (BDNS) y finalizará el día 6 de marzo de 2025.</p><p> </p><p>La convocatoria será única.</p><p> </p><p>Las bases, y el modelo normalizado exigidos en el artículo 5 de esta convocatoria, se podrán encontrar en el siguiente sitio web: http://www.diba.cat/web/cultura/subvencions .</p><p> </p><p>En el formulario electrónico de solicitud deberá anexarse la documentación exigida en la base 5 que deberá presentarse a través de la sede electrónica de la Diputación de Barcelona: https://seuelectronica.diba.cat/tramits- ciudadanía , apartado de subvenciones de cultura.</p><p> </p><p>El formulario electrónico de solicitud deberá estar firmado por el representante legal o persona apoderada de la entidad, con el certificado electrónico de representación de la entidad o certificado electrónico personal ( DNIe u otros u otros sistemas de firma electrónica admitidos en la Política de firma electrónica de la Diputación de Barcelona consultable en la sede electrónica de la Diputación).</p><p> </p><p>Sexto. Otros datos</p><p> </p><p>Las subvenciones concedidas al amparo de esta convocatoria se tendrán que destinar a financiar las actuaciones de las federaciones que aglutinan entidades dedicadas a fomentar y difundir la cultura popular y tradicional durante el período comprendido entre el 1 de enero de 2025 y a 31 de diciembre de 2025.</p><p> </p><p>Los períodos de justificación de esta convocatoria se regula de la siguiente forma:</p><p> </p><p>- Habrá un período voluntario de justificación entre el 14 de octubre y el 15 de noviembre de 2025.</p><p> </p><p>- Quienes no hayan justificado en dicho período voluntario, deberán hacerlo entre el 2 de enero y, como máximo, el 28 de febrero de 2026.</p><p> </p>",
+      "textoLeng": "<p>El text íntegre de la convocatòria i els models normalitzats de sol·licitud i justificació de les subvencions es pot trobar a http://www.diba.cat/web/cultura/subvencions.</p><p> </p><p>Primer. Beneficiaris.</p><p> </p><p>Podran ser beneficiàries d’aquestes subvencions les persones jurídiques privades sense afany de lucre, legalment constituïdes i degudament inscrites en el registre corresponent, que realitzin l’activitat que fonamenta el seu atorgament i que realitzen activitats que compleixin amb l’objecte de la convocatòria especificat en l’article 2.2, sempre que no estiguin afectades per cap de les prohibicions contingudes a l’art. 13 de la Llei 38/2003, de 17 de novembre, General de Subvencions (en endavant LGS). Els beneficiaris seran:</p><p> </p><p>- Federacions, coordinadores i/o agrupacions d’entitats dedicades al foment, difusió i protecció de la cultura popular i tradicional i que representin a entitats dedicades a la pràctica i difusió de la cultura popular i tradicional.</p><p> </p><p>Queden excloses aquelles federacions i coordinadores d’entitats que aborden els aspectes culturals de forma secundària en les seves activitats.</p><p> </p><p>També resten excloses d’aquestes subvencions les confederacions, enteses com les entitats de tercer nivell en que s’associen i organitzen les federacions.</p><p> </p><p>Segon. Objecte.</p><p> </p><p>L’objecte de la present convocatòria és regular i fixar els criteris i el procediment de sol·licitud, tramitació, concessió, justificació i pagament de les subvencions que atorgui la Diputació de Barcelona a través de la Gerència de Serveis de Cultura de l’Àrea de Cultura, destinades a finançar les actuacions de les federacions que aglutinen entitats dedicades a fomentar i difondre la cultura popular i tradicional, durant l’any 2025.</p><p> </p><p>En concret, aquesta línia de subvencions vol promoure activitats, dutes a terme per les federacions, que donin suport a les diferents entitats de primer nivell que formin part (federades i associades). Aquest objecte està regulat en la llei 11/2023 del foment d'associacionisme en els articles 6.3, 8.2 i 17.9.</p><p> </p><p>Les activitats presentades per les federacions han de tenir com a finalitat la millora, suport, assessorament, reconeixement, o coordinació dels seus associats i/o federats, entitats dedicades a difondre la cultura popular i tradicional.</p><p> </p><p>Les bases de la present convocatòria s’integren en el Pla estratègic de subvencions de la Diputació de Barcelona per a l’exercici 2025, i contribueixen en l’assoliment dels objectius del susdit Pla donat que només seran objecte de subvenció l’organització i/o participació en una activitat o diverses activitats dintre d’un mateix projecte de cultura popular i tradicional  a la demarcació de la Diputació de Barcelona, amb vinculació a:</p><p> </p><p>- Donar suport i/o assessorament als seus associats en matèria de foment de la cultura popular i tradicional i/o en la millora de processos de les entitats. S’inclou el suport a la implementació de mitjans on-line.</p><p>- Activitats de cultura popular i tradicional, presencials i en format virtual, realitzades i/o previstes, com ara trobades, jornades, xerrades, formacions, tallers, cursos i altres actuacions on els destinataris principals siguin les entitats de cultura popular i tradicional.</p><p>- Implementació d’eines de comunicació i difusió en matèria de cultura popular i tradicional com ara publicacions, estudis, pàgines web i emissions d’activitats per televisió i canals on-line.</p><p>- Treballs de coordinació en activitats de cultura popular i tradicional.</p><p> </p><p>No seran objecte de subvenció les següents activitats:</p><p> </p><p>- Sortides, viatges o intercanvis no vinculats a l’objecte de la convocatòria.</p><p>- Sortides, viatges o intercanvis fora de la demarcació de la Diputació de Barcelona, encara que siguin vinculats a l’objecte de la convocatòria.</p><p>- Àpats populars.</p><p>- Activitats de caire esportiu, escolar i les colònies infantils.</p><p>- Les festes majors i altres festes del cicle festiu de caràcter local.</p><p>- Activitats adreçades exclusivament a la promoció comercial o turística.</p><p>- L'adquisició de béns mobles que suposin un increment en el patrimoni de l'entitat.</p><p>- Les activitats que no tinguin relació amb el marc d'actuació que estableix la Llei 2/1993, de 5 de març, de foment i protecció de la cultura popular i tradicional i de l'associacionisme cultural.</p><p> </p><p>Tercer. Bases reguladores.</p><p> </p><p>Ordenança General de Subvencions de la Diputació de Barcelona (Butlletí Oficial de la Província de Barcelona de 9 de maig de 2017).</p><p> </p><p>Quart. Quantia.</p><p> </p><p>L’import que es destinarà per a la concessió de les subvencions regulades en la present convocatòria serà de CENT CINQUANTA-MIL EUROS (150.000- EUR) amb càrrec a l’aplicació pressupostària G/40100/33400/48903 de l’exercici pressupostari 2025, destinada a subvencionar actuacions a realitzar per federacions que aglutinen entitats dedicades a fomentar i difondre la cultura popular i tradicional.</p><p> </p><p>No podran atorgar-se subvencions per import superior a l’esmentada consignació pressupostària.</p><p> </p><p>L’import a concedir a cadascun dels projectes subvencionats es determinarà de forma proporcional entre totes les entitats sol·licitants, en relació als punts assignats. El valor mig del punt resultarà de la divisió de l’import de la convocatòria entre la suma total de valoracions iguals o superiors a quinze punts.</p><p> </p><p>S’adjudicaran els ajuts entre totes les sol·licituds estimades, començant pel projecte amb una puntuació superior fins esgotar la partida pressupostària.</p><p> </p><p>No s’atorgaran subvencions per import superior a 10.000.- EUR.</p><p> </p><p>L’import i percentatge de les subvencions que s’atorguin no excedirà, en qualsevol cas, del 50% del cost total del projecte o activitat subvencionada.</p><p> </p><p>Cinquè. Termini de presentació de sol·licituds.</p><p> </p><p>El termini de presentació de les sol·licituds començarà l’endemà de la publicació d’un extracte de la present convocatòria al Butlletí Oficial de la Província de Barcelona, a través de la Base de Dades Nacional de Subvencions (BDNS) i finalitzarà el dia 6 de març de 2025.</p><p> </p><p>La convocatòria serà única.</p><p> </p><p>Les bases, i els model normalitzat exigits a l’article 5 d’aquesta convocatòria, es podran trobar al lloc web següent: http://www.diba.cat/web/cultura/subvencions.</p><p> </p><p>Al formulari electrònic de sol·licitud s’haurà d’annexar la documentació exigida a la base 5 que s’haurà de presentar a través de la seu electrònica de la Diputació de Barcelona: https://seuelectronica.diba.cat/tramits-ciutadania, apartat de subvencions de cultura.</p><p> </p><p>El formulari electrònic de sol·licitud haurà d’estar signat pel representant legal o persona apoderada de l’entitat, amb el certificat electrònic de representació de l’entitat o certificat electrònic personal (DNIe o altres o altres sistemes de firma electrònica admesos a la Política de signatura electrònica de la Diputació de Barcelona consultable a la seu electrònica de la Diputació).</p><p> </p><p>Sisè. Altres dades</p><p> </p><p>Les subvencions concedides a l’empara d’aquesta convocatòria s’hauran de destinar a finançar les actuacions de les federacions que aglutinen entitats dedicades a fomentar i difondre la cultura popular i tradicional durant el període comprés entre l’1 de gener de 2025 i el 31 de desembre de 2025.</p><p> </p><p>Els períodes de justificació d’aquesta convocatòria es regula de la següent forma:</p><p> </p><p>- Hi haurà un període voluntari de justificació entre el 14 d’octubre i el 15 de novembre de 2025.</p><p> </p><p>- Els que no hagin justificat en l’esmentat període voluntari, hauran de fer-ho entre el 2 de gener i, com a màxim, el 28 de febrer de 2026.</p><p> </p>",
+      "url": "http://bop.diba.cat/anunci/3728324/convocatoria-i-bases-especifiques-per-a-l-atorgament-de-subvencions-en-regim-de-concurrencia-competitiva-destinades-a-financar-actuacions-a-realitzar-dins-de-la-demarcacio-de-la-diputacio-de-barcelona-durant-l-any-2025-versio-en-catala-i-castella-diputacio-de-barcelona-gerencia-de-serveis-de-cultura",
+      "cve": "202510022400",
+      "desDiarioOficial": "B.O.P. DE BARCELONA",
+      "datPublicacion": "2025-02-05"
+     }
+    ],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1013658,
+    "mrr": false,
+    "numeroConvocatoria": "812098",
+    "descripcion": "SUBVENCIONES DESTINADAS A FINANCIAR ACTIVIDADES DE CULTURA POPULAR Y TRADICIONAL A REALIZAR DENTRO DE LA DEMARCACIÓN DE LA DIPUTACIÓN DE BARCELONA DURANTE EL AÑO 2025, ORGANIZADAS POR LAS ENTIDADES CULTURALES SIN ÁNIMO DE LUCRO",
+    "descripcionLeng": "SUBVENCIONS DESTINADES A FINANÇAR ACTIVITATS DE CULTURA POPULAR I TRADICIONAL A REALITZAR DINS DE LA DEMARCACIÓ DE LA DIPUTACIÓ DE BARCELONA DURANT L’ANY 2025, ORGANITZADES PER LES ENTITATS CULTURALS SENSE FINALITAT DE LUCRE",
+    "fechaRecepcion": "2025-01-31",
+    "nivel1": "LOCAL",
+    "nivel2": "DIPUTACIÓN PROV. DE BARCELONA",
+    "nivel3": "DIPUTACIÓN PROVINCIAL DE BARCELONA",
+    "codigoInvente": null
+   },
+   "detall": {
+    "id": 1013658,
+    "organo": {
+     "nivel1": "LOCAL",
+     "nivel2": "DIPUTACIÓN PROV. DE BARCELONA",
+     "nivel3": "DIPUTACIÓN PROVINCIAL DE BARCELONA"
+    },
+    "sedeElectronica": null,
+    "codigoBDNS": "812098",
+    "fechaRecepcion": "2025-01-31",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concurrencia competitiva - canónica",
+    "presupuestoTotal": 500000,
+    "mrr": false,
+    "descripcion": "SUBVENCIONES DESTINADAS A FINANCIAR ACTIVIDADES DE CULTURA POPULAR Y TRADICIONAL A REALIZAR DENTRO DE LA DEMARCACIÓN DE LA DIPUTACIÓN DE BARCELONA DURANTE EL AÑO 2025, ORGANIZADAS POR LAS ENTIDADES CULTURALES SIN ÁNIMO DE LUCRO",
+    "descripcionLeng": "SUBVENCIONS DESTINADES A FINANÇAR ACTIVITATS DE CULTURA POPULAR I TRADICIONAL A REALITZAR DINS DE LA DEMARCACIÓ DE LA DIPUTACIÓ DE BARCELONA DURANT L’ANY 2025, ORGANITZADES PER LES ENTITATS CULTURALS SENSE FINALITAT DE LUCRE",
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PERSONAS JURÍDICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "Actividades de bibliotecas, archivos, museos y otras actividades culturales",
+      "codigo": "91"
+     },
+     {
+      "descripcion": "Actividades de creación artística y artes escénicas",
+      "codigo": "90"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES511 - Barcelona"
+     }
+    ],
+    "descripcionFinalidad": "Cultura",
+    "descripcionBasesReguladoras": "Ordenanza General de Subvenciones",
+    "urlBasesReguladoras": "https://www.diba.cat/documents/446885/0/Ordenan%C3%A7a+General+Subvencions+17.pdf/01e71b5c-561b-4c94-a7a9-584247c623e5",
+    "sePublicaDiarioOficial": true,
+    "abierto": false,
+    "fechaInicioSolicitud": null,
+    "fechaFinSolicitud": "2025-03-06",
+    "textInicio": "El día siguiente a la publicación del extracto de la convocatoria en el BOPB.",
+    "textFin": null,
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1199459,
+      "descripcion": "Documento de la convocatoria en español",
+      "nombreFic": "convocatòria bases castellà.pdf",
+      "long": 237497,
+      "datMod": "2025-01-31",
+      "datPublicacion": "2025-01-31"
+     },
+     {
+      "id": 1199460,
+      "descripcion": "Documento de la convocatoria en lengua cooficial",
+      "nombreFic": "Convocatòria bases català.pdf",
+      "long": 272651,
+      "datMod": "2025-01-31",
+      "datPublicacion": "2025-01-31"
+     }
+    ],
+    "anuncios": [
+     {
+      "numAnuncio": 174336,
+      "titulo": "EXTRACTO DEL ACUERDO DE 30 DE ENERO DE 2025 DE LA JUNTA DE GOBIERNO DE LA DIPUTACIÓN DE BARCELONA POR EL QUE SE APRUEBA LA CONVOCATORIA Y LAS BASES ESPECIFICAS PARA EL OTORGAMIENTO DE SUBVENCIONES, EN RÉGIMEN DE CONCURRENCIA COMPETITIVA, DESTINADAS A FINANCIAR ACTIVIDADES DE CULTURA POPULAR Y TRADICIONAL A REALIZAR DENTRO DE LA DEMARCACIÓN DE LA DIPUTACIÓN DE BARCELONA DURANTE EN EL AÑO 2025, ORGANIZADAS POR LAS ENTIDADES CULTURALES SIN FINALIDAD DE LUCRO.",
+      "tituloLeng": "EXTRACTE DE L’ACORD DE 30 DE GENER DE 2025 DE LA JUNTA DE GOVERN DE LA DIPUTACIÓ DE BARCELONA PEL QUAL S’APROVA LA CONVOCATÒRIA I LES BASES ESPECIFIQUES  PER A L’ATORGAMENT DE SUBVENCIONS, EN RÈGIM DE CONCURRENCIA COMPETITIVA, DESTINADES A FINANÇAR ACTIVITATS DE CULTURA POPULAR I TRADICIONAL A REALITZAR DINS DE LA DEMARCACIÓ DE LA DIPUTACIÓ DE BARCELONA DURANT L’ANY 2025, ORGANITZADES PER LES ENTITATS CULTURALS SENSE FINALITAT DE LUCRE.",
+      "texto": "<p>El texto íntegro de la convocatoria y los modelos normalizados de solicitud y justificación de las subvenciones se puede encontrar en   http://www.diba.cat/web/cultura/subvencions.</p><p> </p><p> </p><p>Primero. Beneficiarios.</p><p> </p><p>Podrán ser beneficiarias de estas subvenciones las personas jurídicas legalmente constituidas y que deban realizar la actividad que fundamenta su otorgamiento, siempre que no estén afectadas por ninguna de las prohibiciones contenidas en el art. 13 de la Ley 38/2003, de 17 de noviembre, General de Subvenciones (en adelante LGS) y, reúnan el requisito de que conste en sus estatutos el hecho de ser asociaciones, fundaciones o entidades sin finalidad de lucro de carácter cultural con sede en la provincia de Barcelona.</p><p> </p><p>Quedan excluidas las asociaciones de vecinos, los partidos y asociaciones políticas y sindicales, los colegios profesionales y, en general, aquellas entidades que aborden los aspectos culturales de forma secundaria en sus actividades. Tampoco podrán ser beneficiarias entidades que agrupen a otras asociaciones (Federaciones, Coordinadoras, Agrupaciones...), por tener una convocatoria propia de subvenciones.</p><p> </p><p>Las sociedades cooperativas pueden ser beneficiarias de estas ayudas siempre que cumplan con los requisitos que se especifican en el art. 144 de la Ley 12/2015, de 9 de julio, de cooperativas.</p><p> </p><p>Las solicitudes presentadas por entidades que desarrollen actividades de carácter mercantil o que sean entidades mercantiles, en todo caso, serán desestimadas por considerarse entidades lucrativas.</p><p> </p><p> </p><p>Segundo. Objeto.</p><p> </p><p>El objeto de la presente convocatoria es regular y fijar los criterios y el procedimiento de solicitud, tramitación, concesión, justificación y pago de las subvenciones que otorgue la Diputación de Barcelona a través de la Gerencia de Servicios de Cultura del Área de Cultura, destinadas a financiar actividades que tengan como objetivo el fomento y difusión de la cultura popular y tradicional a realizar por entidades culturales sin ánimo de lucro dentro de la demarcación de la Diputación de Barcelona durante el año 2025.</p><p> </p><p>Las bases de la presente convocatoria se integran en el Plan estratégico de subvenciones de la Diputación de Barcelona para el ejercicio 2025 y contribuyen en la consecución de los objetivos del susodicho Plan dado que sólo serán objeto de subvención la organización y/o participación en una actividad o diversas actividades de la misma temática dentro de un proyecto de cultura popular y tradicional en la demarcación de la Diputación de Barcelona</p><p> </p><p>El objetivo de la convocatoria es apoyar actividades de cultura popular y tradicional, que se caracteriza por su carácter popular, propio, exclusivo, antiguo y local, donde resulta trascendente articular el campo simbólico e identitario . La cultura popular y tradicional se refiere a la historia y al patrimonio histórico, artístico y festivo, y algunos de sus elementos son de carácter mítico o ritual, y ejerce funciones sociales. La tipología de las actividades objeto de esta convocatoria es la siguiente:</p><p> </p><p>- Actividades de cultura popular y tradicional , presenciales y/o on-line , como encuentros, actuaciones del ciclo festivo de los municipios y comunidades, jornadas, charlas, formaciones , talleres , cursos y otras actuaciones .</p><p>- Salidas, viajes o intercambios vinculados al objeto de la convocatoria.</p><p>- Festivales, concursos y exposiciones relacionados con la cultura popular y tradicional.</p><p>- Producción de nuevos espectáculos de cultura popular y tradicional.</p><p>- Conmemoración de cumpleaños de personalidades, hechos y/o entidades dirigidas a la conservación y difusión de la memoria cultural colectiva.</p><p>- Restauración o creación de elementos de imaginería festiva y confección de la indumentaria.</p><p>- Implementación de herramientas de comunicación y difusión en materia de cultura popular y tradicional como publicaciones, estudios, páginas web y emisiones de actividades por televisión y canales on-line .</p><p>- Actividades vinculadas a la difusión del patrimonio cultural rural.</p><p> </p><p>No serán objeto de subvención aquellos proyectos cuyas actividades principales sean:</p><p> </p><p>- Salidas, viajes o intercambios no vinculados al objeto de la convocatoria.</p><p>- Salidas, viajes o intercambios fuera de la demarcación de la Diputación de Barcelona, aunque estén vinculados al objeto de la convocatoria.</p><p>- Comidas populares.</p><p>- Programas de investigación y estudio.</p><p>- Actividades de tipo deportivo, escolar y colonias infantiles.</p><p>- Actividades dirigidas exclusivamente a la promoción comercial o turística.</p><p>- Actividades de cultura popular y/o cultura de masas que carezcan de componente tradicional.</p><p> </p><p>En ningún caso serán subvencionables las programaciones anuales de la entidad, es decir, programaciones de toda la actividad de la entidad que se desarrollen durante todo el ejercicio de la presente convocatoria, lo que provocará la desestimación de la solicitud.</p><p> </p><p>Cada solicitante podrá presentar una única solicitud que incluya una única actividad o un proyecto de diversas actividades de la misma temática. Presentar más de una actividad con diferentes temáticas será motivo de desestimación.</p><p> </p><p>En caso de presentar más de una solicitud, sólo se valorará la última presentada, excluyendo las anteriores.</p><p> </p><p> </p><p>Tercero. Bases reguladoras</p><p> </p><p>Ordenanza General de Subvenciones de la Diputación de Barcelona (Boletín Oficial de la Provincia de Barcelona de 9 de mayo de 2017).</p><p> </p><p> </p><p>Cuarto. Cuantía</p><p> </p><p>El importe que se destinará para la concesión de subvenciones reguladas en la presente convocatoria será de QUINIENTOS MIL EUROS (500.000.- €) con cargo a la aplicación presupuestaria G/40100/33400/48903 del ejercicio 2025, destinada a subvencionar actividades de cultura popular y tradicional.</p><p> </p><p>No podrán otorgarse subvenciones por importe superior a la citada consignación presupuestaria.</p><p> </p><p>El importe a conceder a cada uno de los proyectos o actividades subvencionadas se determinará de forma proporcional entre todas las entidades solicitantes, en relación con los puntos asignados. El valor medio del punto resultará de la división del importe de la convocatoria entre la suma total de valoraciones iguales o superiores a treinta puntos.</p><p> </p><p>Se adjudicarán las ayudas entre todas las solicitudes estimadas, comenzando por el proyecto con una puntuación superior hasta agotar la partida presupuestaria.</p><p> </p><p>No se otorgarán subvenciones por importe superior a 5.000€.</p><p> </p><p>El importe y porcentaje de las subvenciones que se otorguen no excederá, en cualquier caso, del 50% del coste total del proyecto o actividad subvencionada.</p><p> </p><p> </p><p>Quinto. Plazo de presentación de solicitudes.</p><p> </p><p>El plazo de presentación de las solicitudes empezará al día siguiente de la publicación de un extracto de la presente convocatoria en el Boletín Oficial de la Provincia de Barcelona, a través de la Base de Datos Nacional de Subvenciones (BDNS) y finalizará el 6 de marzo de 2025.</p><p> </p><p>La convocatoria será única.</p><p> </p><p>Las bases y el modelo normalizado exigidos en el artículo 5 de esta convocatoria, se podrán encontrar en el siguiente sitio web: http://www.diba.cat/web/cultura/subvencions .</p><p> </p><p>En el formulario electrónico de solicitud deberá anexarse la documentación exigida en la base 5 que deberá presentarse a través de la sede electrónica de la Diputación de Barcelona https://seuelectronica.diba.cat/tramits-ciutadania , apartado de subvenciones de cultura.</p><p> </p><p> </p><p>Sexto. Otros datos</p><p> </p><p>Las subvenciones concedidas al amparo de esta convocatoria deberán destinarse a financiar proyectos desarrollados durante el período comprendido entre el 1 de enero de 2025 y el 31 de diciembre de 2025.</p><p> </p><p>Los períodos de justificación de esta convocatoria se regulan de la siguiente forma:</p><p> </p><p>- Habrá un período voluntario de justificación entre el 13 de octubre y el 14 de noviembre de 2025.</p><p>- Quienes no hayan justificado en dicho período voluntario, deberán hacerlo entre el 2 de enero y, como máximo, el 27 de febrero de 2026.</p><p> </p>",
+      "textoLeng": "<p>El text íntegre de la convocatòria i els models normalitzats de sol·licitud i justificació de les subvencions es pot trobar a http://www.diba.cat/web/cultura/subvencions.</p><p> </p><p>Primer. Beneficiaris.</p><p> </p><p>Podran ser beneficiàries d’aquestes subvencions les persones jurídiques legalment constituïdes i que hagin de realitzar l’activitat que fonamenta el seu atorgament, sempre que no estiguin afectades per cap de les prohibicions contingudes a l’art. 13 de la Llei 38/2003, de 17 de novembre, General de Subvencions (en endavant LGS) i, reuneixin el requisit de què consti al seus estatuts el fet de ser associacions, fundacions o entitats sense finalitat de lucre de caràcter cultural amb seu a la província de Barcelona.</p><p> </p><p>Queden excloses les associacions de veïns, els partits i associacions polítiques i sindicals, els col·legis professionals i, en general, aquelles entitats que aborden els aspectes culturals de forma secundària en les seves activitats. Tampoc podran ser beneficiàries entitats que agrupen altres associacions (Federacions, Coordinadores, Agrupacions...), per tenir una convocatòria pròpia de subvencions.</p><p> </p><p>Les societats cooperatives poden ser beneficiàries d’aquests ajuts sempre que compleixin amb els requisits que s’especifiquen a l’art. 144 de la Llei 12/2015, del 9 de juliol, de cooperatives.</p><p> </p><p>Les sol·licituds presentades per entitats que desenvolupin activitats de caràcter mercantil o que siguin entitats mercantils, en tot cas, seran desestimades per considerar-se entitats lucratives.</p><p> </p><p> </p><p>Segon. Objecte.</p><p> </p><p>L’objecte de la present convocatòria és regular i fixar els criteris i el procediment de sol·licitud, tramitació, concessió, justificació i pagament de les subvencions que atorgui la Diputació de Barcelona a través de la Gerència de Serveis de Cultura de l’Àrea de Cultura, destinades a finançar activitats que tinguin com a objectiu el foment i difusió de la cultura popular i tradicional a realitzar per entitats culturals sense finalitat de lucre dins de la demarcació de la Diputació de Barcelona durant l’any 2025.</p><p> </p><p>Les bases de la present convocatòria s’integren en el Pla estratègic de subvencions de la Diputació de Barcelona per a l’exercici 2025 i contribueixen en l’assoliment dels objectius del susdit Pla donat que només seran objecte de subvenció l’organització i/o participació en una activitat o diverses activitats de la mateixa temàtica dintre d’un projecte de cultura popular i tradicional a la demarcació de la Diputació de Barcelona</p><p> </p><p>L’objectiu de la convocatòria és recolzar activitats de cultura popular i tradicional, la qual es caracteritza pel seu caràcter popular, propi, exclusiu, antic i local, on resulta transcendent articular el camp simbòlic i identitari. La cultura popular i tradicional fa referència a la història i al patrimoni històric, artístic i festiu, i alguns dels seus elements són de caràcter mític o ritual, i exerceix funcions socials. La tipologia de les activitats objecte d’aquesta convocatòria és la següent:</p><p> </p><p>- Activitats de cultura popular i tradicional, presencials i/o on-line, com ara trobades, actuacions del cicle festiu dels municipis i comunitats, jornades, xerrades, formacions, tallers, cursos i altres actuacions.</p><p>- Sortides, viatges o intercanvis vinculats a l’objecte de la convocatòria.</p><p>- Festivals, concursos i exposicions relacionats amb la cultura popular i tradicional.</p><p>- Producció de nous espectacles de cultura popular i tradicional.</p><p>- Commemoració d’aniversaris de personalitats, fets i/o entitats adreçades a la conservació i difusió de la memòria cultural col·lectiva.</p><p>- Restauració o creació d’elements d’imatgeria festiva i confecció de la indumentària.</p><p>- Implementació d’eines de comunicació i difusió en matèria de cultura popular i tradicional com ara publicacions, estudis, pàgines web i emissions d’activitats per televisió i canals on-line.</p><p>- Activitats vinculades a la difusió del patrimoni cultural rural.</p><p> </p><p>No seran objecte de subvenció aquells projectes les activitats principals dels quals siguin:</p><p> </p><p>- Sortides, viatges o intercanvis no vinculats a l’objecte de la convocatòria.</p><p>- Sortides, viatges o intercanvis fora de la demarcació de la Diputació de Barcelona, encara que siguin vinculats a l’objecte de la convocatòria.</p><p>- Àpats populars.</p><p>- Programes de recerca i estudi.</p><p>- Activitats de caire esportiu, escolar i les colònies infantils.</p><p>- Activitats adreçades exclusivament a la promoció comercial o turística.</p><p>- Activitats de cultura popular i/o cultura de masses que no tinguin component  tradicional.</p><p> </p><p>En cap cas seran subvencionables les programacions anuals de l’entitat és a dir programacions de tota la activitat de l’entitat que es desenvolupin durant tot l’exercici de la present convocatòria, el que provocarà la desestimació de la sol·licitud.</p><p> </p><p>Cada sol·licitant podrà presentar una única sol·licitud que inclogui una única activitat o un projecte de diverses activitats de la mateix temàtica. Presentar més d’una activitat amb diferents temàtiques serà motiu de desestimació .</p><p> </p><p>En cas de presentar-ne més d’una sol·licitud només es valorarà la darrera presentada, excloent les anteriors.</p><p> </p><p> </p><p>Tercer. Bases reguladores.</p><p> </p><p>Ordenança General de Subvencions de la Diputació de Barcelona (Butlletí Oficial de la Província de Barcelona de 9 de maig de 2017).</p><p> </p><p> </p><p>Quart. Quantia.</p><p> </p><p>L’import que es destinarà per a la concessió de subvencions regulades en la present convocatòria serà de CINC-CENTS MIL EUROS (500.000.- €) amb càrrec a l’aplicació pressupostària G/40100/33400/48903 de l’exercici 2025, destinada a subvencionar activitats de cultura popular i tradicional.</p><p> </p><p>No podran atorgar-se subvencions per import superior a l’esmentada consignació pressupostària.</p><p> </p><p>L’import a concedir a cadascun dels projectes o activitats subvencionades es determinarà de forma proporcional entre totes les entitats sol·licitants, en relació als punts assignats. El valor mig del punt resultarà de la divisió de l’import de la convocatòria entre la suma total de valoracions iguals o superiors a trenta punts.</p><p> </p><p>S’adjudicaran els ajuts entre totes les sol·licituds estimades, començant pel projecte amb una puntuació superior fins esgotar la partida pressupostària. </p><p> </p><p>No s’atorgaran subvencions per import superior a 5.000 €.</p><p> </p><p>L’import i percentatge de les subvencions que s’atorguin no excedirà, en qualsevol cas, del 50% del cost total del projecte o activitat subvencionada.</p><p> </p><p> </p><p>Cinquè. Termini de presentació de sol·licituds.</p><p> </p><p>El termini de presentació de les sol·licituds començarà l’endemà de la publicació d’un extracte de la present convocatòria al Butlletí Oficial de la Província de Barcelona, a través de la Base de Dades Nacional de Subvencions (BDNS) i finalitzarà el 6 de març de 2025.</p><p> </p><p>La convocatòria serà única.</p><p> </p><p>Les bases i els model normalitzat exigits a l’article 5 d’aquesta convocatòria, es podran trobar al lloc web següent: http://www.diba.cat/web/cultura/subvencions.</p><p> </p><p>Al formulari electrònic de sol·licitud s’haurà d’annexar la documentació exigida a la base 5 que s’haurà de presentar a través de la seu electrònica de la Diputació de Barcelona https://seuelectronica.diba.cat/tramits-ciutadania, apartat de subvencions de cultura.</p><p> </p><p> </p><p>Sisè. Altres dades</p><p> </p><p>Les subvencions concedides a l’empara d’aquesta convocatòria s’hauran de destinar a finançar projectes desenvolupats durant el període comprés entre l’1 de gener de 2025 i el 31 de desembre de 2025.</p><p> </p><p>Els períodes de justificació d’aquesta convocatòria es regulen de la següent forma:</p><p> </p><p>- Hi haurà un període voluntari de justificació entre el 13 d’octubre i el 14 de novembre de 2025.</p><p>- Els que no hagin justificat en l’esmentat període voluntari, hauran de fer-ho entre el 2 de gener i, com a màxim, el 27 de febrer de 2026.</p><p> </p>",
+      "url": "http://bop.diba.cat/anunci/3728326/convocatoria-i-bases-per-a-l-atorgament-de-subvencions-destinades-a-financar-activitats-de-cultura-popular-i-tradicional-a-realitzar-dins-de-la-demarcacio-de-la-diputacio-de-barcelona-durant-l-any-2025-versio-en-catala-i-castella-diputacio-de-barcelona-gerencia-de-serveis-de-cultura",
+      "cve": "202510022414",
+      "desDiarioOficial": "B.O.P. DE BARCELONA",
+      "datPublicacion": "2025-02-05"
+     }
+    ],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1012988,
+    "mrr": true,
+    "numeroConvocatoria": "811428",
+    "descripcion": "Convocatoria NextGenerationEU para las actuaciones del programa de actuaciones de mejora de la eficiencia energética en viviendas, en la ciudad de Barcelona",
+    "descripcionLeng": "Convocatòria NextGenerationEU per a les actuacions del programa d’actuacions de millora de l’eficiència energètica en habitatges, a la ciutat de Barcelona",
+    "fechaRecepcion": "2025-01-28",
+    "nivel1": "AUTONOMICA",
+    "nivel2": "CATALUÑA",
+    "nivel3": "CONSORCIO DE LA VIVIENDA DE BARCELONA",
+    "codigoInvente": null
+   },
+   "detall": {
+    "id": 1012988,
+    "organo": {
+     "nivel1": "AUTONOMICA",
+     "nivel2": "CATALUÑA",
+     "nivel3": "CONSORCIO DE LA VIVIENDA DE BARCELONA"
+    },
+    "sedeElectronica": "https://habitatge.barcelona/ca   i   http://www.bcn.cat/consorcihabitatge/ca/home.html",
+    "codigoBDNS": "811428",
+    "fechaRecepcion": "2025-01-28",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concurrencia competitiva - canónica",
+    "presupuestoTotal": 10000000,
+    "mrr": true,
+    "descripcion": "Convocatoria NextGenerationEU para las actuaciones del programa de actuaciones de mejora de la eficiencia energética en viviendas, en la ciudad de Barcelona",
+    "descripcionLeng": "Convocatòria NextGenerationEU per a les actuacions del programa d’actuacions de millora de l’eficiència energètica en habitatges, a la ciutat de Barcelona",
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PERSONAS FÍSICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     },
+     {
+      "descripcion": "PERSONAS JURÍDICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "Actividades relacionadas con el empleo",
+      "codigo": "78"
+     },
+     {
+      "descripcion": "Conservación, restauración y otras actividades de apoyo al patrimonio cultural",
+      "codigo": "91.3"
+     },
+     {
+      "descripcion": "Construcción de edificios",
+      "codigo": "41.0"
+     },
+     {
+      "descripcion": "Otras actividades de construcción especializada",
+      "codigo": "43.9"
+     },
+     {
+      "descripcion": "Servicios técnicos de arquitectura e ingeniería; ensayos y análisis técnicos",
+      "codigo": "71"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES511 - Barcelona"
+     }
+    ],
+    "descripcionFinalidad": "Acceso a la vivienda y fomento de la edificación",
+    "descripcionBasesReguladoras": "Real Decreto 853/2021, de 5 de octubre, por el que se regulan los programas de ayuda en materia de rehabilitación residencial y vivienda social del Plan de Recuperación, Transformación y Resiliencia",
+    "urlBasesReguladoras": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2021-16233",
+    "sePublicaDiarioOficial": true,
+    "abierto": false,
+    "fechaInicioSolicitud": null,
+    "fechaFinSolicitud": "2025-12-31",
+    "textInicio": "Des de l’endemà de la publicació en el diari oficial de la convocatòria inicial",
+    "textFin": null,
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [
+     {
+      "descripcion": "MRR - MECANISMO DE RECUPERACIÓN Y RESILIENCIA"
+     }
+    ],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1218798,
+      "descripcion": "Texto en otra lengua de la convocatoria",
+      "nombreFic": "ANUNCI convocatòria interior habitages P4 NGUE CP 171224.pdf",
+      "long": 448279,
+      "datMod": "2025-03-06",
+      "datPublicacion": "2025-03-06"
+     },
+     {
+      "id": 1218797,
+      "descripcion": "Texto en castellano de la convocatoria",
+      "nombreFic": "ANUNCIO convocatòria interior habitages P4 NGUE CP 17122_ES.pdf",
+      "long": 437123,
+      "datMod": "2025-03-06",
+      "datPublicacion": "2025-03-06"
+     }
+    ],
+    "anuncios": [
+     {
+      "numAnuncio": 175647,
+      "titulo": "Procedimiento Beta",
+      "tituloLeng": null,
+      "texto": "Procedimiento Beta",
+      "textoLeng": null,
+      "url": "https://dogc.gencat.cat/es/document-del-dogc/index.html?documentId=1006372",
+      "cve": null,
+      "desDiarioOficial": "DOGC. D.O. DE LA GENERALITAT DE CATALUNYA",
+      "datPublicacion": "2025-02-14"
+     }
+    ],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1010891,
+    "mrr": false,
+    "numeroConvocatoria": "809331",
+    "descripcion": "Convocatòria-Bases Memòria Democràtica, 2024",
+    "descripcionLeng": null,
+    "fechaRecepcion": "2025-01-16",
+    "nivel1": "LOCAL",
+    "nivel2": "DIPUTACIÓN PROV. DE LLEIDA",
+    "nivel3": "FUNDACIÓ PÚBLICA INSTITUT D'ESTUDIS ILERDENCS",
+    "codigoInvente": null
+   },
+   "detall": {
+    "id": 1010891,
+    "organo": {
+     "nivel1": "LOCAL",
+     "nivel2": "DIPUTACIÓN PROV. DE LLEIDA",
+     "nivel3": "FUNDACIÓ PÚBLICA INSTITUT D'ESTUDIS ILERDENCS"
+    },
+    "sedeElectronica": null,
+    "codigoBDNS": "809331",
+    "fechaRecepcion": "2025-01-16",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concurrencia competitiva - canónica",
+    "presupuestoTotal": 600000,
+    "mrr": false,
+    "descripcion": "Convocatòria-Bases Memòria Democràtica, 2024",
+    "descripcionLeng": null,
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PERSONAS JURÍDICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "Actividades de bibliotecas, archivos, museos y otras actividades culturales",
+      "codigo": "91"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES513 - Lleida"
+     }
+    ],
+    "descripcionFinalidad": "Cultura",
+    "descripcionBasesReguladoras": "BASES reguladores de l`atorgament de subvencions",
+    "urlBasesReguladoras": "https://seuelectronica.diputaciolleida.cat/normativaMilloradaAnunciPublic/categories",
+    "sePublicaDiarioOficial": true,
+    "abierto": false,
+    "fechaInicioSolicitud": "2025-01-21",
+    "fechaFinSolicitud": "2025-02-14",
+    "textInicio": null,
+    "textFin": null,
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1197189,
+      "descripcion": "Texto en otra lengua de la convocatoria",
+      "nombreFic": "DILI-3_Memòria_Democràtica.pdf",
+      "long": 711351,
+      "datMod": "2025-01-27",
+      "datPublicacion": "2025-01-27"
+     },
+     {
+      "id": 1197188,
+      "descripcion": "Texto en castellano de la convocatoria",
+      "nombreFic": "DILI-3_-_Memòria_Democràtica._Castellà.pdf",
+      "long": 880645,
+      "datMod": "2025-01-27",
+      "datPublicacion": "2025-01-27"
+     }
+    ],
+    "anuncios": [
+     {
+      "numAnuncio": 173201,
+      "titulo": "Extracto del Acuerdo del Consejo Rector del Instituto de Estudios Ilerdenses de la Diputación de Lleida, n.º 9/24, de 31 de diciembre de 2024, por el que se convocan las subvenciones a la concesión de subvenciones para la realización de actividades conmemorativas, investigadoras o de difusión de la Memoria Democrática por el periodo enero 2025 ¿ mayo 2026.",
+      "tituloLeng": "Extracte de l¿Acord del Consell Rector de l¿Institut d¿Estudis Ilerdencs de la Diputació de Lleida, núm. 9/24, de 31 de desembre de 2024, pel que es convoquen les subvencions a la concessió de subvencions per a la realització d¿activitats commemoratives, investigadores o de difusió de la Memòria Democràtica pel període Gener 2025 ¿ Maig 2026.",
+      "texto": "<p>De conformidad con aquello previsto en los artículos 17.3 b y 20.8.a de la Ley 38/2003, de 17 de noviembre, General de Subvenciones, se publica el extracto de la convocatoria. El texto completo se puede consultar en la Base de datos Nacional de Subvenciones (http://www.pap.minhap.gob.es/bdnstrans).</p><p></p><p>Primero. Beneficiarios</p><p></p><p>Podrán solicitar subvenciones los ayuntamientos del territorio correspondiente al ámbito de actuación de la Diputació de Lleida.</p><p></p><p>Segundo. Objeto</p><p></p><p>El objeto de esta convocatoria y bases es regular la línea de subvenciones a entes locales para apoyar a la realización de actividades conmemorativas, de investigación y de difusión de la memoria democrática y para proyectos de recuperación de la memoria democrática mediante la valorización y la difusión del patrimonio memorial de las Terres de Lleida. Entendiéndose como ?memoria democrática?, los hechos acontecidos en el periodo que va del año 1931 (proclamación de la 2ª República Española) al 1980 (año en que se considera finalizada la transición, una vez promulgado el Estatuto de Autonomía de 1979) y relacionados con la temática de la Segunda República, la Guerra Civil, la Dictadura, la Transición, el exilio, la deportación, la represión franquista, la resistencia democrática y la construcción de la sociedad democrática.</p><p></p><p>Se podrán acoger a las ayudas que prevén estas bases las actuaciones y proyectos incluidos en uno de los ámbitos siguientes:</p><p></p><p>Ámbito 1. Actividades conmemorativas de hechos o actuaciones de homenaje a personas físicas y/o jurídicas, que hayan resultado especialmente relevantes en la defensa y el restablecimiento de las libertades y la democracia, en alguna localidad o comarca en concreto de las Terres de Lleida.</p><p></p><p>Ámbito 2. Actuaciones de difusión, como por ejemplo la organización de congresos, seminarios, conferencias, talleres, jornadas, coloquios, premios, exposiciones físicas y/o virtuales, o cualquier otra actividad similar, incluidas las publicaciones electrónicas y/o en soporte papel, que recuerden, dignifiquen y promuevan los valores vinculados a la memoria democrática, que se desarrollen en alguna localidad o comarca en concreto de las Terres de Lleida.</p><p></p><p>Ámbito 3. Proyectos dirigidos a la conservación, reparación, señalización e interpretación del patrimonio memorial de las Terres de Lleida. La titularidad de los bienes que configuran el patrimonio memorial, o, en su caso, la cesión de uso, en las condiciones que se indican en el artículo 18, tienen que ser del ente solicitante.</p><p></p><p>Se incluyen en este ámbito actuaciones de inversión, como la realización de obras de reposición, adecuación y preservación de bienes patrimoniales y/o espacios de memoria; actuaciones de restitución y/o establecimiento de plafones informativos y señalizaciones de itinerarios y/o espacios de memoria; actuaciones de inversión en caminos y rutas. </p><p></p><p>Quedarán excluidas todas las actuaciones y proyectos que supongan incitación al odio o a la violencia, que hagan apología del fascismo, del nazismo, de la dictadura o de la represión por razones ideológicas, culturales, de raza o de género, o que atenten contra los derechos humanos o las libertades colectivas.</p><p></p><p>Tercero. Régimen de concesión</p><p></p><p>Concurrencia competitiva. El procedimiento de concesión de éstas es el de concurrencia competitiva y convocatoria pública que tiene que aprobar el Consell Rector del Institut d?Estudis Ilerdencs. Las subvenciones se conceden mediante la comparación de las solicitudes que se presenten en el periodo fijado en la convocatoria y estableciendo una prelación de acuerdo con los criterios establecidos en esta Convocatoria-Bases.</p><p></p><p>Cuarto. Normativa reguladora</p><p></p><p>1.\tEl Ple de la Corporació, en sesión ordinaria celebrada el día 19 de mayo de 2022, aprobó inicialmente la modificación de las Bases Generales reguladoras de la concesión de subvenciones de la Diputació de Lleida y de sus organismos autónomos reformando las Bases aprobadas por el Pleno de 15 de octubre de 2020, a los efectos de incorporar la posibilidad de poder tramitar una Convocatoria-Bases conjuntamente, siempre que estas Bases no tengan la vocación de incorporarse a la normativa propia de la Diputació de Lleida, sino que tengan una aplicación temporal limitada y tengan como objeto concretar el marco normativo aplicable a un procedimiento concreto de concesión de una subvención.</p><p></p><p>Estas Bases se aprobaron definitivamente y se dejó constancia mediante su publicación al BOP, n.º 159, de 19 de agosto de 2022.</p><p> </p><p>2.\tLa presente convocatoria incorpora las bases que contienen las regulaciones particulares del procedimiento de concesión, de acuerdo con la posibilidad prevista en el artículo 23.2.a) LGS.</p><p></p><p>Quinto. Crédito presupuestario y cuantía de las subvenciones</p><p></p><p>El importe total de la convocatoria es de 600.000 €, con el siguiente desglose presupuestario con cargo a un ejercicio futuro, anualidad 2025:</p><p></p><p>Anualidad presupuesto\tAplicación presupuestaria\tImporte</p><p>2025\t070 334 4620002 ? Subv. AYNTS. Activitades culturales memorial democrático\t35.000 €</p><p>2025\t070 330 7620001- Subv. AYNTS. para inversiones en memorial democrático\t565.000 €</p><p>\tTOTAL PRESUPUESTO AÑO 2025\t600.000 €</p><p></p><p>La concesión de las subvenciones quedará condicionada a la existencia de crédito adecuado y suficiente en el momento de la resolución de la concesión.</p><p></p><p>El importe de las subvenciones no será superior al 70% del coste de la actuación, en el caso de municipios de más de 6.000 habitantes; y al 90%, en el caso de municipios de 6.000 o menos habitantes. El número de habitantes será el que determinan los datos oficiales de población resultantes de la revisión del Padrón Municipal a fecha de 1 de enero del año de la convocatoria.</p><p></p><p>Se establece un límite máximo:</p><p>?\tPara los ámbitos 1 y 2: un máximo de 5.000 €.</p><p>?\tPara el ámbito 3: un máximo de 30.000 €.</p><p></p><p>Sexto. Plazo de presentación de solicitudes</p><p></p><p>El plazo de presentación de solicitudes será de 25 días naturales, a contar del día siguiente a la publicación del extracto de la convocatoria al Butlletí Oficial de la Província de Lleida Se establece que el plazo de presentación del formulario de solicitud, junto con los anexos correspondientes, empieza a las 9.00 horas del primer día de inicio de plazo y finaliza a las 13.00 horas del último día de plazo.</p><p></p><p>En el supuesto de interrupción por circunstancias accidentales del funcionamiento de la Sede, y siempre que sea técnicamente posible, la persona usuaria que acceda tiene que visualizar un mensaje en que se comunique esta circunstancia, indicándole los registros presenciales donde se puede presentar la documentación alternativamente e informante de los efectos de esta interrupción del funcionamiento en el cómputo de los plazos. Además, si procede por razón de la materia, se le tiene que proporcionar un acceso directo a las sub sedes electrónicas correspondientes. No obstante, cuando no sea técnicamente posible que la persona usuaria acceda a visualizar el mensaje mencionado y se trate de trámites que se tienen que hacer obligatoriamente por medios telemáticos, si se produce una interrupción no planificada en el funcionamiento de los sistemas electrónicos durante el último día establecido para la realización del trámite correspondiente, este se podrá llevar a cabo durante los tres días hábiles consecutivos.</p><p></p><p>Solo se admitirá una solicitud por ente local y convocatoria, que corresponderá a uno de los 3 ámbitos que detalla el artículo 2.</p><p></p><p>En caso de que el mismo ente local presente más de una solicitud dentro del mismo o diferentes ámbitos de la subvención convocada, el órgano instructor, a través de la Comisión de valoración, se reserva el derecho de tramitar únicamente la solicitud que suponga un mayor importe del coste de la actuación.</p><p></p><p>Séptimo. Otros datos</p><p></p><p>a)\tÁmbito temporal. Las actuaciones por las cuales se haya obtenido subvención se ejecutarán entre el 1 de enero de 2025 y el 31 de mayo de 2026.</p><p>b)\tGastos subvencionables. Se consideran subvencionables los gastos siguientes:</p><p></p><p>\t?\t Ámbitos 1 y 2. Todos aquellos gastos corrientes que de manera inequívoca respondan a la naturaleza de la actividad y/o actuación objeto de la subvención, resulten estrictamente necesarias y se efectúen en el plazo de ejecución previsto en las Bases-Convocatoria.</p><p></p><p>Son subvencionables los gastos de personal directo y necesario para llevar a cabo la actividad y/o actuación subvencionada.</p><p></p><p>No tienen la consideración de gastos subvencionables y, por lo tanto, no pueden formar parte del presupuesto de la acción subvencionada: </p><p></p><p>?\tLos gastos indirectos o generales, son aquellos gastos comunes a los diferentes servicios o actividades que hacen los beneficiarios, por ejemplo los de mantenimiento y otros de funcionamiento ordinario, como los gastos de alquileres, material de oficina, luz, agua, calefacción, limpieza y otras de características similares.</p><p>?\tLos gastos correspondientes a las retribuciones de personal funcionario ni de personal fijo vinculado estatutariamente o contractualmente a la entidad solicitante, salvo los gastos del personal que haya sido expresamente contratado para llevar a cabo la actividad para la cual se solicita la subvención, y que dedique la totalidad de la jornada laboral.</p><p>?\tTodos aquellos gastos que sean inventariables, entendiendo como gasto inventariable los que cumplen los requisitos que indican las bases de ejecución del presupuesto de la Diputació de Lleida.</p><p></p><p>\t?  Ámbito 3. Todos aquellos gastos de inversión que, de manera inequívoca, respondan a la naturaleza de la actividad objeto de la subvención y que resulten estrictamente necesarias.</p><p></p><p>No tienen la consideración de gastos subvencionables y, por lo tanto, no pueden formar parte del presupuesto de la acción subvencionada y no serán subvencionables:</p><p></p><p>?\tLa adquisición de bienes, de maquinaria, mobiliario, equipos informáticos y las de naturaleza análoga, que sean para el funcionamiento ordinario de los entes beneficiarios.</p><p>?\tLa adquisición y construcción de bienes inmuebles.</p><p>?\tLos gastos de naturaleza corriente. </p><p>?\tLas atenciones protocolarias y las de naturaleza similar, como por ejemplo obsequios y/o comidas.</p><p></p><p>c)\tForma y lugar de presentación de solicitudes. La solicitud de subvención se hará por medio de formulario dirigido a la Presidencia del Institut d?Estudis Ilerdenncs (IEI) de la Diputació de Lleida, de acuerdo con el modelo que se encuentra dentro del Catálogo de trámites de la Sede electrónica del IEI </p><p>(https://convocatoriamemoriademocraticaiei.diputaciolleida.cat/), que tendrá que ser rellenado electrónicamente. </p><p></p><p>Este formulario de solicitud y la documentación que se tenga que adjuntar se tendrá que presentar a través del Catálogo de trámites de la Sede Electrónica del IEI al siguiente enlace: (https://convocatoriamemoriademocraticaiei.diputaciolleida.cat/).</p><p></p><p>Los documentos que acompañarán a la solicitud se incorporarán a una única remisión. Todos los documentos que requieran firma tendrán que incorporar una firma electrónica generada a partir de un certificado electrónico que identifique al firmante, ya sea como persona o en ejercicio de su cargo, de acuerdo con el el decreto de la Presidencia de la Diputació de Lleida 4625/2018, de 29 de octubre, de Política de firma electrónica de la Diputació de Lleida y de los organismos que dependen de él. </p><p>(https://seuelectronica.diputaciolleida.cat/normativamilloradaanuncipublic/categories).</p><p></p><p>d)\tInstrucción del expediente. La ordenación e instrucción de los expedientes se llevará a cabo por parte del Servei de Gestió Econòmica-Administrativa del IEI, que será el órgano instructor. Una comisión valorará las solicitudes y elaborará un acta donde se concretará el resultado de la evaluación efectuada que tendrá que expresar la lista de beneficiarios propuestos para la concesión de la subvención, su valoración y la cuantía, así como la relación de los solicitantes excluidos, con indicación de la causa de exclusión. El órgano instructor, a la vista del expediente y del acta/informe de la Comisión de valoración, formulará la propuesta de resolución de concesión de la convocatoria de las subvenciones, debidamente motivada, que elevará al órgano concedente. El Consell Rector del IEI es el órgano competente para resolver el procedimiento de concesión de subvenciones.</p><p>e)\tCriterios de valoración de las solicitudes. Se determinan en el artículo 15 de la Convocatoria y Bases para la concesión de subvenciones en régimen de concurrencia competitiva a entes locales para la realización de actividades conmemorativas, investigadoras o de difusión de la memoria democrática para el periodo enero 2025 ? mayo 2026.</p><p></p><p>f)\tPlazo de resolución y notificación. El plazo máximo para resolver y notificar la resolución del procedimiento de concesión será de seis meses a contar desde la fecha de finalización del plazo de presentación de las solicitudes. La resolución se notificará de manera individualizada a todos los beneficiarios y también a los peticionarios cuya solicitud se haya denegado. El vencimiento del plazo antes indicado, sin que se haya dictado ni notificado una resolución exprés, producirá efectos desestimatorios de la solicitud de concesión de la subvención.</p><p></p><p>g)\tPublicación de los acuerdos de concesión de las subvenciones.  Las subvenciones concedidas en la convocatoria se comunicarán a la Base de datos Nacional de Subvenciones como Sistema Nacional de Publicidad de Subvenciones, dando cumplimiento al principio de publicidad que está previsto en los artículos 18 y 20 de la Ley 38/2003, de 17 de noviembre, General de Subvenciones y el artículo 4 de la Resolución, de 10 de diciembre de 2015, de la Intervención General del Estado, por la cual se regula el proceso de registro y publicación de las convocatorias de subvenciones y ayudas al Sistema Nacional de Publicidad de Subvenciones.</p><p>Así mismo, se dará publicidad de las subvenciones concedidas al Portal de Transparencia de la Diputació de Lleida, a la sede electrónica y/o en la página web deI IEI, en los términos previstos a la Ley 19/2014, de 29 de diciembre, de transparencia, acceso a la información pública y buen gobierno. </p><p></p><p>La concurrencia a los procesos de concesión de subvenciones implicará la autorización tácita de consentimiento inequívoco al tratamiento de datos de carácter personal y en su publicación, en los términos establecidos a la legislación vigente sobre protección de datos de carácter personal.</p><p></p><p>h)\tJustificación de la ejecución de la actuación: documentación y plazo. Para la justificación de cada actuación subvencionada, se deberá presentar la documentación que se determina en el artículo 24 de la convocatoria y bases. La acreditación de la obligación de publicidad de acuerdo con el artículo 26. La justificación de la realización de la actuación se podrá formalizar desde la finalización de la actuación subvencionada y hasta el 31/07/2026.</p><p></p><p>i)\tMedio de publicidad. Publicación de la convocatoria en el Butlletí Oficial de la Província de Lleida en forma de extracto, a través de la Base de datos Nacional de Subvenciones (BDNS).</p>",
+      "textoLeng": "<p>De conformitat amb allò previst en els articles 17.3 b i 20.8.a de la Llei 38/2003, de 17 de novembre, General de subvencions, es publica l?extracte de la convocatòria. El text complet es pot consultar en la Base de Dades Nacional de Subvencions  (http://www.pap.minhap.gob.es/bdnstrans).</p><p></p><p></p><p>Primer. Beneficiaris</p><p></p><p>Podran sol·licitar subvencions els ajuntaments del territori corresponent a l?àmbit d?actuació de la Diputació de Lleida.</p><p></p><p>Segon. Objecte</p><p></p><p>L?objecte d?aquesta convocatòria i bases és regular la línia de subvencions a ens locals  per donar suport a la realització d?activitats commemoratives, d?investigació i de difusió de la memòria democràtica i per a projectes de recuperació de la memòria democràtica mitjançant la posada en valor i la difusió del patrimoni memorial de les Terres de Lleida. Entenent-se com a ?memòria democràtica?, els fets esdevinguts en  el període que va de l?any 1931 (proclamació de la 2a. República Espanyola) al 1980 (any en què es considera finalitzada la transició, un cop promulgat l?Estatut d?Autonomia de 1979) i relacionats amb la temàtica de la Segona República, la Guerra Civil, la dictadura, la Transició, l?exili, la deportació, la repressió franquista, la resistència democràtica i la construcció de la societat democràtica.</p><p></p><p>Es podran acollir als ajuts que preveuen aquestes bases les actuacions i projectes inclosos en un dels àmbits següents:</p><p></p><p>Àmbit 1. Activitats commemoratives de fets o actuacions d?homenatge a persones físiques i/o jurídiques, que hagin resultat especialment rellevants en la defensa i el restabliment de les llibertats  i la democràcia, a alguna localitat o comarca en concret de les Terres  de Lleida.</p><p></p><p>Àmbit 2. Actuacions de difusió, com ara l?organització de congressos, seminaris, conferències, tallers, jornades, col·loquis, premis, exposicions físiques i/o virtuals, o qualsevol altra activitat similar, incloses les publicacions electròniques i/o en suport paper, que recordin, dignifiquin i promoguin els valors vinculats a la memòria democràtica, que es desenvolupin a alguna localitat o comarca en concret de les Terres  de Lleida.</p><p></p><p>Àmbit 3. Projectes adreçats a la conservació, reparació, senyalització i interpretació del patrimoni memorial de les Terres de Lleida. La titularitat dels béns que configuren el patrimoni memorial, o, en el seu cas, la cessió d?ús, en les condicions que s?indiquen en l?article 18, han de ser de l?ens sol·licitant.</p><p></p><p>S?inclouen en aquest àmbit actuacions d?inversió com la realització d?obres de reposició, adequació i preservació de béns patrimonials i/o espais de memòria; actuacions de restitució i/o establiment de plafons informatius i senyalitzacions d?itineraris i/o espais de memòria; actuacions d?inversió en camins i rutes. </p><p></p><p>Quedaran excloses totes les actuacions i projectes que suposin incitació a l?odi o a la violència, que facin apologia del feixisme, del nazisme, de la dictadura o de la repressió per raons ideològiques, culturals, de raça o de gènere, o que atemptin contra els drets humans o les llibertats col·lectives.</p><p></p><p>Tercer. Règim d?atorgament</p><p></p><p>Concurrència competitiva. El procediment de concessió d?aquestes és el de concurrència competitiva i convocatòria pública que ha d?aprovar el Consell Rector de l?Institut d?Estudis Ilerdencs. Les subvencions es concedeixen mitjançant la comparació de les sol·licituds que es presentin en el període fixat en la convocatòria i establint-ne una prelació d?acord amb els criteris establerts en aquesta convocatòria-bases.  </p><p></p><p>Quart. Normativa reguladora</p><p></p><p>1.\tEl Ple de la Corporació, en sessió ordinària celebrada el dia 19 de maig de 2022, va aprovar inicialment la modificació de les Bases generals reguladores de l?atorgament de subvencions de la Diputació de Lleida i dels seus organismes autònoms reformant les Bases aprovades pel Ple de 15 d?octubre de 2020, als efectes d?incorporar la possibilitat de poder tramitar una Convocatòria-bases conjuntament, sempre que aquestes bases no tinguin la vocació de incorporar-se a la normativa pròpia de la Diputació de Lleida , sinó que tinguin una aplicació temporal limitada i tinguin com a objecte concretar el marc normatiu aplicable a un procediment concret de concessió d?una subvenció. </p><p></p><p>Aquestes Bases es van aprovar definitivament i es va deixar constància mitjançant la seva publicació al BOP número 159 de 19 d?agost de 2022.</p><p> </p><p>2.\tLa present convocatòria incorpora les bases que contenen les regulacions particulars del procediment de concessió, d?acord amb la possibilitat prevista a l?article 23.2.a) LGS. </p><p></p><p>Cinquè. Crèdit pressupostari i quantia de les subvencions</p><p></p><p>L?import total de la convocatòria és de 600.000 €, amb el següent desglossament pressupostari amb càrrec a un exercici futur, anualitat 2025: </p><p></p><p>Anualitat Pressupost\tAplicació Pressupostària\tImport</p><p>2025\t070 334 4620002 ? Subv. AJNTS Activitats culturals memorial democràtic\t35.000 €</p><p>2025\t070 330 7620001- Subv. AJNTS per inversions en memorial democràtic\t565.000 €</p><p>\tTOTAL PRESSUPOST ANY 2025\t600.000 €</p><p></p><p>La concessió de les subvencions quedarà condicionada a l?existència de crèdit adequat</p><p>i suficient en el moment de la resolució de la concessió.</p><p>L?import de les subvencions no serà superior al 70% del cost de l?actuació, en el cas de municipis de més de 6.000 habitants, i al 90%, en el cas de municipis de 6.000 o menys habitants. El nombre d?habitants serà el que determinen les dades oficials de població resultants de la revisió del Padró Municipal a 1 de gener de l?any de la convocatòria.</p><p></p><p>S?estableix un límit màxim:</p><p>?\tPer als àmbits 1 i 2: Un màxim de 5.000 €.</p><p>?\tPer a l?àmbit 3: Un màxim de 30.000 €.</p><p></p><p>Sisè. Termini de presentació de sol·licituds</p><p></p><p>El termini de presentació de sol·licituds serà de 25 dies naturals,  a comptar de l?endemà de la publicació de l?extracte de la convocatòria al Butlletí Oficial de la Província de Lleida. S?estableix que el termini de presentació del formulari de sol·licitud, junt amb els annexos corresponents, comença a les 9.00 hores del primer dia d?inici de termini i finalitza a les 13.00 hores de l?últim dia de termini.</p><p></p><p>En el supòsit d?interrupció per circumstàncies accidentals del funcionament de la Seu, i sempre que sigui tècnicament possible, la persona usuària que hi accedeixi ha de visualitzar un missatge en què es comuniqui aquesta circumstància, indicant-li els registres presencials on es pot presentar la documentació alternativament i informant dels efectes d?aquesta interrupció del funcionament en el còmput dels terminis. A més, si escau per raó de la matèria, se li ha de proporcionar un accés directe a les subseus electròniques corresponents. No obstant, quan no sigui tècnicament possible que la persona usuària accedeixi a visualitzar el missatge esmentat i es tracti de tràmits que s?han de fer obligatòriament per mitjans telemàtics, si es produeix una interrupció no planificada en el funcionament dels sistemes electrònics durant l?últim dia establert per a la realització del tràmit corresponent, aquest es podrà dur a terme durant els tres dies hàbils consecutius.</p><p></p><p>Només s?admetrà una sol·licitud per ens local i convocatòria, que correspondrà a un dels 3 àmbits que detalla l?article 2. </p><p></p><p>En cas que el mateix ens local presenti més d?una sol·licitud dins el mateix o diferents àmbits de la subvenció convocada, l?òrgan instructor, a través de la Comissió de valoració, es reserva el dret de tramitar únicament la sol·licitud que suposi un major import del cost de l?actuació.   </p><p></p><p>Setè. Altres dades</p><p></p><p>a)\tÀmbit temporal. Les actuacions per les quals s?hagi obtingut subvenció s?executaran entre l?1 de gener de 2025 i el 31 de maig de 2026.</p><p>b)\tDespeses subvencionables. Es consideren subvencionables les despeses següents:</p><p></p><p>\t?\tÀmbits 1 i 2. Totes aquelles despeses corrents que de manera inequívoca responguin a la naturalesa de l?activitat i/o actuació objecte de la subvenció, resultin estrictament necessàries i s?efectuÃ¯n en el termini d?execució previst en les bases-convocatòria. </p><p></p><p>Són subvencionables les despeses de personal directe i necessari per dur a terme l?activitat i/o actuació subvencionada.</p><p></p><p>No tenen la consideració de despeses subvencionables i, per tant, no poden formar part del pressupost de l?acció subvencionada: </p><p></p><p>\t-Les despeses indirectes o generals, són aquelles despeses comunes als diferents serveis o activitats que fan els beneficiaris, com ara les de manteniment i altres de  funcionament ordinari, com les despeses de lloguers, material d?oficina, llum, aigua, calefacció, neteja i altres de característiques similars.</p><p></p><p>\t-Les despeses corresponents a les retribucions de personal funcionari ni de personal fix vinculat estatutàriament o contractualment a l?entitat sol·licitant, llevat de les despeses del personal que hagi estat expressament contractat per dur a terme l?activitat per a la qual se sol·licita la subvenció, i que hi dediqui la totalitat de la jornada laboral.</p><p>-Totes aquelles despeses que siguin inventariables, entenent com a despesa inventariable les que compleixen els requisits que indiquen les bases d?execució del pressupost de la Diputació de Lleida.</p><p></p><p>\t?\tÀmbit 3. Totes aquelles despeses d?inversió que de manera inequívoca responguin a la naturalesa de l?activitat objecte de la subvenció i que resultin estrictament necessàries.</p><p></p><p>No tenen la consideració de despeses subvencionables i, per tant, no poden formar part del pressupost de l?acció subvencionada i no seran subvencionables: </p><p></p><p>\t-L?adquisició de béns, de maquinària, mobiliari, equips informàtics i les de naturalesa anàloga, que siguin per al funcionament ordinari dels ens beneficiaris.</p><p>\t-L?adquisició i construcció de béns immobles.</p><p>\t-Les despeses de naturalesa corrent. </p><p>\t-Les atencions protocol·làries i les de naturalesa similar, com ara obsequis i/o àpats.</p><p></p><p>c)\tForma i lloc de presentació de sol·licituds. La sol·licitud de subvenció es farà per mitjà de formulari adreçat a la Presidència de l?Institut d?Estudis Ilerdencs (IEI) de la Diputació de Lleida, d?acord amb el model que es troba dins el Catàleg de tràmits de la Seu electrònica de l?IEI (https://convocatoriamemoriademocraticaiei.diputaciolleida.cat/), que haurà de ser emplenat electrònicament. </p><p>Aquest formulari de sol·licitud i la documentació que s?hi hagi d?adjuntar s?haurà de presentar a través del Catàleg de tràmits de la Seu Electrònica de l?IEI al següent enllaç: (https://convocatoriamemoriademocraticaiei.diputaciolleida.cat/). </p><p></p><p>Els documents que acompanyaran a la sol·licitud s?incorporaran a una única tramesa. Tots els documents que requereixin signatura hauran d?incorporar una signatura electrònica generada a partir d?un certificat electrònic que identifiqui al signant, ja sigui com a persona o en exercici del seu càrrec, d?acord amb el que es recull en el decret de la Presidència de la Diputació de Lleida 4625/2018, de 29 d?octubre, de Política de signatura electrònica de la Diputació de Lleida i dels seus organismes dependents.</p><p>(https://seuelectronica.diputaciolleida.cat/normativamilloradaanuncipublic/categories).</p><p></p><p>d)\tInstrucció de l?expedient. L?ordenació i instrucció dels expedients es durà a terme per part del Servei de Gestió Econòmica-Administrativa de l?IEI, serà l?òrgan instructor. Una comissió valorarà les sol·licituds i elaborarà un acta on es concretarà el resultat de l?avaluació efectuada que haurà d?expressar la llista de beneficiaris proposats per a l?atorgament de la subvenció, la seva valoració i la quantia, així com la relació dels sol·licitants exclosos, amb indicació de la causa d?exclusió. L?òrgan instructor, a la vista de l?expedient i de l?acta/informe de la Comissió de valoració, formularà la proposta de resolució de concessió de la convocatòria de les subvencions, degudament motivada que elevarà a l?òrgan concedent. El Consell Rector de l?IEI és l?òrgan competent per resoldre el procediment d?atorgament de subvencions.</p><p>e)\tCriteris de valoració de les sol·licituds. Es determinen en l?article 15 de la Convocatòria i Bases per a la concessió de subvencions en règim de concurrència competitiva a ens locals per a la realització d?activitats commemoratives, investigadores o de difusió de la memòria democràtica pel període Gener 2025 ? Maig 2026.</p><p></p><p>f)\tTermini de resolució i notificació. El termini màxim per a resoldre i notificar la resolució del procediment d?atorgament serà de sis mesos a comptar des de la data d?acabament del termini de presentació de les sol·licituds. La resolució es notificarà de manera individualitzada a tots els beneficiaris i també als peticionaris la sol·licitud dels quals s?hagi denegat. El venciment del termini abans indicat, sense que s?hagi dictat ni notificat una resolució expressa, produirà efectes desestimatoris de la sol·licitud d?atorgament de la subvenció. </p><p></p><p>g)\tPublicació dels acords de concessió de les subvencions. Les subvencions atorgades en la convocatòria es comunicaran a la Base de Dades Nacional de Subvencions com a Sistema Nacional de Publicitat de Subvencions, donant compliment al principi de publicitat que esta previst als articles 18 i 20 de la Llei 38/2003, de 17 de novembre, General de Subvencions i l?article 4 de la Resolució, de 10 desembre de 2015, de la Intervenció General de l?Estat, per la qual es regula el procés de registre i publicació de les convocatòries de subvencions i ajudes al Sistema Nacional de Publicitat de Subvencions.</p><p>Així mateix, es donarà publicitat de les subvencions atorgades al Portal de Transparència de la Diputació de Lleida, a la seu electrònica i/o a la pàgina web de l?IEI, en els termes previstos a la Llei 19/2014, de 29 de desembre, de transparència, accés a la informació pública i bon govern. </p><p>La concurrència als processos de concessió de subvencions implicarà l?autorització tàcita de consentiment inequívoc al tractament de dades de caràcter personal i a la seva publicació, en els termes establerts a la legislació vigent sobre protecció de dades de caràcter personal. </p><p></p><p>h)\tJustificació de l?execució de l?actuació: documentació i termini. Per a la justificació de cada actuació subvencionada, caldrà presentar la documentació que es determina a l?article 24 de la convocatòria i bases. L?acreditació de l?obligació de publicitat d?acord amb l?article 26. La justificació de la realització de l?actuació es podrà formalitzar des de l?acabament de l?actuació subvencionada i fins al 31/07/2026. </p><p></p><p>i)\tMitjà de publicitat. Publicació de la convocatòria en el Butlletí Oficial de la Província de Lleida en forma d?extracte, a través de la Base de Dades Nacional de Subvencions (BDNS).</p>",
+      "url": "https://ebop.diputaciolleida.cat/aplicacions/bop/bopV1/fitxers/pdf/2025/12/2025120408.pdf",
+      "cve": null,
+      "desDiarioOficial": "B.O.P. DE LLEIDA",
+      "datPublicacion": "2025-01-20"
+     }
+    ],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  },
+  {
+   "busqueda": {
+    "id": 1012222,
+    "mrr": false,
+    "numeroConvocatoria": "810662",
+    "descripcion": "CONVOCATÒRIA DE AYUDAS PARA LA MEJORA DEL AHORRO Y EFICIENCIA ENERGETICA I PROMOCIÓN DEL MEDIO AMBIENTE 2025",
+    "descripcionLeng": null,
+    "fechaRecepcion": "2025-01-23",
+    "nivel1": "LOCAL",
+    "nivel2": "ORÍS",
+    "nivel3": "AYUNTAMIENTO DE ORÍS",
+    "codigoInvente": null
+   },
+   "detall": {
+    "id": 1012222,
+    "organo": {
+     "nivel1": "LOCAL",
+     "nivel2": "ORÍS",
+     "nivel3": "AYUNTAMIENTO DE ORÍS"
+    },
+    "sedeElectronica": null,
+    "codigoBDNS": "810662",
+    "fechaRecepcion": "2025-01-23",
+    "instrumentos": [
+     {
+      "descripcion": "SUBVENCIÓN Y ENTREGA DINERARIA SIN CONTRAPRESTACIÓN "
+     }
+    ],
+    "tipoConvocatoria": "Concurrencia competitiva - canónica",
+    "presupuestoTotal": 20339.7,
+    "mrr": false,
+    "descripcion": "CONVOCATÒRIA DE AYUDAS PARA LA MEJORA DEL AHORRO Y EFICIENCIA ENERGETICA I PROMOCIÓN DEL MEDIO AMBIENTE 2025",
+    "descripcionLeng": null,
+    "tiposBeneficiarios": [
+     {
+      "descripcion": "PERSONAS FÍSICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     },
+     {
+      "descripcion": "PERSONAS JURÍDICAS QUE NO DESARROLLAN ACTIVIDAD ECONÓMICA"
+     },
+     {
+      "descripcion": "PYME Y PERSONAS FÍSICAS QUE DESARROLLAN ACTIVIDAD ECONÓMICA"
+     }
+    ],
+    "sectores": [
+     {
+      "descripcion": "OTROS SERVICIOS",
+      "codigo": "T"
+     },
+     {
+      "descripcion": "TRANSPORTE Y ALMACENAMIENTO",
+      "codigo": "H"
+     }
+    ],
+    "regiones": [
+     {
+      "descripcion": "ES511 - Barcelona"
+     }
+    ],
+    "descripcionFinalidad": "Otras Prestaciones económicas",
+    "descripcionBasesReguladoras": "BASES REGULADORAS AYUDA MEJORA AHORRO ENERGETICO EFICIENCIA ENERGETICA Y PROTECCIÓN DEL MEDIO AMBIENTE",
+    "urlBasesReguladoras": "https://bop.diba.cat/anunci/3555813",
+    "sePublicaDiarioOficial": true,
+    "abierto": false,
+    "fechaInicioSolicitud": "2025-01-27",
+    "fechaFinSolicitud": "2025-12-01",
+    "textInicio": null,
+    "textFin": null,
+    "ayudaEstado": null,
+    "urlAyudaEstado": null,
+    "fondos": [],
+    "reglamento": null,
+    "objetivos": [],
+    "sectoresProductos": [],
+    "documentos": [
+     {
+      "id": 1400542,
+      "descripcion": "Texto en otra lengua de la convocatoria",
+      "nombreFic": "Ex._6-2025_Resolució_CONV_concurrència_-_Ajuts_millora_estalvi_i_eficiència_energètica.pdf",
+      "long": 193230,
+      "datMod": "2026-02-12",
+      "datPublicacion": "2026-02-12"
+     },
+     {
+      "id": 1400541,
+      "descripcion": "Texto en castellano de la convocatoria",
+      "nombreFic": "Ex._6-2025_Resolució_CONV_concurrència_-_Ajuts_millora_estalvi_i_eficiència_energètica-_cast.pdf",
+      "long": 102888,
+      "datMod": "2026-02-12",
+      "datPublicacion": "2026-02-12"
+     }
+    ],
+    "anuncios": [],
+    "advertencia": "La reutilización de los datos del Sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas está sujeta a una serie de restricciones y consideraciones legales. Consulte el aviso legal en https://www.infosubvenciones.es/bdnstrans/GE/es/avisolegal.Además, el usuario debe ser consciente que la información presentada es de naturaleza dinámica, y que los datos pueden ser sometidos a correcciones, inserciones, modificaciones y eliminaciones en momentos posteriores a su extracción. Accesos al API del sistema Nacional de Publicidad de Subvenciones y Ayudas Públicas. La Administración Presupuestaria, para salvaguardar la protección del acceso libre e irrestricto de los ciudadanos a este Portal y a su información podrá adoptar medidas restrictivas de acceso al API ante situaciones de manifiesto abuso del servicio, riesgos de seguridad, o uso fraudulento de la información descargada, de acuerdo con las buenas prácticas de gestión de datos abiertos (https://datos.gob.es/es/blog/limitaciones-la-consulta-de-una-api) establecidas por el Ministerio para la Transformación Digital y de la Función Pública."
+   }
+  }
+ ]
+}

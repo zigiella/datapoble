@@ -1,0 +1,28 @@
+# _default — PLANTILLA COPIABLE de perfil municipal (C3 §3/§4)
+# ==========================================================================
+# NO és un perfil viu: cap herència ni merge de perfils en v1 (C3 §3) — per
+# donar d'alta un municipi, COPIA aquest fitxer a `<ine5>-<slug>.yaml`, omple
+# els valors reals i deixa `actiu: false` fins a la porta del §4 de l'spec
+# (banc C4 + mes de validació + vistiplau de Bea).
+#
+# El loader SALTA els fitxers que comencen per «_» (plantilles); el nom dels
+# perfils reals ha de començar per un INE5 present a BERGUEDA_INE5 (test C3 §4).
+#
+# Regles fail-fast del load (C3 §3 + §6bis):
+#   · camp desconegut → error          · `actiu` absent → error
+#   · `pes` fora de [0,1] → error      · una «@» a destinataris → error
+tipus_beneficiari: ajuntament   # v1: només `ajuntament`
+poblacio: 999                   # ← substitueix pel padró REAL del municipi
+poblacio_any: 2025              # ← i cita l'any del padró (obligatori)
+territori:                      # etiquetes d'àmbit que ENCAIXEN amb el municipi
+  - "municipi:00000"            # ← substitueix per l'INE5 real
+  - "comarca:bergueda"
+  - "provincia:barcelona"
+  - catalunya
+  - estatal
+materies:                       # {nom, pes} amb pes ∈ [0,1] — ordenen, NO filtren
+  - { nom: "turisme i patrimoni", pes: 0.5 }
+projectes_en_cartera: []        # llista viva de projectes (strings lliures)
+cofinancament_max: 5000         # € màxim assumible (llindar prudent)
+destinataris: [BEA]             # claus simbòliques, MAI correus (C3 §6bis)
+actiu: false                    # les plantilles i els nous perfils neixen dorments

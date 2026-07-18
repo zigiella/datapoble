@@ -237,14 +237,43 @@ la capa de licitacions (vegeu la secció anterior); i, per al motor de convergè
 incorporar el repartiment supra de contractació (ja materialitzat aquí) perquè el
 seu senyal secundari deixi de ser mut als micromunicipis.
 
+## El radar de subvencions (track R — contractes C3/C4)
+
+Senyal **germà** de la taula `events`, amb taula pròpia (una convocatòria té
+`estat` que muta i N procedències). Contractes: `docs/ajuntaments/C3-subvencions-perfil.md`
+i `C4-avaluacio-radar.md`.
+
+- **R1 · `subvencions_bdns.py`** — connector BDNS → fitxa normalitzada C3
+  (àncores verificades en viu al docstring: la trampa de les regions que NO
+  cascada, els dos endpoints amb esquemes distints, el `termini` NULL ambigu).
+- **R2 · `subvencions_match.py`** — filtre dur **DETERMINISTA** + puntuació de
+  perfil. Descarta només amb **evidència positiva** (convocant aliè, beneficiaris
+  que exclouen ens públics, nominatives, restricció de població contra el padró
+  citat, termini datat i vençut); `termini: NULL` **mai** descarta (C3 §2bis).
+  La puntuació (matèries×pesos + projectes en cartera) **ordena i gradua, no
+  filtra** (R-FUNC §3). Cada descartada, motiu d'una línia (C4). Semàfor
+  determinista = stub offline de R3. Dry-run local (R-FUNC §9.1, **mai envia**
+  — C3 §6): `python -m datapoble_signals.subvencions_match --data 2026-07-01
+  --perfil 08166 --sortida out/` (gitignorat).
+- **R2 · `perfils.py`** — perfils municipals de `config/municipis/<ine5>-<slug>.yaml`
+  amb validació **fail-fast** (esquema tancat; `actiu` obligatori; `pes` ∈ [0,1];
+  `destinataris` = claus simbòliques, una `@` → error, C3 §6bis). v1: actiu només
+  `08166-lillet`; `08052-castellar` i `_default` dorments.
+- **Disciplina C4 §4:** el filtre es desenvolupa amb DEV SET propi
+  (`tests/fixtures_r2_dev.py` + `dev_r2_reals.json`, disjunt del banc per test
+  mecànic); les 66 fixtures del banc **mesuren, no entrenen** — el run oficial
+  contra el banc el fa Talaia quan Bea congeli les etiquetes.
+
 ## Estructura
 
-- `schema.py` — el contracte: columnes d'`events` + vocabularis controlats.
+- `schema.py` — el contracte: columnes d'`events` + vocabularis controlats
+  (+ `SUBVENCIO_COLUMNS` de la fitxa C3).
 - `taxonomy.py` — heurística CPV + paraules clau → `tipus_senyal` + `confianca`.
 - `municipis.py` — INE5 del Berguedà + detecció d'òrgans supra (la lliçó).
 - `contractacio.py` — connector `ybgg-dgi6` → normalització a events.
 - `sequera.py` — connector `i5n8-43cw` (ACA) → events de sequera.
 - `convergencia.py` — motor de convergència (turisme × sequera) → `convergencia_bergueda.parquet`.
 - `events.py` — escriptura de la taula `events` a parquet via DuckDB.
+- `subvencions_bdns.py` / `subvencions_match.py` / `perfils.py` — el radar (R1+R2).
 - `socrata.py` / `config.py` / `provenance.py` — client SODA, registre de fonts,
   sidecar de procedència (mateix patró que `packages/ingestion`).
