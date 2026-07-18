@@ -57,18 +57,31 @@ publicable per si sola.*
 > verificats adversarialment per Talaia i fusionats. Les tres decisions de R1, **RATIFICADES** (§ bitàcola).
 >
 > **🔴 COLA DE SONDEIG (per ordre; un latido = una tasca):**
-> 1. **D1** — connector atur SEPE (`docs/ajuntaments/tasques-especificades.md` §D1; C1 §1.1 esmenat:
->    la font Socrata NO existeix; doctrina del «<5» = interval [1,4]).
-> 2. **`main` ÉS VERMELL — arreglar `test_licitacions.py::test_real_parquet_cobertura_i_conservacio`**
->    (desquadre de ~7,67 M€ en la conservació d'imports). Preexistent a R1; ningú ho veia perquè **cap
->    test de `signals` corria a CI** (només s'hi lintava). Descobert per Sondeig a R1, reportat i no tapat.
->    **En tancar-lo: treure l'acotació del pas de CI** que R1 va deixar (ara només corre el seu fitxer) i
->    fer que CI corri **tots** els tests de `signals`. Fins llavors, la porta de main té aquest forat obert.
-> 3. **Saturació dels índexs** (handoff de Brúixola, X1): **47 municipis empatats a `index_turisme = 100`**
->    i 6 a `IETR = 100` — els índexs topen. El xat ja no menteix (X1 ho arregla al determinista: empat →
->    no s'afirma guanyador), però la pregunta de dades és seva: **un índex que satura 47 municipis al
->    màxim, informa?** Recalibrar o declarar-ne el límit.
-> 4. **R2** — filtre dur + puntuació de perfil (C3; inclou crear `config/municipis/08166-lillet.yaml`).
+> 1. **Saturació dels índexs** (handoff de Brúixola, X1): 47 municipis empatats a `index_turisme=100`,
+>    6 a `IETR=100`. `index_turisme` ja és FORA del tauler (vot de Bea) i el xat ja no menteix; la
+>    pregunta de dades queda: recalibrar o declarar el límit dels índexs compostos.
+> 2. **R2** — filtre dur + puntuació de perfil (C3 + §2bis; inclou crear `config/municipis/08166-lillet.yaml`,
+>    `08052-castellar` i `_default` dorments; recorda: NO es pot descartar per `termini: NULL`).
+> 3. **Esmena L1/L3 al contracte** (handoff de Mirador, #256): les notes de kwh/vidre/restauració a
+>    `semantic/metrics.yml` encara citen «capa L1/L3» (el model aparcat) — reescriure-les en termes
+>    oficials.
+> 4. **D2** — connector HERMES selectiu (C1 §1.2) · **D4** — `mart_govern` (rangs «k de n» per LA
+>    COMARCA DEL MUNICIPI via municipis-territori.json; C6 §3; + la vora de D1: «taxa de paro» (%)
+>    avui resol al RECOMPTE — D4 decideix si porta la taxa o el xat n'explica la diferència).
+>
+> **🟡 COLA DE MIRADOR:** D5 (vista govern, C6+gorra — DARRERE de D4) · seguiment menor: el loader de
+> la fitxa embeu pernocta-catalunya.json sencer per llegir-ne només l'ETCA (optimitzar quan toqui).
+> **🔵 COLA DE BRÚIXOLA:** X3 (catàleg govern + 8 preguntes curades, darrere D1✅/D4) · B3 (xips de
+> /pregunta-li → KPIs oficials).
+> **🟣 TALAIA:** ✅ nota:/caveat: unificat (#252/#253) · vot de copy de Mirador presentat a Bea ·
+> etiquetatge C4 esperant Bea (investigació seva en curs).
+>
+> **📦 ENTREGAT (2026-07-17, cicle «tira amb la resta»):** #252/#253 (caveat unificat + exports) ·
+> #254 (D1: atur SEPE 2006–2026 × 947 munis, doctrina <5 amb NULL+interval, cron refresh-atur.yml,
+> Gósol 25100 i Gombrèn 17080 a la sèrie) · #255 (el vermell de main: per_poblacio diluït ×196 quan
+> F2 va escalar a 947 — 7,67 M€ recuperats; suite sencera al CI) · #256 (aparcaments A1–A10: el model
+> fora de la vista, −3.310 línies; ETCA o «sense dada oficial»; glossari 21 honest; metodologia
+> etiquetada annex de recerca). Verificació adversarial de Talaia a tots quatre.
 >
 > **⚡ FASE NOVA (Bea, 2026-07-16): tot al dashboard útil + radar; el model de pernocta APARCAT del
 > mode govern (dades oficials i consolidades); multi-municipi des d'ara (radar segueix només la Pobla);
