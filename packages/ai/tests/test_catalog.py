@@ -16,7 +16,10 @@ def test_loads_metrics_and_meta(catalog):
 
 def test_planned_metrics_are_not_available(catalog):
     # These are status: planned in the contract -> defined but not queryable.
-    for key in ("index_envelliment", "pct_extrema_dreta"):
+    # (index_envelliment left this list on 2026-07-18: promoted to public after B3
+    # found it planned with 946/947 real values in mart_municipi — KPI 1 of the
+    # government dashboard. It now asserts AVAILABLE below.)
+    for key in ("pct_extrema_dreta",):
         m = catalog.metric(key)
         assert m is not None
         assert m.is_available() is False
@@ -24,6 +27,7 @@ def test_planned_metrics_are_not_available(catalog):
     available = {m.key for m in catalog.available_metrics()}
     assert "pct_extrema_dreta" not in available
     assert "poblacio" in available
+    assert "index_envelliment" in available
 
 
 def test_localized_labels_and_units(catalog):
