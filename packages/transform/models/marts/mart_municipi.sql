@@ -135,6 +135,16 @@ pres as (
 ),
 
 -- vstats + tur: index_turisme GLOBAL (z-score del vidre/hab sobre tot CAT, indicador absolut 0-100).
+--
+-- LÍMIT DECLARAT (saturació per construcció, anàlisi Sondeig 2026-07-18): el clamp del z a
+-- [-2,+2] és un TOPALL DUR. vidre_hab té cua dreta pesada (2024: mitjana 34,9 · sd 20,8 ·
+-- màx 149,4 → z=5,5), així que tot muni amb z≥+2 col·lapsa exactament a 100: 47 de 947 el
+-- 2024, abraçant 76,8–149,4 kg/hab (el topall esborra diferències reals de 2×). Asimètric:
+-- el terra −2 no arriba a lligar (mín observat 8,1) perquè el senyal està fitat per sota.
+-- L'ÍNDEX NO ORDENA AL CIM: els 100 són sostre compartit, no empat de senyal; per ordenar,
+-- vidre_hab (cru). Recalibrar NO ho arregla sense trair la definició: amb ln(vidre_hab) el
+-- clamp seguiria lligant (34 munis >+2σ, verificat), i sense clamp l'outlier màxim comprimeix
+-- tota l'escala (raó de ser del clamp). El contracte (semantic/metrics.yml) declara el límit.
 vstats as (
     select avg(vidre_hab) as vidre_hab_avg, stddev_pop(vidre_hab) as vidre_hab_sd from ind
 ),
@@ -148,6 +158,13 @@ tur as (
 
 -- IETR GLOBAL (min-max winsoritzat p5/p95 sobre tot CAT): exposició turística-residencial comparable
 -- entre comarques. Usa RTC (tot CAT) + EMEX (tot CAT) — no depèn d'OSM.
+--
+-- LÍMIT DECLARAT (saturació per construcció): la winsorització p5/p95 CENSURA cada component
+-- fora d'aquest rang (≈5% de munis al sostre i ≈5% al terra per component). Al 2024: 36 munis
+-- amb A_resid=100, 28 amb B_turis=100; 6 munis amb IETR=100 (els 4 components ≥p95 alhora,
+-- amagant p. ex. 244→700 places RTC/1000 hab) i 8 amb IETR=0. L'ÍNDEX NO ORDENA AL CIM NI AL
+-- TERRA: 100/0 són sostre/terra compartits. El rang mig (p5–p95) sí que discrimina i la
+-- validació externa aguanta (Spearman IETR↔residus, verify_marts.py).
 q as (
     select quantile_cont(pct_noprincipal,0.05) p5_np, quantile_cont(pct_noprincipal,0.95) p95_np,
            quantile_cont(hab_per_hab,0.05)     p5_hh, quantile_cont(hab_per_hab,0.95)     p95_hh,
@@ -368,8 +385,15 @@ select
     cast(null as double)                                        as pct_icaen_EFG,
 
     -- IETR (global)
+    -- IETR_rank: rank() (no row_number) — ELS EMPATS COMPARTEIXEN POSICIÓ i el següent salta.
+    -- El row_number anterior repartia posicions 1..6 entre els 6 munis empatats a IETR=100
+    -- per ordre de codi INE (Llançà «guanyava» Naut Aran perquè 17092<25025): ordre fantasma
+    -- que l'índex no assenyala — la mateixa mentida que X1 va treure del xat, a la capa de
+    -- dades. Es rankeja sobre round(IETR,2) = LA PRECISIÓ PUBLICADA: el que el lector veu
+    -- igual, el rank no ho pot distingir (i el mirall offline derive_fase1.py reprodueix
+    -- el rank exacte des del parquet, que ja duu 2 decimals).
     round(ietr.IETR, 2)                                         as IETR,
-    row_number() over (order by ietr.IETR desc, ind.ine5)       as IETR_rank,
+    rank() over (order by round(ietr.IETR, 2) desc)             as IETR_rank,
     round(ietr.A_resid, 2)                                      as IETR_stock,
     round(ietr.B_turis, 2)                                      as IETR_impact,
 
