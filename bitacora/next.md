@@ -87,8 +87,12 @@ publicable per si sola.*
 >
 > **🟡 COLA DE MIRADOR:** D5 (vista govern, C6+gorra — DARRERE de D4) · seguiment menor: el loader de
 > la fitxa embeu pernocta-catalunya.json sencer per llegir-ne només l'ETCA (optimitzar quan toqui).
-> **🔵 COLA DE BRÚIXOLA:** X3 (catàleg govern + 8 preguntes curades, darrere D1✅/D4) · B3 (xips de
-> /pregunta-li → KPIs oficials).
+> **🔵 COLA DE BRÚIXOLA:** X3 (catàleg govern + 8 preguntes curades, darrere D1✅/D4) · **B3 ✅ (PR
+> obert)** — xips de /pregunta-li re-basats en 6 KPIs oficials (ca+es, copy pendent de vot de Bea),
+> provats contra fixtures I marts reals; de passada, 3 forats del router tancats (mes arbitrari del
+> pols, topònims amb article INE, variant «per habitant» que robava la mètrica) — bitàcola
+> `2026-07-18_b3-xips-kpis-oficials_bruixola.md` · serrell nou: copy del refús diu «(Berguedà)» i el
+> mart ja és Catalunya-947.
 > **🟣 TALAIA:** ✅ nota:/caveat: unificat (#252/#253) · ✅ C4 v2 dues capes + C3 §6bis · vot de
 > copy de Mirador presentat a Bea.
 > **🟠 BEA:** etiquetatge del banc — CAPA A quan vulgui (10 min, full reorientat); CAPA B quan
@@ -119,7 +123,7 @@ publicable per si sola.*
 > (Gósol és Lleida, 25100).**
 >
 > **🔵 COLA DE BRÚIXOLA:** X3 (catàleg govern) queda darrere de D1/D4 (necessita les mètriques noves) ·
-> B3 (re-basar xips de /pregunta-li en KPIs oficials) quan Bea voti els aparcaments.
+> B3 ✅ entregada (2026-07-18, vegeu la cua vigent més amunt).
 > **🟡 COLA DE MIRADOR — DESBLOQUEJADA (vot de Bea 2026-07-16: «sentit comú — el que s'ha d'aparcar,
 > s'ha d'aparcar»):** 1) executar els aparcaments A1–A10 (`fase-nova-aparcaments.md` §A; criteri =
 > el doc + sentit comú; el /mapa es decideix allà mateix) · 2) D5 (vista govern, C6 + gorra — 12 KPIs

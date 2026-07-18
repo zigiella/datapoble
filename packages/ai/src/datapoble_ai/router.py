@@ -59,6 +59,42 @@ _LIST_CUES = {
     "es": ["ranking", "lista", "ordena", "clasificacion", "top"],
 }
 
+# INE/Idescat registers write the article as a suffix: «Pobla de Lillet, la»,
+# «Espunyola, l'». People ask with the natural form («la Pobla de Lillet»), so
+# the municipality index carries both spellings (see :func:`_muni_name_variants`).
+_INE_ARTICLE = re.compile(
+    r"^(?P<base>.+?),\s*(?P<art>els|les|los|las|el|la|l'|es|sa|na)\s*$",
+    re.IGNORECASE,
+)
+
+
+def natural_muni_name(name: str) -> str:
+    """The name a person would say: register style -> natural article.
+
+    «Pobla de Lillet, la» → «la Pobla de Lillet»; «Espunyola, l'» →
+    «l'Espunyola» (an apostrophe article hugs the noun). Names without a
+    suffixed article pass through untouched. Used for *prose only* — the data
+    rows keep the mart's exact spelling, so the trace stays byte-faithful.
+    """
+    m = _INE_ARTICLE.match(name.strip())
+    if not m:
+        return name
+    art, base = m.group("art"), m.group("base")
+    return art + base if art.endswith("'") else f"{art} {base}"
+
+
+def _muni_name_variants(name: str) -> set[str]:
+    """Normalized search variants for a municipality name.
+
+    Always the name as spelled; plus, for the register style with the article
+    as a suffix, the natural form a question would use (see
+    :func:`natural_muni_name`). Found via the /pregunta-li chips (B3): the real
+    ``mart_municipi`` spells toponyms register-style, so every lookup for a
+    municipality with an article refused («la Pobla de Lillet» — the demo
+    municipality — was unrecognisable).
+    """
+    return {normalize(name), normalize(natural_muni_name(name))}
+
 
 @dataclass
 class Intent:
@@ -83,14 +119,23 @@ class Router:
         # the secret is runtime-only; a gate with no word configured stays sealed
         # for every vote question (fail-safe). Injectable for deterministic tests.
         self.politics_gate = politics_gate or PoliticsGate.from_env()
-        # Precompute the municipality directory from the mart so we can resolve
+        # Precompute the municipality directory from the marts so we can resolve
         # toponyms. Falls back gracefully if a mart lacks `municipi`.
         self._muni_index = self._build_muni_index()
+        # Whether a mart carries a `date` column (monthly series), lazily probed.
+        self._table_has_date: dict[str, bool] = {}
 
     # ------------------------------------------------------------------ setup
-    def _build_muni_index(self) -> dict[str, str]:
-        """Map normalized municipality name -> canonical name, from the marts."""
-        index: dict[str, str] = {}
+    def _build_muni_index(self) -> dict[str, dict[str, str]]:
+        """Per-table map of normalized name variant -> canonical name.
+
+        Keyed by table because the marts do not agree on spelling: the real
+        ``mart_municipi``/``mart_electoral`` use the register style («Pobla de
+        Lillet, la») while ``mart_pols_mensual`` uses the natural form («la
+        Pobla de Lillet»). A lookup must bind ``$muni`` to the name *as spelled
+        in the table it queries*, so each table resolves its own canonical.
+        """
+        index: dict[str, dict[str, str]] = {}
         for table in self.catalog.tables():
             try:
                 rows = self.warehouse.query(
@@ -99,10 +144,26 @@ class Router:
                 )
             except WarehouseError:
                 continue
+            per_table = index.setdefault(table, {})
             for row in rows:
                 name = row["municipi"]
-                index[normalize(name)] = name
+                for variant in _muni_name_variants(name):
+                    per_table[variant] = name
         return index
+
+    def _muni_variants_for(self, table: str | None) -> dict[str, str]:
+        """The variant->canonical view to match against.
+
+        For a known table, its own directory; otherwise the union of every
+        table (ranking/correlation and the unknown-place heuristic do not care
+        which spelling wins, only whether the toponym is known).
+        """
+        if table is not None and table in self._muni_index:
+            return self._muni_index[table]
+        merged: dict[str, str] = {}
+        for per_table in self._muni_index.values():
+            merged.update(per_table)
+        return merged
 
     # -------------------------------------------------------------- matching
     def match_metric(self, question_norm: str, locale: str,
@@ -163,11 +224,17 @@ class Router:
                     break
         return best[1] if best else None
 
-    def match_municipality(self, question_norm: str) -> str | None:
-        """Resolve a municipality name mentioned in the question."""
+    def match_municipality(self, question_norm: str,
+                           table: str | None = None) -> str | None:
+        """Resolve a municipality name mentioned in the question.
+
+        ``table`` scopes the resolution to the mart the intent will query, so
+        the canonical returned is spelled the way *that* table spells it (the
+        marts disagree on article placement; see :meth:`_build_muni_index`).
+        """
         best: str | None = None
         best_len = 0
-        for norm_name, canonical in self._muni_index.items():
+        for norm_name, canonical in self._muni_variants_for(table).items():
             if norm_name and norm_name in question_norm and len(norm_name) > best_len:
                 best = canonical
                 best_len = len(norm_name)
@@ -192,13 +259,14 @@ class Router:
             "cuantos", "cuantas", "cuanto", "que", "donde", "cual", "cuales",
             "habitatges", "viviendas", "el", "la", "els", "les", "los", "las",
         }
+        known = self._muni_variants_for(None)
         tokens = re.findall(r"[A-ZÀ-Ý][\wÀ-ÿ'·]+", question)
         for i, tok in enumerate(tokens):
             if i == 0:  # sentence-initial capital carries no signal
                 continue
             if tok.lower() in stop:
                 continue
-            if normalize(tok) in self._muni_index:
+            if normalize(tok) in known:
                 return False  # it's a known municipality -> not "unknown"
             # A multi-word toponym (e.g. "Castellar de n'Hug") is matched by
             # match_municipality already; here a lone unknown capital suffices.
@@ -234,7 +302,9 @@ class Router:
             return RefusalReason.OUT_OF_CATALOG
 
         # --- ranking vs lookup ---
-        muni = self.match_municipality(qn)
+        # Resolve the toponym against the mart this metric lives in, so the
+        # canonical name is spelled the way that table spells it.
+        muni = self.match_municipality(qn, metric.table)
         wants_min = self._has_cue(qn, min_cues)
         wants_max = self._has_cue(qn, max_cues)
         wants_list = self._has_cue(qn, list_cues)
@@ -334,6 +404,32 @@ class Router:
         return self._refuse(question, loc, RefusalReason.UNSUPPORTED_QUESTION, backend)
 
     # ------------------------------------------------------------- builders
+    def _has_date_column(self, table: str) -> bool:
+        """True when ``table`` is a dated (monthly) mart. Probed once, cached."""
+        cached = self._table_has_date.get(table)
+        if cached is None:
+            try:
+                cached = "date" in self.warehouse.columns(table)
+            except WarehouseError:
+                cached = False
+            self._table_has_date[table] = cached
+        return cached
+
+    def _latest_filter(self, table: str, alias: str = "") -> str:
+        """``AND``-predicate pinning a monthly mart to its latest month, or ``""``.
+
+        ``mart_pols_mensual`` is a long series (one row per municipality and
+        month, 2006→today). A naive lookup used to grab whichever row came
+        first, silently serving a 2006 unemployment figure as current — found
+        while proving the /pregunta-li example chips resolve (B3). Any mart
+        with a ``date`` column is pinned to ``MAX(date)``: the latest loaded
+        month, which is what the contract's ``date:`` field documents.
+        """
+        if not self._has_date_column(table):
+            return ""
+        col = f'{alias}."date"' if alias else '"date"'
+        return f' AND {col} = (SELECT MAX("date") FROM "{table}")'
+
     def _provenance(self, metric: Metric, locale: str, query: str,
                     params: dict) -> Provenance:
         """Assemble the provenance block from the contract for ``metric``."""
@@ -379,6 +475,7 @@ class Router:
         sql = (
             f'SELECT municipi, "{col}" AS value '
             f'FROM "{metric.table}" WHERE municipi = $muni'
+            f"{self._latest_filter(metric.table)}"
         )
         params = {"muni": intent.municipality}
         rows = self.warehouse.query(sql, params)
@@ -392,7 +489,7 @@ class Router:
         text = t(
             locale, "value_for",
             label=metric.label(locale),
-            municipi=rows[0]["municipi"],
+            municipi=natural_muni_name(rows[0]["municipi"]),
             value=format_number(value, locale),
             unit=self._unit_suffix(metric, locale),
         )
@@ -414,7 +511,8 @@ class Router:
         # honest if we have looked at the runner-up (see the tie guard below).
         sql = (
             f'SELECT municipi, "{col}" AS value '
-            f'FROM "{metric.table}" WHERE "{col}" IS NOT NULL '
+            f'FROM "{metric.table}" WHERE "{col}" IS NOT NULL'
+            f"{self._latest_filter(metric.table)} "
             f'ORDER BY "{col}" {order} LIMIT {limit}'
         )
         rows = self.warehouse.query(sql)
@@ -439,7 +537,8 @@ class Router:
                     n=len(tie),
                     value=format_number(rows[0]["value"], locale),
                     unit=unit,
-                    municipis=", ".join(tie[:5]) + ("…" if len(tie) > 5 else ""),
+                    municipis=", ".join(natural_muni_name(m) for m in tie[:5])
+                    + ("…" if len(tie) > 5 else ""),
                 )
                 text = self._with_provenance_and_note(text, prov, locale)
                 return Answer(
@@ -451,7 +550,8 @@ class Router:
             lines = [t(locale, "ranking_list_intro", label=metric.label(locale))]
             for i, r in enumerate(rows, 1):
                 lines.append(t(
-                    locale, "ranking_row", rank=i, municipi=r["municipi"],
+                    locale, "ranking_row", rank=i,
+                    municipi=natural_muni_name(r["municipi"]),
                     value=format_number(r["value"], locale), unit=unit,
                 ))
             text = "\n".join(lines)
@@ -459,7 +559,7 @@ class Router:
             sup = t(locale, "superlative_max" if intent.descending else "superlative_min")
             text = t(
                 locale, "ranking_top", sup=sup, label=metric.label(locale),
-                municipi=rows[0]["municipi"],
+                municipi=natural_muni_name(rows[0]["municipi"]),
                 value=format_number(rows[0]["value"], locale), unit=unit,
             )
         text = self._with_provenance_and_note(text, prov, locale)
@@ -477,10 +577,12 @@ class Router:
         alone. This is the harvested band rule, honestly reduced — see
         :func:`datapoble_ai.doctrine.distinguishable`.
         """
+        anchor = self._latest_filter(metric.table)
         top_sql = (
             f'SELECT municipi FROM "{metric.table}" '
             f'WHERE "{col}" = (SELECT {"MAX" if order == "DESC" else "MIN"}("{col}") '
-            f'FROM "{metric.table}" WHERE "{col}" IS NOT NULL) '
+            f'FROM "{metric.table}" WHERE "{col}" IS NOT NULL{anchor})'
+            f"{anchor} "
             f'ORDER BY municipi'
         )
         try:
@@ -494,18 +596,23 @@ class Router:
         a, b = intent.metric, intent.metric_b
         assert a is not None and b is not None
         # Both metrics must share a mart to be joined on ine5/municipi.
+        # Dated (monthly) marts are pinned to their latest month on either side,
+        # so a long series never fans out the join nor skews the correlation.
         if a.table != b.table:
             sql = (
                 f'SELECT x.municipi AS municipi, x."{a.column}" AS a, '
                 f'y."{b.column}" AS b '
                 f'FROM "{a.table}" x JOIN "{b.table}" y USING (municipi) '
                 f'WHERE x."{a.column}" IS NOT NULL AND y."{b.column}" IS NOT NULL'
+                f"{self._latest_filter(a.table, 'x')}"
+                f"{self._latest_filter(b.table, 'y')}"
             )
         else:
             sql = (
                 f'SELECT municipi, "{a.column}" AS a, "{b.column}" AS b '
                 f'FROM "{a.table}" '
                 f'WHERE "{a.column}" IS NOT NULL AND "{b.column}" IS NOT NULL'
+                f"{self._latest_filter(a.table)}"
             )
         rows = self.warehouse.query(sql)
         xs = [r["a"] for r in rows]

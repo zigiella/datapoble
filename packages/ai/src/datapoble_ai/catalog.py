@@ -212,6 +212,13 @@ class Metric:
         does not list a synonym for it). Returned longest-first so the router
         prefers the most specific phrase (``segona residencia`` before
         ``residencia``).
+
+        A derived variant must still *name* the metric: if stripping the lead
+        word leaves a bare qualifier phrase (``per habitant``, ``/ 1000 hab``),
+        it is discarded. Found via the /pregunta-li chips (B3): «residus per
+        habitant» matched ``hab_per_hab`` — «Habitatges per habitant» minus the
+        lead word left ``per habitant``, which outscored the ``residus`` synonym
+        on length and answered the wrong metric.
         """
         terms = {self.key, self.label(locale)}
         terms.update(self.synonyms(locale))
@@ -224,9 +231,13 @@ class Metric:
         # Drop a leading function word so "% vot extrema dreta" -> "extrema dreta".
         lead_words = ("vot", "voto", "establiments", "establecimientos",
                       "habitatges", "viviendas", "index d", "indice d")
+        # Leads that reveal the remainder is a unit/qualifier, not a name.
+        bare_qualifier = ("per ", "por ", "de ", "del ", "d'", "/", "x ")
         for lw in lead_words:
             if stripped.startswith(lw + " "):
-                terms.add(stripped[len(lw) + 1:].strip())
+                variant = stripped[len(lw) + 1:].strip()
+                if variant and not variant.startswith(bare_qualifier):
+                    terms.add(variant)
         normalized = {normalize(t) for t in terms if t and len(normalize(t)) >= 3}
         return sorted(normalized, key=len, reverse=True)
 
