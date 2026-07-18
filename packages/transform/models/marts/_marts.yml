@@ -3,10 +3,10 @@ version: 2
 models:
   - name: mart_municipi
     description: >
-      1 fila per municipi del Berguedà (clau ine5). Columnes segons el contracte
-      semantic/metrics.yml (table: mart_municipi). IETR/IETR_rank es calculen amb
-      la metodologia de Talaia (min-max winsoritzat p5/p95, dues dimensions a pesos
-      iguals). pct_icaen_EFG segueix NULL (requereix connector ICAEN, fora d'aquest PR).
+      1 fila per municipi de Catalunya (clau ine5; escala F2, 947 munis). Columnes segons
+      el contracte semantic/metrics.yml (table: mart_municipi). IETR/IETR_rank es calculen
+      amb la metodologia de Talaia (min-max winsoritzat p5/p95 GLOBAL sobre tot CAT, dues
+      dimensions a pesos iguals). pct_icaen_EFG segueix NULL (requereix connector ICAEN).
     columns:
       - name: ine5
         description: Codi INE de 5 dígits (clau de join del contracte).
@@ -139,11 +139,14 @@ models:
           - not_null
           - between:
               arguments: { min_value: 0, max_value: 10000000 }
-      # L3 · pressió turística (vidre, z-score comarcal 0-100) — NO és població.
+      # L3 · pressió turística (vidre, z-score GLOBAL CAT 0-100) — NO és població.
       - name: index_turisme
         description: >
-          L3. Pressió turística/hostaleria: z-score comarcal de vidre_hab portat a
-          0–100 (50 = mitjana comarcal). Proxy d'activitat de visitants, NO població.
+          L3. Pressió turística/hostaleria: z-score GLOBAL (tot Catalunya, des de F2) de
+          vidre_hab, clamp [-2,+2], portat a 0–100 (50 = mitjana catalana). Proxy
+          d'activitat de visitants, NO població. LÍMIT DECLARAT: el clamp és un topall
+          dur — tot z≥+2 col·lapsa a 100 (2024: 47 de 947 munis al sostre, abraçant
+          76,8–149,4 kg vidre/hab) i l'índex NO ordena al cim; per ordenar, vidre_hab.
         data_tests:
           - not_null
           - between:
@@ -191,17 +194,21 @@ models:
         description: "% certificats E-G (ICAEN). NULL: connector pendent."
       - name: IETR
         description: >
-          Índex d'Exposició Turística-Residencial (0-100). Min-max winsoritzat
-          (p5/p95) sobre els 31 municipis, eix residencial + eix turístic a pesos
-          iguals. Ancoratges: Castellar (08052) ≈ 89,4 (#1); Berga (08022) ≈ 0,3 (#31).
+          Índex d'Exposició Turística-Residencial (0-100). Min-max winsoritzat (p5/p95)
+          GLOBAL sobre tot Catalunya (des de F2; els ancoratges dels 31 es van retirar,
+          vegeu verify_marts.py), eix residencial + eix turístic a pesos iguals.
+          LÍMIT DECLARAT: la winsorització censura els extrems — 0 i 100 són terra/sostre
+          compartits i l'índex NO ordena allà (2024: 6 munis a 100, 8 a 0).
         data_tests:
           - not_null
           - between:
               arguments: { min_value: 0, max_value: 100 }
       - name: IETR_rank
-        description: "Rànquing IETR (1 = major exposició). Únic i not_null."
+        description: >
+          Rànquing IETR (1 = major exposició) sobre round(IETR,2), la precisió publicada.
+          rank(): ELS EMPATS COMPARTEIXEN POSICIÓ i el següent salta — NO és únic per
+          construcció (el row_number anterior fabricava ordre per codi INE dins l'empat).
         data_tests:
-          - unique
           - not_null
       # --- FASE 1 · 3 derivats nous (endurir el model SENSE fonts noves) ---
       - name: IETR_stock

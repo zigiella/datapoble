@@ -787,12 +787,12 @@
       "source": "indicador derivat — vegeu la metodologia · Agència de Residus de Catalunya (ARC)",
       "date": "2024",
       "definicio": {
-        "ca": "Intensitat d'activitat de visitants (hostaleria), via vidre per habitant: z-score comarcal del vidre/hab portat a 0–100 (50 = mitjana comarcal). Proxy d'hostaleria, NO població.",
-        "es": "Intensidad de actividad de visitantes (hostelería), vía vidrio por habitante: z-score comarcal del vidrio/hab llevado a 0–100 (50 = media comarcal). Proxy de hostelería, NO población."
+        "ca": "Intensitat d'activitat de visitants (hostaleria), via vidre per habitant: z-score del vidre/hab sobre tot Catalunya portat a 0–100 (50 = mitjana catalana). Proxy d'hostaleria, NO població.",
+        "es": "Intensidad de actividad de visitantes (hostelería), vía vidrio por habitante: z-score del vidrio/hab sobre toda Cataluña llevado a 0–100 (50 = media catalana). Proxy de hostelería, NO población."
       },
       "note": {
-        "ca": "NO és població ni càrrega de persones: és INTENSITAT d'hostaleria (el vidre el genera el bar/restaurant que serveix el visitant). És RELATIU a la comarca (z-score): 50 = un municipi mitjà del Berguedà, no un valor absolut. Granularitat anual (no capta estacionalitat). Inferència, lectura ecològica.",
-        "es": "NO es población ni carga de personas: es INTENSIDAD de hostelería (el vidrio lo genera el bar/restaurante que sirve al visitante). Es RELATIVO a la comarca (z-score): 50 = un municipio medio del Berguedà, no un valor absoluto. Granularidad anual (no capta estacionalidad). Inferencia, lectura ecológica."
+        "ca": "NO és població ni càrrega de persones: és INTENSITAT d'hostaleria (el vidre el genera el bar/restaurant que serveix el visitant). És RELATIU a la distribució catalana (z-score global): 50 = un municipi mitjà de Catalunya, no un valor absolut. SATURA AL CIM: l'escala talla a ±2 desviacions i tot municipi per damunt marca 100 exacte (el 2024, 47 municipis comparteixen aquest sostre amb valors reals de vidre que van del simple al doble) — a 100, l'índex NO ordena ni distingeix; per comparar-los, useu el vidre per habitant (kg/hab). Granularitat anual (no capta estacionalitat). Inferència, lectura ecològica.",
+        "es": "NO es población ni carga de personas: es INTENSIDAD de hostelería (el vidrio lo genera el bar/restaurante que sirve al visitante). Es RELATIVO a la distribución catalana (z-score global): 50 = un municipio medio de Cataluña, no un valor absoluto. SATURA EN LA CIMA: la escala corta a ±2 desviaciones y todo municipio por encima marca 100 exacto (en 2024, 47 municipios comparten ese techo con valores reales de vidrio que van del simple al doble) — en 100, el índice NO ordena ni distingue; para compararlos, usad el vidrio por habitante (kg/hab). Granularidad anual (no capta estacionalidad). Inferencia, lectura ecológica."
       },
       "status": "public"
     },
@@ -953,8 +953,8 @@
         "es": "Exposición turística-residencial relativa a la distribución (0=mín, 100=máx): SÍNTESIS de la capacidad (estructura) y el impacto (huella realizada). Validado externamente con residuos (r=0,87)."
       },
       "note": {
-        "ca": "L'exposició combina dues cares: 0,5·capacitat (estructura preparada) + 0,5·impacte (empremta realitzada). Per al desglossament, vegeu Capacitat i Impacte.",
-        "es": "La exposición combina dos caras: 0,5·capacidad (estructura preparada) + 0,5·impacto (huella realizada). Para el desglose, ved Capacidad e Impacto."
+        "ca": "L'exposició combina dues cares: 0,5·capacitat (estructura preparada) + 0,5·impacte (empremta realitzada). Per al desglossament, vegeu Capacitat i Impacte. SATURA ALS EXTREMS: els valors es retallen als percentils 5 i 95 de Catalunya, així que 0 i 100 són terra i sostre COMPARTITS (el 2024, 6 municipis marquen 100 i 8 marquen 0) — allà l'índex NO ordena: municipis al sostre poden diferir molt en els senyals crus (p. ex. del simple al triple en places turístiques per habitant). Els empats al rànquing comparteixen posició.",
+        "es": "La exposición combina dos caras: 0,5·capacidad (estructura preparada) + 0,5·impacto (huella realizada). Para el desglose, ved Capacidad e Impacto. SATURA EN LOS EXTREMOS: los valores se recortan en los percentiles 5 y 95 de Cataluña, así que 0 y 100 son suelo y techo COMPARTIDOS (en 2024, 6 municipios marcan 100 y 8 marcan 0) — ahí el índice NO ordena: municipios en el techo pueden diferir mucho en las señales crudas (p. ej. del simple al triple en plazas turísticas por habitante). Los empates en el ranking comparten posición."
       },
       "status": "public"
     },
@@ -972,8 +972,12 @@
       "format": "rank",
       "source": "indicador derivat — vegeu la metodologia",
       "definicio": {
-        "ca": "Posició del municipi dins la distribució (1 = major exposició).",
-        "es": "Posición del municipio dentro de la distribución (1 = mayor exposición)."
+        "ca": "Posició del municipi dins la distribució (1 = major exposició). Els EMPATS comparteixen posició i la següent salta (rank, no row_number): si 6 municipis comparteixen el sostre 100, tots són 1r i el següent és 7è.",
+        "es": "Posición del municipio dentro de la distribución (1 = mayor exposición). Los EMPATES comparten posición y la siguiente salta (rank, no row_number): si 6 municipios comparten el techo 100, todos son 1º y el siguiente es 7º."
+      },
+      "note": {
+        "ca": "El rànquing hereta la saturació de l'IETR: dins d'un empat (sobretot al sostre 100 i al terra 0) NO hi ha ordre — la posició compartida és la lectura honesta, no una classificació fina.",
+        "es": "El ranking hereda la saturación del IETR: dentro de un empate (sobre todo en el techo 100 y el suelo 0) NO hay orden — la posición compartida es la lectura honesta, no una clasificación fina."
       },
       "status": "public"
     },
@@ -996,8 +1000,8 @@
         "es": "Lado ESTRUCTURAL/residente del IETR (eje A reescalado 0-100): exposición LATENTE inscrita en el parque de vivienda (vivienda no principal + viviendas por habitante). Cuánto territorio está preparado para la presión turística-residencial, haya o no actividad ahora mismo."
       },
       "note": {
-        "ca": "Desglossament de l'IETR (no una mesura nova): exposició STOCK, no pressió realitzada. Alt a municipis amb molt habitatge secundari/buit encara que el turisme reglat sigui baix (Gósol, Castellar). Relatiu a la comarca (winsoritzat). Inferència.",
-        "es": "Desglose del IETR (no una medida nueva): exposición STOCK, no presión realizada. Alto en municipios con mucha vivienda secundaria/vacía aunque el turismo reglado sea bajo (Gósol, Castellar). Relativo a la comarca (winsorizado). Inferencia."
+        "ca": "Desglossament de l'IETR (no una mesura nova): exposició STOCK, no pressió realitzada. Alt a municipis amb molt habitatge secundari/buit encara que el turisme reglat sigui baix (Gósol, Castellar). Relatiu a la distribució catalana (winsoritzat p5/p95): satura als extrems — 0 i 100 són terra/sostre compartits (el 2024, 36 municipis marquen 100) i allà el component no ordena. Inferència.",
+        "es": "Desglose del IETR (no una medida nueva): exposición STOCK, no presión realizada. Alto en municipios con mucha vivienda secundaria/vacía aunque el turismo reglado sea bajo (Gósol, Castellar). Relativo a la distribución catalana (winsorizado p5/p95): satura en los extremos — 0 y 100 son suelo/techo compartidos (en 2024, 36 municipios marcan 100) y ahí el componente no ordena. Inferencia."
       },
       "status": "public"
     },
@@ -1020,8 +1024,8 @@
         "es": "Lado de PRESIÓN realizada del IETR (eje B reescalado 0-100): actividad turística viva inscrita en los establecimientos reglados (RTC por 1000 hab + por 100 viviendas). Cuánta presión turística se está ejerciendo realmente, ahora."
       },
       "note": {
-        "ca": "Desglossament de l'IETR (no una mesura nova): pressió REALITZADA, no stock. Pot ser alt amb poc habitatge buit si hi ha molta oferta reglada activa (Capolat, Sagàs). Relatiu a la comarca (winsoritzat). Inferència.",
-        "es": "Desglose del IETR (no una medida nueva): presión REALIZADA, no stock. Puede ser alto con poca vivienda vacía si hay mucha oferta reglada activa (Capolat, Sagàs). Relativo a la comarca (winsorizado). Inferencia."
+        "ca": "Desglossament de l'IETR (no una mesura nova): pressió REALITZADA, no stock. Pot ser alt amb poc habitatge buit si hi ha molta oferta reglada activa (Capolat, Sagàs). Relatiu a la distribució catalana (winsoritzat p5/p95): satura als extrems — 0 i 100 són terra/sostre compartits (el 2024, 28 municipis marquen 100 i 48 marquen 0, els «sense oferta reglada») i allà el component no ordena. Inferència.",
+        "es": "Desglose del IETR (no una medida nueva): presión REALIZADA, no stock. Puede ser alto con poca vivienda vacía si hay mucha oferta reglada activa (Capolat, Sagàs). Relativo a la distribución catalana (winsorizado p5/p95): satura en los extremos — 0 y 100 son suelo/techo compartidos (en 2024, 28 municipios marcan 100 y 48 marcan 0, los «sin oferta reglada») y ahí el componente no ordena. Inferencia."
       },
       "status": "public"
     },
@@ -2337,7 +2341,7 @@
         "confianca": "alta",
         "pct_icaen_EFG": null,
         "IETR": 65.17,
-        "IETR_rank": 110,
+        "IETR_rank": 109,
         "IETR_stock": 33.99,
         "IETR_impact": 96.34,
         "tipologia": "segona_residencia",
@@ -2679,7 +2683,7 @@
         "confianca": "baixa",
         "pct_icaen_EFG": null,
         "IETR": 29.75,
-        "IETR_rank": 398,
+        "IETR_rank": 397,
         "IETR_stock": 46.41,
         "IETR_impact": 13.09,
         "tipologia": "indeterminat",

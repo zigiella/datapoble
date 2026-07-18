@@ -12,6 +12,9 @@ d'entrada. Així el parquet (artefacte versionat) queda al dia sense raw, i la
 fidelitat amb el pipeline queda PROVADA: re-deriva A_resid/B_turis i comprova que
 `0.5*IETR_stock + 0.5*IETR_impact == IETR` (la columna ja materialitzada).
 
+També re-deriva IETR_rank (rank() sobre round(IETR,2) desc, empats comparteixen
+posició — mirall del model des de la declaració del límit dels índexs, 2026-07-18).
+
 Quan hi hagi raw, `dbt build` produeix el MATEIX resultat (mateixa SQL).
 
 Ús:
@@ -247,6 +250,15 @@ def build() -> pd.DataFrame:
     diff = (recomb - df["IETR"].round(2)).abs().max()
     if diff > 0.02:
         raise SystemExit(f"FALLA: IETR re-compost difereix del materialitzat (max {diff}).")
+    # IETR_rank — mirall EXACTE del model (mart_municipi.sql): rank() sobre round(IETR,2)
+    # desc, ELS EMPATS COMPARTEIXEN POSICIÓ (method="min" de pandas == rank() SQL). Es
+    # rankeja a la precisió PUBLICADA (2 decimals, la del parquet): el que el lector veu
+    # igual, el rank no ho distingeix. Re-derivable offline perquè només depèn de l'IETR
+    # ja materialitzat — el --check del CI vigila que el parquet no torni a l'ordre
+    # fantasma del row_number (que repartia posicions dins l'empat per codi INE).
+    df["IETR_rank"] = (
+        df["IETR"].round(2).rank(method="min", ascending=False).astype("int64")
+    )
     return df
 
 
@@ -264,8 +276,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.check:
         cur = pd.read_parquet(MART)
-        # El senyal de centralitat (serveis) i els derivats Fase 1 han de ser-hi i al dia.
-        check_cols = [*SERVEIS_COLS, *NEW_COLS]
+        # El senyal de centralitat (serveis), els derivats Fase 1 i l'IETR_rank honest
+        # (empats comparteixen posició) han de ser-hi i al dia.
+        check_cols = [*SERVEIS_COLS, *NEW_COLS, "IETR_rank"]
         missing = [c for c in check_cols if c not in cur.columns]
         if missing:
             print(f"FALLA (--check): falten columnes {missing} (re-executa sense --check)", file=sys.stderr)
