@@ -57,15 +57,31 @@ publicable per si sola.*
 > verificats adversarialment per Talaia i fusionats. Les tres decisions de R1, **RATIFICADES** (§ bitàcola).
 >
 > **🔴 COLA DE SONDEIG (per ordre; un latido = una tasca):**
-> 1. **Saturació dels índexs** (handoff de Brúixola, X1): 47 municipis empatats a `index_turisme=100`,
+> 1. **R1.5 — COMPOSICIÓ DE LA CAPA B DEL BANC C4** (nova, URGENT: desbloqueja l'etiquetatge de Bea;
+>    C4 §2 v2 + R-FUNC §2). Cerca dirigida a BDNS (i CIDO si cal) **6–12 mesos enrere** per LLISTA DE
+>    PROGRAMES — Catàleg Diba · OSIC/Cultura · Leader/ADRCatCentral (conv. 2026 oberta) · IDAE/
+>    enllumenat · patrimoni (1,5% cultural) · camins/natura · digitalització ens locals — i **arxiu de
+>    TOTES les convocatòries d'aquests programes del període** com a fixtures reals (l'objectiu és que
+>    hi hagi ≥8 elegibles clares i 4–6 fronteres PER EXISTÈNCIA, no per selecció): **guarda
+>    anti-pre-etiquetatge de C4 §2 — Sondeig llista programes i arxiva, NO etiqueta res; qui etiqueta
+>    és NOMÉS Bea (A+B juntes)**. Re-verifica en viu les fonts del R-FUNC §2 en compondre (PUOSC
+>    tancat→memòria de cicle; ADRCatCentral oberta). Afegeix les fitxes al full d'etiquetatge (segona
+>    taula). Test nou de la trampa de noms: «Sant Salvador de Guardiola» (Bages) ≠ «Guardiola de
+>    Berguedà» (#9–10 de la capa A ho exerceixen).
+> 2. **Saturació dels índexs** (handoff de Brúixola, X1): 47 municipis empatats a `index_turisme=100`,
 >    6 a `IETR=100`. `index_turisme` ja és FORA del tauler (vot de Bea) i el xat ja no menteix; la
 >    pregunta de dades queda: recalibrar o declarar el límit dels índexs compostos.
-> 2. **R2** — filtre dur + puntuació de perfil (C3 + §2bis; inclou crear `config/municipis/08166-lillet.yaml`,
->    `08052-castellar` i `_default` dorments; recorda: NO es pot descartar per `termini: NULL`).
-> 3. **Esmena L1/L3 al contracte** (handoff de Mirador, #256): les notes de kwh/vidre/restauració a
+> 3. **R2** — filtre dur + puntuació de perfil (C3 + §2bis + **§6bis nou**: destinataris = claus
+>    simbòliques, mai correus; validació @→error). El perfil `08166-lillet.yaml` parteix de la
+>    PROPOSTA del R-FUNC §3 (pesos i cartera de Marea; la llista de projectes la valida Bea amb
+>    l'Ajuntament — mentre no arribi, marcada com a proposta). `_default` i `08052-castellar`
+>    dorments. NO es pot descartar per `termini: NULL`. **Requisits de dev del R-FUNC §9.1**:
+>    dry-run local a directori gitignorat, fixtures rejugables, snapshot test del correu (patró
+>    test_parafrasis), correu real només via workflow_dispatch [DEV].
+> 4. **Esmena L1/L3 al contracte** (handoff de Mirador, #256): les notes de kwh/vidre/restauració a
 >    `semantic/metrics.yml` encara citen «capa L1/L3» (el model aparcat) — reescriure-les en termes
 >    oficials.
-> 4. **D2** — connector HERMES selectiu (C1 §1.2) · **D4** — `mart_govern` (rangs «k de n» per LA
+> 5. **D2** — connector HERMES selectiu (C1 §1.2) · **D4** — `mart_govern` (rangs «k de n» per LA
 >    COMARCA DEL MUNICIPI via municipis-territori.json; C6 §3; + la vora de D1: «taxa de paro» (%)
 >    avui resol al RECOMPTE — D4 decideix si porta la taxa o el xat n'explica la diferència).
 >
@@ -73,8 +89,16 @@ publicable per si sola.*
 > la fitxa embeu pernocta-catalunya.json sencer per llegir-ne només l'ETCA (optimitzar quan toqui).
 > **🔵 COLA DE BRÚIXOLA:** X3 (catàleg govern + 8 preguntes curades, darrere D1✅/D4) · B3 (xips de
 > /pregunta-li → KPIs oficials).
-> **🟣 TALAIA:** ✅ nota:/caveat: unificat (#252/#253) · vot de copy de Mirador presentat a Bea ·
-> etiquetatge C4 esperant Bea (investigació seva en curs).
+> **🟣 TALAIA:** ✅ nota:/caveat: unificat (#252/#253) · ✅ C4 v2 dues capes + C3 §6bis · vot de
+> copy de Mirador presentat a Bea.
+> **🟠 BEA:** etiquetatge del banc — CAPA A quan vulgui (10 min, full reorientat); CAPA B quan
+> R1.5 la porti (etiqueta A+B juntes i es congela TOT) · validar amb l'Ajuntament la llista de
+> projectes del perfil (R-FUNC §3) · crear el repo PRIVAT de sortides del radar (fase dev de l'espai
+> del radar, R-FUNC §9.2 — p. ex. datapoble-radar-out; el workflow R4 hi escriurà).
+> **📅 ENCUAT NOU (del R-FUNC #258, adoptat):** R7 memòria de cicle (calendari-finestres.yaml +
+> anticipacions al correu de divendres — POST-R4, barat) · R8 espai del radar fase pilot (ruta /radar
+> a Render amb token per municipi + refresca/envia'm — POST-X2, amb Trazo; anti-relay per §6bis) ·
+> agregats públics amb retard + arxiu de tancades (R-FUNC §9, quan surti de l'experimental).
 >
 > **📦 ENTREGAT (2026-07-17, cicle «tira amb la resta»):** #252/#253 (caveat unificat + exports) ·
 > #254 (D1: atur SEPE 2006–2026 × 947 munis, doctrina <5 amb NULL+interval, cron refresh-atur.yml,

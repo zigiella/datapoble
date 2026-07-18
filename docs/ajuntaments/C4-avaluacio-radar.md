@@ -21,14 +21,34 @@ Els dos errors, amb nom (la 2×2 del geo-rag):
 - **FP — avisar d'una no-elegible** (soroll a la safata): el pecat **prudent**. Cansa, però
   no fa perdre res. Es mesura i es reporta, amb llindar més tou.
 
-## 2. El banc (composició congelada abans de cap sortida)
+## 2. El banc — DUES CAPES (v2, 2026-07-18: objecció de Marea ACCEPTADA, ratificada per Bea)
 
-- **20 convocatòries reals arxivades** (BDNS + CIDO, període 2025–2026), guardades com a
-  fixtures literals al repo (el CI les consumeix offline).
-- Mix: **8 elegibles clares** per al perfil de la Pobla · **8 descartables clares** ·
-  **4 casos frontera** (elegibles-però-dubtoses o descartables-però-atractives).
-- **Idioma segons la font real:** la BDNS publica majoritàriament en castellà — el banc manté
-  la distribució real (≈2/3 [es], ≈1/3 [ca] via CIDO), no la llengua còmoda del desenvolupador.
+**Per què v2:** la v1 d'aquest contracte manava un mix 8/8/4 però el full d'etiquetatge (#251) va
+deixar que les candidates sortissin del flux cru d'un dia de BDNS — i el recompte de Marea sobre les
+26 va donar **0 elegibles clares** (el feed diari és 90–95% soroll trivial: nominatives, persones
+físiques, convocatòries d'altres ajuntaments per als seus veïns). Un recall sobre denominador ≈0 és
+un titular buit («detector d'incendis avaluat 26 dies sense cap incendi»), i la clàusula de reescalar
+era el símptoma, no la solució: **reescalar no crea elegibles**. L'error era del full, no del
+contracte: el banc del geo-rag (06/07) es va COMPOSAR, no mostrejar — aquesta v2 hi torna.
+
+- **Capa A — el flux cru (26 convocatòries reals d'un dia, les de R1, tal qual).** La seva virtut és
+  NO estar triada a dit: mesura el **FP-rate del pipeline i el filtre dur** sobre la distribució
+  real que el radar veurà cada matí, i la **taxa de descartades-amb-motiu-erroni**. Inclou els
+  paranys de nom reals (#9–10 «Sant Salvador de Guardiola» és del BAGES — test obligat del filtre).
+  **Cap titular de recall surt d'aquesta capa.**
+- **Capa B — la classe positiva, COMPOSADA (el denominador del recall i el número de la demo).**
+  Cerca dirigida a BDNS/CIDO **6–12 mesos enrere** per obtenir **8 elegibles clares + 4–6 fronteres
+  reals** del perfil de la Pobla. **Guarda anti-pre-etiquetatge (vinculant):** la cerca es defineix
+  per LLISTA DE PROGRAMES/FINANÇADORS (R-FUNC §2: Catàleg Diba, OSIC, Leader/ADRCatCentral,
+  IDAE/enllumenat, patrimoni, camins…), i s'arxiven **TOTES les convocatòries d'aquests programes
+  del període** — no una selecció per «sembla elegible». Qui compon (Sondeig, tasca R1.5) llista
+  programes i arxiva; **qui etiqueta és NOMÉS Bea**, sobre el conjunt sencer A+B. Així la composició
+  garanteix que la classe positiva EXISTEIX sense que cap agent pre-etiqueti res.
+- Les convocatòries de capa B poden tenir `estat: tancada` (són de mesos enrere): el banc avalua el
+  JUDICI del pipeline (elegibilitat/semàfor), no la vigència — la data de referència de cada fitxa
+  és la seva `data_publicacio`, i el filtre de termini s'avalua contra aquella data, no contra avui.
+- **Idioma segons la font real:** la BDNS publica majoritàriament en castellà — el banc (les dues
+  capes) manté la distribució real, no la llengua còmoda del desenvolupador.
 - **Criteri d'etiquetatge ESCRIT ABANS d'etiquetar:** Bea rep una pàgina amb la definició
   operativa d'«elegible» (beneficiari municipal vàlid + àmbit territorial que inclou la Pobla +
   matèria dins del perfil + termini obert en la data de referència) i etiqueta CONTRA el
@@ -39,18 +59,20 @@ Els dos errors, amb nom (la 2×2 del geo-rag):
   banc no es toca. Guarda mecànica: test que verifica que el JSON del banc coincideix amb el
   doc congelat (mateix patró que `test_parafrasis.py`).
 
-## 3. Els nivells, DINS del contracte (no a la mesura d'èxit)
+## 3. Els nivells, DINS del contracte (no a la mesura d'èxit) — sobre la CAPA B
 
-Congelats aquí, abans de cap run:
+Congelats aquí, abans de cap run. **El recall i els nivells s'apliquen NOMÉS a la capa B** (la
+classe positiva composada); la capa A reporta FP-rate i descartades-amb-motiu, sense nivell.
 
-| Nivell | Condició (sobre el banc de 20) |
+| Nivell | Condició (sobre la capa B) |
 |---|---|
-| **HONEST** | recall d'elegibles = **12/12** (les 8 clares + les 4 frontera etiquetades elegibles… el denominador exacte surt de les etiquetes de Bea) **i** FP ≤ 3 dels 8 descartables |
-| **DECEBEDOR** | recall ≥ 10/12 amb cap FN d'elegible CLARA (els FN frontera es toleren, es documenten) |
-| **NO FUNCIONA** | qualsevol FN d'una elegible clara |
+| **HONEST** | recall = **totes les elegibles de B detectades** (clares + fronteres que Bea etiqueti elegibles) **i, a la capa A,** FP ≤ 3 |
+| **DECEBEDOR** | cap FN d'elegible CLARA de B (els FN de frontera es toleren i es documenten un a un) |
+| **NO FUNCIONA** | qualsevol FN d'una elegible clara de B |
 
-*(Si les etiquetes finals de Bea canvien el repartiment 8/8/4, els llindars es reescalen a la
-mateixa proporció ABANS de la primera passada — mai després.)*
+*(El denominador exacte surt de les etiquetes de Bea sobre B; si la composició no arriba a 8 clares
+reals, es reporta el denominador tal com sigui — mai s'infla amb fronteres reetiquetades. La clàusula
+de reescalar de la v1 queda SUPRIMIDA: la composició B és la solució, no el reescalat.)*
 
 A més del 2×2: **taxa de descartades-amb-motiu-erroni** (una descartada correcta amb motiu
 equivocat és un defecte de transparència, no d'acció) — es reporta, sense nivell.
@@ -84,7 +106,9 @@ narratiu de Bea. Els correus del període experimental van NOMÉS a Bea.
 
 ## 7. Traçabilitat del report
 
-El report oficial del banc es versiona (`data/` del paquet que R2/R3 decideixin) amb: 2×2 +
-recall + nivell + per-convocatòria (id, daurada, sortida del pipeline amb el punt exacte de
-decisió — filtre o semàfor — i motiu) + cost + provenance. Mateix estàndard d'acta que el
-geo-rag: el número es reporta tal com surt.
+El report oficial del banc es versiona (`data/` del paquet que R2/R3 decideixin) amb: 2×2 de la
+capa B + recall + nivell · FP-rate i descartades-amb-motiu de la capa A · **dies de marge** de cada
+elegible detectada en la seva data de referència (mètrica d'utilitat del R-FUNC §8: l'objectiu ≥30
+dies es reporta, sense nivell) · per-convocatòria (id, daurada, capa, sortida del pipeline amb el
+punt exacte de decisió — filtre o semàfor — i motiu) + cost + provenance. Mateix estàndard d'acta
+que el geo-rag: el número es reporta tal com surt.
