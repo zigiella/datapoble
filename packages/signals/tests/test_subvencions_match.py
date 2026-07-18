@@ -407,8 +407,12 @@ def test_snapshot_estructura_correu(tmp_path, perfil_lillet):
         sortida=tmp_path,
         fitxes=sintetiques(),
     )
-    produit = (tmp_path / "radar-08166-2026-07-01.md").read_text(encoding="utf-8")
-    golden = (GOLDEN_DIR / "radar-08166-2026-07-01.md").read_text(encoding="utf-8")
+    # EOL normalitzats: el codi escriu LF pertot (newline="\n"), però el checkout
+    # de git pot servir el golden amb CRLF segons core.autocrlf de la màquina.
+    produit = (tmp_path / "radar-08166-2026-07-01.md").read_text(encoding="utf-8") \
+        .replace("\r\n", "\n")
+    golden = (GOLDEN_DIR / "radar-08166-2026-07-01.md").read_text(encoding="utf-8") \
+        .replace("\r\n", "\n")
     assert produit == golden, (
         "l'estructura del dry-run ha canviat — si és a consciència, regenera el "
         "golden (tests/fixtures/golden/) i explica-ho al PR"

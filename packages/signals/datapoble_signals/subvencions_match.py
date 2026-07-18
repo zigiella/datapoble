@@ -684,7 +684,9 @@ def dry_run(
     sortida.mkdir(parents=True, exist_ok=True)
     base = f"radar-{ine5}-{data_referencia.isoformat()}"
     md = _md_dry_run(resultat, perfil, data_referencia)
-    (sortida / f"{base}.md").write_text(md, encoding="utf-8")
+    # newline="\n": bytes idèntics a qualsevol plataforma (el snapshot compara
+    # contra el golden; sense això, Windows escriuria CRLF i el CI LF).
+    (sortida / f"{base}.md").write_text(md, encoding="utf-8", newline="\n")
 
     payload = {
         "perfil": ine5,
@@ -701,7 +703,7 @@ def dry_run(
         "descartades": resultat["descartades"],
     }
     (sortida / f"{base}.json").write_text(
-        json.dumps(payload, ensure_ascii=False, indent=1), encoding="utf-8"
+        json.dumps(payload, ensure_ascii=False, indent=1), encoding="utf-8", newline="\n"
     )
     return payload
 
