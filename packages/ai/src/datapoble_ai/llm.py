@@ -337,7 +337,11 @@ class OpenRouterBackend(LLMBackend):
                 self.name)
         metric_b = self.catalog.metric(args.get("metric_b"))
         muni_raw = args.get("municipality")
-        muni = self.router.match_municipality(normalize(muni_raw)) if muni_raw else None
+        # Resolve the toponym against the mart of the chosen metric, so the
+        # canonical is spelled the way that table spells it (register vs
+        # natural article placement differs between marts).
+        muni = (self.router.match_municipality(normalize(muni_raw), metric.table)
+                if muni_raw else None)
         intent = Intent(
             kind=args.get("kind", "lookup"),
             metric=metric,

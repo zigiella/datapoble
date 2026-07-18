@@ -43,19 +43,36 @@ Every row carries an `is_real` flag.
   have the estimate and I disown it, with a reason" — rather than only the happy
   path. La Nou de Berguedà is the second such case.
 
-- **`mart_pols_mensual` is all-real (`is_real = 1`)**: 12 rows transcribed
+- **`renda_neta_persona` is illustrative for every row** (added for the B3
+  /pregunta-li chips, whose renda example must resolve offline): plausible,
+  tie-free values in the real Berguedà range, **not** the INE Atlas figures.
+  The real column lives in `data/marts/mart_municipi.parquet`. Do not cite.
+
+- **Municipality names follow the registers, article as a suffix** (`Pobla de
+  Lillet, la`, `Nou de Berguedà, la`) — exactly how the real `mart_municipi` /
+  `mart_electoral` spell them. Kept register-style on purpose so the offline
+  gate exercises the router's toponym variants («la Pobla de Lillet» must
+  resolve): B3 found that natural-form fixtures were masking a production
+  refusal for every article-bearing municipality, the demo one included.
+
+- **`mart_pols_mensual` is all-real (`is_real = 1`)**: 24 rows transcribed
   verbatim from the verified `data/marts/mart_pols_mensual.parquet` (D1, atur
-  SEPE, byte-matched against the source CSV), trimmed to a **single month**
-  (`2026-06`, the contract's `date:` for `atur_registrat`) so a naive lookup
-  stays deterministic — the router is not month-aware yet. Four rows are
-  genuine «<5» doctrine rows (`atur_registrat` NULL + interval [1,4] +
-  `atur_emmascarat = true`), including both province edge cases (Gombrèn
-  17080/Girona, Gósol 25100/Lleida). **Identity caveat**: these rows carry the
-  *official* register codes and names (Bagà = `08016`, `la Nou de Berguedà` =
-  `08142`…), which differ from the synthetic `ine5` placeholders above (Bagà
-  is `08009` in `mart_municipi`). The warehouse queries each table
-  independently — never joins them — so the mismatch is harmless, and the real
-  rows stay real rather than bending to the synthetic spine.
+  SEPE, byte-matched against the source CSV), trimmed to **two months**
+  (`2026-05` + `2026-06`; the contract's `date:` for `atur_registrat` is the
+  latest). Two months on purpose: the router pins dated marts to `MAX(date)`
+  (B3), and the fixture must be able to catch a regression to the naive
+  lookup — the stale month comes *first* in the file so an unpinned query
+  would surface it (la Pobla: 27 al maig vs 31 al juny; Berga: 776 vs 760).
+  Several rows are genuine «<5» doctrine rows (`atur_registrat` NULL +
+  interval [1,4] + `atur_emmascarat = true`), including both province edge
+  cases (Gombrèn 17080/Girona, Gósol 25100/Lleida) — and Gombrèn flips from a
+  real 7 (maig) to masked (juny), a true month-to-month doctrine transition.
+  **Identity caveat**: these rows carry the *official* register codes and the
+  pols' own naming (natural article: `la Pobla de Lillet`), which differ from
+  the synthetic `ine5` placeholders above (Bagà is `08009` in `mart_municipi`)
+  and from the register-style article of `mart_municipi` (`Pobla de Lillet,
+  la`). That disagreement is **faithful to the real marts** and the router
+  resolves toponyms per table, so the mismatch is exercised, not hidden.
 
 The agent itself does not read `is_real`; it is documentation for humans and a
 hook for a future "fixture vs production" provenance flag.
@@ -65,7 +82,7 @@ hook for a future "fixture vs production" provenance flag.
 Columns mirror `semantic/metrics.yml` `column:` names exactly, so the SQL
 builder can select `metric.column` straight from `metric.table`:
 
-- `mart_municipi` — demografia, vivenda, turisme, pressió, energia, índex.
+- `mart_municipi` — demografia, vivenda, turisme, pressió, energia, renda, índex.
 - `mart_electoral` — política (columns are suffixed `_A20241` = Parlament 2024,
   matching the contract).
 - `mart_pols_mensual` — treball (mensual, format llarg: 1 row per `ine5` +

@@ -126,6 +126,19 @@ class Warehouse:
                 f"SELECT * FROM {reader}('{path.as_posix()}')"
             )
 
+    # --- introspection ---
+    def columns(self, table: str) -> list[str]:
+        """Column names of a registered mart table.
+
+        Lets the router adapt to the shape of a mart (e.g. detect the ``date``
+        column of a monthly series and pin queries to the latest month). The
+        identifier comes from the trusted catalog; unknown tables fail closed.
+        """
+        if table not in self.allowed_tables:
+            raise WarehouseError(f"Table '{table}' is not in the catalog")
+        rel = self._con.execute(f'SELECT * FROM "{table}" LIMIT 0')
+        return [d[0] for d in rel.description]
+
     # --- guarded query ---
     def validate(self, sql: str) -> str:
         """Validate a statement against the read-only guardrails.

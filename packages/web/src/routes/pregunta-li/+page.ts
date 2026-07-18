@@ -14,11 +14,14 @@ import type { MetricKey, MetricDef } from '$lib/contract/types';
 import type { PageLoad } from './$types';
 
 /**
- * Indicadors (claus del contracte) que volem oferir com a exemples, en ordre de
- * preferència: població, gap de pernocta (l'indicador estrella), IETR i residus.
- * Coherent amb el brief. Si alguna no és al dataset, se salta.
+ * Indicadors (claus del contracte) per als xips de reserva del catàleg, en
+ * ordre de preferència. Tots són KPIs OFICIALS del tauler de govern
+ * (docs/ajuntaments/gorra-alcalde-pobla.md §3) — cap inferència aparcada
+ * (gap/IETR fora des dels aparcaments #256). L'energia va primer: és l'únic
+ * KPI oficial del tauler sense xip curat propi. Si alguna clau no és al
+ * dataset, se salta.
  */
-const EXAMPLE_KEYS: MetricKey[] = ['poblacio', 'gap_pernocta_pct', 'pct_noprincipal', 'kg_hab_any'];
+const EXAMPLE_KEYS: MetricKey[] = ['kwh_hab', 'poblacio', 'pct_noprincipal', 'kg_hab_any'];
 
 export const load: PageLoad = async ({ fetch }) => {
 	let metricLabels: Array<{ key: MetricKey; label: MetricDef['label'] }> = [];

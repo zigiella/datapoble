@@ -57,27 +57,26 @@
 	const canSubmit = $derived(question.trim().length > 0 && !isLoading);
 
 	// ── Xips d'exemple ──────────────────────────────────────────────────────────
-	// Preferim construir-los del contracte (les etiquetes reals d'indicador que el
-	// loader llegeix del dataset, equivalent al /metrics de l'API). Sempre hi ha, a
-	// més, un conjunt canònic de reserva coherent amb les dades (població, IETR, gap,
-	// residus) perquè la pàgina mai es quedi sense exemples encara que falti el dataset.
+	// Sis preguntes CURADES, totes sobre KPIs OFICIALS del tauler de govern
+	// (gorra-alcalde-pobla.md §3: padró, % no principal, RTC, atur mensual, renda,
+	// residus) — cap inferència aparcada (gap/IETR fora des dels aparcaments #256).
+	// Cada una està verificada contra l'OfflineBackend amb fixtures I amb els marts
+	// reals (packages/ai/tests/test_chips.py): un xip que porta a un refús frustra,
+	// així que cap xip refusa — el refús honest queda per a les preguntes lliures.
 	const cannedExamples = $derived([
 		m.pl_ex_poblacio(),
-		m.pl_ex_ietr(),
-		m.pl_ex_gap(),
+		m.pl_ex_noprincipal(),
+		m.pl_ex_rtc(),
+		m.pl_ex_atur(),
+		m.pl_ex_renda(),
 		m.pl_ex_residus()
 	]);
 	const metricExamples = $derived(
 		(data.metricLabels ?? []).map((mtc) => m.pl_ex_metric_tpl({ label: mtc.label[locale] }))
 	);
-	// Mostrem com a màxim 4 xips: si tenim etiquetes del contracte, en prenem un parell
-	// i completem amb canònics; si no, només canònics.
-	const examples = $derived(
-		(metricExamples.length
-			? [...metricExamples.slice(0, 2), ...cannedExamples]
-			: cannedExamples
-		).slice(0, 4)
-	);
+	// Mostrem com a màxim 6 xips: primer els curats (preguntes de veí o d'alcalde),
+	// i les plantilles del contracte només com a reserva si mai en faltessin.
+	const examples = $derived([...cannedExamples, ...metricExamples].slice(0, 6));
 
 	// ── Etiquetes derivades ─────────────────────────────────────────────────────
 	function backendLabel(b: AskResponse['backend']): string {
