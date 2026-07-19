@@ -81,22 +81,36 @@ publicable per si sola.*
 > 4. **Esmena L1/L3 al contracte** (handoff de Mirador, #256): les notes de kwh/vidre/restauració a
 >    `semantic/metrics.yml` encara citen «capa L1/L3» (el model aparcat) — reescriure-les en termes
 >    oficials.
-> 5. **D2** — connector HERMES selectiu (C1 §1.2) · **D4** — `mart_govern` (rangs «k de n» per LA
->    COMARCA DEL MUNICIPI via municipis-territori.json; C6 §3; + la vora de D1: «taxa de paro» (%)
->    avui resol al RECOMPTE — D4 decideix si porta la taxa o el xat n'explica la diferència).
+> 5. **D4 — `mart_govern` + PROCEDÈNCIA (dashboard niquelat, prioritat de Bea 2026-07-18):**
+>    (a) `mart_govern` amb rangs «k de n» per LA COMARCA DEL MUNICIPI (via municipis-territori.json;
+>    C6 §3; mai llista fixa; `rang`+`n_amb_dada`+data per mètrica). (b) **REGLA DE FERRO DE BEA
+>    (C6 §8.1): cada xifra amb la seva font O fórmula** — l'export web (`export_web_municipis.py`)
+>    ha d'EMETRE el camp `formula` del contracte (avui emet source/date/definicio/note però NO
+>    formula); afegir-lo a build_metrics + al tipus MetricDef. (c) **Acabar la deprecació
+>    d'`index_turisme`** (ja marcat `status: deprecated` al contracte per Talaia): treure'l dels
+>    PUBLICADORS (METRIC_KEYS de l'export web + export_indicadors_cat + eval_writer) i regenerar —
+>    el mart pot seguir calculant-lo. (d) **Esmena L1/L3** al contracte (handoff de Mirador, #256):
+>    les notes de kwh/vidre/restauració citen «capa L1/L3» (model aparcat) → termes oficials.
+>    · **D2** (HERMES selectiu, C1 §1.2) queda DARRERE de D4.
 >
-> **🟡 COLA DE MIRADOR:** D5 (vista govern, C6+gorra — DARRERE de D4) · seguiment menor: el loader de
-> la fitxa embeu pernocta-catalunya.json sencer per llegir-ne només l'ETCA (optimitzar quan toqui).
+> **🟡 COLA DE MIRADOR (dashboard niquelat):** D5 (vista govern, C6+gorra — DARRERE de D4) amb la
+> **regla de ferro C6 §8.1: cada targeta de KPI mostra font (mesurada) o fórmula (inferida)**, visible
+> o a un toc, del camp que D4 emetrà; test que cap KPI queda sense línia de procedència. En passar:
+> treure `index_turisme` de metodologia (keys de l'annex aparcat) i del tipus MetricKey (deprecat) ·
+> serrell de B3: el copy del refús del xat diu «(Berguedà)» i el mart ja és Catalunya-947 · seguiment
+> menor: el loader de la fitxa embeu pernocta-catalunya.json sencer per llegir-ne només l'ETCA.
 > **🔵 COLA DE BRÚIXOLA:** X3 (catàleg govern + 8 preguntes curades, darrere D1✅/D4) · **B3 ✅ (PR
 > obert)** — xips de /pregunta-li re-basats en 6 KPIs oficials (ca+es, copy pendent de vot de Bea),
 > provats contra fixtures I marts reals; de passada, 3 forats del router tancats (mes arbitrari del
 > pols, topònims amb article INE, variant «per habitant» que robava la mètrica) — bitàcola
 > `2026-07-18_b3-xips-kpis-oficials_bruixola.md` · serrell nou: copy del refús diu «(Berguedà)» i el
 > mart ja és Catalunya-947.
-> **🟣 TALAIA:** ✅ nota:/caveat: unificat (#252/#253) · ✅ C4 v2 dues capes + C3 §6bis · vot de
-> copy de Mirador presentat a Bea.
-> **🟠 BEA:** etiquetatge del banc — CAPA A quan vulgui (10 min, full reorientat); CAPA B quan
-> R1.5 la porti (etiqueta A+B juntes i es congela TOT) · validar amb l'Ajuntament la llista de
+> **🟣 TALAIA:** ✅ nota:/caveat: unificat (#252/#253) · ✅ C4 v2 dues capes + C3 §6bis · ✅ regla de
+> procedència C6 §8.1 + `index_turisme` marcat deprecat + bundle orfe fora (#267) · vot de copy de
+> Mirador presentat a Bea.
+> **🟠 BEA (decisions 2026-07-18):** ✅ deprecar index_turisme · ✅ copy tot OK (xips B3 + aparcaments
+> Mirador validats) · 🔑 ETIQUETANT el banc (A+B, es congela quan digui «etiquetat») · pendents:
+> validar amb l'Ajuntament la llista de
 > projectes del perfil (R-FUNC §3) · crear el repo PRIVAT de sortides del radar (fase dev de l'espai
 > del radar, R-FUNC §9.2 — p. ex. datapoble-radar-out; el workflow R4 hi escriurà).
 > **📅 ENCUAT NOU (del R-FUNC #258, adoptat):** R7 memòria de cicle (calendari-finestres.yaml +

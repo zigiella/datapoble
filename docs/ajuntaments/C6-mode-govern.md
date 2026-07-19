@@ -71,7 +71,15 @@
 
 - i18n **ca/es** complet (paraglide, com la resta de la fitxa); el commutador i tot text nou, traduïts.
 - **AA**: contrast, focus visible, semàntica aria del commutador i de les seccions; navegable per teclat.
-- **Enllaç a metodologia per indicador** (glossari/contracte semàntic), **banda visible** on n'hi ha, punt de procedència (mesurada/inferència/manual) com a la fitxa actual. Cap xifra sense font, data i fórmula.
+- **Enllaç a metodologia per indicador** (glossari/contracte semàntic), punt de procedència (mesurada/inferència/manual) com a la fitxa actual.
+
+### 8.1 · CADA XIFRA AMB LA SEVA FONT O FÓRMULA (regla de ferro, Bea 2026-07-18)
+
+No n'hi ha prou amb el punt de color: **cada KPI del tauler mostra, a la mateixa targeta o a un sol toc/hover, el text de la seva procedència** —
+- **mètrica MESURADA** → la seva **font** (organisme + data: «Idescat · 2025», «SEPE · 2026-06»);
+- **mètrica INFERIDA/derivada** → la seva **fórmula** llegible (p. ex. «65+ / 0–14 × 100»), i la font de les entrades.
+
+Res es codifica a la UI: **font, data i fórmula surten del contracte** (`semantic/metrics.yml`) via l'export (l'export emet `source`, `date` i, NOU, `formula`). Un KPI que no pot mostrar font O fórmula **no entra al tauler** — és la mateixa condició de credibilitat davant la Diba que la política editorial del §7. Criteri verificable: cap targeta de KPI sense línia de procedència; test que ho comprova a D5.
 
 ## 9. Dins / fora
 
@@ -86,3 +94,4 @@
 4. Empats i denominadors reals visibles tal com fixa §3.2–3.3.
 5. i18n ca/es sense claus pendents; auditoria AA del commutador i seccions noves.
 6. Cap secció ni string del radar al bundle abans de la porta del §4 de l'spec.
+7. **CADA KPI mostra font (mesurada) o fórmula (inferida)** visible o a un toc (§8.1); test que verifica que cap targeta de KPI del mode govern queda sense línia de procedència.
