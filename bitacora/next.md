@@ -93,13 +93,18 @@ publicable per si sola.*
 >    les notes de kwh/vidre/restauració citen «capa L1/L3» (model aparcat) → termes oficials.
 >    · **D2** (HERMES selectiu, C1 §1.2) queda DARRERE de D4.
 >
-> **🟡 COLA DE MIRADOR (dashboard niquelat):** D5 (vista govern, C6+gorra — DARRERE de D4) amb la
-> **regla de ferro C6 §8.1: cada targeta de KPI mostra font (mesurada) o fórmula (inferida)**, visible
-> o a un toc, del camp que D4 emetrà; test que cap KPI queda sense línia de procedència. En passar:
-> treure `index_turisme` de metodologia (keys de l'annex aparcat) i del tipus MetricKey (deprecat) ·
-> serrell de B3: el copy del refús del xat diu «(Berguedà)» i el mart ja és Catalunya-947 · seguiment
-> menor: el loader de la fitxa embeu pernocta-catalunya.json sencer per llegir-ne només l'ETCA.
-> **🔵 COLA DE BRÚIXOLA:** X3 (catàleg govern + 8 preguntes curades, darrere D1✅/D4) · **B3 ✅ (PR
+> **🟡 COLA DE MIRADOR (dashboard niquelat) — D4 ✅ FUSIONAT (#268), desbloquejada:**
+> **D5 · la vista de govern** (`?vista=govern` a `municipi/[slug]`, C6+gorra): els 12 KPIs amb el
+> **rang comarcal «k de n»** que D4 ja calcula al mart (`mart_govern` — es LLEGEIX, mai es recalcula
+> al front, C6 §4), sèries, licitacions filtrades per ine5, bloc de preguntes suggerides.
+> **REGLA DE FERRO C6 §8.1: cada targeta de KPI mostra font (mesurada) o FÓRMULA (inferida)** — el
+> camp `formula` ja arriba al JSON (49/49) i `MetricDef.formula?` ja és al tipus (D4); test que cap
+> KPI queda sense línia de procedència. Petits: treure `index_turisme` del tipus `MetricKey`
+> (metodologia ja net, #269) · serrell B3: el copy del refús del xat diu «(Berguedà)» i el mart és
+> Catalunya-947 · loader que embeu pernocta sencer per l'ETCA.
+> **🔵 COLA DE BRÚIXOLA:** **deprecated-refús** (handoff de Sondeig #268: `is_available()` a `packages/ai`
+> només exclou `planned`, no `deprecated` — el xat encara serviria `index_turisme` si el pregunten;
+> ha d'excloure també `deprecated`) · X3 (catàleg govern + 8 preguntes curades, darrere D4✅) · **B3 ✅ (PR
 > obert)** — xips de /pregunta-li re-basats en 6 KPIs oficials (ca+es, copy pendent de vot de Bea),
 > provats contra fixtures I marts reals; de passada, 3 forats del router tancats (mes arbitrari del
 > pols, topònims amb article INE, variant «per habitant» que robava la mètrica) — bitàcola
