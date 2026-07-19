@@ -16,6 +16,7 @@
       "format": "integer",
       "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
       "date": "2025",
+      "formula": "directe",
       "definicio": {
         "ca": "Població empadronada.",
         "es": "Población empadronada."
@@ -36,6 +37,7 @@
       "format": "integer",
       "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
       "date": "2021",
+      "formula": "directe",
       "definicio": {
         "ca": "Parc total d'habitatges (Cens 2021).",
         "es": "Parque total de viviendas (Censo 2021)."
@@ -56,6 +58,7 @@
       "format": "integer",
       "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
       "date": "2021",
+      "formula": "directe",
       "definicio": {
         "ca": "Habitatges de residència habitual.",
         "es": "Viviendas de residencia habitual."
@@ -76,6 +79,7 @@
       "format": "integer",
       "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
       "date": "2021",
+      "formula": "directe",
       "definicio": {
         "ca": "Secundàries + buides (no residència habitual). Senyal estructural de segona residència.",
         "es": "Secundarias + vacías (no residencia habitual). Señal estructural de segunda residencia."
@@ -96,6 +100,7 @@
       "format": "percent",
       "source": "indicador derivat — vegeu la metodologia · Idescat",
       "date": "2021",
+      "formula": "hab_noprincipal / hab_total * 100",
       "definicio": {
         "ca": "Pes de l'habitatge no principal sobre el total.",
         "es": "Peso de la vivienda no principal sobre el total."
@@ -116,6 +121,7 @@
       "format": "ratio",
       "source": "indicador derivat — vegeu la metodologia",
       "date": "2021/2025",
+      "formula": "hab_total / poblacio",
       "definicio": {
         "ca": "Sobredimensió del parc respecte a la població resident.",
         "es": "Sobredimensión del parque respecto a la población residente."
@@ -136,6 +142,7 @@
       "format": "decimal",
       "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
       "date": "2025",
+      "formula": "poblacio_65_mes / poblacio_0_14 * 100",
       "definicio": {
         "ca": "Població de 65 anys o més per cada 100 habitants de 0 a 14. Mesura el relleu generacional: per sobre de 100, hi ha més gent gran que canalla.",
         "es": "Población de 65 años o más por cada 100 habitantes de 0 a 14. Mide el relevo generacional: por encima de 100, hay más gente mayor que niños."
@@ -156,6 +163,7 @@
       "format": "decimal",
       "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
       "date": "2025",
+      "formula": "directe",
       "definicio": {
         "ca": "Habitants per km² (EMEX). Covariable estructural: a més densitat, pisos més petits i menys consum elèctric per persona — driver principal de la base del model de presència.",
         "es": "Habitantes por km² (EMEX). Covariable estructural: a más densidad, pisos más pequeños y menos consumo eléctrico por persona — driver principal de la base del modelo de presencia."
@@ -176,6 +184,7 @@
       "format": "integer",
       "source": "INE — Instituto Nacional de Estadística — Atlas de distribución de renta de los hogares (ADRH) — renda neta per persona",
       "date": "2023",
+      "formula": "directe",
       "definicio": {
         "ca": "Renda neta mitjana per persona (INE, Atlas de distribució de renda 2023). Indicador de benestar i covariable de la base del model de presència.",
         "es": "Renta neta media por persona (INE, Atlas de distribución de renta 2023). Indicador de bienestar y covariable de la base del modelo de presencia."
@@ -196,6 +205,7 @@
       "format": "integer",
       "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
       "date": "2025",
+      "formula": "EMEX f69 (darrer any)",
       "definicio": {
         "ca": "Població nascuda a Catalunya (lloc de naixement, no nacionalitat). Part de la composició d'origen del municipi.",
         "es": "Población nacida en Cataluña (lugar de nacimiento, no nacionalidad). Parte de la composición de origen del municipio."
@@ -216,6 +226,7 @@
       "format": "integer",
       "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
       "date": "2025",
+      "formula": "EMEX f72 (darrer any)",
       "definicio": {
         "ca": "Població nascuda a la resta de l'Estat espanyol (fora de Catalunya). Lloc de naixement, no nacionalitat.",
         "es": "Población nacida en el resto del Estado español (fuera de Cataluña). Lugar de nacimiento, no nacionalidad."
@@ -236,6 +247,7 @@
       "format": "integer",
       "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
       "date": "2025",
+      "formula": "EMEX f73 (darrer any)",
       "definicio": {
         "ca": "Població nascuda fora d'Espanya (lloc de naixement). INCLOU qui ja té nacionalitat espanyola: és la biografia, no el passaport.",
         "es": "Población nacida fuera de España (lugar de nacimiento). INCLUYE a quien ya tiene nacionalidad española: es la biografía, no el pasaporte."
@@ -256,6 +268,7 @@
       "format": "percent",
       "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
       "date": "2025",
+      "formula": "poblacio_nascuda_estranger / total lloc de naixement * 100",
       "definicio": {
         "ca": "Pes de la població nascuda fora d'Espanya sobre el total. Mesura de BIOGRAFIA migratòria, no de nacionalitat actual.",
         "es": "Peso de la población nacida fuera de España sobre el total. Medida de BIOGRAFÍA migratoria, no de nacionalidad actual."
@@ -280,6 +293,7 @@
       "format": "percent",
       "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
       "date": "2025",
+      "formula": "poblacio_nacionalitat_estrangera / total nacionalitat * 100",
       "definicio": {
         "ca": "Pes de la població amb nacionalitat estrangera (passaport no espanyol) sobre el total. NO és lloc de naixement: és situació administrativa, reversible amb la naturalització.",
         "es": "Peso de la población con nacionalidad extranjera (pasaporte no español) sobre el total. NO es lugar de nacimiento: es situación administrativa, reversible con la naturalización."
@@ -304,6 +318,7 @@
       "format": "decimal",
       "source": "indicador derivat — vegeu la metodologia · Idescat",
       "date": "2025",
+      "formula": "pct_nascuda_estranger − pct_nacionalitat_estrangera",
       "definicio": {
         "ca": "% nascuts a l'estranger − % nacionalitat estrangera. Aproxima qui va arribar de fora i JA té nacionalitat espanyola: senyal d'ARRELAMENT (gent que ve, es queda i s'arrela), no un recompte de «forasters».",
         "es": "% nacidos en el extranjero − % nacionalidad extranjera. Aproxima a quien llegó de fuera y YA tiene nacionalidad española: señal de ARRAIGO (gente que viene, se queda y se arraiga), no un recuento de «forasteros»."
@@ -328,6 +343,7 @@
       "format": "decimal",
       "source": "Idescat — Població estrangera (sèrie municipal per nacionalitat)",
       "date": "2025",
+      "formula": "% estrangera (any final) − % estrangera (any inicial), finestra 2021→",
       "definicio": {
         "ca": "Variació en punts del % de població de nacionalitat estrangera dins la finestra homogènia 2021→ (Cens anual). L'EVOLUCIÓ, no la foto.",
         "es": "Variación en puntos del % de población de nacionalidad extranjera dentro de la ventana homogénea 2021→ (Censo anual). La EVOLUCIÓN, no la foto."
@@ -352,6 +368,7 @@
       "format": "text",
       "source": "indicador derivat — vegeu la metodologia · Idescat",
       "date": "2025",
+      "formula": "regla sobre mida del padró + supressió per secret estadístic",
       "definicio": {
         "ca": "Fiabilitat de la lectura d'origen del municipi (alta/mitjana/baixa), segons la mida del padró i el secret estadístic. Baixa als micromunicipis.",
         "es": "Fiabilidad de la lectura de origen del municipio (alta/media/baja), según el tamaño del padrón y el secreto estadístico. Baja en los micromunicipios."
@@ -372,6 +389,7 @@
       "format": "integer",
       "source": "Generalitat — Registre de Turisme de Catalunya — Establiments d'allotjament turístic",
       "date": "2026",
+      "formula": "directe",
       "definicio": {
         "ca": "Allotjaments turístics reglats (HUT, hotel, rural, càmping).",
         "es": "Alojamientos turísticos reglados (HUT, hotel, rural, camping)."
@@ -392,6 +410,7 @@
       "format": "integer",
       "source": "Generalitat — Registre de Turisme de Catalunya — Establiments d'allotjament turístic",
       "date": "2026",
+      "formula": "directe",
       "definicio": {
         "ca": "Subconjunt d'habitatges d'ús turístic.",
         "es": "Subconjunto de viviendas de uso turístico."
@@ -411,6 +430,7 @@
       "dimension": "turisme",
       "format": "decimal",
       "source": "indicador derivat — vegeu la metodologia",
+      "formula": "rtc_total / poblacio * 1000",
       "definicio": {
         "ca": "Intensitat turística reglada per càpita.",
         "es": "Intensidad turística reglada per cápita."
@@ -430,6 +450,7 @@
       "dimension": "turisme",
       "format": "decimal",
       "source": "indicador derivat — vegeu la metodologia",
+      "formula": "rtc_total / hab_total * 100",
       "definicio": {
         "ca": "Penetració del turisme reglat en el parc.",
         "es": "Penetración del turismo reglado en el parque."
@@ -450,6 +471,7 @@
       "format": "decimal",
       "source": "Agència de Residus de Catalunya (ARC) — Estadístiques de residus municipals",
       "date": "2024",
+      "formula": "directe",
       "definicio": {
         "ca": "Generació de residus per habitant empadronat. Proxy de càrrega real (població fantasma).",
         "es": "Generación de residuos por habitante empadronado. Proxy de carga real (población fantasma)."
@@ -470,9 +492,10 @@
       "format": "decimal",
       "source": "Institut Català d'Energia (ICAEN) — Consum d'energia elèctrica per municipis i sectors de Catalunya",
       "date": "2024",
+      "formula": "consum_domestic_kwh / poblacio",
       "definicio": {
-        "ca": "Consum elèctric domèstic per habitant empadronat, darrer any de cobertura plena (2024). Senyal de presència que pernocta (capa L1).",
-        "es": "Consumo eléctrico doméstico por habitante empadronado, último año de cobertura plena (2024). Señal de presencia que pernocta (capa L1)."
+        "ca": "Consum elèctric domèstic per habitant empadronat, darrer any de cobertura plena (2024, dada oficial ICAEN). Mesura física del consum residencial.",
+        "es": "Consumo eléctrico doméstico por habitante empadronado, último año de cobertura plena (2024, dato oficial ICAEN). Medida física del consumo residencial."
       },
       "status": "public"
     },
@@ -490,9 +513,10 @@
       "format": "decimal",
       "source": "Agència de Residus de Catalunya (ARC) — Estadístiques de residus municipals",
       "date": "2024",
+      "formula": "vidre_tones * 1000 / poblacio",
       "definicio": {
-        "ca": "Generació de vidre per habitant empadronat (fracció de recollida selectiva). Proxy d'hostaleria (ampolles de bar/restaurant); senyal de la capa L3.",
-        "es": "Generación de vidrio por habitante empadronado (fracción de recogida selectiva). Proxy de hostelería (botellas de bar/restaurante); señal de la capa L3."
+        "ca": "Generació de vidre per habitant empadronat (fracció de recollida selectiva, dada oficial ARC). Senyal físic d'hostaleria: el vidre el generen sobretot els bars i restaurants (ampolles).",
+        "es": "Generación de vidrio por habitante empadronado (fracción de recogida selectiva, dato oficial ARC). Señal física de hostelería: el vidrio lo generan sobre todo los bares y restaurantes (botellas)."
       },
       "status": "public"
     },
@@ -510,6 +534,7 @@
       "format": "decimal",
       "source": "indicador derivat — vegeu la metodologia · Agència de Residus de Catalunya (ARC)",
       "date": "2024",
+      "formula": "kg_hab_any / 410",
       "definicio": {
         "ca": "Residus per habitant dividits per la base residencial (410 kg/hab/any). >1 = el municipi genera MÉS del que generaria una vila de vall poc turística; <1 = menys. Pressió ABSOLUTA (no relativa a la comarca), comparable entre comarques.",
         "es": "Residuos por habitante divididos por la base residencial (410 kg/hab/año). >1 = el municipio genera MÁS de lo que generaría una villa de valle poco turística; <1 = menos. Presión ABSOLUTA (no relativa a la comarca), comparable entre comarcas."
@@ -530,6 +555,7 @@
       "format": "decimal",
       "source": "indicador derivat — vegeu la metodologia · Institut Català d'Energia (ICAEN)",
       "date": "2024",
+      "formula": "kwh_hab / 1224",
       "definicio": {
         "ca": "Consum elèctric domèstic per habitant dividit per la base (1.224 kWh/hab/any). >1 = més pernocta/consum del que tocaria a una vila de vall.",
         "es": "Consumo eléctrico doméstico por habitante dividido por la base (1.224 kWh/hab/año). >1 = más pernoctación/consumo del que correspondería a una villa de valle."
@@ -550,6 +576,7 @@
       "format": "decimal",
       "source": "indicador derivat — vegeu la metodologia · Agència de Residus de Catalunya (ARC)",
       "date": "2024",
+      "formula": "vidre_hab / 26.5",
       "definicio": {
         "ca": "Vidre per habitant dividit per la base (26,5 kg/hab/any). >1 = més empremta hostalera del que tocaria a una vila de vall poc turística.",
         "es": "Vidrio por habitante dividido por la base (26,5 kg/hab/año). >1 = más huella hostelera de la que correspondería a una villa de valle poco turística."
@@ -570,13 +597,14 @@
       "format": "integer",
       "source": "OpenStreetMap (col·laboradors) — via Overpass API — Punts d'interès de restauració (amenity=restaurant/cafe/bar/fast_food/pub/biergarten/ice_cream)",
       "date": "2026",
+      "formula": "compte de POIs amenity in (restaurant,cafe,bar,fast_food,pub,biergarten,ice_cream) assignats per punt-en-polígon a la geometria municipal real",
       "definicio": {
         "ca": "Nombre de locals de restauració (restaurants, bars, cafeteries, menjars ràpids, pubs; CCAE-56) mapejats a OpenStreetMap dins el municipi. 2n proxy d'hostaleria (capacitat), complement del vidre.",
         "es": "Número de locales de restauración (restaurantes, bares, cafeterías, comidas rápidas, pubs; CCAE-56) mapeados en OpenStreetMap dentro del municipio. 2º proxy de hostelería (capacidad), complemento del vidrio."
       },
       "note": {
-        "ca": "MÍNIM observat, NO un cens: OSM INFRA-MAPEJA les zones rurals (la completesa del mapejat varia entre municipis), per això 6 micromunicipis surten amb 0 tot i tenir senyal de vidre. És una MESURA (no inferència); la lectura de «pressió turística» que se'n fa SÍ és inferència. El contrast oficial Idescat (ee, CCAE-56) no és municipal per API oberta (secret estadístic). Llicència ODbL (atribució + compartir-igual).",
-        "es": "MÍNIMO observado, NO un censo: OSM INFRAMAPEA las zonas rurales (la completitud del mapeo varía entre municipios), por eso 6 micromunicipios salen con 0 pese a tener señal de vidrio. Es una MEDIDA (no inferencia); la lectura de «presión turística» que se hace SÍ es inferencia. El contraste oficial Idescat (ee, CCAE-56) no es municipal por API abierta (secreto estadístico). Licencia ODbL (atribución + compartir-igual)."
+        "ca": "MÍNIM observat, NO un cens: OSM INFRA-MAPEJA les zones rurals (la completesa del mapejat varia entre municipis), per això 6 micromunicipis surten amb 0 tot i tenir vidre. És una MESURA (no inferència); la lectura d'orientació a visitants (hostaleria) que se'n fa SÍ és inferència. El contrast oficial Idescat (ee, CCAE-56) no és municipal per API oberta (secret estadístic). Llicència ODbL (atribució + compartir-igual).",
+        "es": "MÍNIMO observado, NO un censo: OSM INFRAMAPEA las zonas rurales (la completitud del mapeo varía entre municipios), por eso 6 micromunicipios salen con 0 pese a tener vidrio. Es una MEDIDA (no inferencia); la lectura de orientación a visitantes (hostelería) que se hace SÍ es inferencia. El contraste oficial Idescat (ee, CCAE-56) no es municipal por API abierta (secreto estadístico). Licencia ODbL (atribución + compartir-igual)."
       },
       "status": "public"
     },
@@ -594,9 +622,10 @@
       "format": "decimal",
       "source": "indicador derivat — vegeu la metodologia · OpenStreetMap (col·laboradors) — via Overpass API",
       "date": "2026",
+      "formula": "restauracio_estab / poblacio * 1000",
       "definicio": {
-        "ca": "Densitat d'establiments de restauració per cada 1000 habitants empadronats. Intensitat d'hostaleria per càpita (stock), 2n senyal de la capa L3.",
-        "es": "Densidad de establecimientos de restauración por cada 1000 habitantes empadronados. Intensidad de hostelería per cápita (stock), 2ª señal de la capa L3."
+        "ca": "Densitat d'establiments de restauració per cada 1000 habitants empadronats. Intensitat d'hostaleria per càpita (stock d'establiments).",
+        "es": "Densidad de establecimientos de restauración por cada 1000 habitantes empadronados. Intensidad de hostelería per cápita (stock de establecimientos)."
       },
       "note": {
         "ca": "Densitat per càpita: aïlla l'orientació a visitants de la mida del municipi (Berga té el màxim absolut d'establiments però queda baixa per càpita; els pobles de muntanya turístics queden alts). Hereta el caveat de completesa d'OSM (MÍNIM, no cens): als micromunicipis no mapejats subestima. Validat com a 2n proxy independent del vidre (Spearman ≈ 0,54 amb vidre_hab i amb index_turisme, N=31, p<0,01).",
@@ -618,6 +647,7 @@
       "format": "integer",
       "source": "OpenStreetMap (col·laboradors) — via Overpass API — Punts d'interès de restauració (amenity=restaurant/cafe/bar/fast_food/pub/biergarten/ice_cream)",
       "date": "2026",
+      "formula": "compte de POIs shop in (supermarket,convenience,bakery,butcher,greengrocer,hardware,doityourself,chemist,kiosk,general) + amenity in (bank,pharmacy,post_office,townhall,fuel,doctors,clinic,hospital,veterinary,school) assignats per punt-en-polígon a la geometria municipal real",
       "definicio": {
         "ca": "Nombre d'establiments de comerç quotidià (supermercat, botiga de conveniència, forn, carnisseria, fruiteria, ferreteria…) i serveis essencials (banc, farmàcia, oficina de correus, ajuntament, benzinera, metge/clínica…) mapejats a OpenStreetMap dins el municipi. Senyal de CENTRALITAT funcional: mesura si el municipi és un centre de serveis real.",
         "es": "Número de establecimientos de comercio cotidiano (supermercado, tienda de conveniencia, panadería, carnicería, frutería, ferretería…) y servicios esenciales (banco, farmacia, oficina de correos, ayuntamiento, gasolinera, médico/clínica…) mapeados en OpenStreetMap dentro del municipio. Señal de CENTRALIDAD funcional: mide si el municipio es un centro de servicios real."
@@ -642,6 +672,7 @@
       "format": "decimal",
       "source": "indicador derivat — vegeu la metodologia · OpenStreetMap (col·laboradors) — via Overpass API",
       "date": "2026",
+      "formula": "serveis_estab / poblacio * 1000",
       "definicio": {
         "ca": "Densitat d'establiments de comerç i serveis essencials per cada 1000 habitants empadronats. Context secundari del senyal de centralitat (el senyal primari és el compte absolut): aïlla la dotació de serveis de la mida del municipi.",
         "es": "Densidad de establecimientos de comercio y servicios esenciales por cada 1000 habitantes empadronados. Contexto secundario de la señal de centralidad (la señal primaria es el recuento absoluto): aísla la dotación de servicios del tamaño del municipio."
@@ -666,6 +697,7 @@
       "format": "integer",
       "source": "indicador derivat — vegeu la metodologia · Institut Català d'Energia (ICAEN)",
       "date": "2024/2025",
+      "formula": "round(poblacio * kwh_hab / BASE_ELECTRIC)  · BASE_ELECTRIC=1224 kWh/hab (viles IETR<5, parametritzable per comarca)",
       "definicio": {
         "ca": "La població que DORM al territori sense constar al padró (residents no registrats, segona residència, estacionals que hi pernocten), estimada a partir del consum elèctric domèstic per habitant.",
         "es": "La población que DUERME en el territorio sin constar en el padrón (residentes no registrados, segunda residencia, estacionales que pernoctan), estimada a partir del consumo eléctrico doméstico por habitante."
@@ -690,6 +722,7 @@
       "format": "integer",
       "source": "indicador derivat — vegeu la metodologia · Institut Català d'Energia (ICAEN)",
       "date": "2024/2025",
+      "formula": "poblacio_pernocta_est - poblacio",
       "definicio": {
         "ca": "Població invisible: població real estimada (pernocta) − padró. La 'gent dels rius de gent' que dorm al territori sense constar.",
         "es": "Población invisible: población real estimada (pernocta) − padrón. La 'gente de los ríos de gente' que duerme en el territorio sin constar."
@@ -714,6 +747,7 @@
       "format": "percent",
       "source": "indicador derivat — vegeu la metodologia · Institut Català d'Energia (ICAEN)",
       "date": "2024/2025",
+      "formula": "gap_pernocta / poblacio * 100",
       "definicio": {
         "ca": "Gap de pernocta relatiu sobre el padró: quant per cent més de gent dorm al territori de la registrada.",
         "es": "Gap de pernocta relativo sobre el padrón: cuánto por ciento más de gente duerme en el territorio de la registrada."
@@ -738,6 +772,7 @@
       "format": "integer",
       "source": "indicador derivat — vegeu la metodologia · Agència de Residus de Catalunya (ARC)",
       "date": "2024/2025",
+      "formula": "round(poblacio * kg_hab_any / BASE)  · BASE=410 (base residencial, parametritzable per comarca)",
       "definicio": {
         "ca": "Càrrega que suggereixen els RESIDUS (residents + 2a residència + estacionals + excursionistes de dia), via residus per habitant. NO és població ni un sostre: pot quedar PER SOTA de la pernocta (L1). Per al sostre realista useu carrega_funcional_est.",
         "es": "Carga que sugieren los RESIDUOS (residentes + 2ª residencia + estacionales + excursionistas de día), vía residuos por habitante. NO es población ni un techo: puede quedar POR DEBAJO de la pernoctación (L1). Para el techo realista usad carrega_funcional_est."
@@ -762,6 +797,7 @@
       "format": "integer",
       "source": "indicador derivat — vegeu la metodologia · Agència de Residus de Catalunya (ARC)",
       "date": "2024/2025",
+      "formula": "max(poblacio, poblacio_pernocta_est, carrega_total_est)",
       "definicio": {
         "ca": "El SOSTRE realista de càrrega humana: el màxim entre el padró, la pernocta (L1, via elèctric) i la càrrega per residus (L2). El «denominador per governar» — el nombre amb què dimensionar serveis (residus, aigua, neteja) en lloc del padró, i que MAI hi queda per sota.",
         "es": "El TECHO realista de carga humana: el máximo entre el padrón, la pernoctación (L1, vía eléctrico) y la carga por residuos (L2). El «denominador para gobernar» — el número con el que dimensionar servicios (residuos, agua, limpieza) en lugar del padrón, y que NUNCA queda por debajo."
@@ -771,30 +807,6 @@
         "es": "INFERENCIA (combina el padrón con dos rastros físicos). Toma el más alto de padrón/L1/L2: resuelve la contradicción L2<L1 y tiene el padrón como suelo (nunca por debajo de los residentes registrados). Es el denominador recomendado para servicios municipales; NO es «población» (que se cuenta con el padrón). Lectura ECOLÓGICA."
       },
       "status": "public"
-    },
-    "index_turisme": {
-      "key": "index_turisme",
-      "label": {
-        "ca": "Pressió turística (hostaleria)",
-        "es": "Presión turística (hostelería)"
-      },
-      "unit": {
-        "ca": "0-100",
-        "es": "0-100"
-      },
-      "dimension": "index",
-      "format": "decimal",
-      "source": "indicador derivat — vegeu la metodologia · Agència de Residus de Catalunya (ARC)",
-      "date": "2024",
-      "definicio": {
-        "ca": "Intensitat d'activitat de visitants (hostaleria), via vidre per habitant: z-score del vidre/hab sobre tot Catalunya portat a 0–100 (50 = mitjana catalana). Proxy d'hostaleria, NO població.",
-        "es": "Intensidad de actividad de visitantes (hostelería), vía vidrio por habitante: z-score del vidrio/hab sobre toda Cataluña llevado a 0–100 (50 = media catalana). Proxy de hostelería, NO población."
-      },
-      "note": {
-        "ca": "NO és població ni càrrega de persones: és INTENSITAT d'hostaleria (el vidre el genera el bar/restaurant que serveix el visitant). És RELATIU a la distribució catalana (z-score global): 50 = un municipi mitjà de Catalunya, no un valor absolut. SATURA AL CIM: l'escala talla a ±2 desviacions i tot municipi per damunt marca 100 exacte (el 2024, 47 municipis comparteixen aquest sostre amb valors reals de vidre que van del simple al doble) — a 100, l'índex NO ordena ni distingeix; per comparar-los, useu el vidre per habitant (kg/hab). Granularitat anual (no capta estacionalitat). Inferència, lectura ecològica.",
-        "es": "NO es población ni carga de personas: es INTENSIDAD de hostelería (el vidrio lo genera el bar/restaurante que sirve al visitante). Es RELATIVO a la distribución catalana (z-score global): 50 = un municipio medio de Cataluña, no un valor absoluto. SATURA EN LA CIMA: la escala corta a ±2 desviaciones y todo municipio por encima marca 100 exacto (en 2024, 47 municipios comparten ese techo con valores reales de vidrio que van del simple al doble) — en 100, el índice NO ordena ni distingue; para compararlos, usad el vidrio por habitante (kg/hab). Granularidad anual (no capta estacionalidad). Inferencia, lectura ecológica."
-      },
-      "status": "deprecated"
     },
     "confianca": {
       "key": "confianca",
@@ -810,6 +822,7 @@
       "format": "text",
       "source": "indicador derivat — vegeu la metodologia · Agència de Residus de Catalunya (ARC)",
       "date": "2024/2025",
+      "formula": "baixa si poblacio<75 O senyals divergents; alta si residus>mediana I (kwh_hab O %no-principal)>mediana I poblacio>=75; mitjana la resta",
       "definicio": {
         "ca": "Bandera de fiabilitat de les estimacions de les 3 capes: alta/mitjana/baixa segons la corroboració entre els senyals físics (residus, elèctric domèstic/hab, % habitatge no principal) i la mida del municipi. Quan els 3 senyals coincideixen la confiança és alta; quan divergeixen, baixa.",
         "es": "Bandera de fiabilidad de las estimaciones de las 3 capas: alta/mitjana/baixa según la corroboración entre las señales físicas (residuos, eléctrico doméstico/hab, % vivienda no principal) y el tamaño del municipio. Cuando las 3 señales coinciden la confianza es alta; cuando divergen, baja."
@@ -834,6 +847,7 @@
       "format": "integer",
       "source": "indicador derivat — vegeu la metodologia · Agència de Residus de Catalunya (ARC)",
       "date": "2024/2025",
+      "formula": "round(poblacio * kg_hab_any / BASE)  · BASE=410  (== carrega_total_est)",
       "definicio": {
         "ca": "ÀLIES de carrega_total_est (mateixa fórmula residus/410). REENQUADRAT: NO és «població real» sinó CÀRREGA humana total (inclou excursionistes). Es conserva per no trencar consumidors; per la població real que pernocta, useu poblacio_pernocta_est.",
         "es": "ALIAS de carrega_total_est (misma fórmula residuos/410). REENCUADRADO: NO es «población real» sino CARGA humana total (incluye excursionistas). Se conserva para no romper consumidores; para la población real que pernocta, usad poblacio_pernocta_est."
@@ -858,6 +872,7 @@
       "format": "integer",
       "source": "indicador derivat — vegeu la metodologia · Agència de Residus de Catalunya (ARC)",
       "date": "2024/2025",
+      "formula": "poblacio_real_est - poblacio  (gap de càrrega total)",
       "definicio": {
         "ca": "carrega_total_est − padró (gap de CÀRREGA, inclou visitants de dia). Es conserva per compatibilitat; per la població invisible que pernocta, useu gap_pernocta.",
         "es": "carrega_total_est − padrón (gap de CARGA, incluye visitantes de día). Se conserva por compatibilidad; para la población invisible que pernocta, usad gap_pernocta."
@@ -882,6 +897,7 @@
       "format": "percent",
       "source": "indicador derivat — vegeu la metodologia · Agència de Residus de Catalunya (ARC)",
       "date": "2024/2025",
+      "formula": "gap_abs / poblacio * 100  (gap de càrrega total)",
       "definicio": {
         "ca": "Gap de càrrega relatiu sobre el padró: quant per cent més de càrrega humana (inclòs el dia) hi ha de la registrada. Per al gap de pernocta, gap_pernocta_pct.",
         "es": "Gap de carga relativo sobre el padrón: cuánto por ciento más de carga humana (incluido el día) hay de la registrada. Para el gap de pernocta, gap_pernocta_pct."
@@ -906,6 +922,7 @@
       "format": "integer",
       "source": "indicador derivat — vegeu la metodologia · Agència de Residus de Catalunya (ARC)",
       "date": "2024/2025",
+      "formula": "round(poblacio * kg_hab_any / BASE_COMARCAL)  · BASE_COMARCAL=452 (mitjana comarcal)",
       "definicio": {
         "ca": "Presència estimada amb base comarcal (mitjana pop-ponderada). Vista espacial: qui acull més DINS la comarca (≈ suma zero, redistribució).",
         "es": "Presencia estimada con base comarcal (media pop-ponderada). Vista espacial: quién acoge más DENTRO de la comarca (≈ suma cero, redistribución)."
@@ -929,6 +946,7 @@
       "dimension": "energia",
       "format": "percent",
       "source": "indicador derivat — vegeu la metodologia · ICAEN",
+      "formula": "icaen_EFG / icaen_total * 100",
       "definicio": {
         "ca": "Pes de qualificacions baixes (E,F,G). Proxy de potencial de rehabilitació.",
         "es": "Peso de calificaciones bajas (E,F,G). Proxy de potencial de rehabilitación."
@@ -948,6 +966,7 @@
       "dimension": "index",
       "format": "decimal",
       "source": "indicador derivat — vegeu la metodologia",
+      "formula": "0.5*A_resid + 0.5*B_turis (min-max winsoritzat p5/p95 sobre tot Catalunya, pesos iguals)",
       "definicio": {
         "ca": "Exposició turística-residencial relativa a la distribució (0=mín, 100=màx): SÍNTESI de la capacitat (estructura) i l'impacte (empremta realitzada). Validat externament amb residus (r=0,87).",
         "es": "Exposición turística-residencial relativa a la distribución (0=mín, 100=máx): SÍNTESIS de la capacidad (estructura) y el impacto (huella realizada). Validado externamente con residuos (r=0,87)."
@@ -971,6 +990,7 @@
       "dimension": "index",
       "format": "rank",
       "source": "indicador derivat — vegeu la metodologia",
+      "formula": "rank(round(IETR,2) desc) — a la precisió publicada; empats comparteixen posició",
       "definicio": {
         "ca": "Posició del municipi dins la distribució (1 = major exposició). Els EMPATS comparteixen posició i la següent salta (rank, no row_number): si 6 municipis comparteixen el sostre 100, tots són 1r i el següent és 7è.",
         "es": "Posición del municipio dentro de la distribución (1 = mayor exposición). Los EMPATES comparten posición y la siguiente salta (rank, no row_number): si 6 municipios comparten el techo 100, todos son 1º y el siguiente es 7º."
@@ -995,6 +1015,7 @@
       "format": "decimal",
       "source": "indicador derivat — vegeu la metodologia · Idescat",
       "date": "2021/2025",
+      "formula": "A_resid reescalat 0-100 (mitjana de pct_noprincipal i hab_per_hab, min-max winsoritzat p5/p95). És el component estructural de l'IETR: IETR = 0.5*IETR_stock + 0.5*IETR_impact",
       "definicio": {
         "ca": "Costat ESTRUCTURAL/resident de l'IETR (eix A reescalat 0-100): exposició LATENT inscrita al parc d'habitatge (habitatge no principal + habitatges per habitant). Quant de territori està preparat per a la pressió turística-residencial, hi hagi o no activitat ara mateix.",
         "es": "Lado ESTRUCTURAL/residente del IETR (eje A reescalado 0-100): exposición LATENTE inscrita en el parque de vivienda (vivienda no principal + viviendas por habitante). Cuánto territorio está preparado para la presión turística-residencial, haya o no actividad ahora mismo."
@@ -1019,6 +1040,7 @@
       "format": "decimal",
       "source": "indicador derivat — vegeu la metodologia · Generalitat — Registre de Turisme de Catalunya",
       "date": "2024/2025",
+      "formula": "B_turis reescalat 0-100 (mitjana de rtc_per_1000hab i rtc_per_100hab_viv, min-max winsoritzat p5/p95). És el component de pressió de l'IETR: IETR = 0.5*IETR_stock + 0.5*IETR_impact",
       "definicio": {
         "ca": "Costat de PRESSIÓ realitzada de l'IETR (eix B reescalat 0-100): activitat turística viva inscrita als establiments reglats (RTC per 1000 hab + per 100 habitatges). Quanta pressió turística s'està exercint realment, ara.",
         "es": "Lado de PRESIÓN realizada del IETR (eje B reescalado 0-100): actividad turística viva inscrita en los establecimientos reglados (RTC por 1000 hab + por 100 viviendas). Cuánta presión turística se está ejerciendo realmente, ahora."
@@ -1043,6 +1065,7 @@
       "format": "text",
       "source": "indicador derivat — vegeu la metodologia · Agència de Residus de Catalunya (ARC)",
       "date": "2024/2025",
+      "formula": "Classificador de regles sobre z-scores comarcals de gap_pernocta_pct, index_turisme, pct_noprincipal, poblacio, carrega_total_est i l'activitat (residus/vidre/restauració). Primera regla que encaixa; 'indeterminat' si cap. Vegeu docs/tipologia-municipal.md per als llindars.",
       "definicio": {
         "ca": "Classificació amb NOM de com s'habita el municipi, llegida dels senyals físics (no «més/menys»): dormitori_invisible, excursio, segona_residencia, capital_serveis, buit_administratiu o indeterminat. Classificador basat en regles sobre z-scores comarcals (vegeu docs/tipologia-municipal.md).",
         "es": "Clasificación con NOMBRE de cómo se habita el municipio, leída de las señales físicas (no «más/menos»): dormitori_invisible, excursio, segona_residencia, capital_serveis, buit_administratiu o indeterminat. Clasificador basado en reglas sobre z-scores comarcales (véase docs/tipologia-municipal.md)."
@@ -1067,6 +1090,7 @@
       "format": "decimal",
       "source": "indicador derivat — vegeu la metodologia · Agència de Residus de Catalunya (ARC)",
       "date": "2024/2025",
+      "formula": "40*mida_denominador(ln-escalat padró 75→410) + 35*concordança(1 − dispersió_z dels 3 senyals de presència/3) + 15*cobertura(senyals no nuls/5) − 10*outlier(|z|>2 d'algun senyal). Talls de l'etiqueta: <45 baixa · 45–65 mitjana · ≥65 alta. Vegeu docs/tipologia-municipal.md.",
       "definicio": {
         "ca": "Puntuació auditable 0-100 de la fiabilitat de les estimacions del municipi, que COMPLEMENTA (no substitueix) la bandera `confianca`. Suma quatre components: mida del denominador (padró), concordança dels senyals físics de presència, cobertura dels senyals i penalització d'outlier. Com més alt, més fiable. L'etiqueta es deriva amb talls documentats (<45 baixa · 45–65 mitjana · ≥65 alta).",
         "es": "Puntuación auditable 0-100 de la fiabilidad de las estimaciones del municipio, que COMPLEMENTA (no sustituye) la bandera `confianza`. Suma cuatro componentes: tamaño del denominador (padrón), concordancia de las señales físicas de presencia, cobertura de las señales y penalización de outlier. Cuanto más alto, más fiable. La etiqueta se deriva con cortes documentados (<45 baja · 45–65 media · ≥65 alta)."
@@ -1091,6 +1115,7 @@
       "format": "integer",
       "source": "indicador derivat — vegeu la metodologia · Agència de Residus de Catalunya (ARC)",
       "date": "2024/2025",
+      "formula": "100 * min(1, (max(z_kg,z_kwh,z_np) − min(z_kg,z_kwh,z_np)) / 3) sobre els z-scores comarcals dels 3 senyals de presència",
       "definicio": {
         "ca": "Com de DISCREPANTS són els tres senyals físics de presència (residus, elèctric, % habitatge no principal) un cop normalitzats a la comarca. 0 = concordants (estimació fiable) · 100 = màxima discrepància (llegir amb prudència). És el component de concordança del `confianca_score`, exposat sol perquè el «per què» de la confiança sigui auditable.",
         "es": "Cómo de DISCREPANTES son las tres señales físicas de presencia (residuos, eléctrico, % vivienda no principal) una vez normalizadas a la comarca. 0 = concordantes (estimación fiable) · 100 = máxima discrepancia (leer con prudencia). Es el componente de concordancia del `confianca_score`, expuesto solo para que el «por qué» de la confianza sea auditable."
@@ -1136,7 +1161,6 @@
         "gap_pernocta_pct": -6.1,
         "carrega_total_est": 2076,
         "carrega_funcional_est": 2263,
-        "index_turisme": 41.4,
         "poblacio_real_est": 2076,
         "gap_abs": -187,
         "gap_pct": -8.3,
@@ -1193,7 +1217,6 @@
         "gap_pernocta_pct": -2.4,
         "carrega_total_est": 2351,
         "carrega_funcional_est": 2351,
-        "index_turisme": 49.5,
         "poblacio_real_est": 2351,
         "gap_abs": 184,
         "gap_pct": 8.5,
@@ -1250,7 +1273,6 @@
         "gap_pernocta_pct": -5,
         "carrega_total_est": 19626,
         "carrega_funcional_est": 19626,
-        "index_turisme": 41.2,
         "poblacio_real_est": 19626,
         "gap_abs": 2087,
         "gap_pct": 11.9,
@@ -1307,7 +1329,6 @@
         "gap_pernocta_pct": -3.7,
         "carrega_total_est": 908,
         "carrega_funcional_est": 908,
-        "index_turisme": 67.8,
         "poblacio_real_est": 908,
         "gap_abs": 474,
         "gap_pct": 109.2,
@@ -1364,7 +1385,6 @@
         "gap_pernocta_pct": -14,
         "carrega_total_est": 206,
         "carrega_funcional_est": 206,
-        "index_turisme": 100,
         "poblacio_real_est": 206,
         "gap_abs": 113,
         "gap_pct": 121.5,
@@ -1421,7 +1441,6 @@
         "gap_pernocta_pct": -2.4,
         "carrega_total_est": 1615,
         "carrega_funcional_est": 1665,
-        "index_turisme": 54.5,
         "poblacio_real_est": 1615,
         "gap_abs": -50,
         "gap_pct": -3,
@@ -1478,7 +1497,6 @@
         "gap_pernocta_pct": -19.2,
         "carrega_total_est": 379,
         "carrega_funcional_est": 379,
-        "index_turisme": 100,
         "poblacio_real_est": 379,
         "gap_abs": 228,
         "gap_pct": 151,
@@ -1535,7 +1553,6 @@
         "gap_pernocta_pct": -18.1,
         "carrega_total_est": 397,
         "carrega_funcional_est": 397,
-        "index_turisme": 100,
         "poblacio_real_est": 397,
         "gap_abs": 231,
         "gap_pct": 139.2,
@@ -1592,7 +1609,6 @@
         "gap_pernocta_pct": -17.6,
         "carrega_total_est": 149,
         "carrega_funcional_est": 149,
-        "index_turisme": 80.2,
         "poblacio_real_est": 149,
         "gap_abs": 81,
         "gap_pct": 119.1,
@@ -1649,7 +1665,6 @@
         "gap_pernocta_pct": 0.4,
         "carrega_total_est": 530,
         "carrega_funcional_est": 530,
-        "index_turisme": 55.1,
         "poblacio_real_est": 530,
         "gap_abs": 270,
         "gap_pct": 103.8,
@@ -1706,7 +1721,6 @@
         "gap_pernocta_pct": -51.2,
         "carrega_total_est": 76,
         "carrega_funcional_est": 76,
-        "index_turisme": 9.5,
         "poblacio_real_est": 76,
         "gap_abs": 35,
         "gap_pct": 85.4,
@@ -1763,7 +1777,6 @@
         "gap_pernocta_pct": 2.1,
         "carrega_total_est": 4010,
         "carrega_funcional_est": 5190,
-        "index_turisme": 32.8,
         "poblacio_real_est": 4010,
         "gap_abs": -1072,
         "gap_pct": -21.1,
@@ -1820,7 +1833,6 @@
         "gap_pernocta_pct": 14.3,
         "carrega_total_est": 71,
         "carrega_funcional_est": 71,
-        "index_turisme": 100,
         "poblacio_real_est": 71,
         "gap_abs": 43,
         "gap_pct": 153.6,
@@ -1877,7 +1889,6 @@
         "gap_pernocta_pct": -11.4,
         "carrega_total_est": 1120,
         "carrega_funcional_est": 1120,
-        "index_turisme": 71.7,
         "poblacio_real_est": 1120,
         "gap_abs": 158,
         "gap_pct": 16.4,
@@ -1934,7 +1945,6 @@
         "gap_pernocta_pct": 7.5,
         "carrega_total_est": 192,
         "carrega_funcional_est": 192,
-        "index_turisme": 61.1,
         "poblacio_real_est": 192,
         "gap_abs": 59,
         "gap_pct": 44.4,
@@ -1991,7 +2001,6 @@
         "gap_pernocta_pct": 11.9,
         "carrega_total_est": 969,
         "carrega_funcional_est": 969,
-        "index_turisme": 63.9,
         "poblacio_real_est": 969,
         "gap_abs": 498,
         "gap_pct": 105.7,
@@ -2048,7 +2057,6 @@
         "gap_pernocta_pct": 3.1,
         "carrega_total_est": 373,
         "carrega_funcional_est": 373,
-        "index_turisme": 100,
         "poblacio_real_est": 373,
         "gap_abs": 210,
         "gap_pct": 128.8,
@@ -2105,7 +2113,6 @@
         "gap_pernocta_pct": -14.5,
         "carrega_total_est": 903,
         "carrega_funcional_est": 926,
-        "index_turisme": 51.4,
         "poblacio_real_est": 903,
         "gap_abs": -23,
         "gap_pct": -2.5,
@@ -2162,7 +2169,6 @@
         "gap_pernocta_pct": -23,
         "carrega_total_est": 1237,
         "carrega_funcional_est": 1237,
-        "index_turisme": 66.4,
         "poblacio_real_est": 1237,
         "gap_abs": 131,
         "gap_pct": 11.8,
@@ -2219,7 +2225,6 @@
         "gap_pernocta_pct": -13.8,
         "carrega_total_est": 3713,
         "carrega_funcional_est": 4558,
-        "index_turisme": 42,
         "poblacio_real_est": 3713,
         "gap_abs": -845,
         "gap_pct": -18.5,
@@ -2276,7 +2281,6 @@
         "gap_pernocta_pct": 72.7,
         "carrega_total_est": 86,
         "carrega_funcional_est": 86,
-        "index_turisme": 92.7,
         "poblacio_real_est": 86,
         "gap_abs": 42,
         "gap_pct": 95.5,
@@ -2333,7 +2337,6 @@
         "gap_pernocta_pct": 61.4,
         "carrega_total_est": 285,
         "carrega_funcional_est": 285,
-        "index_turisme": 100,
         "poblacio_real_est": 285,
         "gap_abs": 132,
         "gap_pct": 86.3,
@@ -2390,7 +2393,6 @@
         "gap_pernocta_pct": 11.6,
         "carrega_total_est": 681,
         "carrega_funcional_est": 681,
-        "index_turisme": 100,
         "poblacio_real_est": 681,
         "gap_abs": 380,
         "gap_pct": 126.2,
@@ -2447,7 +2449,6 @@
         "gap_pernocta_pct": 12,
         "carrega_total_est": 69,
         "carrega_funcional_est": 69,
-        "index_turisme": 55.6,
         "poblacio_real_est": 69,
         "gap_abs": 44,
         "gap_pct": 176,
@@ -2504,7 +2505,6 @@
         "gap_pernocta_pct": 33,
         "carrega_total_est": 300,
         "carrega_funcional_est": 300,
-        "index_turisme": 100,
         "poblacio_real_est": 300,
         "gap_abs": 121,
         "gap_pct": 67.6,
@@ -2561,7 +2561,6 @@
         "gap_pernocta_pct": -7.4,
         "carrega_total_est": 1466,
         "carrega_funcional_est": 1466,
-        "index_turisme": 51.8,
         "poblacio_real_est": 1466,
         "gap_abs": 230,
         "gap_pct": 18.6,
@@ -2618,7 +2617,6 @@
         "gap_pernocta_pct": -23.5,
         "carrega_total_est": 531,
         "carrega_funcional_est": 531,
-        "index_turisme": 74.9,
         "poblacio_real_est": 531,
         "gap_abs": 271,
         "gap_pct": 104.2,
@@ -2675,7 +2673,6 @@
         "gap_pernocta_pct": -10.5,
         "carrega_total_est": 380,
         "carrega_funcional_est": 430,
-        "index_turisme": 50.8,
         "poblacio_real_est": 380,
         "gap_abs": -50,
         "gap_pct": -11.6,
@@ -2732,7 +2729,6 @@
         "gap_pernocta_pct": 1.7,
         "carrega_total_est": 293,
         "carrega_funcional_est": 293,
-        "index_turisme": 97.5,
         "poblacio_real_est": 293,
         "gap_abs": 115,
         "gap_pct": 64.6,
@@ -2789,7 +2785,6 @@
         "gap_pernocta_pct": 10.3,
         "carrega_total_est": 289,
         "carrega_funcional_est": 289,
-        "index_turisme": 77.8,
         "poblacio_real_est": 289,
         "gap_abs": 55,
         "gap_pct": 23.5,
@@ -2846,7 +2841,6 @@
         "gap_pernocta_pct": 19.8,
         "carrega_total_est": 535,
         "carrega_funcional_est": 535,
-        "index_turisme": 100,
         "poblacio_real_est": 535,
         "gap_abs": 328,
         "gap_pct": 158.5,

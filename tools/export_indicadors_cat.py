@@ -30,9 +30,11 @@ OUT = REPO / "data" / "web" / "indicadors-catalunya.json"
 # Tots tenen valor calculat al mart per a tot CAT (deriven de senyals que ja cobreixen el país:
 # residus, EMEX, RTC). Els únics indicadors del mapa que NO hi són són tipologia i restauració
 # (depenen d'OSM, encara només-Berguedà → 2a onada).
+# `index_turisme` DEPRECAT (#267): fora del publicador (satura a 100 · re-escala lossy de
+# vidre_hab). El mapa ja no el pinta; per a la lectura d'hostaleria, vidre_hab (kg/hab).
 NUM_KEYS = (
     "gap_pernocta_pct", "kg_hab_any", "densitat_hab_km2", "renda_neta_persona",
-    "carrega_total_est", "index_turisme", "IETR", "pct_noprincipal", "divergencia_senyals",
+    "carrega_total_est", "IETR", "pct_noprincipal", "divergencia_senyals",
     "restauracio_per_1000hab",
 )
 

@@ -347,6 +347,71 @@ models:
         data_tests:
           - not_null
 
+  - name: mart_govern
+    description: >
+      Tauler de govern amb PROCEDÈNCIA (D4). Format llarg: 1 fila per (ine5, metric).
+      Per a cada municipi de Catalunya i cada KPI OFICIAL i MESURAT del tauler (gorra
+      §3): valor, rang «k de n» CONTRA LA COMARCA DEL MUNICIPI (partició per
+      municipis-territori.json, autoritat ine5→comarca — mai una llista fixa: Gombrèn
+      rankeja contra els 19 del Ripollès, no els 31 del Berguedà), n_amb_dada (el
+      denominador honest = munis de la comarca amb la dada) i data (vintage del
+      contracte). El rang es calcula AQUÍ (transform), mai al front (C6 §4); rank()
+      descendent, empats comparteixen posició. 7 KPIs: index_envelliment, poblacio,
+      pct_noprincipal, rtc_per_1000hab, kwh_hab, renda_neta_persona, kg_hab_any (els
+      que són mesura oficial i comparables per comarca; origen/ETCA/atur/OSM en queden
+      fora amb motiu, vegeu el capçal del model).
+    columns:
+      - name: ine5
+        description: Codi INE de 5 dígits.
+        data_tests:
+          - not_null
+      - name: codi6
+        description: Codi Idescat de 6 dígits (de mart_municipi).
+        data_tests:
+          - not_null
+      - name: municipi
+        description: Nom oficial del municipi (de mart_municipi).
+        data_tests:
+          - not_null
+      - name: comarca
+        description: Comarca del municipi (autoritat municipis-territori.json).
+        data_tests:
+          - not_null
+      - name: metric
+        description: Clau de mètrica del contracte (1:1 amb metrics.yml).
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - index_envelliment
+                  - poblacio
+                  - pct_noprincipal
+                  - rtc_per_1000hab
+                  - kwh_hab
+                  - renda_neta_persona
+                  - kg_hab_any
+      - name: valor
+        description: Valor mesurat de la mètrica (NULL = sense dada oficial per aquest municipi).
+      - name: rang
+        description: >
+          Posició «k» dins la comarca, rank() descendent pel valor (1 = el valor més alt).
+          Els empats comparteixen posició. NULL quan valor és NULL (no es rankeja).
+        data_tests:
+          - between:
+              arguments: { min_value: 1, max_value: 1000 }
+      - name: n_amb_dada
+        description: >
+          Municipis de la comarca amb la dada (denominador del rang «k de n»). ≥1.
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 1, max_value: 1000 }
+      - name: data
+        description: Vintage de la dada (any del contracte semantic/metrics.yml).
+        data_tests:
+          - not_null
+
   - name: mart_electoral
     description: >
       Resultats electorals agregats per municipi (clau ine5), Parlament de

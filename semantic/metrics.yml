@@ -55,7 +55,7 @@ sources:
     producte: Estadístiques de residus municipals
     dataset_id: 69zu-w48s
     llicencia: Dades Obertes de Catalunya
-    nota: "Inclou les fraccions de recollida selectiva (vidre, paper, FORM…). El VIDRE/hab és el senyal de la capa L3 (pressió turística/hostaleria)."
+    nota: "Inclou les fraccions de recollida selectiva (vidre, paper, FORM…). El VIDRE/hab és un senyal físic d'hostaleria (les ampolles de bar/restaurant)."
   icaen:
     organisme: ICAEN
     producte: Certificats d'eficiència energètica d'edificis
@@ -66,7 +66,7 @@ sources:
     producte: Consum d'energia elèctrica per municipis i sectors de Catalunya
     dataset_id: 8idm-becu
     llicencia: Dades Obertes de Catalunya
-    nota: "Sector USOS DOMÈSTICS, darrer any de cobertura plena (2024). kWh/hab és el senyal de la capa L1 (població pernocta)."
+    nota: "Sector USOS DOMÈSTICS, darrer any de cobertura plena (2024). kWh/hab és la mesura física del consum elèctric residencial per habitant."
   electoral:
     organisme: Generalitat
     producte: Processos electorals - Vots
@@ -78,7 +78,7 @@ sources:
     producte: Punts d'interès de restauració (amenity=restaurant/cafe/bar/fast_food/pub/biergarten/ice_cream)
     acces: "https://overpass-api.de/api/interpreter (POST Overpass QL; sense auth)"
     llicencia: "ODbL (OpenStreetMap) — atribució + compartir-igual"
-    nota: "2n proxy d'hostaleria de la capa L3 (complement del vidre). POIs assignats al municipi per PUNT-EN-POLÍGON amb la geometria real (ine5). OSM INFRA-MAPEJA el rural → el compte és un MÍNIM observat, NO un cens. Idescat (ee, CCAE-56) oficial NO és municipal per API oberta (secret estadístic; l'EMEX només dóna 'serveis' agregat)."
+    nota: "2n proxy físic d'hostaleria (complement del vidre). POIs assignats al municipi per PUNT-EN-POLÍGON amb la geometria real (ine5). OSM INFRA-MAPEJA el rural → el compte és un MÍNIM observat, NO un cens. Idescat (ee, CCAE-56) oficial NO és municipal per API oberta (secret estadístic; l'EMEX només dóna 'serveis' agregat)."
   ine_adrh:
     organisme: INE — Instituto Nacional de Estadística
     producte: Atlas de distribución de renta de los hogares (ADRH) — renda neta per persona
@@ -455,8 +455,8 @@ metrics:
   kwh_hab:
     label: {ca: Elèctric domèstic kWh/hab, es: Eléctrico doméstico kWh/hab}
     definicio:
-      ca: "Consum elèctric domèstic per habitant empadronat, darrer any de cobertura plena (2024). Senyal de presència que pernocta (capa L1)."
-      es: "Consumo eléctrico doméstico por habitante empadronado, último año de cobertura plena (2024). Señal de presencia que pernocta (capa L1)."
+      ca: "Consum elèctric domèstic per habitant empadronat, darrer any de cobertura plena (2024, dada oficial ICAEN). Mesura física del consum residencial."
+      es: "Consumo eléctrico doméstico por habitante empadronado, último año de cobertura plena (2024, dato oficial ICAEN). Medida física del consumo residencial."
     dimension: pressio
     unit: {ca: kWh/hab/any, es: kWh/hab/año}
     formula: "consum_domestic_kwh / poblacio"
@@ -470,8 +470,8 @@ metrics:
   vidre_hab:
     label: {ca: Vidre kg/hab/any, es: Vidrio kg/hab/año}
     definicio:
-      ca: "Generació de vidre per habitant empadronat (fracció de recollida selectiva). Proxy d'hostaleria (ampolles de bar/restaurant); senyal de la capa L3."
-      es: "Generación de vidrio por habitante empadronado (fracción de recogida selectiva). Proxy de hostelería (botellas de bar/restaurante); señal de la capa L3."
+      ca: "Generació de vidre per habitant empadronat (fracció de recollida selectiva, dada oficial ARC). Senyal físic d'hostaleria: el vidre el generen sobretot els bars i restaurants (ampolles)."
+      es: "Generación de vidrio por habitante empadronado (fracción de recogida selectiva, dato oficial ARC). Señal física de hostelería: el vidrio lo generan sobre todo los bares y restaurantes (botellas)."
     dimension: pressio
     unit: {ca: kg/hab/any, es: kg/hab/año}
     formula: "vidre_tones * 1000 / poblacio"
@@ -532,7 +532,7 @@ metrics:
     column: vidre_base_ratio
     visibility: public
 
-  # --- 2n PROXY D'HOSTALERIA de la capa L3 (restauració, OSM) — complement del vidre ---
+  # --- 2n PROXY D'HOSTALERIA (restauració, OSM) — complement del vidre ---
   # El vidre mesura ACTIVITAT (ampolles consumides); la restauració, CAPACITAT instal·lada
   # (stock de locals). Dos senyals INDEPENDENTS que apunten al mateix fenomen. És una
   # MESURA (no inferència), però OSM infra-mapeja el rural → MÍNIM observat, no cens.
@@ -550,15 +550,15 @@ metrics:
     column: restauracio_estab
     visibility: public
     caveat:
-      ca: "MÍNIM observat, NO un cens: OSM INFRA-MAPEJA les zones rurals (la completesa del mapejat varia entre municipis), per això 6 micromunicipis surten amb 0 tot i tenir senyal de vidre. És una MESURA (no inferència); la lectura de «pressió turística» que se'n fa SÍ és inferència. El contrast oficial Idescat (ee, CCAE-56) no és municipal per API oberta (secret estadístic). Llicència ODbL (atribució + compartir-igual)."
-      es: "MÍNIMO observado, NO un censo: OSM INFRAMAPEA las zonas rurales (la completitud del mapeo varía entre municipios), por eso 6 micromunicipios salen con 0 pese a tener señal de vidrio. Es una MEDIDA (no inferencia); la lectura de «presión turística» que se hace SÍ es inferencia. El contraste oficial Idescat (ee, CCAE-56) no es municipal por API abierta (secreto estadístico). Licencia ODbL (atribución + compartir-igual)."
+      ca: "MÍNIM observat, NO un cens: OSM INFRA-MAPEJA les zones rurals (la completesa del mapejat varia entre municipis), per això 6 micromunicipis surten amb 0 tot i tenir vidre. És una MESURA (no inferència); la lectura d'orientació a visitants (hostaleria) que se'n fa SÍ és inferència. El contrast oficial Idescat (ee, CCAE-56) no és municipal per API oberta (secret estadístic). Llicència ODbL (atribució + compartir-igual)."
+      es: "MÍNIMO observado, NO un censo: OSM INFRAMAPEA las zonas rurales (la completitud del mapeo varía entre municipios), por eso 6 micromunicipios salen con 0 pese a tener vidrio. Es una MEDIDA (no inferencia); la lectura de orientación a visitantes (hostelería) que se hace SÍ es inferencia. El contraste oficial Idescat (ee, CCAE-56) no es municipal por API abierta (secreto estadístico). Licencia ODbL (atribución + compartir-igual)."
     synonyms: {ca: [restauració, bars, restaurants, hostaleria, locals], es: [restauración, bares, restaurantes, hostelería, locales]}
 
   restauracio_per_1000hab:
     label: {ca: Restauració / 1000 hab, es: Restauración / 1000 hab}
     definicio:
-      ca: "Densitat d'establiments de restauració per cada 1000 habitants empadronats. Intensitat d'hostaleria per càpita (stock), 2n senyal de la capa L3."
-      es: "Densidad de establecimientos de restauración por cada 1000 habitantes empadronados. Intensidad de hostelería per cápita (stock), 2ª señal de la capa L3."
+      ca: "Densitat d'establiments de restauració per cada 1000 habitants empadronats. Intensitat d'hostaleria per càpita (stock d'establiments)."
+      es: "Densidad de establecimientos de restauración por cada 1000 habitantes empadronados. Intensidad de hostelería per cápita (stock de establecimientos)."
     dimension: turisme
     unit: {ca: per mil, es: por mil}
     formula: "restauracio_estab / poblacio * 1000"

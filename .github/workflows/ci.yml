@@ -51,6 +51,11 @@ jobs:
           pytest packages/ingestion/tests/test_atur_sepe.py -q
       - name: Verify mart_pols_mensual (àncores byte-match + doctrina <5 · offline)
         run: python packages/transform/verify_pols_mensual.py
+      # D4 · mart_govern: rang «k de n» per comarca recalculat i comparat, comarca de
+      # municipis-territori.json, byte-match d'àncores a mà (Pobla/gorra §2), Gombrèn
+      # contra el Ripollès (no els 31). Offline, sobre el parquet versionat.
+      - name: Verify mart_govern (rang per comarca + àncores a mà · offline)
+        run: python packages/transform/verify_govern.py
       # Suite COMPLETA de `signals`, 100% OFFLINE (fixtures reals arxivades +
       # sessions HTTP falses + parquets versionats; cap crida de xarxa, cap clau).
       # Cobreix: BDNS/R1 (la trampa de les regions NUTS — la pare no cascada),

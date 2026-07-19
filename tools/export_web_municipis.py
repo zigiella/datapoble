@@ -72,8 +72,11 @@ METRIC_KEYS = [
     # Indicador estrella: MODEL DE 3 CAPES (derived, inferència).
     # L1 població pernocta (la nova «població invisible»):
     "poblacio_pernocta_est", "gap_pernocta", "gap_pernocta_pct",
-    # L2 càrrega per residus · denominador funcional (max L1,L2) · L3 pressió turística:
-    "carrega_total_est", "carrega_funcional_est", "index_turisme", "confianca",
+    # L2 càrrega per residus · denominador funcional (max L1,L2) · confiança.
+    # `index_turisme` DEPRECAT (status: deprecated al contracte, #267): FORA dels
+    # publicadors (D4) — satura a 100 en 47 munis i és re-escala lossy de vidre_hab;
+    # useu vidre_hab (kg/hab). El mart el pot seguir calculant com a rastre.
+    "carrega_total_est", "carrega_funcional_est", "confianca",
     # Compatibilitat (model anterior d'una capa), reenquadrades:
     "poblacio_real_est", "gap_abs", "gap_pct", "poblacio_real_rel",
     "pct_icaen_EFG", "IETR", "IETR_rank",
@@ -103,11 +106,10 @@ FORMAT_BY_KEY = {
     # Centralitat (comerç i serveis OSM): compte enter + densitat decimal.
     "serveis_estab": "integer", "serveis_per_1000hab": "decimal",
     # 3 capes: comptes d'habitants → integer; *_pct ja en 0-100 → percent (mateixa
-    # convenció que pct_noprincipal); index_turisme és 0-100 → decimal; confianca → text.
+    # convenció que pct_noprincipal); confianca → text. (index_turisme deprecat, fora.)
     "poblacio_pernocta_est": "integer", "gap_pernocta": "integer",
     "gap_pernocta_pct": "percent", "carrega_total_est": "integer",
     "carrega_funcional_est": "integer",
-    "index_turisme": "decimal",
     # Compatibilitat (model anterior).
     "poblacio_real_est": "integer", "gap_abs": "integer", "gap_pct": "percent",
     "poblacio_real_rel": "integer", "confianca": "text",
@@ -140,7 +142,7 @@ COL_MUNI = {
     "poblacio_pernocta_est": "poblacio_pernocta_est", "gap_pernocta": "gap_pernocta",
     "gap_pernocta_pct": "gap_pernocta_pct", "carrega_total_est": "carrega_total_est",
     "carrega_funcional_est": "carrega_funcional_est",
-    "index_turisme": "index_turisme",
+    # index_turisme deprecat (#267): fora del publicador — no s'emet ni al catàleg ni als valors.
     # Compatibilitat (model anterior d'una capa).
     "poblacio_real_est": "poblacio_real_est", "gap_abs": "gap_abs",
     "gap_pct": "gap_pct", "poblacio_real_rel": "poblacio_real_rel",
@@ -214,6 +216,13 @@ def build_metrics(contract: dict) -> dict[str, dict]:
         }
         if spec.get("date"):
             m["date"] = str(spec["date"])
+        # formula: REGLA DE FERRO de Bea (C6 §8.1) — cada xifra amb la seva font O fórmula.
+        # El contracte porta `formula:` a TOTA mètrica (cadena plana, p. ex. "hab_noprincipal
+        # / hab_total * 100" o "directe"). L'emetem tal qual perquè D5 pugui mostrar la
+        # procedència de les inferides. Additiu (MetricDef.formula? opcional).
+        formula = spec.get("formula")
+        if formula:
+            m["formula"] = str(formula)
         # definicio: text canònic del «diccionari» que pinta el glossari
         # (definicio.ca/.es del contracte). S'emet només si hi és; si falta, el
         # web recau en `note` (MetricDef.definicio? és opcional).

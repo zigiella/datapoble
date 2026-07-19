@@ -27,6 +27,10 @@ vars:
   marts_root: "../../data/marts"
   # arrel de dades territorials versionades (registre, Nivell C): pont Python→dbt (F2)
   territorial_root: "../../data/territorial"
+  # arrel dels artefactes de dades del web: mart_govern hi llegeix municipis-territori.json
+  # (autoritat ine5→comarca, 947 munis) per partir els rangs comarcals. Lectura NOMÉS d'un
+  # fitxer de dades versionat (com municipis-catalunya.csv); no s'escriu res a data/web.
+  web_root: "../../data/web"
   # --- Indicador estrella: MODEL DE 3 CAPES (mètode de Talaia, validat sobre dades) ---
   # Tres senyals físics independents per municipi, cadascun amb la seva BASE = la
   # generació d'un resident "normal" (viles de vall poc turístiques, IETR<5: Avià,
