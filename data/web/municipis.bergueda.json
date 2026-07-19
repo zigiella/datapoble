@@ -794,7 +794,7 @@
         "ca": "NO és població ni càrrega de persones: és INTENSITAT d'hostaleria (el vidre el genera el bar/restaurant que serveix el visitant). És RELATIU a la distribució catalana (z-score global): 50 = un municipi mitjà de Catalunya, no un valor absolut. SATURA AL CIM: l'escala talla a ±2 desviacions i tot municipi per damunt marca 100 exacte (el 2024, 47 municipis comparteixen aquest sostre amb valors reals de vidre que van del simple al doble) — a 100, l'índex NO ordena ni distingeix; per comparar-los, useu el vidre per habitant (kg/hab). Granularitat anual (no capta estacionalitat). Inferència, lectura ecològica.",
         "es": "NO es población ni carga de personas: es INTENSIDAD de hostelería (el vidrio lo genera el bar/restaurante que sirve al visitante). Es RELATIVO a la distribución catalana (z-score global): 50 = un municipio medio de Cataluña, no un valor absoluto. SATURA EN LA CIMA: la escala corta a ±2 desviaciones y todo municipio por encima marca 100 exacto (en 2024, 47 municipios comparten ese techo con valores reales de vidrio que van del simple al doble) — en 100, el índice NO ordena ni distingue; para compararlos, usad el vidrio por habitante (kg/hab). Granularidad anual (no capta estacionalidad). Inferencia, lectura ecológica."
       },
-      "status": "public"
+      "status": "deprecated"
     },
     "confianca": {
       "key": "confianca",

@@ -760,6 +760,12 @@ metrics:
     date: "2024"
     table: mart_municipi
     column: index_turisme
+    status: deprecated  # 2026-07-18 (vot de Bea): SATURA (47 munis al sostre, no ordena) i
+                        # re-escala lossy d'una variable ja publicada (vidre_hab). FORA del tauler
+                        # de govern (substituït per energia/hab) i FORA del glossari. El mart pot
+                        # seguir calculant-lo com a rastre; els PUBLICADORS (export web, indicadors
+                        # CAT) el deixen de servir (D4). Useu `vidre_hab` (kg/hab) per a la lectura
+                        # d'hostaleria — cru, oficial, i ordena de veritat.
     visibility: public
     caveat:
       ca: "NO és població ni càrrega de persones: és INTENSITAT d'hostaleria (el vidre el genera el bar/restaurant que serveix el visitant). És RELATIU a la distribució catalana (z-score global): 50 = un municipi mitjà de Catalunya, no un valor absolut. SATURA AL CIM: l'escala talla a ±2 desviacions i tot municipi per damunt marca 100 exacte (el 2024, 47 municipis comparteixen aquest sostre amb valors reals de vidre que van del simple al doble) — a 100, l'índex NO ordena ni distingeix; per comparar-los, useu el vidre per habitant (kg/hab). Granularitat anual (no capta estacionalitat). Inferència, lectura ecològica."

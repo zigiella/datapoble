@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Exporta un PAQUET LOCAL de la dada del Berguedà, còmode per treballar la IA (#65).
+"""LLEGAT (2026-07-18) — eina de l'era del model d'interpretació, ARA APARCAT.
+
+Exporta un PAQUET LOCAL de la dada del Berguedà, còmode per treballar la IA (#65).
+
+NOTA: cap workflow la crida i la seva sortida ja NO es committeja (era rància: prometia
+«31 municipis» amb el mart escalat a 947). Es conserva com a utilitat local re-executable;
+`data/export/` és gitignorat. Si la fase nova no la necessita, es pot retirar sencera.
 
 Llegeix els marts reals (`data/marts/*.parquet`) i el contracte (`semantic/metrics.yml`)
 i escriu a `data/export/` quatre formats del MATEIX contingut (els 31 municipis):
