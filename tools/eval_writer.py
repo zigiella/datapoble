@@ -46,7 +46,8 @@ FACT_KEYS = [
     "poblacio", "pct_noprincipal", "hab_per_hab", "index_envelliment",
     "rtc_per_1000hab", "kwh_hab", "kg_hab_any", "vidre_hab",
     "poblacio_pernocta_est", "gap_pernocta_pct", "carrega_funcional_est",
-    "index_turisme", "restauracio_estab", "IETR", "IETR_stock", "IETR_impact",
+    # index_turisme DEPRECAT (#267): fora del full de fets; vidre_hab ja hi és per l'hostaleria.
+    "restauracio_estab", "IETR", "IETR_stock", "IETR_impact",
     "tipologia", "confianca", "confianca_score", "divergencia_senyals",
 ]
 GAP_SENS = 0.10  # banda ±10% de base (igual que la fitxa)

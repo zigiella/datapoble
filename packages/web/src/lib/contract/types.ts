@@ -141,6 +141,14 @@ export interface MetricDef {
 	source: string;
 	/** Any o rang de referència de la dada. */
 	date?: string;
+	/**
+	 * Fórmula del contracte (formula de metrics.yml): cadena plana ("hab_noprincipal /
+	 * hab_total * 100" o "directe"). Regla de ferro de Bea (C6 §8.1): cada xifra amb la
+	 * seva font O fórmula. Opcional perquè és additiu (l'emet `export_web_municipis.py`
+	 * des de D4); la vista de govern (D5) mostra font per a les mesurades i fórmula per a
+	 * les inferides. No és `Localized`: la fórmula és la mateixa en tots dos locales.
+	 */
+	formula?: string;
 	/** Nota/caveat (ex.: lectura ecològica, falàcia ecològica). */
 	note?: Localized;
 	/** public = visible · planned = definit, encara no calculat. */
