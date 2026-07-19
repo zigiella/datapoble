@@ -46,7 +46,6 @@
 		kg_hab_any: () => m.met_residus_what(),
 		gap_pernocta_pct: () => m.met_pernocta_what(),
 		carrega_total_est: () => m.met_carrega_what(),
-		index_turisme: () => m.met_turisme_what(),
 		restauracio_per_1000hab: () => m.met_restauracio_what(),
 		restauracio_estab: () => m.met_restauracio_what(),
 		confianca: () => m.met_confianca_what(),
@@ -65,7 +64,6 @@
 		kg_hab_any: () => m.met_residus_how(),
 		gap_pernocta_pct: () => m.met_pernocta_how(),
 		carrega_total_est: () => m.met_carrega_how(),
-		index_turisme: () => m.met_turisme_how(),
 		restauracio_per_1000hab: () => m.met_restauracio_how(),
 		restauracio_estab: () => m.met_restauracio_how(),
 		confianca: () => m.met_confianca_how(),
@@ -106,7 +104,7 @@
 			title: () => m.met_block_capes(),
 			intro: () => m.met_capes_intro(),
 			annex: true,
-			keys: ['kwh_hab', 'kwh_base_ratio', 'gap_pernocta_pct', 'kg_hab_any', 'residu_base_ratio', 'carrega_total_est', 'carrega_funcional_est', 'vidre_hab', 'vidre_base_ratio', 'index_turisme', 'restauracio_per_1000hab', 'restauracio_estab', 'confianca']
+			keys: ['kwh_hab', 'kwh_base_ratio', 'gap_pernocta_pct', 'kg_hab_any', 'residu_base_ratio', 'carrega_total_est', 'carrega_funcional_est', 'vidre_hab', 'vidre_base_ratio', 'restauracio_per_1000hab', 'restauracio_estab', 'confianca']
 		},
 		{
 			ref: 'D',
@@ -141,6 +139,7 @@
 	// Font · data del contracte (cap font codificada a mà).
 	function srcLine(key: MetricKey): string {
 		const def = dataset.metrics[key];
+		if (!def) return ''; // clau retirada del catàleg (mètrica deprecada) → sense font, mai un 500
 		return def.date ? `${def.source} · ${def.date}` : def.source;
 	}
 	// Algunes mètriques del catàleg poden estar marcades `planned` (definides, encara no calculades).
