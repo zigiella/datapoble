@@ -8,6 +8,7 @@
     "machine-translate": "paraglide-js compile --project ./project.inlang --outdir ./src/lib/paraglide",
     "paraglide": "paraglide-js compile --project ./project.inlang --outdir ./src/lib/paraglide",
     "copy-data": "node scripts/copy-data.mjs",
+    "verify:govern": "node scripts/verify-govern.mjs",
     "prepare": "npm run paraglide && svelte-kit sync || echo 'prepare skipped'",
     "predev": "npm run copy-data",
     "dev": "npm run paraglide && vite dev",

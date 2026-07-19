@@ -24,6 +24,7 @@
 	 * Chrome del design-system (.ap-hero + .ds-main/.ds-sec); el text nou és i18n ca/es.
 	 */
 	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	import { browser } from '$app/environment';
 	import ContourField from '$lib/components/ContourField.svelte';
 	import { currentLocale, pick, localizeHref } from '$lib/i18n';
@@ -35,6 +36,8 @@
 	import { m } from '$lib/paraglide/messages';
 	import type { MetricDef, MetricKey, MetricValue, MunicipiRow } from '$lib/contract/types';
 	import type { LectTo } from '$lib/contract/lectures';
+	import { GOVERN_KPIS, provenanceLine } from '$lib/govern/kpis';
+	import type { GovernEntry } from '$lib/contract/govern';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -45,6 +48,18 @@
 	// aparcat). null = Idescat no la publica (<1.000 hab) → «sense dada oficial».
 	const etca = $derived(data.etca ?? null);
 	const isBergueda = $derived(data.isBergueda ?? false); // pilot profund vs espina CAT (lede honest)
+	// ── Vista de govern (D5 · C6) ────────────────────────────────────────────────────────────
+	// El commutador viu a la URL (`?vista=govern`): la MATEIXA fitxa, amb els KPIs de la gorra al
+	// capdamunt i el rang comarcal (C6 §1). La vista NOMÉS canvia l'ordenació i l'èmfasi, mai les
+	// xifres (test de paritat §10.1). Es reactiva a `page.url` (client). El rang «k de n» es LLEGEIX
+	// del mart via `data.govern` (D4) — el front no calcula cap rang (C6 §4).
+	const govern = $derived<GovernEntry | null>(data.govern ?? null);
+	// `?vista=govern` NOMÉS es llegeix al client: la pàgina és prerenderitzada (adapter-static) i
+	// SvelteKit prohibeix `url.searchParams` en prerender (el query no es coneix en build). Per tant
+	// el prerender surt sempre en vista veïnal i, en hidratar, el client hi aplica el commutador
+	// (millora progressiva). Paritat intacta: les xifres són les mateixes; només canvia l'ordenació.
+	const isGovern = $derived(browser && page.url.searchParams.get('vista') === 'govern');
+	const basePath = $derived(page.url.pathname); // conserva el prefix de locale (/es/…)
 	// Espina territorial: comarca/vegueria del muni + municipis veïns de la comarca (navegació).
 	const territori = $derived(data.territori);
 	const veins = $derived(data.veins ?? []);
@@ -245,6 +260,34 @@
 		return def.date ? `${def.source} · ${def.date}` : def.source;
 	}
 
+	// ── Ajudes de la vista de govern ──────────────────────────────────────────────────────────
+	// Els 4 blocs de la gorra §3 (ordre FIX, C6 §7 — cap KPI es reordena per enterrar-lo).
+	const GOV_GROUPS = [
+		{ g: 'A', label: () => m.gov_grp_a() },
+		{ g: 'B', label: () => m.gov_grp_b() },
+		{ g: 'C', label: () => m.gov_grp_c() },
+		{ g: 'D', label: () => m.gov_grp_d() }
+	] as const;
+	const kpisOf = (g: string) => GOVERN_KPIS.filter((k) => k.group === g);
+	// Def del contracte per a una clau (les claus del descriptor són strings JS).
+	const gDef = (key: string): MetricDef => dataset.metrics[key as MetricKey];
+	// Unitat curta editorial per a la targeta (mateixa pràctica que SHORT_UNIT; % pel format).
+	const GOV_UNIT: Record<string, string> = {
+		poblacio: 'hab.',
+		renda_neta_persona: '€',
+		kwh_hab: 'kWh',
+		kg_hab_any: 'kg',
+		rtc_per_1000hab: '‰'
+	};
+	function gUnit(key: string): string {
+		if (gDef(key)?.format === 'percent') return '%';
+		return GOV_UNIT[key] ?? '';
+	}
+	// Prefixa el signe a una variació ja formatada (la negativa ja porta el «−» d'Intl).
+	function signed(s: string): string {
+		return s.startsWith('-') || s.startsWith('−') ? s : `+${s}`;
+	}
+
 	// Pobles mirall a escala Catalunya: bessons funcionals (no geogràfics) de tot el país, resolts al
 	// loader des de l'artefacte `municipis-mirall.json` (Nivell C). Per a QUALSEVOL muni, no només Berguedà.
 	// (La confiança del model —score, divergència, validats— està APARCADA amb el model: les dades
@@ -342,7 +385,105 @@
 			</div>
 		</section>
 
+		<!-- Commutador de vista (C6 §1): la MATEIXA URL, amb i sense `?vista=govern`, mostra les
+		     MATEIXES xifres (test de paritat §10.1). El mode govern només canvia l'ordenació i
+		     l'èmfasi. S'ofereix NOMÉS al Berguedà (C6 §1.2). Enllaços compartibles, no estat amagat. -->
+		{#if isBergueda && row}
+			<section class="ds-sec" style="border-top:none">
+				<div class="gov-switch" role="group" aria-label={m.gov_switch_aria()}>
+					<a
+						class="gov-switch__opt"
+						href={basePath}
+						data-active={!isGovern}
+						aria-current={!isGovern ? 'true' : undefined}>{m.gov_view_veinal()}</a
+					>
+					<a
+						class="gov-switch__opt"
+						href={`${basePath}?vista=govern`}
+						data-active={isGovern}
+						aria-current={isGovern ? 'true' : undefined}>{m.gov_view_govern()}</a
+					>
+				</div>
+			</section>
+		{/if}
+
 		{#if row}
+			<!-- TAULER DE GOVERN (D5): els KPIs de la gorra §3 al capdamunt, amb el rang comarcal
+			     «k de n» LLEGIT del mart (C6 §4, mai calculat aquí) i, a cada targeta, la seva
+			     procedència: FONT (mesurada) o FÓRMULA (inferida) — regla de ferro de Bea (C6 §8.1). -->
+			{#if isGovern}
+				<section class="ds-sec gov-board" aria-labelledby="gov-board-h">
+					<div class="ds-sec__hd"><span class="ref">◆</span><h2 id="gov-board-h">{m.gov_board_title()}</h2></div>
+					<p class="muni-sec__sub">{m.gov_board_sub()}</p>
+					{#each GOV_GROUPS as grp (grp.g)}
+						<h3 class="gov-grp">{grp.label()}</h3>
+						<div class="gov-grid tnum">
+							{#each kpisOf(grp.g) as kpi (kpi.kind + (kpi.key ?? ''))}
+								{#if kpi.kind === 'metric' && kpi.key}
+									{@const def = gDef(kpi.key)}
+									{@const cell = govern?.metrics?.[kpi.key] ?? null}
+									{@const prv = provenanceLine(def)}
+									<article class="gov-kpi">
+										<p class="gov-kpi__lab">
+											<span class="pd {provDotClass(prov(row, kpi.key as MetricKey))}"></span>{pick(def.label, locale)}
+										</p>
+										<p class="gov-kpi__v">
+											{fmt(row, kpi.key as MetricKey)}{#if gUnit(kpi.key)}<span class="u">{gUnit(kpi.key)}</span>{/if}
+										</p>
+										{#if kpi.deltaKey}
+											<p class="gov-kpi__delta">{signed(fmt(row, kpi.deltaKey as MetricKey))} pts · {m.gov_nova_delta_label()}</p>
+										{/if}
+										{#if cell && cell.rang != null}
+											<p class="gov-kpi__rank">
+												<span class="gov-kpi__rankk">{m.gov_rang_val({ k: String(cell.rang), n: String(cell.n_amb_dada) })}</span>
+												<span class="gov-kpi__rankl">{m.gov_rang_label()}{#if cell.empat} · {m.gov_rang_empat()}{/if}{m.gov_rang_cap({ comarca: govern?.comarca ?? '' })}</span>
+											</p>
+										{:else if kpi.bea}
+											<p class="gov-kpi__norank">{m.gov_nova_norank()}</p>
+										{/if}
+										{#if prv.formula}
+											<p class="gov-kpi__prov"><span class="gov-kpi__provk">ƒ</span> {prv.formula}</p>
+											<p class="gov-kpi__src">{prv.src}</p>
+										{:else}
+											<p class="gov-kpi__src">{prv.src}</p>
+										{/if}
+										{#if kpi.bea}
+											<p class="gov-kpi__bea">{m.gov_kpi_nova_frame()} <span class="gov-tag">{m.gov_bea_pending()}</span></p>
+										{/if}
+									</article>
+								{:else if kpi.kind === 'etca'}
+									<article class="gov-kpi">
+										<p class="gov-kpi__lab"><span class="pd dot--measured"></span>{m.muni_num_etca()}</p>
+										{#if etca !== null}
+											<p class="gov-kpi__v">{formatInteger(etca, locale)}<span class="u">hab.</span></p>
+										{:else}
+											<p class="gov-kpi__v gov-kpi__v--absent">{m.muni_sense_dada_oficial()}</p>
+										{/if}
+										<p class="gov-kpi__src">{m.muni_etca_srcline()}</p>
+									</article>
+								{:else if kpi.kind === 'atur'}
+									<article class="gov-kpi gov-kpi--pending">
+										<p class="gov-kpi__lab"><span class="pd dot--measured"></span>{m.gov_kpi_atur()}</p>
+										<p class="gov-kpi__v gov-kpi__v--absent">{m.gov_kpi_atur_pending()}</p>
+										<p class="gov-kpi__src">{m.gov_kpi_atur_src()}</p>
+									</article>
+								{:else if kpi.kind === 'serveis'}
+									{@const sDef = gDef('serveis_estab')}
+									<article class="gov-kpi">
+										<p class="gov-kpi__lab"><span class="pd dot--measured"></span>{m.gov_kpi_serveis()}</p>
+										<p class="gov-kpi__v">
+											{fmt(row, 'serveis_estab')}<span class="u">{m.gov_kpi_serveis_a()}</span> · {fmt(row, 'restauracio_estab')}<span class="u">{m.gov_kpi_serveis_b()}</span>
+										</p>
+										<p class="gov-kpi__src">{srcLine(sDef)}</p>
+									</article>
+								{/if}
+							{/each}
+						</div>
+					{/each}
+					<p class="gov-board__foot">{m.muni_srcline()}</p>
+				</section>
+			{/if}
+
 			<!-- P1 · EL VEREDICTE: la frase-mare de la IA (verificada), el primer cop d'ull. Només si
 			     la lectura ve del model; si és reserva o no hi és, s'omet (degradació honesta). -->
 			{#if veredicte}
@@ -1002,4 +1143,187 @@
 		color: var(--dp-forest);
 	}
 	/* (El mirall ara és la constel·lació cat-escala —MirallConstel.svelte—, amb estil propi.) */
+
+	/* ── Vista de govern (D5 · C6) ───────────────────────────────────────────────────────── */
+	/* Commutador Veïnal | Govern: segmented control d'enllaços (compartibles). */
+	.gov-switch {
+		display: inline-flex;
+		gap: 2px;
+		padding: 3px;
+		border: 1px solid var(--dp-border-strong);
+		border-radius: var(--dp-radius-full);
+		background: var(--dp-surface);
+	}
+	.gov-switch__opt {
+		font-family: var(--dp-font-mono);
+		font-size: 0.72rem;
+		letter-spacing: 0.03em;
+		text-transform: uppercase;
+		padding: 6px 16px;
+		border-radius: var(--dp-radius-full);
+		text-decoration: none;
+		color: var(--dp-text-muted);
+		transition:
+			background 0.15s ease,
+			color 0.15s ease;
+	}
+	.gov-switch__opt[data-active='true'] {
+		background: var(--dp-text);
+		color: var(--dp-bg);
+	}
+	.gov-switch__opt:hover:not([data-active='true']) {
+		color: var(--dp-text);
+		background: var(--dp-accent-weak);
+	}
+	.gov-switch__opt:focus-visible {
+		outline: 2px solid var(--dp-focus, var(--dp-forest));
+		outline-offset: 2px;
+	}
+
+	/* Tauler: grups de la gorra §3 + graella de targetes de KPI. */
+	.gov-grp {
+		margin: 18px 0 8px;
+		font-family: var(--dp-font-mono);
+		font-size: 0.66rem;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--dp-text-subtle);
+	}
+	.gov-grp:first-of-type {
+		margin-top: 6px;
+	}
+	.gov-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+		gap: 12px;
+	}
+	.gov-kpi {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		padding: 13px 14px;
+		background: var(--dp-surface);
+		border: 1px solid var(--dp-border);
+		border-radius: var(--dp-radius-md);
+	}
+	.gov-kpi--pending {
+		opacity: 0.72;
+	}
+	.gov-kpi__lab {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		margin: 0;
+		font-size: 0.78rem;
+		line-height: 1.3;
+		color: var(--dp-text-muted);
+	}
+	.gov-kpi__lab .pd {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		flex: none;
+	}
+	.gov-kpi__v {
+		margin: 0;
+		font-family: 'Archivo', var(--dp-font-display);
+		font-weight: 700;
+		font-size: 1.5rem;
+		line-height: 1;
+		color: var(--dp-text);
+	}
+	.gov-kpi__v .u {
+		font-family: var(--dp-font-mono);
+		font-size: 0.6rem;
+		color: var(--dp-text-subtle);
+		margin-left: 3px;
+	}
+	.gov-kpi__v--absent {
+		font-family: var(--dp-font-sans);
+		font-weight: 600;
+		font-size: 0.9rem;
+		color: var(--dp-text-muted);
+	}
+	.gov-kpi__delta {
+		margin: 0;
+		font-family: var(--dp-font-mono);
+		font-size: 0.66rem;
+		color: var(--dp-text-subtle);
+	}
+	/* Rang comarcal «k de n» (LLEGIT del mart, C6 §4 — mai calculat al front). */
+	.gov-kpi__rank {
+		margin: 2px 0 0;
+		display: flex;
+		align-items: baseline;
+		gap: 7px;
+		flex-wrap: wrap;
+	}
+	.gov-kpi__rankk {
+		font-family: 'Archivo', var(--dp-font-display);
+		font-weight: 700;
+		font-size: 0.95rem;
+		color: var(--dp-text);
+		background: var(--dp-accent-weak);
+		border-radius: var(--dp-radius-sm);
+		padding: 1px 7px;
+	}
+	.gov-kpi__rankl {
+		font-family: var(--dp-font-mono);
+		font-size: 0.62rem;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: var(--dp-text-subtle);
+	}
+	.gov-kpi__norank {
+		margin: 2px 0 0;
+		font-family: var(--dp-font-mono);
+		font-size: 0.62rem;
+		color: var(--dp-text-subtle);
+		line-height: 1.4;
+	}
+	/* Procedència (regla de ferro C6 §8.1): fórmula (inferida) o font (mesurada). */
+	.gov-kpi__prov {
+		margin: 4px 0 0;
+		font-family: var(--dp-font-mono);
+		font-size: 0.66rem;
+		color: var(--dp-text-muted);
+		line-height: 1.4;
+		word-break: break-word;
+	}
+	.gov-kpi__provk {
+		color: var(--dp-forest);
+		font-style: italic;
+		margin-right: 2px;
+	}
+	.gov-kpi__src {
+		margin: 0;
+		font-family: var(--dp-font-mono);
+		font-size: 0.6rem;
+		color: var(--dp-text-subtle);
+		line-height: 1.4;
+	}
+	.gov-kpi__bea {
+		margin: 6px 0 0;
+		font-size: 0.72rem;
+		line-height: 1.45;
+		color: var(--dp-text-muted);
+	}
+	.gov-tag {
+		display: inline-block;
+		font-family: var(--dp-font-mono);
+		font-size: 0.58rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: var(--dp-text-subtle);
+		border: 1px solid var(--dp-border-strong);
+		border-radius: var(--dp-radius-sm);
+		padding: 1px 6px;
+		white-space: nowrap;
+	}
+	.gov-board__foot {
+		margin: 16px 0 0;
+		font-family: var(--dp-font-mono);
+		font-size: 0.62rem;
+		color: var(--dp-text-subtle);
+	}
 </style>
