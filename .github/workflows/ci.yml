@@ -90,6 +90,11 @@ jobs:
         run: |
           python tools/export_web_municipis.py --scope catalunya --check
           python tools/export_web_municipis.py --scope bergueda --check
+      # D5 · mode govern: el pont mart_govern → JSON servible (rang comarcal per al front).
+      # Sense aquest --check, el JSON versionat es podia desincronitzar en silenci del parquet
+      # (el forat que D4/D5 van destapar: D4 emetia parquet, no JSON web). Ownership → Sondeig.
+      - name: Export govern web al dia (mart_govern → web · offline)
+        run: python tools/export_govern_web.py --check
 
   # Brúixola: evals de la capa de IA (texto→SQL trazable). Corre OFFLINE
   # (sin OPENROUTER_API_KEY): determinista, sin red. Gate anti-regresión.

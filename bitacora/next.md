@@ -93,7 +93,16 @@ publicable per si sola.*
 >    les notes de kwh/vidre/restauració citen «capa L1/L3» (model aparcat) → termes oficials.
 >    · **D2** (HERMES selectiu, C1 §1.2) queda DARRERE de D4.
 >
-> **🟡 COLA DE MIRADOR (dashboard niquelat) — D4 ✅ FUSIONAT (#268), desbloquejada:**
+> **🟡 COLA DE MIRADOR: D5 ✅ FUSIONAT (#271) — DASHBOARD NIQUELAT.** Mode govern viu (?vista=govern):
+> 12 KPIs amb rang comarcal LLEGIT del mart (mai calculat al front), cada targeta amb font O fórmula
+> (regla de Bea §8.1), pernocta aparcada, política editorial. **➡️ Handoff a Sondeig:** el pont
+> `tools/export_govern_web.py` + `data/web/govern.bergueda.json` el va CREAR Mirador (D4 emetia parquet
+> però cap JSON servible — forat de D4); és jurisdicció de `tools/`/dades: revisar-ne la propietat i
+> el disseny (idealment D4 hauria emès aquest JSON). Talaia ja n'ha cablat el `--check` al CI (#272).
+> **Multi-municipi** (Gombrèn/gorra §5): la vista es limita al Berguedà (C6 §1.2); obrir-la = exportar
+> el mart sencer + obrir la porta isBergueda — deixat escrit, no fet (costat conservador). **Atur al
+> tauler:** targeta «pendent» fins que hi hagi export web de mart_pols_mensual.
+> **[HISTÒRIC] Mirador D5 (ara fet):**
 > **D5 · la vista de govern** (`?vista=govern` a `municipi/[slug]`, C6+gorra): els 12 KPIs amb el
 > **rang comarcal «k de n»** que D4 ja calcula al mart (`mart_govern` — es LLEGEIX, mai es recalcula
 > al front, C6 §4), sèries, licitacions filtrades per ine5, bloc de preguntes suggerides.
