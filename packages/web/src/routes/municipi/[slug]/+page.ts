@@ -27,6 +27,7 @@ import type { PernoctaData } from '$lib/contract/pernocta';
 import type { CatalegData } from '$lib/contract/cataleg';
 import type { TerritoriData, MuniTerritori } from '$lib/contract/territori';
 import type { MirallData, MirallVei } from '$lib/contract/mirall';
+import type { GovernData, GovernEntry } from '$lib/contract/govern';
 import type { EntryGenerator, PageLoad } from './$types';
 
 export const prerender = true;
@@ -178,6 +179,24 @@ export const load: PageLoad = async ({ fetch, params }) => {
 		}
 	}
 
+	// VISTA DE GOVERN (D5): el rang comarcal «k de n» que D4 va calcular al mart_govern i que
+	// `export_govern_web.py` serveix a `/data/govern.json`. El front NOMÉS el LLEGEIX (C6 §4):
+	// aquí n'agafem l'entrada del municipi (cel·les {valor, rang, n_amb_dada, data, empat} per
+	// mètrica). Abast de la vista = Berguedà (C6 §1.2), així que només es carrega si `isBergueda`.
+	// Prerender-safe, no-fatal (sense l'artefacte, la vista de govern simplement no mostra rang).
+	let govern: GovernEntry | null = null;
+	if (isBergueda && ine5) {
+		try {
+			const res = await fetch('/data/govern.json');
+			if (res.ok) {
+				const all = (await res.json()) as GovernData;
+				govern = all[ine5] ?? null;
+			}
+		} catch {
+			govern = null;
+		}
+	}
+
 	// Lectura-IA és un artefacte del BERGUEDÀ: només es carrega si el muni hi és (`row`). Així la
 	// resta de Catalunya no fa fetches inútils en prerender. Prerender-safe.
 	// (Licitacions aparcades per al llançament —decisió Bea—: la fitxa no en mostra secció.)
@@ -194,5 +213,5 @@ export const load: PageLoad = async ({ fetch, params }) => {
 		}
 	}
 
-	return { dataset, ine5, nom, row, isBergueda, lectura, etca, territori, veins, veinsTotal, miralls };
+	return { dataset, ine5, nom, row, isBergueda, lectura, etca, govern, territori, veins, veinsTotal, miralls };
 };

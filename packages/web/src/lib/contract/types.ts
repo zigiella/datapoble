@@ -81,8 +81,8 @@ export type MetricKey =
 	| 'carrega_total_est'
 	//  Denominador funcional: max(L1, L2) — el sostre per governar serveis
 	| 'carrega_funcional_est'
-	//  L3 PRESSIÓ turística (via vidre/hostaleria, 0-100)
-	| 'index_turisme'
+	// (`index_turisme` DEPRECAT i FORA dels publicadors —#267/#268, D4—: satura a 100 en 47
+	//  municipis; substituït per `kwh_hab`/`vidre_hab`. Retirat del tipus: ja no és al JSON.)
 	// Compatibilitat (model d'una sola capa, reenquadrat com a càrrega) + confiança
 	| 'poblacio_real_est'
 	| 'poblacio_real_rel'

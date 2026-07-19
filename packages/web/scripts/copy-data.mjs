@@ -49,7 +49,10 @@ const FILES = [
 	{ src: resolve(REPO_ROOT, 'data/web/pernocta-catalunya.json'), name: 'pernocta-catalunya.json' },
 	{ src: resolve(REPO_ROOT, 'data/web/municipis-territori.json'), name: 'municipis-territori.json' },
 	{ src: resolve(REPO_ROOT, 'data/web/municipis-mirall.json'), name: 'municipis-mirall.json' },
-	{ src: resolve(REPO_ROOT, 'data/web/indicadors-catalunya.json'), name: 'indicadors-catalunya.json' }
+	{ src: resolve(REPO_ROOT, 'data/web/indicadors-catalunya.json'), name: 'indicadors-catalunya.json' },
+	// Vista de govern (D5): rang «k de n» per comarca LLEGIT del mart_govern (D4) — el front
+	// NO el calcula (C6 §4). El genera `tools/export_govern_web.py` des del parquet versionat.
+	{ src: resolve(REPO_ROOT, 'data/web/govern.bergueda.json'), name: 'govern.json' }
 ];
 
 mkdirSync(DEST_DIR, { recursive: true });
