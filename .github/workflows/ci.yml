@@ -67,7 +67,13 @@ jobs:
       # període, cap Δ inventat, «sense sèrie» EXPLÍCIT amb motiu, i la doctrina del «<5»
       # propagada al delta (interval, no número). Recalcula A MÀ els 1.894 deltes d'atur
       # des de mart_pols_mensual i els compara byte a byte.
-      - name: Verify mart_tendencia (Δ d'atur recalculats a mà + regla del període · offline)
+      # D10 · dues guardes noves aquí dins: (1) CAP TARGETA DEL TAULER SENSE FILA — el
+      # conjunt esperat es DERIVA de l'autoritat del front (src/lib/govern/kpis.js, via
+      # tools/tauler_kpis.py) en comptes d'escriure's a mà, perquè escrit a mà divergia en
+      # silenci (serveis_estab/restauracio_estab es pintaven i no tenien fila al mart);
+      # (2) el motiu de «sense sèrie» ha d'existir EN ELS DOS IDIOMES: el front el pinta
+      # literal i traduir-lo allà seria inventar dada.
+      - name: Verify mart_tendencia (Δ d'atur a mà + període + cobertura del tauler · offline)
         run: python packages/transform/verify_tendencia.py
       # Suite COMPLETA de `signals`, 100% OFFLINE (fixtures reals arxivades +
       # sessions HTTP falses + parquets versionats; cap crida de xarxa, cap clau).
@@ -99,7 +105,11 @@ jobs:
         run: python tools/senyal_sub1000.py --check
       - name: Export Licitacions al dia (cabal → web · offline)
         run: python tools/export_licitacions.py --check
-      - name: Export web municipis al dia (cabal → web · offline)
+      # D10 · el --check també fa córrer les guardes del CATÀLEG (check_catalog): cap clau
+      # servida sense valor ni excepció declarada, i cap mètrica amb `frescor.actualitzacio`
+      # null que no consti a la llista d'excepcions ESCRITES — que a més caduca sola (si una
+      # clau pendent deixa d'estar trencada, la guarda cau i obliga a retirar-la).
+      - name: Export web municipis al dia (cabal → web + guardes del catàleg · offline)
         run: |
           python tools/export_web_municipis.py --scope catalunya --check
           python tools/export_web_municipis.py --scope bergueda --check

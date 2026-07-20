@@ -10,8 +10,16 @@ D'HONESTEDAT del §2 de ``docs/ajuntaments/tauler-v2-esmenes-bea.md``, que és v
   2. **Cap fletxa sense període.** Tota fila amb `direccio` o amb `delta` porta
      `periode_anterior` i `periode_actual`. És LA regla de Bea; si es trenca, el CI cau.
   3. **Cap Δ inventat, cap NULL mut.** Les mètriques sense sèrie hi són EXPLÍCITES
-     (estat='sense_serie') amb el motiu escrit i sense cap delta. Les que en tenen no
-     poden dur estat='sense_serie'.
+     (estat='sense_serie') amb el motiu escrit —EN ELS DOS IDIOMES (D10)— i sense cap
+     delta. Les que en tenen no poden dur estat='sense_serie'.
+  3b. **CAP TARGETA DEL TAULER SENSE FILA** (D10 · el forat que va destapar Mirador).
+     El conjunt esperat NO s'escriu aquí: es deriva de l'autoritat del front
+     (``packages/web/src/lib/govern/kpis.js``, via ``tools/tauler_kpis.py``). Fins a D9
+     aquest fitxer comprovava «cap 'sense_serie' sense motiu» però no «cap mètrica del
+     tauler sense fila», i per això ``serveis_estab``/``restauracio_estab`` es pintaven
+     al tauler sense cap fila al mart —ni tan sols com a 'sense_serie'— sense que res
+     petés. Una fila que falta és INVISIBLE; un motiu es pot llegir. Amb la llista
+     escrita a mà la propera també hauria faltat: per això ara es deriva.
   4. **Doctrina del «<5» propagada al delta** (C1 §1.1): si un dels dos punts venia
      emmascarat, `delta` és NULL i el que s'emet és l'INTERVAL [delta_min, delta_max].
      Mai un número exacte sobre un punt secret, mai un zero.
@@ -41,6 +49,10 @@ MART = REPO / "data" / "marts" / "mart_tendencia.parquet"
 POLS = REPO / "data" / "marts" / "mart_pols_mensual.parquet"
 TERRITORI = REPO / "data" / "web" / "municipis-territori.json"
 
+# La composició del tauler es DERIVA (D10), no es copia: vegeu tools/tauler_kpis.py.
+sys.path.insert(0, str(REPO / "tools"))
+from tauler_kpis import metriques_del_tauler  # noqa: E402
+
 N_MUNICIPIS = 947
 
 AMB_SERIE = {"atur_registrat", "pct_nacionalitat_estrangera", "poblacio_nacionalitat_estrangera"}
@@ -48,6 +60,8 @@ SENSE_SERIE = {
     "poblacio", "pob_0_14", "pob_15_64", "pob_65_84", "pob_85_mes", "index_envelliment",
     "renda_neta_persona", "pct_noprincipal", "kg_hab_any", "kwh_hab", "vidre_hab",
     "rtc_per_1000hab",
+    # D10 · les dues que es pintaven i no hi eren (targeta «comerç i serveis», bloc C).
+    "serveis_estab", "restauracio_estab",
 }
 
 # Àncores A MÀ · la Pobla de Lillet (08166), atur. Llegides del pols i restades a mà:
@@ -89,6 +103,20 @@ def main() -> int:  # noqa: C901 — un verificador és una llista de guardes, n
             fails.append(msg)
 
     # --- 1. Estructura ---
+    # Esquema primer: si falta una columna, val més dir-ho que petar amb un KeyError
+    # tres guardes més avall (un traceback també és un CI vermell, però no s'entén).
+    COLUMNES = [
+        "ine5", "codi6", "municipi", "comarca", "metric", "comparacio", "estat",
+        "motiu_ca", "motiu_es", "periode_actual", "periode_anterior", "valor_actual",
+        "valor_anterior", "delta", "delta_min", "delta_max", "delta_emmascarat",
+        "unitat_delta", "direccio",
+    ]
+    if manquen := [c for c in COLUMNES if c not in df.columns]:
+        print(f"VERIFICACIÓ mart_tendencia: FALLA — columnes absents: {manquen} "
+              f"(el parquet és d'abans del canvi d'esquema? regenera'l amb dbt build)",
+              file=sys.stderr)
+        return 1
+
     check(not df.empty, "mart buit")
     check(df["ine5"].nunique() == N_MUNICIPIS,
           f"municipis = {df['ine5'].nunique()} ≠ {N_MUNICIPIS}")
@@ -101,6 +129,23 @@ def main() -> int:  # noqa: C901 — un verificador és una llista de guardes, n
     mismatch = df[df["comarca"] != df["ine5"].map(ine5_to_comarca)]
     check(mismatch.empty,
           f"comarca ≠ municipis-territori.json a {len(mismatch)} files")
+
+    # --- 1b. CAP TARGETA DEL TAULER SENSE FILA (D10) ---
+    # El conjunt esperat es DERIVA del front (kpis.js), no d'una llista d'aquí: si les dues
+    # llistes s'escriuen a mà, divergeixen — i divergir vol dir una targeta muda que ningú veu.
+    pintades = metriques_del_tauler(REPO)
+    al_mart = set(df["metric"].unique())
+    sense_fila = pintades - al_mart
+    check(not sense_fila,
+          f"{len(sense_fila)} mètriques que el TAULER PINTA i que no tenen cap fila al mart: "
+          f"{sorted(sense_fila)} — una fila que falta és invisible (el lector no distingeix "
+          f"«no ha canviat» de «no ho sabem»); afegeix-les amb estat 'sense_serie' i el motiu escrit")
+    # Coherència de la nostra pròpia declaració: si el mart cobreix una targeta, ha de constar
+    # als conjunts d'aquest fitxer (si no, el punt 3 la deixaria passar sense classificar).
+    no_declarades = pintades - (AMB_SERIE | SENSE_SERIE)
+    check(not no_declarades,
+          f"mètriques del tauler no declarades ni a AMB_SERIE ni a SENSE_SERIE: "
+          f"{sorted(no_declarades)}")
 
     # --- 2. CAP FLETXA SENSE PERÍODE (la regla de Bea) ---
     amb_fletxa = df[df["direccio"].notna()]
@@ -118,8 +163,15 @@ def main() -> int:  # noqa: C901 — un verificador és una llista de guardes, n
     check(sense["delta"].isna().all(), "una fila 'sense_serie' porta delta")
     check(sense["delta_min"].isna().all() and sense["delta_max"].isna().all(),
           "una fila 'sense_serie' porta interval de delta")
-    check(sense["motiu"].notna().all() and sense["motiu"].astype(str).str.len().gt(20).all(),
-          "hi ha una fila 'sense_serie' sense motiu escrit (o massa curt per informar)")
+    # El motiu, EN ELS DOS IDIOMES (D10): el front el pinta literal i no el pot traduir sense
+    # inventar-se'l, així que si en falta un el lector d'aquesta llengua es quedaria sense
+    # l'única explicació que té la targeta.
+    for col in ("motiu_ca", "motiu_es"):
+        check(sense[col].notna().all() and sense[col].astype(str).str.len().gt(20).all(),
+              f"hi ha una fila 'sense_serie' sense {col} escrit (o massa curt per informar)")
+    check((sense["motiu_ca"] != sense["motiu_es"]).all(),
+          "hi ha una fila 'sense_serie' amb motiu_ca idèntic a motiu_es "
+          "(o s'ha copiat el català al castellà, o falta traduir-lo)")
     check(sense["direccio"].isna().all(), "una fila 'sense_serie' porta direcció")
     check(set(sense["metric"].unique()) == SENSE_SERIE,
           f"conjunt 'sense_serie' inesperat: {sorted(set(sense['metric'].unique()))}")
@@ -127,7 +179,8 @@ def main() -> int:  # noqa: C901 — un verificador és una llista de guardes, n
     check(set(amb["metric"].unique()) == AMB_SERIE,
           f"conjunt 'amb_serie' inesperat: {sorted(set(amb['metric'].unique()))}")
     check(amb["comparacio"].notna().all(), "hi ha 'amb_serie' sense dir quina comparació és")
-    check(amb["motiu"].isna().all(), "una fila 'amb_serie' porta motiu de sense-sèrie")
+    check(amb["motiu_ca"].isna().all() and amb["motiu_es"].isna().all(),
+          "una fila 'amb_serie' porta motiu de sense-sèrie")
 
     # --- 4. Doctrina del «<5» propagada al delta ---
     emm = df[df["delta_emmascarat"]]

@@ -58,6 +58,14 @@ METRIC_KEYS = [
     "pob_0_14", "pob_15_64", "pob_65_84", "pob_85_mes", "pob_65_mes",
     "hab_total", "hab_principal", "hab_noprincipal",
     "pct_noprincipal", "hab_per_hab", "index_envelliment", "densitat_hab_km2", "renda_neta_persona",
+    # Treball (D10). Al contracte hi era des de D1 (`atur_registrat`, amb el seu caveat i la
+    # doctrina del «<5»), però NO arribava aquí: conseqüència, l'etiqueta i la font de la
+    # targeta d'atur del tauler eren les DUES ÚNIQUES cadenes escrites al codi del front i no
+    # llegides del contracte — una violació del mecanisme de la regla de ferro de Bea (C6 §8.1),
+    # que exigeix que cada xifra porti la seva font O fórmula i que aquestes surtin del contracte.
+    # Només entra al CATÀLEG: el seu valor viu a mart_pols_mensual i se serveix per
+    # `tauler.bergueda.json` (cadència mensual pròpia), no a `values` d'aquest fitxer.
+    "atur_registrat",
     # Origen: composició i arrelament (capa sensible; lectura ecològica, mai individual).
     "poblacio_nascuda_catalunya", "poblacio_nascuda_resta_espanya",
     "poblacio_nascuda_estranger", "pct_nascuda_estranger",
@@ -98,6 +106,8 @@ FORMAT_BY_KEY = {
     "hab_noprincipal": "integer", "pct_noprincipal": "percent",
     "hab_per_hab": "ratio", "index_envelliment": "decimal", "densitat_hab_km2": "decimal",
     "renda_neta_persona": "integer",
+    # Treball: recompte de persones (l'interval del «<5» el pinta el tauler, no el format).
+    "atur_registrat": "integer",
     # Origen (composició i arrelament): comptes enters, %s en 0-100, bretxa/delta en punts.
     "poblacio_nascuda_catalunya": "integer", "poblacio_nascuda_resta_espanya": "integer",
     "poblacio_nascuda_estranger": "integer", "pct_nascuda_estranger": "percent",
@@ -241,6 +251,63 @@ def resolve_frescor(spec: dict, sources: dict) -> dict[str, Any]:
         "proces_refresc": src.get("proces_refresc"),
         "font_frescor": src_key or None,
     }
+
+
+# --- GUARDA DE FRESCOR (D10 · serrell b) ------------------------------------------------
+# Una derivada (`source: datapoble`) hereta la cadència del seu `origin_source`. Si no en
+# declara cap, `resolve_frescor` emet `actualitzacio: null` — un buit visible, sí, però al
+# tauler es tradueix en una targeta que no pot dir de quan és la seva xifra. `rtc_per_1000hab`
+# n'és una I ÉS TARGETA VIVA del tauler.
+#
+# El fix és al contracte (`semantic/metrics.yml`) i el contracte és de Talaia: aquí no s'edita,
+# es PROPOSA (bitàcola 2026-07-20, amb el diff exacte). Mentrestant la guarda ja corre, amb les
+# excepcions ESCRITES i amb data — que és el contrari de callar-les:
+#
+#   · IETR / IETR_rank — el null és HONEST i s'hi queda: l'IETR composa residus + ICAEN + RTC
+#     + padró; no té UN origen del qual heretar cadència, i triar-ne un seria mentir sobre
+#     quan es refresca. La seva absència és la resposta correcta.
+#   · rtc_per_1000hab / rtc_per_100hab_viv / hab_per_hab — PENDENTS del contracte. Aquestes
+#     SÍ que tenen un origen únic i clar; falta escriure'l. Quan Talaia hi baixi l'`origin_source`,
+#     aquesta llista s'ha de buidar sola: si una clau d'aquí deixa d'estar trencada, la guarda
+#     també cau (una excepció que sobreviu al seu motiu és una mentida amb bona intenció).
+FRESCOR_NULL_HONEST = {"IETR", "IETR_rank"}
+FRESCOR_NULL_PENDENT_CONTRACTE = {"rtc_per_1000hab", "rtc_per_100hab_viv", "hab_per_hab"}
+
+# Claus del catàleg que NO porten valor a `values` (no són columnes de cap mart d'aquí).
+# Han de ser DECLARADES: un catàleg que promet una mètrica i no la serveix enlloc és una
+# altra manera de callar.
+#   · atur_registrat — viu a `mart_pols_mensual`; se serveix per `tauler.bergueda.json`
+#     amb la seva pròpia cadència mensual (D7). Aquí només n'entra la fitxa del contracte
+#     (etiqueta, font, data, caveat), que és el que la targeta del tauler ha de llegir.
+SENSE_VALOR_AL_DATASET = {"atur_registrat"}
+
+
+def check_catalog(metrics: dict[str, dict]) -> list[str]:
+    """Guardes del catàleg servit. Retorna la llista d'errors (buida = OK)."""
+    errs: list[str] = []
+
+    # 1 · cada clau del catàleg té valor al dataset, o consta com a excepció declarada.
+    amb_valor = set(COL_MUNI) | set(COL_DEMOG)
+    for key in METRIC_KEYS:
+        if key not in amb_valor and key not in SENSE_VALOR_AL_DATASET:
+            errs.append(f"{key}: al catàleg però sense valor a `values` ni declarada a "
+                        f"SENSE_VALOR_AL_DATASET (el web la prometria i no la trobaria)")
+    for key in sorted(SENSE_VALOR_AL_DATASET & amb_valor):
+        errs.append(f"{key}: declarada sense valor però SÍ que en té — excepció rància, treu-la")
+
+    # 2 · cap mètrica sense cadència declarada, tret de les excepcions escrites a dalt.
+    nulls = {k for k, m in metrics.items() if m["frescor"]["actualitzacio"] is None}
+    inesperats = nulls - FRESCOR_NULL_HONEST - FRESCOR_NULL_PENDENT_CONTRACTE
+    for key in sorted(inesperats):
+        errs.append(f"{key}: `frescor.actualitzacio` null i no declarat — si és derivada, "
+                    f"li falta `origin_source` al contracte; la targeta no es podria datar (E5)")
+    # Excepcions que ja no calen: es retiren, no s'hereten.
+    for key in sorted(FRESCOR_NULL_PENDENT_CONTRACTE - nulls):
+        errs.append(f"{key}: ja té cadència al contracte — treu-la de FRESCOR_NULL_PENDENT_CONTRACTE "
+                    f"(una excepció que sobreviu al seu motiu amaga el pròxim forat)")
+    for key in sorted(FRESCOR_NULL_HONEST - nulls):
+        errs.append(f"{key}: declarada com a null honest però ara té cadència — revisa la declaració")
+    return errs
 
 
 def build_metrics(contract: dict) -> dict[str, dict]:
@@ -416,10 +483,19 @@ def build_dataset(scope: str = "bergueda") -> dict:
         scope_label = f"Catalunya ({n} municipis)"
         comarca = build_comarca(muni, contract, label="Catalunya")
 
+    metrics = build_metrics(contract)
+    # Les guardes corren SOBRE EL CATÀLEG REAL abans d'escriure'l. Si alguna cau no s'emet
+    # res: val més un export que peta que un catàleg que promet el que no pot servir.
+    if errs := check_catalog(metrics):
+        print(f"FALLA: {len(errs)} guardes del catàleg trencades:", file=sys.stderr)
+        for e in errs:
+            print(f"  · {e}", file=sys.stderr)
+        raise SystemExit(1)
+
     return {
         "contractVersion": str(contract["meta"]["version"]),
         "scope": scope_label,
-        "metrics": build_metrics(contract),
+        "metrics": metrics,
         "municipis": build_municipis(muni, demog),
         "comarca": comarca,
     }

@@ -162,7 +162,43 @@ publicable per si sola.*
 > amb la seva font. **Límit honest a declarar a la targeta:** l'**evolució** només existeix per a
 > nacionalitat (finestra 2021→2025); del lloc de naixement en tenim la foto, no la sèrie — i la sèrie
 > de nacionalitat **no** es pot presentar com si fos la del lloc de naixement.
-> 9. **D10 — els quatre serrells que D9 ha destapat** (handoffs de Mirador, tots de dada):
+> 9. **D10 ✅ FETA (PR obert, Sondeig 2026-07-20).** Els quatre serrells, tancats. Bitàcola:
+>    `bitacora/2026-07-20_d10-serrells-dada_sondeig.md`. **Cap premissa del brief era falsa**
+>    (inclosa la correcció de Talaia: `atur_registrat` SÍ que és al contracte).
+>    (a) `motiu_ca`/`motiu_es` al mart + `motiu_l10n` al JSON; el camp pla `motiu` es manté
+>    TRANSITORI a posta —convertir-lo en objecte avui pintaria `[object Object]` a
+>    riusdegent.cat el mateix moment de la fusió, i `packages/web` no és meu.
+>    (b) Verificat: 5 mètriques, totes derivades sense `origin_source`; l'export no hi té cap
+>    bug. Contracte NO tocat (és de Talaia) → **diff exacte a la bitàcola**, amb resolució
+>    simulada amb el resolutor real. La guarda ja corre amb les excepcions ESCRITES, i la
+>    llista de pendents **caduca sola** (si una clau deixa d'estar trencada, el CI cau i
+>    obliga a retirar-la).
+>    (c) `serveis_estab`/`restauracio_estab` amb fila i motiu real —que **no és** «pendent
+>    d'ingesta»: amb OSM no hi ha tendència possible, perquè el mapejat nou i el canvi al
+>    terreny no es poden separar—. I el problema de fons: el conjunt estava escrit **a mà
+>    tres vegades**; ara es DERIVA de `kpis.js` (`tools/tauler_kpis.py`, nou) i el CI cau si
+>    el tauler pinta una targeta sense fila al mart.
+>    (d) `atur_registrat` al catàleg servit: cauen les dues últimes cadenes del tauler
+>    escrites al codi i no llegides del contracte.
+>    *Parquet regenerat sense `dbt build` (no hi ha `data/raw/` en checkout net) executant el
+>    SQL del model contra els marts versionats; **fidelitat provada abans**: la reconstrucció
+>    sense canvis reprodueix el parquet committejat valor a valor. 15.120 → 17.014 files
+>    = +2 × 947, cap fila de més.*
+>    **➡️ Handoff a Talaia:** el diff de contracte, **amb una esmena que el handoff original no
+>    portava** — `hab_per_hab` i `rtc_per_100hab_viv` barregen vintages (`hab_total` és Cens
+>    2021, `puntual`), així que `origin_source` els declararia una cadència més ràpida que la
+>    meitat de la seva dada; i **`rtc_per_100hab_viv` no declara cap `date`**, o sigui que
+>    avui la barreja no la diu enlloc. És doctrina, la decideixes tu.
+>    **➡️ Handoff a Mirador:** `pick(e.motiu_l10n, locale)` + fora el `lang="ca"` · l'etiqueta
+>    i la font de l'atur ja es poden llegir del catàleg · **i una troballa nova de la MATEIXA
+>    forma que el bug arreglat**: el glossari agrupa per `DIM_ORDER` fix i **`treball` no hi
+>    és**, així que `atur_registrat` hi arribarà i el glossari **el descartarà en silenci**.
+>    **➡️ Quart cas del pattern «guardes que no corren» (Talaia en comptava tres):**
+>    `tools/export_indicadors_cat.py` emet `data/web/indicadors-catalunya.json`, **versionat**,
+>    sense `--check` ni pas al CI. Comprovat que **avui NO és estale** → forat obert, no ferida.
+>    Jurisdicció meva, encuat fora de D10. *També: `tools/` no passa per ruff al CI (6 errors
+>    preexistents en 5 fitxers; els meus passen) — la meva jurisdicció té una porta menys.*
+> 9b. **[HISTÒRIC] D10 — l'enunciat original** (handoffs de Mirador, tots de dada):
 >    (a) el `motiu` de `mart_tendencia` és **només en català** → ha de ser `{ca,es}` com `label`/
 >    `definicio`; Mirador no el tradueix al front (seria inventar dada, i fa bé).
 >    (b) **5 mètriques amb `frescor.actualitzacio: null`** i una és targeta del tauler

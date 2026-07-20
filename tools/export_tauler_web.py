@@ -15,9 +15,12 @@ Per què un fitxer separat i no dins `municipis.*.json`:
 
 Frontera honesta (aquí NO es calcula res que no vingui dels marts):
   · L'atur es re-serialitza de `mart_pols_mensual` tal com hi és.
-  · La tendència ve SENCERA de `mart_tendencia` (deltes, períodes, estat, motiu): aquest
-    fitxer no resta cap parell de números. Si un dia un delta és dubtós, el lloc on
-    mirar-lo és el mart, no aquest exportador.
+  · La tendència ve SENCERA de `mart_tendencia` (deltes, períodes, estat, motiu EN ELS
+    DOS IDIOMES): aquest fitxer no resta cap parell de números ni tradueix cap text. Si un
+    dia un delta és dubtós, el lloc on mirar-lo és el mart, no aquest exportador.
+  · QUINES mètriques hi ha d'haver es deriva de la composició del tauler
+    (`tools/tauler_kpis.py` → `packages/web/src/lib/govern/kpis.js`), mai d'una llista
+    escrita aquí: dues llistes a mà divergeixen, i divergeixen en silenci (D10).
   · La DOCTRINA DEL «<5» (C1 §1.1) es propaga literalment: un mes emmascarat surt amb
     `valor: null` + `min`/`max` (l'interval [1,4]) + `emmascarat: true`. MAI zero. Un
     delta que toqui un mes emmascarat surt amb `delta: null` + l'interval. El
@@ -43,6 +46,8 @@ from typing import Any
 import pandas as pd
 import yaml
 
+from tauler_kpis import metriques_del_tauler
+
 REPO = Path(__file__).resolve().parents[1]
 MART_POLS = REPO / "data" / "marts" / "mart_pols_mensual.parquet"
 MART_TEND = REPO / "data" / "marts" / "mart_tendencia.parquet"
@@ -59,15 +64,12 @@ SCOPE_COMARCA: str | None = "Berguedà"
 # servir 20 anys × 31 municipis al navegador seria pes sense lectura.
 MESOS_SERIE = 25
 
-# Mètriques que el mart de tendència ha de portar sí o sí (guarda del contracte del
-# fitxer: si el mart deixa d'emetre'n una, l'export falla en comptes d'emetre un tauler
-# amb una targeta muda).
-TEND_METRICS_ESPERADES = {
-    "atur_registrat", "pct_nacionalitat_estrangera", "poblacio_nacionalitat_estrangera",
-    "poblacio", "pob_0_14", "pob_15_64", "pob_65_84", "pob_85_mes", "index_envelliment",
-    "renda_neta_persona", "pct_noprincipal", "kg_hab_any", "kwh_hab", "vidre_hab",
-    "rtc_per_1000hab",
-}
+# Mètriques que el mart de tendència ha de portar sí o sí. D10: aquesta llista ja NO
+# s'escriu aquí. Es DERIVA de l'autoritat del front (`packages/web/src/lib/govern/kpis.js`,
+# via `tools/tauler_kpis.py`), perquè escrita a mà divergia en silenci: `serveis_estab` i
+# `restauracio_estab` es pintaven al tauler, no eren al mart, i ni aquest export ni el
+# verificador se n'adonaven — la targeta quedava muda i una absència es llegeix com un zero.
+# Ara, el dia que Mirador afegeixi una targeta sense fila al mart, això peta.
 
 
 def _num(v: Any) -> Any:
@@ -139,10 +141,18 @@ def build_tendencia(tend: pd.DataFrame, ine5s: set[str]) -> dict[str, dict]:
     out: dict[str, dict[str, list]] = {}
     for r in tend.itertuples(index=False):
         entry = out.setdefault(str(r.ine5), {})
+        motiu_ca, motiu_es = _txt(r.motiu_ca), _txt(r.motiu_es)
         entry.setdefault(str(r.metric), []).append({
             "estat": str(r.estat),
             "comparacio": _txt(r.comparacio),
-            "motiu": _txt(r.motiu),
+            # `motiu` (ca) es manté MENTRE Mirador llegeix `{e.motiu}` amb lang="ca" cablat:
+            # canviar-lo a objecte avui pintaria «[object Object]» en producció, i el web és
+            # viu. `motiu_l10n` és la forma bona —{ca,es}, com `label`/`definicio` al
+            # contracte— i el mart ja les serveix totes dues.
+            # ➡️ Handoff a Mirador: `pick(e.motiu_l10n, locale)` + fora el lang="ca". Quan
+            # hi sigui, aquesta línia (i el camp pla) desapareixen.
+            "motiu": motiu_ca,
+            "motiu_l10n": {"ca": motiu_ca, "es": motiu_es} if motiu_ca or motiu_es else None,
             "periode_actual": _txt(r.periode_actual),
             "periode_anterior": _txt(r.periode_anterior),
             "valor_actual": _num(r.valor_actual),
@@ -184,6 +194,12 @@ def invariants(payload: dict) -> list[str]:
                         errs.append(f"{ine5}/{metric}: 'sense_serie' amb delta")
                     if not e["motiu"]:
                         errs.append(f"{ine5}/{metric}: 'sense_serie' sense motiu escrit")
+                    # El motiu és l'ÚNICA cosa que la targeta pot dir quan no hi ha fletxa:
+                    # si falta una llengua, el lector d'aquella llengua es queda sense res.
+                    l10n = e["motiu_l10n"] or {}
+                    for lang in ("ca", "es"):
+                        if not l10n.get(lang):
+                            errs.append(f"{ine5}/{metric}: 'sense_serie' sense motiu en [{lang}]")
                 if e["delta_emmascarat"] and e["delta"] is not None:
                     errs.append(f"{ine5}/{metric}: delta exacte sobre un punt emmascarat")
     return errs
@@ -197,9 +213,13 @@ def build() -> dict:
     pols = pd.read_parquet(MART_POLS)
     tend = pd.read_parquet(MART_TEND)
 
-    falten = TEND_METRICS_ESPERADES - set(tend["metric"].unique())
+    falten = metriques_del_tauler(REPO) - set(tend["metric"].unique())
     if falten:
-        raise SystemExit(f"FALLA: mart_tendencia no porta {sorted(falten)}")
+        raise SystemExit(
+            f"FALLA: el tauler pinta {sorted(falten)} i mart_tendencia no en porta cap fila. "
+            f"Una targeta sense fila calla, i callar es llegeix com «no ha canviat»: afegeix-les "
+            f"al mart amb estat 'sense_serie' i el motiu escrit (mart_tendencia.sql, CTE `sense`)."
+        )
 
     atur, darrer_mes = build_atur(pols, ine5s)
     tendencia = build_tendencia(tend, ine5s)
@@ -243,7 +263,16 @@ def build() -> dict:
                     "Cap fletxa sense període: tota entrada amb direcció diu contra quin "
                     "període compara. Les mètriques sense sèrie hi són EXPLÍCITES amb "
                     "estat 'sense_serie' i el motiu escrit — no s'ometen, perquè una "
-                    "absència es llegeix com un zero i un 'sense_serie' no."
+                    "absència es llegeix com un zero i un 'sense_serie' no. Quines "
+                    "mètriques hi han de ser es deriva de la composició del tauler, no "
+                    "d'una llista a mà: si el tauler pinta una targeta sense fila aquí, "
+                    "aquest export falla."
+                ),
+                "motiu": (
+                    "El motiu és DADA i ve del mart en ca i es (`motiu_l10n`); el front el "
+                    "pinta literal i traduir-lo allà seria inventar-se'l. El camp pla "
+                    "`motiu` (català) és transitori i desapareixerà quan el web llegeixi "
+                    "`motiu_l10n`."
                 ),
                 "fonts": ["mart_tendencia.parquet"],
             },

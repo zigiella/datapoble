@@ -9,8 +9,8 @@
 --   «Cap targeta amb fletxa sense període.» Només es mostra tendència on hi ha SÈRIE
 --   REAL, i tota tendència diu CONTRA QUIN PERÍODE compara. Per això aquest mart no té
 --   cap fila muda: TOTA mètrica del tauler hi surt, i la que no té sèrie hi surt amb
---   estat = 'sense_serie' + `motiu` escrit. El front no pot confondre un NULL amb un zero
---   perquè el NULL sempre ve acompanyat de l'estat i del motiu.
+--   estat = 'sense_serie' + el motiu escrit (`motiu_ca`/`motiu_es`). El front no pot
+--   confondre un NULL amb un zero perquè el NULL sempre ve acompanyat de l'estat i del motiu.
 --
 -- QUI TÉ SÈRIE (i qui no) — l'estat del terreny, no una aspiració:
 --   · atur_registrat — SEPE, mensual 2006→. DUES comparacions, no una: el mes anterior
@@ -20,12 +20,25 @@
 --     seria triar la narrativa; s'emeten totes dues i que el lector les vegi.
 --   · pct_nacionalitat_estrangera / poblacio_nacionalitat_estrangera — Cens anual,
 --     finestra 2021→2025 ja calculada a mart_demografia (no es recalcula aquí).
---   · TOTA LA RESTA (població, franges d'edat, renda, habitatge, residus, energia, RTC)
---     — 'sense_serie'. Població i franges hi són perquè EMEX **no serveix sèrie**: la
---     seva API només té els filtres id/i/tipus, cap de temporal (verificat en viu contra
---     l'API i contra la documentació oficial, 2026-07-20; els paràmetres temporals que
---     es provin s'ignoren en silenci i la resposta torna sempre el darrer període). No
---     és un pendent d'ingesta: és un límit de la font, i es diu.
+--   · TOTA LA RESTA (població, franges d'edat, renda, habitatge, residus, energia, RTC,
+--     comerç i restauració) — 'sense_serie'. Població i franges hi són perquè EMEX **no
+--     serveix sèrie**: la seva API només té els filtres id/i/tipus, cap de temporal
+--     (verificat en viu contra l'API i contra la documentació oficial, 2026-07-20; els
+--     paràmetres temporals que es provin s'ignoren en silenci i la resposta torna sempre
+--     el darrer període). No és un pendent d'ingesta: és un límit de la font, i es diu.
+--
+-- D10 · EL CONJUNT ES COMPROVA, NO ES CONFIA. Aquesta llista segueix escrita a mà perquè
+-- el MOTIU de cada absència és text editorial: no es pot derivar de res. El que sí que es
+-- deriva és la PERTINENÇA: `verify_tendencia.py` llegeix quines mètriques pinta el tauler
+-- de la seva autoritat (`packages/web/src/lib/govern/kpis.js`, via `tools/tauler_kpis.py`)
+-- i cau si alguna no té fila aquí. Va caldre perquè `serveis_estab` i `restauracio_estab`
+-- es pintaven al tauler i NO eren en aquest mart — ni com a 'sense_serie'. Una fila que
+-- falta és invisible: el lector no distingeix «no ha canviat» de «no ho sabem».
+--
+-- D10 · MOTIU EN CA I ES. El motiu és DADA (el front el pinta literal i no el pot
+-- traduir sense inventar-se'l), així que surt del mart en els dos idiomes, com `label` i
+-- `definicio` al contracte semàntic. Les columnes són `motiu_ca` i `motiu_es`: no hi ha
+-- cap `motiu` a seques, precisament perquè no es pugui tornar a colar un idioma implícit.
 --
 -- DOCTRINA DEL «<5» A LA RESTA (C1 §1.1): quan un dels dos mesos ve emmascarat, la
 -- diferència NO és un número, és un INTERVAL. Llavors delta = NULL i s'emeten
@@ -107,7 +120,8 @@ atur_out as (
     select
         ine5, codi6, municipi, metric, comparacio,
         'amb_serie'                                          as estat,
-        cast(null as varchar)                                as motiu,
+        cast(null as varchar)                                as motiu_ca,
+        cast(null as varchar)                                as motiu_es,
         periode_actual, periode_anterior,
         cast(valor_actual as double)                         as valor_actual,
         cast(valor_anterior as double)                       as valor_anterior,
@@ -146,7 +160,8 @@ origen_out as (
         'pct_nacionalitat_estrangera'                        as metric,
         'finestra_anual'                                     as comparacio,
         'amb_serie'                                          as estat,
-        cast(null as varchar)                                as motiu,
+        cast(null as varchar)                                as motiu_ca,
+        cast(null as varchar)                                as motiu_es,
         cast(serie_any_final   as varchar)                   as periode_actual,
         cast(serie_any_inicial as varchar)                   as periode_anterior,
         cast(pct_nacionalitat_estrangera as double)          as valor_actual,
@@ -171,7 +186,8 @@ origen_out as (
         'poblacio_nacionalitat_estrangera'                   as metric,
         'finestra_anual'                                     as comparacio,
         'amb_serie'                                          as estat,
-        cast(null as varchar)                                as motiu,
+        cast(null as varchar)                                as motiu_ca,
+        cast(null as varchar)                                as motiu_es,
         cast(serie_any_final   as varchar)                   as periode_actual,
         cast(serie_any_inicial as varchar)                   as periode_anterior,
         cast(poblacio_nacionalitat_estrangera as double)     as valor_actual,
@@ -192,23 +208,71 @@ origen_out as (
 -- sola foto surt aquí amb el seu motiu escrit, perquè la targeta pugui dir «sense sèrie»
 -- en comptes de callar (i perquè un NULL mut no es pugui llegir com un zero).
 sense as (
-    select m.ine5, m.codi6, m.municipi, s.metric, s.motiu, s.valor
+    select m.ine5, m.codi6, m.municipi, s.metric, s.motiu_ca, s.motiu_es, s.valor
     from {{ ref('mart_municipi') }} m
     cross join lateral (
         values
-            ('poblacio',           'EMEX serveix només el darrer període: la seva API (filtres id/i/tipus) no té cap paràmetre temporal — verificat en viu 2026-07-20. Sèrie oficial disponible per una altra via (Idescat censph), ingesta encuada.', cast(m.poblacio as double)),
-            ('pob_0_14',           'Franja d''edat d''EMEX: mateix límit de font que la població (cap sèrie per API).', cast(m.pob_0_14 as double)),
-            ('pob_15_64',          'Franja d''edat derivada d''EMEX: mateix límit de font que la població (cap sèrie per API).', cast(m.pob_15_64 as double)),
-            ('pob_65_84',          'Franja d''edat d''EMEX: mateix límit de font que la població (cap sèrie per API).', cast(m.pob_65_84 as double)),
-            ('pob_85_mes',         'Franja d''edat d''EMEX: mateix límit de font que la població (cap sèrie per API).', cast(m.pob_85_mes as double)),
-            ('index_envelliment',  'Es deriva de franges d''EMEX, que no tenen sèrie per API.', cast(m.index_envelliment as double)),
-            ('renda_neta_persona', 'INE ADRH: s''ingereix una sola foto (2023). Sèrie disponible a la font però encara no ingerida.', cast(m.renda_neta_persona as double)),
-            ('pct_noprincipal',    'Cens d''habitatge 2021: dada decennal, no hi ha període anterior comparable ingerit.', cast(m.pct_noprincipal as double)),
-            ('kg_hab_any',         'Residus (ARC): s''ingereix el darrer any tancat. Sèrie disponible a la font però encara no ingerida.', cast(m.kg_hab_any as double)),
-            ('kwh_hab',            'Consum elèctric domèstic (ICAEN): s''ingereix el darrer any de cobertura plena. Sèrie disponible a la font però encara no ingerida.', cast(m.kwh_hab as double)),
-            ('vidre_hab',          'Fracció vidre (ARC): s''ingereix el darrer any tancat. Sèrie disponible a la font però encara no ingerida.', cast(m.vidre_hab as double)),
-            ('rtc_per_1000hab',    'Registre de Turisme de Catalunya: és un registre viu, es llegeix com a foto del dia de la càrrega; no se''n conserva cap tall anterior.', cast(m.rtc_per_1000hab as double))
-    ) as s(metric, motiu, valor)
+            ('poblacio',
+             'EMEX serveix només el darrer període: la seva API (filtres id/i/tipus) no té cap paràmetre temporal — verificat en viu 2026-07-20. Sèrie oficial disponible per una altra via (Idescat censph), ingesta encuada.',
+             'EMEX solo sirve el último periodo: su API (filtros id/i/tipus) no tiene ningún parámetro temporal — verificado en vivo 2026-07-20. Serie oficial disponible por otra vía (Idescat censph), ingesta en cola.',
+             cast(m.poblacio as double)),
+            ('pob_0_14',
+             'Franja d''edat d''EMEX: mateix límit de font que la població (cap sèrie per API).',
+             'Franja de edad de EMEX: mismo límite de fuente que la población (ninguna serie por API).',
+             cast(m.pob_0_14 as double)),
+            ('pob_15_64',
+             'Franja d''edat derivada d''EMEX: mateix límit de font que la població (cap sèrie per API).',
+             'Franja de edad derivada de EMEX: mismo límite de fuente que la población (ninguna serie por API).',
+             cast(m.pob_15_64 as double)),
+            ('pob_65_84',
+             'Franja d''edat d''EMEX: mateix límit de font que la població (cap sèrie per API).',
+             'Franja de edad de EMEX: mismo límite de fuente que la población (ninguna serie por API).',
+             cast(m.pob_65_84 as double)),
+            ('pob_85_mes',
+             'Franja d''edat d''EMEX: mateix límit de font que la població (cap sèrie per API).',
+             'Franja de edad de EMEX: mismo límite de fuente que la población (ninguna serie por API).',
+             cast(m.pob_85_mes as double)),
+            ('index_envelliment',
+             'Es deriva de franges d''EMEX, que no tenen sèrie per API.',
+             'Se deriva de franjas de EMEX, que no tienen serie por API.',
+             cast(m.index_envelliment as double)),
+            ('renda_neta_persona',
+             'INE ADRH: s''ingereix una sola foto (2023). Sèrie disponible a la font però encara no ingerida.',
+             'INE ADRH: se ingiere una sola foto (2023). Serie disponible en la fuente pero aún no ingerida.',
+             cast(m.renda_neta_persona as double)),
+            ('pct_noprincipal',
+             'Cens d''habitatge 2021: dada decennal, no hi ha període anterior comparable ingerit.',
+             'Censo de vivienda 2021: dato decenal, no hay periodo anterior comparable ingerido.',
+             cast(m.pct_noprincipal as double)),
+            ('kg_hab_any',
+             'Residus (ARC): s''ingereix el darrer any tancat. Sèrie disponible a la font però encara no ingerida.',
+             'Residuos (ARC): se ingiere el último año cerrado. Serie disponible en la fuente pero aún no ingerida.',
+             cast(m.kg_hab_any as double)),
+            ('kwh_hab',
+             'Consum elèctric domèstic (ICAEN): s''ingereix el darrer any de cobertura plena. Sèrie disponible a la font però encara no ingerida.',
+             'Consumo eléctrico doméstico (ICAEN): se ingiere el último año de cobertura plena. Serie disponible en la fuente pero aún no ingerida.',
+             cast(m.kwh_hab as double)),
+            ('vidre_hab',
+             'Fracció vidre (ARC): s''ingereix el darrer any tancat. Sèrie disponible a la font però encara no ingerida.',
+             'Fracción vidrio (ARC): se ingiere el último año cerrado. Serie disponible en la fuente pero aún no ingerida.',
+             cast(m.vidre_hab as double)),
+            ('rtc_per_1000hab',
+             'Registre de Turisme de Catalunya: és un registre viu, es llegeix com a foto del dia de la càrrega; no se''n conserva cap tall anterior.',
+             'Registro de Turismo de Cataluña: es un registro vivo, se lee como foto del día de la carga; no se conserva ningún corte anterior.',
+             cast(m.rtc_per_1000hab as double)),
+            -- D10 · les DUES que faltaven. El tauler les pinta (targeta «comerç i serveis»
+            -- del bloc C) i no tenien fila: la targeta callava en comptes de declarar-se.
+            -- El motiu NO és «encara no ingerida»: aquí ni tan sols guardant dos talls hi
+            -- hauria tendència llegible, i això s'ha de dir sencer.
+            ('serveis_estab',
+             'OpenStreetMap (Overpass): cartografia col·laborativa que canvia contínuament i sense calendari, ingerida com una sola consulta —la del dia de la càrrega— sense conservar cap tall anterior. I encara que se''n guardessin dos, la diferència NO seria llegible com un canvi al terreny: OSM infra-mapeja el rural i la seva completesa creix amb el temps, així que el mapejat nou i l''obertura real d''un establiment no es poden separar.',
+             'OpenStreetMap (Overpass): cartografía colaborativa que cambia continuamente y sin calendario, ingerida como una sola consulta —la del día de la carga— sin conservar ningún corte anterior. Y aunque se guardaran dos, la diferencia NO sería legible como un cambio sobre el terreno: OSM infra-mapea lo rural y su completitud crece con el tiempo, de modo que el mapeo nuevo y la apertura real de un establecimiento no se pueden separar.',
+             cast(m.serveis_estab as double)),
+            ('restauracio_estab',
+             'OpenStreetMap (Overpass): cartografia col·laborativa sense calendari de publicació, ingerida com una sola consulta —la del dia de la càrrega— sense cap tall anterior conservat. I encara que n''hi hagués dos, el Δ no diria obertures i tancaments: OSM infra-mapeja el rural i la seva completesa creix amb el temps, de manera que el mapejat nou i el canvi real es confondrien.',
+             'OpenStreetMap (Overpass): cartografía colaborativa sin calendario de publicación, ingerida como una sola consulta —la del día de la carga— sin ningún corte anterior conservado. Y aunque hubiera dos, el Δ no diría aperturas y cierres: OSM infra-mapea lo rural y su completitud crece con el tiempo, de modo que el mapeo nuevo y el cambio real se confundirían.',
+             cast(m.restauracio_estab as double))
+    ) as s(metric, motiu_ca, motiu_es, valor)
 ),
 
 sense_out as (
@@ -216,7 +280,8 @@ sense_out as (
         ine5, codi6, municipi, metric,
         cast(null as varchar)      as comparacio,
         'sense_serie'              as estat,
-        motiu,
+        motiu_ca,
+        motiu_es,
         cast(null as varchar)      as periode_actual,
         cast(null as varchar)      as periode_anterior,
         valor                      as valor_actual,
@@ -230,17 +295,17 @@ sense_out as (
 ),
 
 unio as (
-    select ine5, codi6, municipi, metric, comparacio, estat, motiu, periode_actual,
+    select ine5, codi6, municipi, metric, comparacio, estat, motiu_ca, motiu_es, periode_actual,
            periode_anterior, valor_actual, valor_anterior, delta, delta_min, delta_max,
            delta_emmascarat, unitat_delta
     from atur_out
     union all
-    select ine5, codi6, municipi, metric, comparacio, estat, motiu, periode_actual,
+    select ine5, codi6, municipi, metric, comparacio, estat, motiu_ca, motiu_es, periode_actual,
            periode_anterior, valor_actual, valor_anterior, delta, delta_min, delta_max,
            delta_emmascarat, unitat_delta
     from origen_out
     union all
-    select ine5, codi6, municipi, metric, comparacio, estat, motiu, periode_actual,
+    select ine5, codi6, municipi, metric, comparacio, estat, motiu_ca, motiu_es, periode_actual,
            periode_anterior, valor_actual, valor_anterior, delta, delta_min, delta_max,
            delta_emmascarat, unitat_delta
     from sense_out
@@ -268,7 +333,8 @@ select
     u.metric,
     u.comparacio,
     u.estat,
-    u.motiu,
+    u.motiu_ca,
+    u.motiu_es,
     u.periode_actual,
     u.periode_anterior,
     u.valor_actual,
