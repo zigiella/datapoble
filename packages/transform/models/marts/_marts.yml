@@ -45,6 +45,45 @@ models:
         data_tests:
           - between:
               arguments: { min_value: 0, max_value: 100 }
+      # --- Franges d'edat (E12 de les esmenes de Bea) ---
+      # Vintage 2025 (Cens de població anual de l'INE via EMEX), el mateix que `poblacio`.
+      # La partició exacta i la regla de publicació de pob_15_64 les guarda el test singular
+      # `assert_mart_municipi_franges_edat.sql`.
+      - name: pob_0_14
+        description: Població de 0 a 14 anys (EMEX f167, 2025).
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 0, max_value: 10000000 }
+      - name: pob_15_64
+        description: >
+          Població de 15 a 64 anys. DERIVADA per resta (poblacio − 0-14 − 65-84 − 85+):
+          EMEX no la serveix. NULL si la resta no quadra (component absent o resultat
+          negatiu) — mai un número fabricat. Avui quadra als 947.
+        data_tests:
+          - between:
+              arguments: { min_value: 0, max_value: 10000000 }
+      - name: pob_65_84
+        description: Població de 65 a 84 anys (EMEX f28, 2025).
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 0, max_value: 10000000 }
+      - name: pob_85_mes
+        description: Població de 85 anys i més (EMEX f29, 2025).
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 0, max_value: 10000000 }
+      - name: pob_65_mes
+        description: >
+          Població de 65 anys i més (rollup 65-84 + 85+). És el numerador
+          d'index_envelliment; s'exposa perquè la xifra que el tauler ensenya sigui
+          la mateixa que la fórmula fa servir.
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 0, max_value: 10000000 }
       - name: index_envelliment
         description: Població 65+ per cada 100 de 0-14.
         data_tests:
@@ -411,6 +450,86 @@ models:
         description: Vintage de la dada (any del contracte semantic/metrics.yml).
         data_tests:
           - not_null
+
+  - name: mart_tendencia
+    description: >
+      La TENDÈNCIA amb el seu període declarat (E6 de les esmenes de Bea, doc
+      docs/ajuntaments/tauler-v2-esmenes-bea.md §2). Format llarg: 1 fila per
+      (ine5, metric, comparacio). Regla vinculant: «cap targeta amb fletxa sense
+      període» — tota fila diu contra QUIN període compara, i la mètrica que no té
+      sèrie hi surt EXPLÍCITA amb estat='sense_serie' + motiu escrit, mai absent i
+      mai amb un NULL mut que el front pugui llegir com un zero. Amb sèrie real:
+      atur (SEPE mensual, DUES comparacions — mes anterior i mateix mes de l'any
+      anterior, perquè l'atur és estacional) i origen (Cens anual, finestra
+      2021→2025 ja calculada a mart_demografia). Doctrina del «<5» propagada al
+      delta: si un dels dos punts ve emmascarat, el delta és un INTERVAL
+      (delta_min/delta_max) i delta = NULL.
+    columns:
+      - name: ine5
+        description: Codi INE de 5 dígits (clau de join del contracte).
+        data_tests:
+          - not_null
+      - name: codi6
+        description: Codi Idescat de 6 dígits.
+        data_tests:
+          - not_null
+      - name: municipi
+        description: Nom oficial del municipi.
+        data_tests:
+          - not_null
+      - name: comarca
+        description: Comarca del municipi (autoritat data/web/municipis-territori.json).
+        data_tests:
+          - not_null
+      - name: metric
+        description: Clau de mètrica del contracte semantic/metrics.yml.
+        data_tests:
+          - not_null
+      - name: comparacio
+        description: >
+          Quina comparació és: 'mes_anterior' · 'mateix_mes_any_anterior' ·
+          'finestra_anual'. NULL quan estat='sense_serie' (no hi ha comparació).
+      - name: estat
+        description: "'amb_serie' o 'sense_serie'. Mai NULL: és el camp que evita la fletxa muda."
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments: { values: ["amb_serie", "sense_serie"] }
+      - name: motiu
+        description: >
+          Per què no hi ha sèrie (obligatori a tota fila 'sense_serie'; NULL a les
+          'amb_serie'). És el text que la targeta pot mostrar en lloc de la fletxa.
+      - name: periode_actual
+        description: Període del valor actual ("YYYY-MM" per a l'atur, "YYYY" per a l'origen).
+      - name: periode_anterior
+        description: Període CONTRA EL QUAL es compara. Sense això no es pinta cap tendència.
+      - name: valor_actual
+        description: Valor del període actual. NULL si la font l'emmascara («<5»).
+      - name: valor_anterior
+        description: Valor del període de comparació. NULL si la font l'emmascara.
+      - name: delta
+        description: >
+          valor_actual − valor_anterior, EXACTE. NULL si algun dels dos punts ve
+          emmascarat (llavors la diferència és un interval, no un número) o si no hi ha sèrie.
+      - name: delta_min
+        description: Extrem inferior del delta (= actual_min − anterior_max). Amb sèrie, sempre present.
+      - name: delta_max
+        description: Extrem superior del delta (= actual_max − anterior_min). Amb sèrie, sempre present.
+      - name: delta_emmascarat
+        description: true = algun dels dos punts venia «<5» → el delta és un interval.
+        data_tests:
+          - not_null
+      - name: unitat_delta
+        description: "'persones' o 'punts_percentuals'. NULL quan no hi ha sèrie."
+      - name: direccio
+        description: >
+          'puja' · 'baixa' · 'igual' · 'indeterminat' · NULL. Amb delta exacte, el seu
+          signe. Amb delta emmascarat, el signe només si l'interval NO travessa el zero
+          (llavors està provat); si el travessa, 'indeterminat' explícit. NULL només
+          quan estat='sense_serie'.
+        data_tests:
+          - accepted_values:
+              arguments: { values: ["puja", "baixa", "igual", "indeterminat"] }
 
   - name: mart_electoral
     description: >

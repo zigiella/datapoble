@@ -53,16 +53,32 @@ INDICATORS: dict[str, str] = {
 TIMEOUT = 60
 
 
-def _iter_leaves(node):
-    """Recorre el JSON niat i emet cada fulla (dict amb ``id`` i ``v``)."""
+def _iter_leaves(node, year=None):
+    """Recorre el JSON niat i emet ``(fulla, any_de_referència)``.
+
+    L'any (``r``) HEREDA de l'avantpassat més proper. No és un detall d'estil: a l'EMEX
+    l'``r`` viu gairebé sempre al node de la TAULA (``t``), no a la fulla (``f``). El
+    recorregut anterior només llegia ``leaf["r"]`` i per això ``year`` sortia NULL a 12
+    dels 13 indicadors de la raw (només ``altitud_m``, que sí que porta ``r`` propi, en
+    tenia) — una columna de vintage que no deia el vintage.
+
+    Amb l'herència, cada fila crua sap de quin període és, i es veu que NO tots són el
+    mateix (verificat en viu 2026-07-20 sobre Castellar de n'Hug, 080522):
+      · f321 població i f167/f28/f29 franges d'edat → r = 2025 (Cens de població anual)
+      · f122/f250/f398 habitatges                  → r = 2021 (Cens d'habitatge)
+    És exactament la distinció que el tauler ha de mostrar («mensual · darrera: …») i que
+    fins ara el contracte havia de portar escrita a mà perquè la ingesta la perdia.
+    """
     if isinstance(node, dict):
+        year = node.get("r", year)
         if "id" in node and "v" in node:
-            yield node
-        for value in node.values():
-            yield from _iter_leaves(value)
+            yield node, year
+        for key, value in node.items():
+            if key != "r":
+                yield from _iter_leaves(value, year)
     elif isinstance(node, list):
         for item in node:
-            yield from _iter_leaves(item)
+            yield from _iter_leaves(item, year)
 
 
 def _municipi_value(v: str):
@@ -82,7 +98,7 @@ def fetch_municipi(codi6: str, session: requests.Session | None = None) -> list[
 
     rows: list[dict] = []
     seen: set[str] = set()
-    for leaf in _iter_leaves(payload):
+    for leaf, year in _iter_leaves(payload):
         fid = leaf.get("id")
         if fid in INDICATORS and fid not in seen:
             seen.add(fid)  # alguns ids apareixen repetits a diferents fitxes
@@ -93,7 +109,8 @@ def fetch_municipi(codi6: str, session: requests.Session | None = None) -> list[
                     "indicator_id": fid,
                     "indicator": INDICATORS[fid],
                     "label": leaf.get("calt") or leaf.get("c"),
-                    "year": leaf.get("r"),
+                    # `r` propi de la fulla si en té; si no, el de la taula que la conté.
+                    "year": year,
                     "value_municipi": _municipi_value(leaf.get("v")),
                 }
             )

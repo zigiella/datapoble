@@ -92,6 +92,34 @@ publicable per si sola.*
 >    el mart pot seguir calculant-lo. (d) **Esmena L1/L3** al contracte (handoff de Mirador, #256):
 >    les notes de kwh/vidre/restauració citen «capa L1/L3» (model aparcat) → termes oficials.
 >    · **D2** (HERMES selectiu, C1 §1.2) queda DARRERE de D4.
+> 6. **D7 — la dada del tauler v2 ✅ FETA (PR obert, Sondeig 2026-07-20).** Capa de dades de les
+>    esmenes E4/E5/E6/E11/E12. Bitàcola: `2026-07-20_d7-dada-tauler-v2_sondeig.md`.
+>    Franges d'edat exposades (quadren als 947 i casen amb el total de CAT) · `mart_tendencia` nou
+>    (Δ amb període declarat; «sense sèrie» explícit amb motiu; «<5» propagat com a interval) ·
+>    `export_tauler_web.py` amb `--check` **cablat al CI el mateix dia** · frescor al contracte
+>    (`actualitzacio`/`darrera_carrega`/`proces_refresc`) · `refresh-atur.yml` ampliat aigües avall.
+>    **⛔ TROBALLA QUE TOMBA UNA PREMISSA: EMEX NO SERVEIX SÈRIE** (verificat en viu + doc oficial:
+>    l'operació `dades` només admet `id`/`i`/`tipus`; els paràmetres temporals s'ignoren EN SILENCI).
+>    Població i franges surten `sense_serie`, no per pendent d'ingesta sinó per límit de font.
+>    També: el `year` de la raw d'EMEX era NULL a 12 dels 13 indicadors (l'`r` viu al node pare) →
+>    esmenat al connector amb test; en surt que els vintages NO són iguals (població 2025 vs
+>    habitatges 2021), que és la base de l'E5.
+> 7. **Sèrie de població (desbloqueja E11 del tot)** — encuada per D7 amb la via JA VERIFICADA:
+>    `idescat.cat/pub/?id=censph&n=538&geo=mun:{codi6}&f=ssv` (sèrie 1975→2025, mateix patró `f=ssv`
+>    que `stg_demografia_estrangera_serie`). Cal **etiquetar la ruptura de font** (Padró/Cens/Cens
+>    anual), no aplanar-la.
+> 8. **UN refresc anual de pipeline sencer** (no una cron per font) — encuat per D7 amb el motiu
+>    verificat: les 9 fonts anuals convergeixen a `mart_municipi`, i refrescar-ne una arrossega 4
+>    marts avall + 7 verificadors/exports amb artefacte `--check`. Una cron per font deixaria la
+>    cadena estale i posaria el CI en vermell. `refresh-atur.yml` va poder ser trivial només perquè
+>    `mart_pols_mensual` està desacoblat a propòsit.
+>    · Encuades també: sèries de residus/ICAEN/renda (les tres fonts en tenen; el pipeline n'ingereix
+>      una sola foto) → desbloquejaria la tendència de 4 targetes més.
+> **➡️ Handoff a: Talaia** — `mart_electoral` i `mart_consum_electric` **versionats estan ESTALE**:
+> els parquets committejats són de l'època del pilot (31 munis / 372 files) i els seus models ja
+> cobreixen tot Catalunya (947 / 11.364). D7 NO els ha reconstruït a propòsit: publicaria dades
+> electorals de 947 municipis com a efecte lateral d'una tasca de tauler, i aquesta capa té política
+> editorial de Bea.
 >
 > **🟡 COLA DE MIRADOR: D5 ✅ FUSIONAT (#271) — DASHBOARD NIQUELAT.** Mode govern viu (?vista=govern):
 > 12 KPIs amb rang comarcal LLEGIT del mart (mai calculat al front), cada targeta amb font O fórmula

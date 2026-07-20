@@ -16,10 +16,155 @@
       "format": "integer",
       "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
       "date": "2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "idescat_emex"
+      },
       "formula": "directe",
       "definicio": {
         "ca": "Població empadronada.",
         "es": "Población empadronada."
+      },
+      "status": "public"
+    },
+    "pob_0_14": {
+      "key": "pob_0_14",
+      "label": {
+        "ca": "Població de 0 a 14 anys",
+        "es": "Población de 0 a 14 años"
+      },
+      "unit": {
+        "ca": "habitants",
+        "es": "habitantes"
+      },
+      "dimension": "demografia",
+      "format": "integer",
+      "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
+      "date": "2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "idescat_emex"
+      },
+      "formula": "directe",
+      "definicio": {
+        "ca": "Habitants de 0 a 14 anys (infància i primera adolescència).",
+        "es": "Habitantes de 0 a 14 años (infancia y primera adolescencia)."
+      },
+      "status": "public"
+    },
+    "pob_15_64": {
+      "key": "pob_15_64",
+      "label": {
+        "ca": "Població de 15 a 64 anys",
+        "es": "Población de 15 a 64 años"
+      },
+      "unit": {
+        "ca": "habitants",
+        "es": "habitantes"
+      },
+      "dimension": "demografia",
+      "format": "integer",
+      "source": "indicador derivat — vegeu la metodologia · Idescat",
+      "date": "2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "idescat_emex"
+      },
+      "formula": "poblacio - pob_0_14 - pob_65_84 - pob_85_mes",
+      "definicio": {
+        "ca": "Habitants de 15 a 64 anys (la franja intermèdia, sovint llegida com a «edat de treballar»).",
+        "es": "Habitantes de 15 a 64 años (la franja intermedia, a menudo leída como «edad de trabajar»)."
+      },
+      "note": {
+        "ca": "DERIVADA per resta: EMEX no serveix aquesta franja. Es publica NOMÉS on la resta quadra (cap component absent i resultat ≥0); on no quadraria s'emet buit, mai un número fabricat. Verificat el 2026-07-20: quadra als 947 municipis i la suma dels 947 casa EXACTAMENT amb el total de Catalunya de la mateixa font (5.442.280), sense residu d'arrodoniment. «Edat de treballar» és una etiqueta convencional, no una mesura d'activitat: aquí dins hi ha qui estudia, qui cuida i qui està jubilat abans d'hora.",
+        "es": "DERIVADA por resta: EMEX no sirve esta franja. Se publica SOLO donde la resta cuadra (ningún componente ausente y resultado ≥0); donde no cuadraría se emite vacío, nunca un número fabricado. Verificado el 2026-07-20: cuadra en los 947 municipios y la suma de los 947 casa EXACTAMENTE con el total de Cataluña de la misma fuente (5.442.280), sin residuo de redondeo. «Edad de trabajar» es una etiqueta convencional, no una medida de actividad: aquí dentro hay quien estudia, quien cuida y quien está jubilado antes de tiempo."
+      },
+      "status": "public"
+    },
+    "pob_65_84": {
+      "key": "pob_65_84",
+      "label": {
+        "ca": "Població de 65 a 84 anys",
+        "es": "Población de 65 a 84 años"
+      },
+      "unit": {
+        "ca": "habitants",
+        "es": "habitantes"
+      },
+      "dimension": "demografia",
+      "format": "integer",
+      "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
+      "date": "2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "idescat_emex"
+      },
+      "formula": "directe",
+      "definicio": {
+        "ca": "Habitants de 65 a 84 anys.",
+        "es": "Habitantes de 65 a 84 años."
+      },
+      "status": "public"
+    },
+    "pob_85_mes": {
+      "key": "pob_85_mes",
+      "label": {
+        "ca": "Població de 85 anys i més",
+        "es": "Población de 85 años y más"
+      },
+      "unit": {
+        "ca": "habitants",
+        "es": "habitantes"
+      },
+      "dimension": "demografia",
+      "format": "integer",
+      "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
+      "date": "2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "idescat_emex"
+      },
+      "formula": "directe",
+      "definicio": {
+        "ca": "Habitants de 85 anys o més (gent gran de més edat: la franja que marca la demanda de cures).",
+        "es": "Habitantes de 85 años o más (personas mayores de más edad: la franja que marca la demanda de cuidados)."
+      },
+      "status": "public"
+    },
+    "pob_65_mes": {
+      "key": "pob_65_mes",
+      "label": {
+        "ca": "Població de 65 anys i més",
+        "es": "Población de 65 años y más"
+      },
+      "unit": {
+        "ca": "habitants",
+        "es": "habitantes"
+      },
+      "dimension": "demografia",
+      "format": "integer",
+      "source": "indicador derivat — vegeu la metodologia · Idescat",
+      "date": "2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "idescat_emex"
+      },
+      "formula": "pob_65_84 + pob_85_mes",
+      "definicio": {
+        "ca": "Habitants de 65 anys o més (suma de 65-84 i 85+). És el numerador de l'índex d'envelliment.",
+        "es": "Habitantes de 65 años o más (suma de 65-84 y 85+). Es el numerador del índice de envejecimiento."
       },
       "status": "public"
     },
@@ -37,6 +182,12 @@
       "format": "integer",
       "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
       "date": "2021",
+      "frescor": {
+        "actualitzacio": "puntual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "idescat_emex"
+      },
       "formula": "directe",
       "definicio": {
         "ca": "Parc total d'habitatges (Cens 2021).",
@@ -58,6 +209,12 @@
       "format": "integer",
       "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
       "date": "2021",
+      "frescor": {
+        "actualitzacio": "puntual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "idescat_emex"
+      },
       "formula": "directe",
       "definicio": {
         "ca": "Habitatges de residència habitual.",
@@ -79,6 +236,12 @@
       "format": "integer",
       "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
       "date": "2021",
+      "frescor": {
+        "actualitzacio": "puntual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "idescat_emex"
+      },
       "formula": "directe",
       "definicio": {
         "ca": "Secundàries + buides (no residència habitual). Senyal estructural de segona residència.",
@@ -100,6 +263,12 @@
       "format": "percent",
       "source": "indicador derivat — vegeu la metodologia · Idescat",
       "date": "2021",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "idescat_emex"
+      },
       "formula": "hab_noprincipal / hab_total * 100",
       "definicio": {
         "ca": "Pes de l'habitatge no principal sobre el total.",
@@ -121,6 +290,12 @@
       "format": "ratio",
       "source": "indicador derivat — vegeu la metodologia",
       "date": "2021/2025",
+      "frescor": {
+        "actualitzacio": null,
+        "darrera_carrega": null,
+        "proces_refresc": null,
+        "font_frescor": "datapoble"
+      },
       "formula": "hab_total / poblacio",
       "definicio": {
         "ca": "Sobredimensió del parc respecte a la població resident.",
@@ -142,7 +317,13 @@
       "format": "decimal",
       "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
       "date": "2025",
-      "formula": "poblacio_65_mes / poblacio_0_14 * 100",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "idescat_emex"
+      },
+      "formula": "pob_65_mes / pob_0_14 * 100",
       "definicio": {
         "ca": "Població de 65 anys o més per cada 100 habitants de 0 a 14. Mesura el relleu generacional: per sobre de 100, hi ha més gent gran que canalla.",
         "es": "Población de 65 años o más por cada 100 habitantes de 0 a 14. Mide el relevo generacional: por encima de 100, hay más gente mayor que niños."
@@ -163,6 +344,12 @@
       "format": "decimal",
       "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
       "date": "2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "idescat_emex"
+      },
       "formula": "directe",
       "definicio": {
         "ca": "Habitants per km² (EMEX). Covariable estructural: a més densitat, pisos més petits i menys consum elèctric per persona — driver principal de la base del model de presència.",
@@ -184,6 +371,12 @@
       "format": "integer",
       "source": "INE — Instituto Nacional de Estadística — Atlas de distribución de renta de los hogares (ADRH) — renda neta per persona",
       "date": "2023",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "ine_adrh"
+      },
       "formula": "directe",
       "definicio": {
         "ca": "Renda neta mitjana per persona (INE, Atlas de distribució de renda 2023). Indicador de benestar i covariable de la base del model de presència.",
@@ -205,6 +398,12 @@
       "format": "integer",
       "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
       "date": "2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "idescat_emex"
+      },
       "formula": "EMEX f69 (darrer any)",
       "definicio": {
         "ca": "Població nascuda a Catalunya (lloc de naixement, no nacionalitat). Part de la composició d'origen del municipi.",
@@ -226,6 +425,12 @@
       "format": "integer",
       "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
       "date": "2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "idescat_emex"
+      },
       "formula": "EMEX f72 (darrer any)",
       "definicio": {
         "ca": "Població nascuda a la resta de l'Estat espanyol (fora de Catalunya). Lloc de naixement, no nacionalitat.",
@@ -247,6 +452,12 @@
       "format": "integer",
       "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
       "date": "2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "idescat_emex"
+      },
       "formula": "EMEX f73 (darrer any)",
       "definicio": {
         "ca": "Població nascuda fora d'Espanya (lloc de naixement). INCLOU qui ja té nacionalitat espanyola: és la biografia, no el passaport.",
@@ -268,6 +479,12 @@
       "format": "percent",
       "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
       "date": "2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "idescat_emex"
+      },
       "formula": "poblacio_nascuda_estranger / total lloc de naixement * 100",
       "definicio": {
         "ca": "Pes de la població nascuda fora d'Espanya sobre el total. Mesura de BIOGRAFIA migratòria, no de nacionalitat actual.",
@@ -293,6 +510,12 @@
       "format": "percent",
       "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
       "date": "2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "idescat_emex"
+      },
       "formula": "poblacio_nacionalitat_estrangera / total nacionalitat * 100",
       "definicio": {
         "ca": "Pes de la població amb nacionalitat estrangera (passaport no espanyol) sobre el total. NO és lloc de naixement: és situació administrativa, reversible amb la naturalització.",
@@ -318,6 +541,12 @@
       "format": "decimal",
       "source": "indicador derivat — vegeu la metodologia · Idescat",
       "date": "2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "idescat_emex"
+      },
       "formula": "pct_nascuda_estranger − pct_nacionalitat_estrangera",
       "definicio": {
         "ca": "% nascuts a l'estranger − % nacionalitat estrangera. Aproxima qui va arribar de fora i JA té nacionalitat espanyola: senyal d'ARRELAMENT (gent que ve, es queda i s'arrela), no un recompte de «forasters».",
@@ -343,6 +572,12 @@
       "format": "decimal",
       "source": "Idescat — Població estrangera (sèrie municipal per nacionalitat)",
       "date": "2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "idescat_pobestr"
+      },
       "formula": "% estrangera (any final) − % estrangera (any inicial), finestra 2021→",
       "definicio": {
         "ca": "Variació en punts del % de població de nacionalitat estrangera dins la finestra homogènia 2021→ (Cens anual). L'EVOLUCIÓ, no la foto.",
@@ -368,6 +603,12 @@
       "format": "text",
       "source": "indicador derivat — vegeu la metodologia · Idescat",
       "date": "2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "idescat_emex"
+      },
       "formula": "regla sobre mida del padró + supressió per secret estadístic",
       "definicio": {
         "ca": "Fiabilitat de la lectura d'origen del municipi (alta/mitjana/baixa), segons la mida del padró i el secret estadístic. Baixa als micromunicipis.",
@@ -389,6 +630,12 @@
       "format": "integer",
       "source": "Generalitat — Registre de Turisme de Catalunya — Establiments d'allotjament turístic",
       "date": "2026",
+      "frescor": {
+        "actualitzacio": "irregular",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "rtc"
+      },
       "formula": "directe",
       "definicio": {
         "ca": "Allotjaments turístics reglats (HUT, hotel, rural, càmping).",
@@ -410,6 +657,12 @@
       "format": "integer",
       "source": "Generalitat — Registre de Turisme de Catalunya — Establiments d'allotjament turístic",
       "date": "2026",
+      "frescor": {
+        "actualitzacio": "irregular",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "rtc"
+      },
       "formula": "directe",
       "definicio": {
         "ca": "Subconjunt d'habitatges d'ús turístic.",
@@ -430,6 +683,12 @@
       "dimension": "turisme",
       "format": "decimal",
       "source": "indicador derivat — vegeu la metodologia",
+      "frescor": {
+        "actualitzacio": null,
+        "darrera_carrega": null,
+        "proces_refresc": null,
+        "font_frescor": "datapoble"
+      },
       "formula": "rtc_total / poblacio * 1000",
       "definicio": {
         "ca": "Intensitat turística reglada per càpita.",
@@ -450,6 +709,12 @@
       "dimension": "turisme",
       "format": "decimal",
       "source": "indicador derivat — vegeu la metodologia",
+      "frescor": {
+        "actualitzacio": null,
+        "darrera_carrega": null,
+        "proces_refresc": null,
+        "font_frescor": "datapoble"
+      },
       "formula": "rtc_total / hab_total * 100",
       "definicio": {
         "ca": "Penetració del turisme reglat en el parc.",
@@ -471,6 +736,12 @@
       "format": "decimal",
       "source": "Agència de Residus de Catalunya (ARC) — Estadístiques de residus municipals",
       "date": "2024",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "residus"
+      },
       "formula": "directe",
       "definicio": {
         "ca": "Generació de residus per habitant empadronat. Proxy de càrrega real (població fantasma).",
@@ -492,6 +763,12 @@
       "format": "decimal",
       "source": "Institut Català d'Energia (ICAEN) — Consum d'energia elèctrica per municipis i sectors de Catalunya",
       "date": "2024",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "icaen_consum"
+      },
       "formula": "consum_domestic_kwh / poblacio",
       "definicio": {
         "ca": "Consum elèctric domèstic per habitant empadronat, darrer any de cobertura plena (2024, dada oficial ICAEN). Mesura física del consum residencial.",
@@ -513,6 +790,12 @@
       "format": "decimal",
       "source": "Agència de Residus de Catalunya (ARC) — Estadístiques de residus municipals",
       "date": "2024",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "residus"
+      },
       "formula": "vidre_tones * 1000 / poblacio",
       "definicio": {
         "ca": "Generació de vidre per habitant empadronat (fracció de recollida selectiva, dada oficial ARC). Senyal físic d'hostaleria: el vidre el generen sobretot els bars i restaurants (ampolles).",
@@ -534,6 +817,12 @@
       "format": "decimal",
       "source": "indicador derivat — vegeu la metodologia · Agència de Residus de Catalunya (ARC)",
       "date": "2024",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "residus"
+      },
       "formula": "kg_hab_any / 410",
       "definicio": {
         "ca": "Residus per habitant dividits per la base residencial (410 kg/hab/any). >1 = el municipi genera MÉS del que generaria una vila de vall poc turística; <1 = menys. Pressió ABSOLUTA (no relativa a la comarca), comparable entre comarques.",
@@ -555,6 +844,12 @@
       "format": "decimal",
       "source": "indicador derivat — vegeu la metodologia · Institut Català d'Energia (ICAEN)",
       "date": "2024",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "icaen_consum"
+      },
       "formula": "kwh_hab / 1224",
       "definicio": {
         "ca": "Consum elèctric domèstic per habitant dividit per la base (1.224 kWh/hab/any). >1 = més pernocta/consum del que tocaria a una vila de vall.",
@@ -576,6 +871,12 @@
       "format": "decimal",
       "source": "indicador derivat — vegeu la metodologia · Agència de Residus de Catalunya (ARC)",
       "date": "2024",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "residus"
+      },
       "formula": "vidre_hab / 26.5",
       "definicio": {
         "ca": "Vidre per habitant dividit per la base (26,5 kg/hab/any). >1 = més empremta hostalera del que tocaria a una vila de vall poc turística.",
@@ -597,6 +898,12 @@
       "format": "integer",
       "source": "OpenStreetMap (col·laboradors) — via Overpass API — Punts d'interès de restauració (amenity=restaurant/cafe/bar/fast_food/pub/biergarten/ice_cream)",
       "date": "2026",
+      "frescor": {
+        "actualitzacio": "irregular",
+        "darrera_carrega": "2026-06-27",
+        "proces_refresc": "cap",
+        "font_frescor": "osm_overpass"
+      },
       "formula": "compte de POIs amenity in (restaurant,cafe,bar,fast_food,pub,biergarten,ice_cream) assignats per punt-en-polígon a la geometria municipal real",
       "definicio": {
         "ca": "Nombre de locals de restauració (restaurants, bars, cafeteries, menjars ràpids, pubs; CCAE-56) mapejats a OpenStreetMap dins el municipi. 2n proxy d'hostaleria (capacitat), complement del vidre.",
@@ -622,6 +929,12 @@
       "format": "decimal",
       "source": "indicador derivat — vegeu la metodologia · OpenStreetMap (col·laboradors) — via Overpass API",
       "date": "2026",
+      "frescor": {
+        "actualitzacio": "irregular",
+        "darrera_carrega": "2026-06-27",
+        "proces_refresc": "cap",
+        "font_frescor": "osm_overpass"
+      },
       "formula": "restauracio_estab / poblacio * 1000",
       "definicio": {
         "ca": "Densitat d'establiments de restauració per cada 1000 habitants empadronats. Intensitat d'hostaleria per càpita (stock d'establiments).",
@@ -647,6 +960,12 @@
       "format": "integer",
       "source": "OpenStreetMap (col·laboradors) — via Overpass API — Punts d'interès de restauració (amenity=restaurant/cafe/bar/fast_food/pub/biergarten/ice_cream)",
       "date": "2026",
+      "frescor": {
+        "actualitzacio": "irregular",
+        "darrera_carrega": "2026-06-27",
+        "proces_refresc": "cap",
+        "font_frescor": "osm_overpass"
+      },
       "formula": "compte de POIs shop in (supermarket,convenience,bakery,butcher,greengrocer,hardware,doityourself,chemist,kiosk,general) + amenity in (bank,pharmacy,post_office,townhall,fuel,doctors,clinic,hospital,veterinary,school) assignats per punt-en-polígon a la geometria municipal real",
       "definicio": {
         "ca": "Nombre d'establiments de comerç quotidià (supermercat, botiga de conveniència, forn, carnisseria, fruiteria, ferreteria…) i serveis essencials (banc, farmàcia, oficina de correus, ajuntament, benzinera, metge/clínica…) mapejats a OpenStreetMap dins el municipi. Senyal de CENTRALITAT funcional: mesura si el municipi és un centre de serveis real.",
@@ -672,6 +991,12 @@
       "format": "decimal",
       "source": "indicador derivat — vegeu la metodologia · OpenStreetMap (col·laboradors) — via Overpass API",
       "date": "2026",
+      "frescor": {
+        "actualitzacio": "irregular",
+        "darrera_carrega": "2026-06-27",
+        "proces_refresc": "cap",
+        "font_frescor": "osm_overpass"
+      },
       "formula": "serveis_estab / poblacio * 1000",
       "definicio": {
         "ca": "Densitat d'establiments de comerç i serveis essencials per cada 1000 habitants empadronats. Context secundari del senyal de centralitat (el senyal primari és el compte absolut): aïlla la dotació de serveis de la mida del municipi.",
@@ -697,6 +1022,12 @@
       "format": "integer",
       "source": "indicador derivat — vegeu la metodologia · Institut Català d'Energia (ICAEN)",
       "date": "2024/2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "icaen_consum"
+      },
       "formula": "round(poblacio * kwh_hab / BASE_ELECTRIC)  · BASE_ELECTRIC=1224 kWh/hab (viles IETR<5, parametritzable per comarca)",
       "definicio": {
         "ca": "La població que DORM al territori sense constar al padró (residents no registrats, segona residència, estacionals que hi pernocten), estimada a partir del consum elèctric domèstic per habitant.",
@@ -722,6 +1053,12 @@
       "format": "integer",
       "source": "indicador derivat — vegeu la metodologia · Institut Català d'Energia (ICAEN)",
       "date": "2024/2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "icaen_consum"
+      },
       "formula": "poblacio_pernocta_est - poblacio",
       "definicio": {
         "ca": "Població invisible: població real estimada (pernocta) − padró. La 'gent dels rius de gent' que dorm al territori sense constar.",
@@ -747,6 +1084,12 @@
       "format": "percent",
       "source": "indicador derivat — vegeu la metodologia · Institut Català d'Energia (ICAEN)",
       "date": "2024/2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "icaen_consum"
+      },
       "formula": "gap_pernocta / poblacio * 100",
       "definicio": {
         "ca": "Gap de pernocta relatiu sobre el padró: quant per cent més de gent dorm al territori de la registrada.",
@@ -772,6 +1115,12 @@
       "format": "integer",
       "source": "indicador derivat — vegeu la metodologia · Agència de Residus de Catalunya (ARC)",
       "date": "2024/2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "residus"
+      },
       "formula": "round(poblacio * kg_hab_any / BASE)  · BASE=410 (base residencial, parametritzable per comarca)",
       "definicio": {
         "ca": "Càrrega que suggereixen els RESIDUS (residents + 2a residència + estacionals + excursionistes de dia), via residus per habitant. NO és població ni un sostre: pot quedar PER SOTA de la pernocta (L1). Per al sostre realista useu carrega_funcional_est.",
@@ -797,6 +1146,12 @@
       "format": "integer",
       "source": "indicador derivat — vegeu la metodologia · Agència de Residus de Catalunya (ARC)",
       "date": "2024/2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "residus"
+      },
       "formula": "max(poblacio, poblacio_pernocta_est, carrega_total_est)",
       "definicio": {
         "ca": "El SOSTRE realista de càrrega humana: el màxim entre el padró, la pernocta (L1, via elèctric) i la càrrega per residus (L2). El «denominador per governar» — el nombre amb què dimensionar serveis (residus, aigua, neteja) en lloc del padró, i que MAI hi queda per sota.",
@@ -822,6 +1177,12 @@
       "format": "text",
       "source": "indicador derivat — vegeu la metodologia · Agència de Residus de Catalunya (ARC)",
       "date": "2024/2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "residus"
+      },
       "formula": "baixa si poblacio<75 O senyals divergents; alta si residus>mediana I (kwh_hab O %no-principal)>mediana I poblacio>=75; mitjana la resta",
       "definicio": {
         "ca": "Bandera de fiabilitat de les estimacions de les 3 capes: alta/mitjana/baixa segons la corroboració entre els senyals físics (residus, elèctric domèstic/hab, % habitatge no principal) i la mida del municipi. Quan els 3 senyals coincideixen la confiança és alta; quan divergeixen, baixa.",
@@ -847,6 +1208,12 @@
       "format": "integer",
       "source": "indicador derivat — vegeu la metodologia · Agència de Residus de Catalunya (ARC)",
       "date": "2024/2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "residus"
+      },
       "formula": "round(poblacio * kg_hab_any / BASE)  · BASE=410  (== carrega_total_est)",
       "definicio": {
         "ca": "ÀLIES de carrega_total_est (mateixa fórmula residus/410). REENQUADRAT: NO és «població real» sinó CÀRREGA humana total (inclou excursionistes). Es conserva per no trencar consumidors; per la població real que pernocta, useu poblacio_pernocta_est.",
@@ -872,6 +1239,12 @@
       "format": "integer",
       "source": "indicador derivat — vegeu la metodologia · Agència de Residus de Catalunya (ARC)",
       "date": "2024/2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "residus"
+      },
       "formula": "poblacio_real_est - poblacio  (gap de càrrega total)",
       "definicio": {
         "ca": "carrega_total_est − padró (gap de CÀRREGA, inclou visitants de dia). Es conserva per compatibilitat; per la població invisible que pernocta, useu gap_pernocta.",
@@ -897,6 +1270,12 @@
       "format": "percent",
       "source": "indicador derivat — vegeu la metodologia · Agència de Residus de Catalunya (ARC)",
       "date": "2024/2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "residus"
+      },
       "formula": "gap_abs / poblacio * 100  (gap de càrrega total)",
       "definicio": {
         "ca": "Gap de càrrega relatiu sobre el padró: quant per cent més de càrrega humana (inclòs el dia) hi ha de la registrada. Per al gap de pernocta, gap_pernocta_pct.",
@@ -922,6 +1301,12 @@
       "format": "integer",
       "source": "indicador derivat — vegeu la metodologia · Agència de Residus de Catalunya (ARC)",
       "date": "2024/2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "residus"
+      },
       "formula": "round(poblacio * kg_hab_any / BASE_COMARCAL)  · BASE_COMARCAL=452 (mitjana comarcal)",
       "definicio": {
         "ca": "Presència estimada amb base comarcal (mitjana pop-ponderada). Vista espacial: qui acull més DINS la comarca (≈ suma zero, redistribució).",
@@ -946,6 +1331,12 @@
       "dimension": "energia",
       "format": "percent",
       "source": "indicador derivat — vegeu la metodologia · ICAEN",
+      "frescor": {
+        "actualitzacio": "irregular",
+        "darrera_carrega": null,
+        "proces_refresc": "cap",
+        "font_frescor": "icaen"
+      },
       "formula": "icaen_EFG / icaen_total * 100",
       "definicio": {
         "ca": "Pes de qualificacions baixes (E,F,G). Proxy de potencial de rehabilitació.",
@@ -966,6 +1357,12 @@
       "dimension": "index",
       "format": "decimal",
       "source": "indicador derivat — vegeu la metodologia",
+      "frescor": {
+        "actualitzacio": null,
+        "darrera_carrega": null,
+        "proces_refresc": null,
+        "font_frescor": "datapoble"
+      },
       "formula": "0.5*A_resid + 0.5*B_turis (min-max winsoritzat p5/p95 sobre tot Catalunya, pesos iguals)",
       "definicio": {
         "ca": "Exposició turística-residencial relativa a la distribució (0=mín, 100=màx): SÍNTESI de la capacitat (estructura) i l'impacte (empremta realitzada). Validat externament amb residus (r=0,87).",
@@ -990,6 +1387,12 @@
       "dimension": "index",
       "format": "rank",
       "source": "indicador derivat — vegeu la metodologia",
+      "frescor": {
+        "actualitzacio": null,
+        "darrera_carrega": null,
+        "proces_refresc": null,
+        "font_frescor": "datapoble"
+      },
       "formula": "rank(round(IETR,2) desc) — a la precisió publicada; empats comparteixen posició",
       "definicio": {
         "ca": "Posició del municipi dins la distribució (1 = major exposició). Els EMPATS comparteixen posició i la següent salta (rank, no row_number): si 6 municipis comparteixen el sostre 100, tots són 1r i el següent és 7è.",
@@ -1015,6 +1418,12 @@
       "format": "decimal",
       "source": "indicador derivat — vegeu la metodologia · Idescat",
       "date": "2021/2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "idescat_emex"
+      },
       "formula": "A_resid reescalat 0-100 (mitjana de pct_noprincipal i hab_per_hab, min-max winsoritzat p5/p95). És el component estructural de l'IETR: IETR = 0.5*IETR_stock + 0.5*IETR_impact",
       "definicio": {
         "ca": "Costat ESTRUCTURAL/resident de l'IETR (eix A reescalat 0-100): exposició LATENT inscrita al parc d'habitatge (habitatge no principal + habitatges per habitant). Quant de territori està preparat per a la pressió turística-residencial, hi hagi o no activitat ara mateix.",
@@ -1040,6 +1449,12 @@
       "format": "decimal",
       "source": "indicador derivat — vegeu la metodologia · Generalitat — Registre de Turisme de Catalunya",
       "date": "2024/2025",
+      "frescor": {
+        "actualitzacio": "irregular",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "rtc"
+      },
       "formula": "B_turis reescalat 0-100 (mitjana de rtc_per_1000hab i rtc_per_100hab_viv, min-max winsoritzat p5/p95). És el component de pressió de l'IETR: IETR = 0.5*IETR_stock + 0.5*IETR_impact",
       "definicio": {
         "ca": "Costat de PRESSIÓ realitzada de l'IETR (eix B reescalat 0-100): activitat turística viva inscrita als establiments reglats (RTC per 1000 hab + per 100 habitatges). Quanta pressió turística s'està exercint realment, ara.",
@@ -1065,6 +1480,12 @@
       "format": "text",
       "source": "indicador derivat — vegeu la metodologia · Agència de Residus de Catalunya (ARC)",
       "date": "2024/2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "residus"
+      },
       "formula": "Classificador de regles sobre z-scores comarcals de gap_pernocta_pct, index_turisme, pct_noprincipal, poblacio, carrega_total_est i l'activitat (residus/vidre/restauració). Primera regla que encaixa; 'indeterminat' si cap. Vegeu docs/tipologia-municipal.md per als llindars.",
       "definicio": {
         "ca": "Classificació amb NOM de com s'habita el municipi, llegida dels senyals físics (no «més/menys»): dormitori_invisible, excursio, segona_residencia, capital_serveis, buit_administratiu o indeterminat. Classificador basat en regles sobre z-scores comarcals (vegeu docs/tipologia-municipal.md).",
@@ -1090,6 +1511,12 @@
       "format": "decimal",
       "source": "indicador derivat — vegeu la metodologia · Agència de Residus de Catalunya (ARC)",
       "date": "2024/2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "residus"
+      },
       "formula": "40*mida_denominador(ln-escalat padró 75→410) + 35*concordança(1 − dispersió_z dels 3 senyals de presència/3) + 15*cobertura(senyals no nuls/5) − 10*outlier(|z|>2 d'algun senyal). Talls de l'etiqueta: <45 baixa · 45–65 mitjana · ≥65 alta. Vegeu docs/tipologia-municipal.md.",
       "definicio": {
         "ca": "Puntuació auditable 0-100 de la fiabilitat de les estimacions del municipi, que COMPLEMENTA (no substitueix) la bandera `confianca`. Suma quatre components: mida del denominador (padró), concordança dels senyals físics de presència, cobertura dels senyals i penalització d'outlier. Com més alt, més fiable. L'etiqueta es deriva amb talls documentats (<45 baixa · 45–65 mitjana · ≥65 alta).",
@@ -1115,6 +1542,12 @@
       "format": "integer",
       "source": "indicador derivat — vegeu la metodologia · Agència de Residus de Catalunya (ARC)",
       "date": "2024/2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "residus"
+      },
       "formula": "100 * min(1, (max(z_kg,z_kwh,z_np) − min(z_kg,z_kwh,z_np)) / 3) sobre els z-scores comarcals dels 3 senyals de presència",
       "definicio": {
         "ca": "Com de DISCREPANTS són els tres senyals físics de presència (residus, elèctric, % habitatge no principal) un cop normalitzats a la comarca. 0 = concordants (estimació fiable) · 100 = màxima discrepància (llegir amb prudència). És el component de concordança del `confianca_score`, exposat sol perquè el «per què» de la confiança sigui auditable.",
@@ -1134,6 +1567,11 @@
       "idescat6": "080116",
       "values": {
         "poblacio": 2263,
+        "pob_0_14": 304,
+        "pob_15_64": 1447,
+        "pob_65_84": 420,
+        "pob_85_mes": 92,
+        "pob_65_mes": 512,
         "hab_total": 1107,
         "hab_principal": 824,
         "hab_noprincipal": 283,
@@ -1190,6 +1628,11 @@
       "idescat6": "080168",
       "values": {
         "poblacio": 2167,
+        "pob_0_14": 211,
+        "pob_15_64": 1332,
+        "pob_65_84": 515,
+        "pob_85_mes": 109,
+        "pob_65_mes": 624,
         "hab_total": 1696,
         "hab_principal": 909,
         "hab_noprincipal": 787,
@@ -1246,6 +1689,11 @@
       "idescat6": "080229",
       "values": {
         "poblacio": 17539,
+        "pob_0_14": 2251,
+        "pob_15_64": 11192,
+        "pob_65_84": 3404,
+        "pob_85_mes": 692,
+        "pob_65_mes": 4096,
         "hab_total": 9010,
         "hab_principal": 6831,
         "hab_noprincipal": 2179,
@@ -1302,6 +1750,11 @@
       "idescat6": "080240",
       "values": {
         "poblacio": 434,
+        "pob_0_14": 34,
+        "pob_15_64": 277,
+        "pob_65_84": 98,
+        "pob_85_mes": 25,
+        "pob_65_mes": 123,
         "hab_total": 392,
         "hab_principal": 178,
         "hab_noprincipal": 214,
@@ -1358,6 +1811,11 @@
       "idescat6": "080459",
       "values": {
         "poblacio": 93,
+        "pob_0_14": 16,
+        "pob_15_64": 60,
+        "pob_65_84": 15,
+        "pob_85_mes": 2,
+        "pob_65_mes": 17,
         "hab_total": 60,
         "hab_principal": 34,
         "hab_noprincipal": 26,
@@ -1414,6 +1872,11 @@
       "idescat6": "080497",
       "values": {
         "poblacio": 1665,
+        "pob_0_14": 227,
+        "pob_15_64": 978,
+        "pob_65_84": 372,
+        "pob_85_mes": 88,
+        "pob_65_mes": 460,
         "hab_total": 996,
         "hab_principal": 646,
         "hab_noprincipal": 350,
@@ -1470,6 +1933,11 @@
       "idescat6": "080500",
       "values": {
         "poblacio": 151,
+        "pob_0_14": 23,
+        "pob_15_64": 101,
+        "pob_65_84": 22,
+        "pob_85_mes": 5,
+        "pob_65_mes": 27,
         "hab_total": 115,
         "hab_principal": 63,
         "hab_noprincipal": 52,
@@ -1526,6 +1994,11 @@
       "idescat6": "080522",
       "values": {
         "poblacio": 166,
+        "pob_0_14": 9,
+        "pob_15_64": 115,
+        "pob_65_84": 36,
+        "pob_85_mes": 6,
+        "pob_65_mes": 42,
         "hab_total": 276,
         "hab_principal": 71,
         "hab_noprincipal": 205,
@@ -1582,6 +2055,11 @@
       "idescat6": "080575",
       "values": {
         "poblacio": 68,
+        "pob_0_14": 4,
+        "pob_15_64": 46,
+        "pob_65_84": 18,
+        "pob_85_mes": 0,
+        "pob_65_mes": 18,
         "hab_total": 66,
         "hab_principal": 31,
         "hab_noprincipal": 35,
@@ -1638,6 +2116,11 @@
       "idescat6": "080787",
       "values": {
         "poblacio": 260,
+        "pob_0_14": 34,
+        "pob_15_64": 166,
+        "pob_65_84": 48,
+        "pob_85_mes": 12,
+        "pob_65_mes": 60,
         "hab_total": 128,
         "hab_principal": 89,
         "hab_noprincipal": 39,
@@ -1694,6 +2177,11 @@
       "idescat6": "080804",
       "values": {
         "poblacio": 41,
+        "pob_0_14": 1,
+        "pob_15_64": 29,
+        "pob_65_84": 11,
+        "pob_85_mes": 0,
+        "pob_65_mes": 11,
         "hab_total": 34,
         "hab_principal": 22,
         "hab_noprincipal": 12,
@@ -1750,6 +2238,11 @@
       "idescat6": "080924",
       "values": {
         "poblacio": 5082,
+        "pob_0_14": 735,
+        "pob_15_64": 2983,
+        "pob_65_84": 1132,
+        "pob_85_mes": 232,
+        "pob_65_mes": 1364,
         "hab_total": 2628,
         "hab_principal": 1935,
         "hab_noprincipal": 693,
@@ -1806,6 +2299,11 @@
       "idescat6": "080930",
       "values": {
         "poblacio": 28,
+        "pob_0_14": 2,
+        "pob_15_64": 13,
+        "pob_65_84": 12,
+        "pob_85_mes": 1,
+        "pob_65_mes": 13,
         "hab_total": 43,
         "hab_principal": 15,
         "hab_noprincipal": 28,
@@ -1862,6 +2360,11 @@
       "idescat6": "080996",
       "values": {
         "poblacio": 962,
+        "pob_0_14": 91,
+        "pob_15_64": 610,
+        "pob_65_84": 204,
+        "pob_85_mes": 57,
+        "pob_65_mes": 261,
         "hab_total": 720,
         "hab_principal": 423,
         "hab_noprincipal": 297,
@@ -1918,6 +2421,11 @@
       "idescat6": "081304",
       "values": {
         "poblacio": 133,
+        "pob_0_14": 22,
+        "pob_15_64": 80,
+        "pob_65_84": 23,
+        "pob_85_mes": 8,
+        "pob_65_mes": 31,
         "hab_total": 87,
         "hab_principal": 46,
         "hab_noprincipal": 41,
@@ -1974,6 +2482,11 @@
       "idescat6": "081326",
       "values": {
         "poblacio": 471,
+        "pob_0_14": 62,
+        "pob_15_64": 278,
+        "pob_65_84": 116,
+        "pob_85_mes": 15,
+        "pob_65_mes": 131,
         "hab_total": 289,
         "hab_principal": 166,
         "hab_noprincipal": 123,
@@ -2030,6 +2543,11 @@
       "idescat6": "081424",
       "values": {
         "poblacio": 163,
+        "pob_0_14": 12,
+        "pob_15_64": 104,
+        "pob_65_84": 40,
+        "pob_85_mes": 7,
+        "pob_65_mes": 47,
         "hab_total": 123,
         "hab_principal": 64,
         "hab_noprincipal": 59,
@@ -2086,6 +2604,11 @@
       "idescat6": "081445",
       "values": {
         "poblacio": 926,
+        "pob_0_14": 104,
+        "pob_15_64": 592,
+        "pob_65_84": 191,
+        "pob_85_mes": 39,
+        "pob_65_mes": 230,
         "hab_total": 530,
         "hab_principal": 360,
         "hab_noprincipal": 170,
@@ -2142,6 +2665,11 @@
       "idescat6": "081666",
       "values": {
         "poblacio": 1106,
+        "pob_0_14": 98,
+        "pob_15_64": 609,
+        "pob_65_84": 322,
+        "pob_85_mes": 77,
+        "pob_65_mes": 399,
         "hab_total": 989,
         "hab_principal": 474,
         "hab_noprincipal": 515,
@@ -2198,6 +2726,11 @@
       "idescat6": "081751",
       "values": {
         "poblacio": 4558,
+        "pob_0_14": 555,
+        "pob_15_64": 2789,
+        "pob_65_84": 973,
+        "pob_85_mes": 241,
+        "pob_65_mes": 1214,
         "hab_total": 2376,
         "hab_principal": 1742,
         "hab_noprincipal": 634,
@@ -2254,6 +2787,11 @@
       "idescat6": "081770",
       "values": {
         "poblacio": 44,
+        "pob_0_14": 5,
+        "pob_15_64": 27,
+        "pob_65_84": 12,
+        "pob_85_mes": 0,
+        "pob_65_mes": 12,
         "hab_total": 31,
         "hab_principal": 18,
         "hab_noprincipal": 13,
@@ -2310,6 +2848,11 @@
       "idescat6": "081884",
       "values": {
         "poblacio": 153,
+        "pob_0_14": 19,
+        "pob_15_64": 103,
+        "pob_65_84": 26,
+        "pob_85_mes": 5,
+        "pob_65_mes": 31,
         "hab_total": 78,
         "hab_principal": 44,
         "hab_noprincipal": 34,
@@ -2366,6 +2909,11 @@
       "idescat6": "081901",
       "values": {
         "poblacio": 301,
+        "pob_0_14": 27,
+        "pob_15_64": 177,
+        "pob_65_84": 93,
+        "pob_85_mes": 4,
+        "pob_65_mes": 97,
         "hab_total": 367,
         "hab_principal": 141,
         "hab_noprincipal": 226,
@@ -2422,6 +2970,11 @@
       "idescat6": "082166",
       "values": {
         "poblacio": 25,
+        "pob_0_14": 2,
+        "pob_15_64": 16,
+        "pob_65_84": 6,
+        "pob_85_mes": 1,
+        "pob_65_mes": 7,
         "hab_total": 39,
         "hab_principal": 17,
         "hab_noprincipal": 22,
@@ -2478,6 +3031,11 @@
       "idescat6": "082554",
       "values": {
         "poblacio": 179,
+        "pob_0_14": 32,
+        "pob_15_64": 119,
+        "pob_65_84": 23,
+        "pob_85_mes": 5,
+        "pob_65_mes": 28,
         "hab_total": 111,
         "hab_principal": 59,
         "hab_noprincipal": 52,
@@ -2534,6 +3092,11 @@
       "idescat6": "082687",
       "values": {
         "poblacio": 1236,
+        "pob_0_14": 130,
+        "pob_15_64": 755,
+        "pob_65_84": 285,
+        "pob_85_mes": 66,
+        "pob_65_mes": 351,
         "hab_total": 1095,
         "hab_principal": 517,
         "hab_noprincipal": 578,
@@ -2590,6 +3153,11 @@
       "idescat6": "082938",
       "values": {
         "poblacio": 260,
+        "pob_0_14": 16,
+        "pob_15_64": 158,
+        "pob_65_84": 73,
+        "pob_85_mes": 13,
+        "pob_65_mes": 86,
         "hab_total": 260,
         "hab_principal": 122,
         "hab_noprincipal": 138,
@@ -2646,6 +3214,11 @@
       "idescat6": "082994",
       "values": {
         "poblacio": 430,
+        "pob_0_14": 48,
+        "pob_15_64": 226,
+        "pob_65_84": 140,
+        "pob_85_mes": 16,
+        "pob_65_mes": 156,
         "hab_total": 325,
         "hab_principal": 181,
         "hab_noprincipal": 144,
@@ -2702,6 +3275,11 @@
       "idescat6": "083089",
       "values": {
         "poblacio": 178,
+        "pob_0_14": 35,
+        "pob_15_64": 100,
+        "pob_65_84": 40,
+        "pob_85_mes": 3,
+        "pob_65_mes": 43,
         "hab_total": 95,
         "hab_principal": 55,
         "hab_noprincipal": 40,
@@ -2758,6 +3336,11 @@
       "idescat6": "089030",
       "values": {
         "poblacio": 234,
+        "pob_0_14": 22,
+        "pob_15_64": 150,
+        "pob_65_84": 56,
+        "pob_85_mes": 6,
+        "pob_65_mes": 62,
         "hab_total": 230,
         "hab_principal": 116,
         "hab_noprincipal": 114,
@@ -2814,6 +3397,11 @@
       "idescat6": "251001",
       "values": {
         "poblacio": 207,
+        "pob_0_14": 19,
+        "pob_15_64": 129,
+        "pob_65_84": 53,
+        "pob_85_mes": 6,
+        "pob_65_mes": 59,
         "hab_total": 333,
         "hab_principal": 107,
         "hab_noprincipal": 226,

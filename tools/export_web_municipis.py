@@ -52,7 +52,11 @@ OUT_CATALUNYA = REPO / "data" / "web" / "municipis.catalunya.json"
 # Ordre i claus de mètrica del contracte (= MetricKey a types.ts). Determina
 # l'ordre del catàleg `metrics` al JSON (estable → diffs nets).
 METRIC_KEYS = [
-    "poblacio", "hab_total", "hab_principal", "hab_noprincipal",
+    "poblacio",
+    # Franges d'edat (E12): ja s'ingerien i el mart les llençava; ara es publiquen.
+    # pob_15_64 és derivada per resta i pot venir buida si no quadra (mai fabricada).
+    "pob_0_14", "pob_15_64", "pob_65_84", "pob_85_mes", "pob_65_mes",
+    "hab_total", "hab_principal", "hab_noprincipal",
     "pct_noprincipal", "hab_per_hab", "index_envelliment", "densitat_hab_km2", "renda_neta_persona",
     # Origen: composició i arrelament (capa sensible; lectura ecològica, mai individual).
     "poblacio_nascuda_catalunya", "poblacio_nascuda_resta_espanya",
@@ -87,7 +91,10 @@ METRIC_KEYS = [
 # Format de presentació per clau (MetricFormat a types.ts). No és al contracte
 # (és de presentació); mirall de com Mirador ja pinta cada mètrica al mock.
 FORMAT_BY_KEY = {
-    "poblacio": "integer", "hab_total": "integer", "hab_principal": "integer",
+    "poblacio": "integer",
+    "pob_0_14": "integer", "pob_15_64": "integer", "pob_65_84": "integer",
+    "pob_85_mes": "integer", "pob_65_mes": "integer",
+    "hab_total": "integer", "hab_principal": "integer",
     "hab_noprincipal": "integer", "pct_noprincipal": "percent",
     "hab_per_hab": "ratio", "index_envelliment": "decimal", "densitat_hab_km2": "decimal",
     "renda_neta_persona": "integer",
@@ -121,7 +128,11 @@ FORMAT_BY_KEY = {
 
 # Mapa clau de mètrica → columna del mart corresponent.
 COL_MUNI = {
-    "poblacio": "poblacio", "hab_total": "hab_total",
+    "poblacio": "poblacio",
+    # Franges d'edat (E12).
+    "pob_0_14": "pob_0_14", "pob_15_64": "pob_15_64", "pob_65_84": "pob_65_84",
+    "pob_85_mes": "pob_85_mes", "pob_65_mes": "pob_65_mes",
+    "hab_total": "hab_total",
     "hab_principal": "hab_principal", "hab_noprincipal": "hab_noprincipal",
     "pct_noprincipal": "pct_noprincipal", "hab_per_hab": "hab_per_hab",
     "index_envelliment": "index_envelliment", "densitat_hab_km2": "densitat_hab_km2",
@@ -199,6 +210,39 @@ def _source_label(spec: dict, sources: dict) -> str:
     return label
 
 
+def resolve_frescor(spec: dict, sources: dict) -> dict[str, Any]:
+    """Frescor d'una mètrica (E5 · esmenes de Bea §3): cada quan s'actualitza, quan es
+    va carregar per darrer cop i QUI la refresca.
+
+    Resolució (mai inventada):
+      · `actualitzacio` — el que digui la mètrica si té override (p. ex. el bloc del Cens
+        d'habitatge 2021, que és decennal encara que EMEX es refresqui cada any); si no,
+        el de la seva font.
+      · Les DERIVADES (`source: datapoble`) no tenen cadència pròpia: hereten la del seu
+        `origin_source`. Si una derivada no en declara cap, s'emet null — un buit visible,
+        no un «anual» de consol.
+      · `darrera_carrega` i `proces_refresc` vénen SEMPRE de la font efectiva.
+        `proces_refresc: "cap"` és una declaració, no un forat: vol dir que aquesta font
+        s'actualitza a mà. El tauler l'ha de poder dir.
+    """
+    src_key = spec.get("source", "")
+    src = sources.get(src_key, {})
+    # Derivada → la font efectiva de la frescor és l'origen.
+    if src.get("actualitzacio") == "derivada":
+        origin_key = spec.get("origin_source")
+        if origin_key and origin_key in sources:
+            src_key, src = origin_key, sources[origin_key]
+        else:
+            src = {}
+    actualitzacio = spec.get("actualitzacio") or src.get("actualitzacio")
+    return {
+        "actualitzacio": actualitzacio,
+        "darrera_carrega": src.get("darrera_carrega"),
+        "proces_refresc": src.get("proces_refresc"),
+        "font_frescor": src_key or None,
+    }
+
+
 def build_metrics(contract: dict) -> dict[str, dict]:
     """Catàleg `metrics` (Record<MetricKey, MetricDef>) des del contracte."""
     raw = contract["metrics"]
@@ -216,6 +260,9 @@ def build_metrics(contract: dict) -> dict[str, dict]:
         }
         if spec.get("date"):
             m["date"] = str(spec["date"])
+        # FRESCOR (E5): `date` diu QUAN és la dada; això diu CADA QUAN es refresca, quan
+        # es va carregar i quin procés la manté (o `cap`). Additiu: MetricDef.frescor?
+        m["frescor"] = resolve_frescor(spec, sources)
         # formula: REGLA DE FERRO de Bea (C6 §8.1) — cada xifra amb la seva font O fórmula.
         # El contracte porta `formula:` a TOTA mètrica (cadena plana, p. ex. "hab_noprincipal
         # / hab_total * 100" o "directe"). L'emetem tal qual perquè D5 pugui mostrar la

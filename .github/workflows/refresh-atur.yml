@@ -33,15 +33,20 @@ jobs:
       - name: Install (connector + dbt-duckdb + verificadors)
         run: |
           pip install requests pandas pyarrow dbt-duckdb duckdb pyyaml
-      - name: Refresh atur (ingesta 2006→avui + dbt build + verify + bump date)
+      # D7: el refresc ja no acaba al pols. Els dos Δ de l'atur (mes anterior i mateix mes
+      # de l'any anterior) canvien cada mes → també es refan mart_tendencia i el JSON
+      # servit tauler.bergueda.json. Si no, el --check del CI cauria al PR següent.
+      - name: Refresh atur (ingesta + dbt build + tendència + export web + verify + bump)
         run: python tools/refresh_atur.py
-      - name: Upload artefactes regenerats (mart + metrics.yml + provenança)
+      - name: Upload artefactes regenerats (marts + web + metrics.yml + provenança)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: refresh-atur
           path: |
             data/marts/mart_pols_mensual.parquet
+            data/marts/mart_tendencia.parquet
+            data/web/tauler.bergueda.json
             semantic/metrics.yml
             data/raw/atur_sepe/_provenance.json
           if-no-files-found: warn
