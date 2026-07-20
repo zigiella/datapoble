@@ -602,9 +602,14 @@ metrics:
     unit: {ca: per cent, es: por cien}
     formula: "rtc_total / hab_total * 100"
     source: datapoble
+    origin_source: rtc
+    date: "2021/2025"
     table: mart_municipi
     column: rtc_per_100hab_viv
     visibility: public
+    caveat:
+      ca: "Barreja de vintages, i el denominador és el vell: el numerador (RTC) és un registre VIU llegit com a foto del dia de la càrrega (2025); el denominador (parc d'habitatges) és el Cens de 2021. On el parc hagi crescut des del 2021, la penetració surt SOBREESTIMADA. Fins al 2026-07-20 aquesta mètrica no declarava cap data i la barreja no es deia enlloc."
+      es: "Mezcla de vintages, y el denominador es el viejo: el numerador (RTC) es un registro VIVO leído como foto del día de la carga (2025); el denominador (parque de viviendas) es el Censo de 2021. Donde el parque haya crecido desde 2021, la penetración sale SOBREESTIMADA. Hasta el 2026-07-20 esta métrica no declaraba ninguna fecha y la mezcla no se decía en ningún sitio."
 
   # --- Pressió / càrrega real ---
   kg_hab_any:
