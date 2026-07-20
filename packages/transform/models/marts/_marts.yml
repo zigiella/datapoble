@@ -464,6 +464,11 @@ models:
       2021→2025 ja calculada a mart_demografia). Doctrina del «<5» propagada al
       delta: si un dels dos punts ve emmascarat, el delta és un INTERVAL
       (delta_min/delta_max) i delta = NULL.
+      COBERTURA DERIVADA (D10): quines mètriques hi han de ser NO s'escriu a mà
+      enlloc — verify_tendencia.py les llegeix de l'autoritat del front
+      (packages/web/src/lib/govern/kpis.js, via tools/tauler_kpis.py) i cau si una
+      targeta del tauler no té fila aquí. La guarda va caldre perquè serveis_estab i
+      restauracio_estab es pintaven i no eren al mart ni com a 'sense_serie'.
     columns:
       - name: ine5
         description: Codi INE de 5 dígits (clau de join del contracte).
@@ -495,10 +500,16 @@ models:
           - not_null
           - accepted_values:
               arguments: { values: ["amb_serie", "sense_serie"] }
-      - name: motiu
+      - name: motiu_ca
         description: >
-          Per què no hi ha sèrie (obligatori a tota fila 'sense_serie'; NULL a les
-          'amb_serie'). És el text que la targeta pot mostrar en lloc de la fletxa.
+          Per què no hi ha sèrie, en CATALÀ (obligatori a tota fila 'sense_serie';
+          NULL a les 'amb_serie'). És el text que la targeta mostra en lloc de la
+          fletxa. Va en dues columnes d'idioma (D10) perquè el motiu és DADA: el
+          front el pinta literal i traduir-lo allà seria inventar-se'l.
+      - name: motiu_es
+        description: >
+          El mateix motiu en CASTELLÀ. Mateixa regla que `motiu_ca`: obligatori a
+          'sense_serie', NULL a 'amb_serie'. Cap dels dos pot faltar sense l'altre.
       - name: periode_actual
         description: Període del valor actual ("YYYY-MM" per a l'atur, "YYYY" per a l'origen).
       - name: periode_anterior

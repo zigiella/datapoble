@@ -384,6 +384,37 @@
       },
       "status": "public"
     },
+    "atur_registrat": {
+      "key": "atur_registrat",
+      "label": {
+        "ca": "Atur registrat",
+        "es": "Paro registrado"
+      },
+      "unit": {
+        "ca": "persones",
+        "es": "personas"
+      },
+      "dimension": "treball",
+      "format": "integer",
+      "source": "SEPE — Servicio Público de Empleo Estatal — Paro registrado por municipios (CSV mensual, un fitxer per any, des de 2006)",
+      "date": "2026-06",
+      "frescor": {
+        "actualitzacio": "mensual",
+        "darrera_carrega": "2026-07-05",
+        "proces_refresc": ".github/workflows/refresh-atur.yml",
+        "font_frescor": "sepe"
+      },
+      "formula": "directe",
+      "definicio": {
+        "ca": "Persones registrades com a aturades a les oficines d'ocupació (SOC/SEPE) el darrer dia del mes.",
+        "es": "Personas registradas como paradas en las oficinas de empleo (SOC/SEPE) el último día del mes."
+      },
+      "note": {
+        "ca": "Cobertura: els 947 municipis de Catalunya (filtre pel catàleg sencer, mai per província), sèrie mensual des de 2006. Doctrina del «<5» (C1 §1.1): des de gener 2022 el SEPE emmascara els valors 1–4 com a «<5» → interval [1,4] (columnes atur_registrat_min/max + atur_emmascarat), MAI zero ni NaN silenciós; la UI mostra «<5».",
+        "es": "Cobertura: los 947 municipios de Cataluña (filtro por el catálogo entero, nunca por provincia), serie mensual desde 2006. Doctrina del «<5» (C1 §1.1): desde enero de 2022 el SEPE enmascara los valores 1–4 como «<5» → intervalo [1,4] (columnas atur_registrat_min/max + atur_emmascarat), NUNCA cero ni NaN silencioso; la UI muestra «<5»."
+      },
+      "status": "public"
+    },
     "poblacio_nascuda_catalunya": {
       "key": "poblacio_nascuda_catalunya",
       "label": {
