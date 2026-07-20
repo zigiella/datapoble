@@ -1,5 +1,11 @@
 /**
- * Els KPIs de la vista de govern (D5), en ORDRE FIX (gorra §3 / C6 §1.3, §7).
+ * Els KPIs del TAULER DE DADES, en ORDRE FIX (gorra §3 / C6 §1.3, §7).
+ *
+ * D8 · E1 (esmena de Bea, `docs/ajuntaments/tauler-v2-esmenes-bea.md`): ja NO hi ha dues
+ * vistes. El commutador Veïnal|Govern desapareix i aquest tauler —els KPIs amb rang comarcal,
+ * ordre fix i política editorial— passa a ser LA fitxa, sense `?vista=govern`. El nom visible
+ * és «Tauler de dades». La paritat de xifres deixa de ser un risc: no hi ha una segona vista
+ * amb què discrepar.
  *
  * ⚠️ Font ÚNICA de l'ordre i la composició del tauler: la comparteixen el component
  * (`municipi/[slug]/+page.svelte`) i el verificador offline (`scripts/verify-govern.mjs`)
@@ -30,7 +36,9 @@
  * @property {string} [key]           Clau de mètrica (kind 'metric').
  * @property {string} [deltaKey]      Mètrica secundària (p. ex. la variació de la finestra).
  * @property {boolean} [noRank]       El KPI no porta rang per doctrina (C6 §3).
- * @property {boolean} [bea]          Copy amb VOT NARRATIU DE BEA PENDENT (gorra §3.3).
+ * @property {boolean} [pendingRank]  El KPI HAURIA de portar rang però el mart encara no el
+ *                                    serveix → targeta amb el motiu REAL escrit (mai un rang
+ *                                    calculat al front: C6 §4 és frontera dura).
  */
 
 /** @type {GovKpi[]} */
@@ -38,18 +46,27 @@ export const GOVERN_KPIS = [
 	// A · Qui hi ha (i qui hi haurà)
 	{ kind: 'metric', key: 'index_envelliment', group: 'A' },
 	{ kind: 'metric', key: 'poblacio', group: 'A' },
-	{ kind: 'metric', key: 'pct_nacionalitat_estrangera', group: 'A', deltaKey: 'delta_pct_estrangera_finestra', noRank: true, bea: true },
+	// E9 (Bea): el vot narratiu ja HI ÉS —el rang s'ha de mostrar—, però `mart_govern` NO
+	// rankeja aquesta mètrica (viu a `mart_demografia`) i `export_govern_web.RANK_METRICS` en
+	// té 7, sense aquesta. El front NO se'l pot inventar (C6 §4), així que la targeta declara
+	// el motiu real. Handoff a Sondeig: afegir-la al mart i a RANK_METRICS → llavors treure
+	// `pendingRank` i afegir-la a GOVERN_RANK_KEYS (segona passada de Mirador).
+	{ kind: 'metric', key: 'pct_nacionalitat_estrangera', group: 'A', deltaKey: 'delta_pct_estrangera_finestra', pendingRank: true },
 	{ kind: 'etca', group: 'A', noRank: true },
 	// B · Les cases (el nus)
 	{ kind: 'metric', key: 'pct_noprincipal', group: 'B' },
 	{ kind: 'metric', key: 'rtc_per_1000hab', group: 'B' },
-	{ kind: 'metric', key: 'kwh_hab', group: 'B' },
 	// C · El pols i l'economia
 	{ kind: 'atur', group: 'C', noRank: true },
 	{ kind: 'metric', key: 'renda_neta_persona', group: 'C' },
 	{ kind: 'serveis', group: 'C', noRank: true },
-	// D · Els diners i el que gastem (radar aparcat rere porta; licitacions aparcada)
-	{ kind: 'metric', key: 'kg_hab_any', group: 'D' }
+	// D · El pols de la vida diària (E2 de Bea): els tres rastres físics del dia a dia JUNTS
+	// —residus, elèctric domèstic i vidre—, cadascun amb la seva font (C6 §8.1). El vidre no
+	// el rankeja el mart (no és a les 7): surt sense rang, que és la lectura honesta.
+	// (Radar aparcat rere porta; licitacions aparcada.)
+	{ kind: 'metric', key: 'kg_hab_any', group: 'D' },
+	{ kind: 'metric', key: 'kwh_hab', group: 'D' },
+	{ kind: 'metric', key: 'vidre_hab', group: 'D' }
 ];
 
 /**

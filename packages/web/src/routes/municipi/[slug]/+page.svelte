@@ -23,7 +23,7 @@
 	 *
 	 * Chrome del design-system (.ap-hero + .ds-main/.ds-sec); el text nou és i18n ca/es.
 	 */
-	import { goto } from '$app/navigation';
+	import { goto, replaceState } from '$app/navigation';
 	import { page } from '$app/state';
 	import { browser } from '$app/environment';
 	import ContourField from '$lib/components/ContourField.svelte';
@@ -48,18 +48,23 @@
 	// aparcat). null = Idescat no la publica (<1.000 hab) → «sense dada oficial».
 	const etca = $derived(data.etca ?? null);
 	const isBergueda = $derived(data.isBergueda ?? false); // pilot profund vs espina CAT (lede honest)
-	// ── Vista de govern (D5 · C6) ────────────────────────────────────────────────────────────
-	// El commutador viu a la URL (`?vista=govern`): la MATEIXA fitxa, amb els KPIs de la gorra al
-	// capdamunt i el rang comarcal (C6 §1). La vista NOMÉS canvia l'ordenació i l'èmfasi, mai les
-	// xifres (test de paritat §10.1). Es reactiva a `page.url` (client). El rang «k de n» es LLEGEIX
-	// del mart via `data.govern` (D4) — el front no calcula cap rang (C6 §4).
+	// ── Tauler de dades (D8 · E1 de Bea) ─────────────────────────────────────────────────────
+	// UNA SOLA VISTA. El commutador Veïnal|Govern s'ha retirat: el que era «mode govern» —KPIs
+	// amb rang comarcal, ordre fix, política editorial— ÉS ara la fitxa. Com que ja no hi ha dues
+	// vistes, la paritat de xifres (§10.1) deixa de ser un risc: no hi ha cap segona lectura amb
+	// què discrepar. El rang «k de n» es LLEGEIX del mart via `data.govern` (D4) — el front no
+	// calcula cap rang (C6 §4).
 	const govern = $derived<GovernEntry | null>(data.govern ?? null);
-	// `?vista=govern` NOMÉS es llegeix al client: la pàgina és prerenderitzada (adapter-static) i
-	// SvelteKit prohibeix `url.searchParams` en prerender (el query no es coneix en build). Per tant
-	// el prerender surt sempre en vista veïnal i, en hidratar, el client hi aplica el commutador
-	// (millora progressiva). Paritat intacta: les xifres són les mateixes; només canvia l'ordenació.
-	const isGovern = $derived(browser && page.url.searchParams.get('vista') === 'govern');
-	const basePath = $derived(page.url.pathname); // conserva el prefix de locale (/es/…)
+	// Compatibilitat d'enllaços ja compartits: `?vista=govern` NO trenca res (la pàgina és la
+	// mateixa amb i sense el paràmetre). En hidratar, si el paràmetre hi és, es neteja de la URL
+	// amb `replaceState` (no navega, no toca l'historial) perquè l'enllaç canònic quedi net.
+	$effect(() => {
+		if (!browser) return;
+		if (!page.url.searchParams.has('vista')) return;
+		const u = new URL(page.url);
+		u.searchParams.delete('vista');
+		replaceState(`${u.pathname}${u.search}${u.hash}`, page.state);
+	});
 	// Espina territorial: comarca/vegueria del muni + municipis veïns de la comarca (navegació).
 	const territori = $derived(data.territori);
 	const veins = $derived(data.veins ?? []);
@@ -260,8 +265,9 @@
 		return def.date ? `${def.source} · ${def.date}` : def.source;
 	}
 
-	// ── Ajudes de la vista de govern ──────────────────────────────────────────────────────────
-	// Els 4 blocs de la gorra §3 (ordre FIX, C6 §7 — cap KPI es reordena per enterrar-lo).
+	// ── Ajudes del tauler de dades ────────────────────────────────────────────────────────────
+	// Els 4 blocs de la gorra §3 (ordre FIX, C6 §7 — cap KPI es reordena per enterrar-lo). El bloc
+	// D és, des de l'E2 de Bea, el grup de «vida»: residus + elèctric domèstic + vidre junts.
 	const GOV_GROUPS = [
 		{ g: 'A', label: () => m.gov_grp_a() },
 		{ g: 'B', label: () => m.gov_grp_b() },
@@ -277,6 +283,7 @@
 		renda_neta_persona: '€',
 		kwh_hab: 'kWh',
 		kg_hab_any: 'kg',
+		vidre_hab: 'kg',
 		rtc_per_1000hab: '‰'
 	};
 	function gUnit(key: string): string {
@@ -385,33 +392,13 @@
 			</div>
 		</section>
 
-		<!-- Commutador de vista (C6 §1): la MATEIXA URL, amb i sense `?vista=govern`, mostra les
-		     MATEIXES xifres (test de paritat §10.1). El mode govern només canvia l'ordenació i
-		     l'èmfasi. S'ofereix NOMÉS al Berguedà (C6 §1.2). Enllaços compartibles, no estat amagat. -->
-		{#if isBergueda && row}
-			<section class="ds-sec" style="border-top:none">
-				<div class="gov-switch" role="group" aria-label={m.gov_switch_aria()}>
-					<a
-						class="gov-switch__opt"
-						href={basePath}
-						data-active={!isGovern}
-						aria-current={!isGovern ? 'true' : undefined}>{m.gov_view_veinal()}</a
-					>
-					<a
-						class="gov-switch__opt"
-						href={`${basePath}?vista=govern`}
-						data-active={isGovern}
-						aria-current={isGovern ? 'true' : undefined}>{m.gov_view_govern()}</a
-					>
-				</div>
-			</section>
-		{/if}
-
 		{#if row}
-			<!-- TAULER DE GOVERN (D5): els KPIs de la gorra §3 al capdamunt, amb el rang comarcal
-			     «k de n» LLEGIT del mart (C6 §4, mai calculat aquí) i, a cada targeta, la seva
-			     procedència: FONT (mesurada) o FÓRMULA (inferida) — regla de ferro de Bea (C6 §8.1). -->
-			{#if isGovern}
+			<!-- TAULER DE DADES (D8 · E1): UNA SOLA VISTA. Els KPIs de la gorra §3 al capdamunt, amb
+			     el rang comarcal «k de n» LLEGIT del mart (C6 §4, mai calculat aquí) i, a cada
+			     targeta, la seva procedència: FONT (mesurada) o FÓRMULA (inferida) — regla de ferro
+			     de Bea (C6 §8.1). Abast del rang = Berguedà (C6 §1.2), que és on `data.govern` existeix;
+			     per això el tauler es manté al pilot i la resta de Catalunya conserva la seva espina. -->
+			{#if isBergueda}
 				<section class="ds-sec gov-board" aria-labelledby="gov-board-h">
 					<div class="ds-sec__hd"><span class="ref">◆</span><h2 id="gov-board-h">{m.gov_board_title()}</h2></div>
 					<p class="muni-sec__sub">{m.gov_board_sub()}</p>
@@ -438,7 +425,10 @@
 												<span class="gov-kpi__rankk">{m.gov_rang_val({ k: String(cell.rang), n: String(cell.n_amb_dada) })}</span>
 												<span class="gov-kpi__rankl">{m.gov_rang_label()}{#if cell.empat} · {m.gov_rang_empat()}{/if}{m.gov_rang_cap({ comarca: govern?.comarca ?? '' })}</span>
 											</p>
-										{:else if kpi.bea}
+										{:else if kpi.pendingRank}
+											<!-- E9: el vot de Bea ja hi és, però el rang encara no el serveix el mart
+											     (`mart_govern` no rankeja aquesta mètrica). Es diu el motiu REAL en
+											     comptes de calcular-lo aquí (C6 §4). -->
 											<p class="gov-kpi__norank">{m.gov_nova_norank()}</p>
 										{/if}
 										{#if prv.formula}
@@ -446,9 +436,6 @@
 											<p class="gov-kpi__src">{prv.src}</p>
 										{:else}
 											<p class="gov-kpi__src">{prv.src}</p>
-										{/if}
-										{#if kpi.bea}
-											<p class="gov-kpi__bea">{m.gov_kpi_nova_frame()} <span class="gov-tag">{m.gov_bea_pending()}</span></p>
 										{/if}
 									</article>
 								{:else if kpi.kind === 'etca'}
@@ -1144,41 +1131,8 @@
 	}
 	/* (El mirall ara és la constel·lació cat-escala —MirallConstel.svelte—, amb estil propi.) */
 
-	/* ── Vista de govern (D5 · C6) ───────────────────────────────────────────────────────── */
-	/* Commutador Veïnal | Govern: segmented control d'enllaços (compartibles). */
-	.gov-switch {
-		display: inline-flex;
-		gap: 2px;
-		padding: 3px;
-		border: 1px solid var(--dp-border-strong);
-		border-radius: var(--dp-radius-full);
-		background: var(--dp-surface);
-	}
-	.gov-switch__opt {
-		font-family: var(--dp-font-mono);
-		font-size: 0.72rem;
-		letter-spacing: 0.03em;
-		text-transform: uppercase;
-		padding: 6px 16px;
-		border-radius: var(--dp-radius-full);
-		text-decoration: none;
-		color: var(--dp-text-muted);
-		transition:
-			background 0.15s ease,
-			color 0.15s ease;
-	}
-	.gov-switch__opt[data-active='true'] {
-		background: var(--dp-text);
-		color: var(--dp-bg);
-	}
-	.gov-switch__opt:hover:not([data-active='true']) {
-		color: var(--dp-text);
-		background: var(--dp-accent-weak);
-	}
-	.gov-switch__opt:focus-visible {
-		outline: 2px solid var(--dp-focus, var(--dp-forest));
-		outline-offset: 2px;
-	}
+	/* ── Tauler de dades (D5, vista única des de D8 · E1) ────────────────────────────────── */
+	/* (El commutador Veïnal|Govern i el seu estil s'han retirat amb l'E1: una sola vista.) */
 
 	/* Tauler: grups de la gorra §3 + graella de targetes de KPI. */
 	.gov-grp {
@@ -1302,24 +1256,8 @@
 		color: var(--dp-text-subtle);
 		line-height: 1.4;
 	}
-	.gov-kpi__bea {
-		margin: 6px 0 0;
-		font-size: 0.72rem;
-		line-height: 1.45;
-		color: var(--dp-text-muted);
-	}
-	.gov-tag {
-		display: inline-block;
-		font-family: var(--dp-font-mono);
-		font-size: 0.58rem;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		color: var(--dp-text-subtle);
-		border: 1px solid var(--dp-border-strong);
-		border-radius: var(--dp-radius-sm);
-		padding: 1px 6px;
-		white-space: nowrap;
-	}
+	/* (`.gov-kpi__bea` i `.gov-tag` retirats amb l'E10: la frase interpretativa ja no es
+	   renderitza i el seu distintiu de «vot pendent» se n'anava amb ella.) */
 	.gov-board__foot {
 		margin: 16px 0 0;
 		font-family: var(--dp-font-mono);

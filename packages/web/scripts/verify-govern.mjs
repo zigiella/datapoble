@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 /**
- * verify-govern.mjs — verificador OFFLINE de la vista de govern (D5 · C6 §10.7).
+ * verify-govern.mjs — verificador OFFLINE del TAULER DE DADES (D5, esmenat a D8 · C6 §10.7).
+ *
+ * D8 · E1: ja no hi ha vista de govern separada ni commutador — el tauler ÉS la fitxa. El
+ * verificador segueix guardant les mateixes invariants, ara sobre la vista única.
  *
  * Guarda la REGLA DE FERRO de Bea (C6 §8.1): CAP targeta de KPI del tauler de govern pot
  * quedar sense línia de procedència (font O fórmula). A més comprova que el rang «k de n»
@@ -88,14 +91,24 @@ if (gp) {
 	}
 }
 
-// 4 · i18n del tauler (etiquetes/commutador) presents a ca+es.
+// 4 · i18n del tauler presents a ca+es. D8 · E1: el commutador ja no existeix (una sola vista),
+//     així que `gov_switch_aria`/`gov_view_*` han desaparegut; E10 retira `gov_kpi_nova_frame`
+//     (i amb ella `gov_bea_pending`, que només l'acompanyava).
 const I18N_UI = [
-	'gov_switch_aria', 'gov_view_veinal', 'gov_view_govern', 'gov_board_title', 'gov_board_sub',
+	'gov_board_title', 'gov_board_sub',
 	'gov_grp_a', 'gov_grp_b', 'gov_grp_c', 'gov_grp_d', 'gov_rang_label', 'gov_rang_val',
-	'gov_rang_cap', 'gov_rang_empat', 'gov_nova_norank', 'gov_nova_delta_label',
-	'gov_kpi_nova_frame', 'gov_bea_pending'
+	'gov_rang_cap', 'gov_rang_empat', 'gov_nova_norank', 'gov_nova_delta_label'
 ];
 for (const k of I18N_UI) ok(!!ca[k] && !!es[k], `i18n '${k}' absent (ca/es)`);
+
+// 4b · Claus RETIRADES: no poden quedar òrfenes als catàlegs (higiene d'i18n, D8).
+const I18N_GONE = [
+	'gov_switch_aria', 'gov_view_veinal', 'gov_view_govern', 'gov_kpi_nova_frame', 'gov_bea_pending'
+];
+for (const k of I18N_GONE) {
+	ok(!(k in ca), `i18n '${k}' retirada però encara a ca.json (clau òrfena)`);
+	ok(!(k in es), `i18n '${k}' retirada però encara a es.json (clau òrfena)`);
+}
 
 // 5 · Higiene: index_turisme (deprecat) fora del catàleg servit.
 ok(!('index_turisme' in metrics), `index_turisme encara al catàleg servit (hauria d'estar fora)`);
@@ -108,7 +121,7 @@ if (fails.length) {
 const nCards = GOVERN_KPIS.length;
 const nRank = GOVERN_KPIS.filter((k) => GOVERN_RANK_KEYS.includes(k.key)).length;
 console.log(
-	`VERIFICACIÓ vista de govern: OK — ${nCards} KPIs (tots amb font O fórmula), ` +
+	`VERIFICACIÓ tauler de dades: OK — ${nCards} KPIs (tots amb font O fórmula), ` +
 		`${nRank} amb rang comarcal LLEGIT del mart, paritat dataset↔mart a la Pobla, ` +
-		`i18n ca/es complet, index_turisme fora.`
+		`i18n ca/es complet i sense claus òrfenes, index_turisme fora.`
 );
