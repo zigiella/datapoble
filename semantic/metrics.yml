@@ -19,6 +19,28 @@
 #     Obligatori a les mètriques noves des de C1 (2026-07-16); el backfill de les
 #     anteriors és un chore separat (owner Talaia).
 #
+# EVIDÈNCIA CITABLE (E7a, 2026-07-20, Talaia). Les fitxes P1/P2 prometen que «cada frase és
+# traçable fins a la font» mitjançant l'array `evidencia`. Aquesta promesa no estava enlloc
+# imposada: el generador validava números, to i llista negra, però `evidencia` era text lliure.
+# Resultat mesurat sobre el que se servia: 532 frases, i només 164 (30%) citaven exclusivament
+# mètriques que un lector pot anar a comprovar. 108 citacions apuntaven a claus que NO
+# EXISTEIXEN al contracte (`pernocta_rang`, `etca_idescat`) — evidència fantasma, inventada pel
+# model generador; 652 apuntaven a la capa del nostre model; 32 a una mètrica deprecada.
+#
+#   REGLA (vinculant): una clau d'`evidencia` d'una lectura pública ha de ser una mètrica que
+#   (1) existeixi en aquest fitxer, (2) no sigui `status: planned` ni `deprecated`,
+#   (3) no sigui `categoria: derived` — la nostra capa de model, no mesura — i
+#   (4) no sigui `visibilitat: vermell`.
+#   Qui no la compleix, no es pot citar. La guarda va al generador i al CI (E7b, Sondeig):
+#   sense guarda això torna, com va tornar el `caveat` esborrat i els `--check` absents.
+#
+#   Per què `categoria: derived` i no `source: datapoble`: hi ha derivades honestes i citables
+#   (`pct_noprincipal`, `hab_per_hab`, `pob_15_64`) que són raons simples de dues mesures
+#   oficials i ensenyen la seva fórmula. `derived` marca una altra cosa: índexs compostos i
+#   estimacions amb supòsits incorporats (pernocta, IETR, tipologia, confiança). Aquestes
+#   segueixen sent vàlides com a recerca; el que no poden és sostenir una frase pública sobre
+#   un municipi com si fossin una mesura.
+#
 # FRESCOR (E5 de les esmenes de Bea, docs/ajuntaments/tauler-v2-esmenes-bea.md §3 —
 # vinculant). Fins ara el contracte deia QUAN és la dada (`date`) però no CADA QUAN es
 # refresca ni QUI la refresca. Una dada anual sense procés és honesta si es diu; una que
@@ -323,7 +345,6 @@ metrics:
     column: pob_65_84
     visibility: public
     visibilitat: verd
-
   pob_85_mes:
     label: {ca: "Població de 85 anys i més", es: "Población de 85 años y más"}
     definicio:
@@ -355,7 +376,6 @@ metrics:
     column: pob_65_mes
     visibility: public
     visibilitat: verd
-
   index_envelliment:
     label: {ca: Índex d'envelliment, es: Índice de envejecimiento}
     definicio:
@@ -477,8 +497,8 @@ metrics:
     column: pct_nacionalitat_estrangera
     visibility: public
     caveat:
-      ca: "Sempre ≤ % nascuts a l'estranger: la diferència són els qui s'han naturalitzat. Lectura ECOLÒGICA, mai individual."
-      es: "Siempre ≤ % nacidos en el extranjero: la diferencia son quienes se han naturalizado. Lectura ECOLÓGICA, nunca individual."
+      ca: "Normalment ≤ % nascuts a l'estranger —la diferència són els qui s'han naturalitzat—, però NO sempre: a 37 dels 938 municipis amb dada la supera (pitjor cas Tornabous, 27,42 vs 24,76). El mecanisme és banal: una criatura nascuda aquí de pares estrangers té passaport estranger i lloc de naixement català, així que suma a nacionalitat i no a naixement. Allà on passa, `bretxa_naturalitzacio` surt NEGATIVA i s'ha de llegir com això, no com un error. Lectura ECOLÒGICA, mai individual."
+      es: "Normalmente ≤ % nacidos en el extranjero —la diferencia son quienes se han naturalizado—, pero NO siempre: en 37 de los 938 municipios con dato lo supera (peor caso Tornabous, 27,42 vs 24,76). El mecanismo es banal: un niño nacido aquí de padres extranjeros tiene pasaporte extranjero y lugar de nacimiento catalán, así que suma a nacionalidad y no a nacimiento. Donde ocurre, `bretxa_naturalitzacio` sale NEGATIVA y debe leerse como eso, no como un error. Lectura ECOLÓGICA, nunca individual."
 
   bretxa_naturalitzacio:
     label: {ca: Bretxa de naturalització (arrelament), es: Brecha de naturalización (arraigo)}
@@ -495,8 +515,8 @@ metrics:
     column: bretxa_naturalitzacio
     visibility: public
     caveat:
-      ca: "Com més alta, més població d'origen estranger ARRELADA (naturalitzada). Dona la volta al marc de l'«extranjería»: mesura integració, no amenaça. Lectura ecològica."
-      es: "Cuanto más alta, más población de origen extranjero ARRAIGADA (naturalizada). Da la vuelta al marco de la «extranjería»: mide integración, no amenaza. Lectura ecológica."
+      ca: "Com més alta, més població d'origen estranger ARRELADA (naturalitzada). Dona la volta al marc de l'«extranjería»: mesura integració, no amenaça. Lectura ecològica. Pot ser NEGATIVA i no és cap error: passa a 37 dels 938 municipis amb dada, quan hi ha més passaports estrangers que persones nascudes fora — típicament criatures nascudes aquí de pares estrangers. En aquests casos la mètrica NO mesura arrelament: no se'n pot llegir «poc arrelament», només que la naturalització encara no ha arribat a una població jove nascuda al municipi."
+      es: "Cuanto más alta, más población de origen extranjero ARRAIGADA (naturalizada). Da la vuelta al marco de la «extranjería»: mide integración, no amenaza. Lectura ecológica. Puede ser NEGATIVA y no es ningún error: ocurre en 37 de los 938 municipios con dato, cuando hay más pasaportes extranjeros que personas nacidas fuera — típicamente niños nacidos aquí de padres extranjeros. En esos casos la métrica NO mide arraigo: no puede leerse «poco arraigo», solo que la naturalización aún no ha alcanzado a una población joven nacida en el municipio."
 
   delta_pct_estrangera_finestra:
     label: {ca: "Variació % estrangera (2021→)", es: "Variación % extranjera (2021→)"}
@@ -582,9 +602,14 @@ metrics:
     unit: {ca: per cent, es: por cien}
     formula: "rtc_total / hab_total * 100"
     source: datapoble
+    origin_source: rtc
+    date: "2021/2025"
     table: mart_municipi
     column: rtc_per_100hab_viv
     visibility: public
+    caveat:
+      ca: "Barreja de vintages, i el denominador és el vell: el numerador (RTC) és un registre VIU llegit com a foto del dia de la càrrega (2025); el denominador (parc d'habitatges) és el Cens de 2021. On el parc hagi crescut des del 2021, la penetració surt SOBREESTIMADA. Fins al 2026-07-20 aquesta mètrica no declarava cap data i la barreja no es deia enlloc."
+      es: "Mezcla de vintages, y el denominador es el viejo: el numerador (RTC) es un registro VIVO leído como foto del día de la carga (2025); el denominador (parque de viviendas) es el Censo de 2021. Donde el parque haya crecido desde 2021, la penetración sale SOBREESTIMADA. Hasta el 2026-07-20 esta métrica no declaraba ninguna fecha y la mezcla no se decía en ningún sitio."
 
   # --- Pressió / càrrega real ---
   kg_hab_any:
@@ -780,8 +805,6 @@ metrics:
   # --- L1 · POBLACIÓ REAL ESTIMADA (PERNOCTA) — la nova «població invisible» ---
   poblacio_pernocta_est:
     label: {ca: "Població real estimada (pernocta)", es: "Población real estimada (pernocta)"}
-    label_ca: "Població real estimada (pernocta)"
-    label_es: "Población real estimada (pernocta)"
     definicio:
       ca: "La població que DORM al territori sense constar al padró (residents no registrats, segona residència, estacionals que hi pernocten), estimada a partir del consum elèctric domèstic per habitant."
       es: "La población que DUERME en el territorio sin constar en el padrón (residentes no registrados, segunda residencia, estacionales que pernoctan), estimada a partir del consumo eléctrico doméstico por habitante."
@@ -791,7 +814,6 @@ metrics:
     formula: "round(poblacio * kwh_hab / BASE_ELECTRIC)  · BASE_ELECTRIC=1224 kWh/hab (viles IETR<5, parametritzable per comarca)"
     source: datapoble
     origin_source: icaen_consum
-    font: "ICAEN (consum elèctric domèstic, 8idm-becu) + Idescat (padró)"
     date: "2024/2025"
     table: mart_municipi
     column: poblacio_pernocta_est
@@ -803,8 +825,6 @@ metrics:
 
   gap_pernocta:
     label: {ca: "Gap pernocta (absolut)", es: "Gap pernocta (absoluto)"}
-    label_ca: "Gap pernocta (absolut)"
-    label_es: "Gap pernocta (absoluto)"
     definicio:
       ca: "Població invisible: població real estimada (pernocta) − padró. La 'gent dels rius de gent' que dorm al territori sense constar."
       es: "Población invisible: población real estimada (pernocta) − padrón. La 'gente de los ríos de gente' que duerme en el territorio sin constar."
@@ -814,7 +834,6 @@ metrics:
     formula: "poblacio_pernocta_est - poblacio"
     source: datapoble
     origin_source: icaen_consum
-    font: "ICAEN (consum elèctric domèstic) + Idescat (padró)"
     date: "2024/2025"
     table: mart_municipi
     column: gap_pernocta
@@ -826,8 +845,6 @@ metrics:
 
   gap_pernocta_pct:
     label: {ca: "Gap pernocta (%)", es: "Gap pernocta (%)"}
-    label_ca: "Gap pernocta (%)"
-    label_es: "Gap pernocta (%)"
     definicio:
       ca: "Gap de pernocta relatiu sobre el padró: quant per cent més de gent dorm al territori de la registrada."
       es: "Gap de pernocta relativo sobre el padrón: cuánto por ciento más de gente duerme en el territorio de la registrada."
@@ -837,7 +854,6 @@ metrics:
     formula: "gap_pernocta / poblacio * 100"
     source: datapoble
     origin_source: icaen_consum
-    font: "ICAEN (consum elèctric domèstic) + Idescat (padró)"
     date: "2024/2025"
     table: mart_municipi
     column: gap_pernocta_pct
@@ -850,8 +866,6 @@ metrics:
   # --- L2 · CÀRREGA HUMANA TOTAL (residus) — inclou visitants de dia ---
   carrega_total_est:
     label: {ca: "Càrrega per residus", es: "Carga por residuos"}
-    label_ca: "Càrrega per residus"
-    label_es: "Carga por residuos"
     definicio:
       ca: "Càrrega que suggereixen els RESIDUS (residents + 2a residència + estacionals + excursionistes de dia), via residus per habitant. NO és població ni un sostre: pot quedar PER SOTA de la pernocta (L1). Per al sostre realista useu carrega_funcional_est."
       es: "Carga que sugieren los RESIDUOS (residentes + 2ª residencia + estacionales + excursionistas de día), vía residuos por habitante. NO es población ni un techo: puede quedar POR DEBAJO de la pernoctación (L1). Para el techo realista usad carrega_funcional_est."
@@ -861,7 +875,6 @@ metrics:
     formula: "round(poblacio * kg_hab_any / BASE)  · BASE=410 (base residencial, parametritzable per comarca)"
     source: datapoble
     origin_source: residus
-    font: "ARC (residus, kg/hab/any) + Idescat (padró)"
     date: "2024/2025"
     table: mart_municipi
     column: carrega_total_est
@@ -873,8 +886,6 @@ metrics:
 
   carrega_funcional_est:
     label: {ca: "Càrrega funcional (denominador per governar)", es: "Carga funcional (denominador para gobernar)"}
-    label_ca: "Càrrega funcional (denominador per governar)"
-    label_es: "Carga funcional (denominador para gobernar)"
     definicio:
       ca: "El SOSTRE realista de càrrega humana: el màxim entre el padró, la pernocta (L1, via elèctric) i la càrrega per residus (L2). El «denominador per governar» — el nombre amb què dimensionar serveis (residus, aigua, neteja) en lloc del padró, i que MAI hi queda per sota."
       es: "El TECHO realista de carga humana: el máximo entre el padrón, la pernoctación (L1, vía eléctrico) y la carga por residuos (L2). El «denominador para gobernar» — el número con el que dimensionar servicios (residuos, agua, limpieza) en lugar del padrón, y que NUNCA queda por debajo."
@@ -906,8 +917,6 @@ metrics:
   # energia/hab). Candidat a retirar-se del contracte; mentre hi sigui, el caveat mana.
   index_turisme:
     label: {ca: "Pressió turística (hostaleria)", es: "Presión turística (hostelería)"}
-    label_ca: "Pressió turística (hostaleria)"
-    label_es: "Presión turística (hostelería)"
     definicio:
       ca: "Intensitat d'activitat de visitants (hostaleria), via vidre per habitant: z-score del vidre/hab sobre tot Catalunya portat a 0–100 (50 = mitjana catalana). Proxy d'hostaleria, NO població."
       es: "Intensidad de actividad de visitantes (hostelería), vía vidrio por habitante: z-score del vidrio/hab sobre toda Cataluña llevado a 0–100 (50 = media catalana). Proxy de hostelería, NO población."
@@ -917,7 +926,6 @@ metrics:
     formula: "z-score GLOBAL (tot CAT) de vidre_hab, clamp [-2,+2], reescalat a 0-100  · alternativa de referència: vidre_hab / BASE_VIDRE (26.5)"
     source: datapoble
     origin_source: residus
-    font: "ARC (fracció vidre, 69zu-w48s)"
     date: "2024"
     table: mart_municipi
     column: index_turisme
@@ -936,8 +944,6 @@ metrics:
   # --- COMPATIBILITAT (model anterior d'una capa) — claus conservades, reenquadrades ---
   poblacio_real_est:
     label: {ca: "Càrrega humana total (alies)", es: "Carga humana total (alias)"}
-    label_ca: "Càrrega humana total (alies)"
-    label_es: "Carga humana total (alias)"
     definicio:
       ca: "ÀLIES de carrega_total_est (mateixa fórmula residus/410). REENQUADRAT: NO és «població real» sinó CÀRREGA humana total (inclou excursionistes). Es conserva per no trencar consumidors; per la població real que pernocta, useu poblacio_pernocta_est."
       es: "ALIAS de carrega_total_est (misma fórmula residuos/410). REENCUADRADO: NO es «población real» sino CARGA humana total (incluye excursionistas). Se conserva para no romper consumidores; para la población real que pernocta, usad poblacio_pernocta_est."
@@ -947,7 +953,6 @@ metrics:
     formula: "round(poblacio * kg_hab_any / BASE)  · BASE=410  (== carrega_total_est)"
     source: datapoble
     origin_source: residus
-    font: "ARC (residus, kg/hab/any) + Idescat (padró)"
     date: "2024/2025"
     table: mart_municipi
     column: poblacio_real_est
@@ -959,8 +964,6 @@ metrics:
 
   gap_abs:
     label: {ca: "Gap càrrega (absolut)", es: "Gap carga (absoluto)"}
-    label_ca: "Gap càrrega (absolut)"
-    label_es: "Gap carga (absoluto)"
     definicio:
       ca: "carrega_total_est − padró (gap de CÀRREGA, inclou visitants de dia). Es conserva per compatibilitat; per la població invisible que pernocta, useu gap_pernocta."
       es: "carrega_total_est − padrón (gap de CARGA, incluye visitantes de día). Se conserva por compatibilidad; para la población invisible que pernocta, usad gap_pernocta."
@@ -970,7 +973,6 @@ metrics:
     formula: "poblacio_real_est - poblacio  (gap de càrrega total)"
     source: datapoble
     origin_source: residus
-    font: "ARC (residus) + Idescat (padró)"
     date: "2024/2025"
     table: mart_municipi
     column: gap_abs
@@ -982,8 +984,6 @@ metrics:
 
   gap_pct:
     label: {ca: "Gap càrrega (%)", es: "Gap carga (%)"}
-    label_ca: "Gap càrrega (%)"
-    label_es: "Gap carga (%)"
     definicio:
       ca: "Gap de càrrega relatiu sobre el padró: quant per cent més de càrrega humana (inclòs el dia) hi ha de la registrada. Per al gap de pernocta, gap_pernocta_pct."
       es: "Gap de carga relativo sobre el padrón: cuánto por ciento más de carga humana (incluido el día) hay de la registrada. Para el gap de pernocta, gap_pernocta_pct."
@@ -993,7 +993,6 @@ metrics:
     formula: "gap_abs / poblacio * 100  (gap de càrrega total)"
     source: datapoble
     origin_source: residus
-    font: "ARC (residus) + Idescat (padró)"
     date: "2024/2025"
     table: mart_municipi
     column: gap_pct
@@ -1004,8 +1003,6 @@ metrics:
 
   poblacio_real_rel:
     label: {ca: Població real (tall relatiu), es: Población real (corte relativo)}
-    label_ca: Població real (tall relatiu)
-    label_es: Población real (corte relativo)
     definicio:
       ca: "Presència estimada amb base comarcal (mitjana pop-ponderada). Vista espacial: qui acull més DINS la comarca (≈ suma zero, redistribució)."
       es: "Presencia estimada con base comarcal (media pop-ponderada). Vista espacial: quién acoge más DENTRO de la comarca (≈ suma cero, redistribución)."
@@ -1015,7 +1012,6 @@ metrics:
     formula: "round(poblacio * kg_hab_any / BASE_COMARCAL)  · BASE_COMARCAL=452 (mitjana comarcal)"
     source: datapoble
     origin_source: residus
-    font: "ARC (residus) + Idescat (padró)"
     date: "2024/2025"
     table: mart_municipi
     column: poblacio_real_rel
@@ -1026,8 +1022,6 @@ metrics:
 
   confianca:
     label: {ca: Confiança de l'estimació, es: Confianza de la estimación}
-    label_ca: Confiança de l'estimació
-    label_es: Confianza de la estimación
     definicio:
       ca: "Bandera de fiabilitat de les estimacions de les 3 capes: alta/mitjana/baixa segons la corroboració entre els senyals físics (residus, elèctric domèstic/hab, % habitatge no principal) i la mida del municipi. Quan els 3 senyals coincideixen la confiança és alta; quan divergeixen, baixa."
       es: "Bandera de fiabilidad de las estimaciones de las 3 capas: alta/mitjana/baixa según la corroboración entre las señales físicas (residuos, eléctrico doméstico/hab, % vivienda no principal) y el tamaño del municipio. Cuando las 3 señales coinciden la confianza es alta; cuando divergen, baja."
@@ -1037,7 +1031,6 @@ metrics:
     formula: "baixa si poblacio<75 O senyals divergents; alta si residus>mediana I (kwh_hab O %no-principal)>mediana I poblacio>=75; mitjana la resta"
     source: datapoble
     origin_source: residus
-    font: "ARC (residus) + ICAEN (consum domèstic) + Idescat (habitatge/padró)"
     date: "2024/2025"
     table: mart_municipi
     column: confianca
@@ -1074,6 +1067,7 @@ metrics:
       ca: "Exposició turística-residencial relativa a la distribució (0=mín, 100=màx): SÍNTESI de la capacitat (estructura) i l'impacte (empremta realitzada). Validat externament amb residus (r=0,87)."
       es: "Exposición turística-residencial relativa a la distribución (0=mín, 100=máx): SÍNTESIS de la capacidad (estructura) y el impacto (huella realizada). Validado externamente con residuos (r=0,87)."
     dimension: index
+    categoria: derived
     unit: "0-100"
     formula: "0.5*A_resid + 0.5*B_turis (min-max winsoritzat p5/p95 sobre tot Catalunya, pesos iguals)"
     source: datapoble
@@ -1091,6 +1085,7 @@ metrics:
       ca: "Posició del municipi dins la distribució (1 = major exposició). Els EMPATS comparteixen posició i la següent salta (rank, no row_number): si 6 municipis comparteixen el sostre 100, tots són 1r i el següent és 7è."
       es: "Posición del municipio dentro de la distribución (1 = mayor exposición). Los EMPATES comparten posición y la siguiente salta (rank, no row_number): si 6 municipios comparten el techo 100, todos son 1º y el siguiente es 7º."
     dimension: index
+    categoria: derived
     unit: {ca: posició, es: posición}
     formula: "rank(round(IETR,2) desc) — a la precisió publicada; empats comparteixen posició"
     source: datapoble
@@ -1106,8 +1101,6 @@ metrics:
   # impacte realitzat; els exposem per separat. Tots dos ja són 0-100 (winsoritzats).
   IETR_stock:
     label: {ca: "Capacitat · component estructural", es: "Capacidad · componente estructural"}
-    label_ca: "Capacitat · component estructural"
-    label_es: "Capacidad · componente estructural"
     definicio:
       ca: "Costat ESTRUCTURAL/resident de l'IETR (eix A reescalat 0-100): exposició LATENT inscrita al parc d'habitatge (habitatge no principal + habitatges per habitant). Quant de territori està preparat per a la pressió turística-residencial, hi hagi o no activitat ara mateix."
       es: "Lado ESTRUCTURAL/residente del IETR (eje A reescalado 0-100): exposición LATENTE inscrita en el parque de vivienda (vivienda no principal + viviendas por habitante). Cuánto territorio está preparado para la presión turística-residencial, haya o no actividad ahora mismo."
@@ -1117,7 +1110,6 @@ metrics:
     formula: "A_resid reescalat 0-100 (mitjana de pct_noprincipal i hab_per_hab, min-max winsoritzat p5/p95). És el component estructural de l'IETR: IETR = 0.5*IETR_stock + 0.5*IETR_impact"
     source: datapoble
     origin_source: idescat_emex
-    font: "Idescat (Cens d'habitatge 2021 + padró)"
     date: "2021/2025"
     table: mart_municipi
     column: IETR_stock
@@ -1129,8 +1121,6 @@ metrics:
 
   IETR_impact:
     label: {ca: "Impacte · component de pressió", es: "Impacto · componente de presión"}
-    label_ca: "Impacte · component de pressió"
-    label_es: "Impacto · componente de presión"
     definicio:
       ca: "Costat de PRESSIÓ realitzada de l'IETR (eix B reescalat 0-100): activitat turística viva inscrita als establiments reglats (RTC per 1000 hab + per 100 habitatges). Quanta pressió turística s'està exercint realment, ara."
       es: "Lado de PRESIÓN realizada del IETR (eje B reescalado 0-100): actividad turística viva inscrita en los establecimientos reglados (RTC por 1000 hab + por 100 viviendas). Cuánta presión turística se está ejerciendo realmente, ahora."
@@ -1140,7 +1130,6 @@ metrics:
     formula: "B_turis reescalat 0-100 (mitjana de rtc_per_1000hab i rtc_per_100hab_viv, min-max winsoritzat p5/p95). És el component de pressió de l'IETR: IETR = 0.5*IETR_stock + 0.5*IETR_impact"
     source: datapoble
     origin_source: rtc
-    font: "Registre de Turisme de Catalunya (RTC) + Idescat (padró/habitatge)"
     date: "2024/2025"
     table: mart_municipi
     column: IETR_impact
@@ -1150,10 +1139,27 @@ metrics:
       es: "Desglose del IETR (no una medida nueva): presión REALIZADA, no stock. Puede ser alto con poca vivienda vacía si hay mucha oferta reglada activa (Capolat, Sagàs). Relativo a la distribución catalana (winsorizado p5/p95): satura en los extremos — 0 y 100 son suelo/techo compartidos (en 2024, 28 municipios marcan 100 y 48 marcan 0, los «sin oferta reglada») y ahí el componente no ordena. Inferencia."
     synonyms: {ca: [ietr impacte, pressió viva, oferta reglada, rtc], es: [ietr impacto, presión viva, oferta reglada, rtc]}
 
+  tipus_territorial:
+    label: {ca: "Tipus territorial", es: "Tipo territorial"}
+    definicio:
+      ca: "QUÈ ÉS el municipi per estructura geogràfica estable (interior_rural, litoral_vacacional, metropolita_dens, corona_metropolitana, litoral_metropolita…), SEPARAT de la `tipologia`, que diu COM s'habita. Classificador determinista de regles per ordre sobre llistes i dades oficials."
+      es: "QUÉ ES el municipio por estructura geográfica estable (interior_rural, litoral_vacacional, metropolita_dens, corona_metropolitana, litoral_metropolita…), SEPARADO de la `tipologia`, que dice CÓMO se habita. Clasificador determinista de reglas por orden sobre listas y datos oficiales."
+    dimension: index
+    unit: {ca: "categoria", es: "categoría"}
+    formula: "Regles per ORDRE (primera que encaixa) sobre fonts obertes: costaner (llista Territori), AMB (llista dels 36), densitat (Idescat), capitalitat comarcal (llista oficial) i altitud (Idescat). Residual: interior_rural. Vegeu tools/tipus_territorial.py."
+    source: datapoble
+    origin_source: idescat_emex
+    date: "2025"
+    table: mart_municipi
+    column: tipus_territorial
+    visibility: public
+    caveat:
+      ca: "Determinista i traçable (cada regla surt d'una llista oficial), però NO és una classificació oficial: és la nostra. 'interior_rural' és la classe RESIDUAL — hi cau tot el que no encaixa en cap regla anterior, així que agrupa municipis molt diferents entre si (804 dels 947). El tipus 'agroindustrial' està pendent de dada fina i de moment cau també a interior_rural. 20 municipis no en tenen: es diu, no s'omple."
+      es: "Determinista y trazable (cada regla sale de una lista oficial), pero NO es una clasificación oficial: es la nuestra. 'interior_rural' es la clase RESIDUAL — ahí cae todo lo que no encaja en ninguna regla anterior, así que agrupa municipios muy distintos entre sí (804 de 947). El tipo 'agroindustrial' está pendiente de dato fino y de momento cae también en interior_rural. 20 municipios no lo tienen: se dice, no se rellena."
+    synonyms: {ca: [tipus territorial, tipus de territori, rural, litoral, metropolità], es: [tipo territorial, tipo de territorio, rural, litoral, metropolitano]}
+
   tipologia:
     label: {ca: "Tipologia d'habitança", es: "Tipología de habitación del territorio"}
-    label_ca: "Tipologia d'habitança"
-    label_es: "Tipología de habitación del territorio"
     definicio:
       ca: "Classificació amb NOM de com s'habita el municipi, llegida dels senyals físics (no «més/menys»): dormitori_invisible, excursio, segona_residencia, capital_serveis, buit_administratiu o indeterminat. Classificador basat en regles sobre z-scores comarcals (vegeu docs/tipologia-municipal.md)."
       es: "Clasificación con NOMBRE de cómo se habita el municipio, leída de las señales físicas (no «más/menos»): dormitori_invisible, excursio, segona_residencia, capital_serveis, buit_administratiu o indeterminat. Clasificador basado en reglas sobre z-scores comarcales (véase docs/tipologia-municipal.md)."
@@ -1163,7 +1169,6 @@ metrics:
     formula: "Classificador de regles sobre z-scores comarcals de gap_pernocta_pct, index_turisme, pct_noprincipal, poblacio, carrega_total_est i l'activitat (residus/vidre/restauració). Primera regla que encaixa; 'indeterminat' si cap. Vegeu docs/tipologia-municipal.md per als llindars."
     source: datapoble
     origin_source: residus
-    font: "Síntesi de senyals ja al mart (ARC residus/vidre · ICAEN elèctric · RTC · OSM · Idescat)"
     date: "2024/2025"
     table: mart_municipi
     column: tipologia
@@ -1175,8 +1180,6 @@ metrics:
 
   confianca_score:
     label: {ca: "Confiança de l'estimació (0-100)", es: "Confianza de la estimación (0-100)"}
-    label_ca: "Confiança de l'estimació (0-100)"
-    label_es: "Confianza de la estimación (0-100)"
     definicio:
       ca: "Puntuació auditable 0-100 de la fiabilitat de les estimacions del municipi, que COMPLEMENTA (no substitueix) la bandera `confianca`. Suma quatre components: mida del denominador (padró), concordança dels senyals físics de presència, cobertura dels senyals i penalització d'outlier. Com més alt, més fiable. L'etiqueta es deriva amb talls documentats (<45 baixa · 45–65 mitjana · ≥65 alta)."
       es: "Puntuación auditable 0-100 de la fiabilidad de las estimaciones del municipio, que COMPLEMENTA (no sustituye) la bandera `confianza`. Suma cuatro componentes: tamaño del denominador (padrón), concordancia de las señales físicas de presencia, cobertura de las señales y penalización de outlier. Cuanto más alto, más fiable. La etiqueta se deriva con cortes documentados (<45 baja · 45–65 media · ≥65 alta)."
@@ -1186,7 +1189,6 @@ metrics:
     formula: "40*mida_denominador(ln-escalat padró 75→410) + 35*concordança(1 − dispersió_z dels 3 senyals de presència/3) + 15*cobertura(senyals no nuls/5) − 10*outlier(|z|>2 d'algun senyal). Talls de l'etiqueta: <45 baixa · 45–65 mitjana · ≥65 alta. Vegeu docs/tipologia-municipal.md."
     source: datapoble
     origin_source: residus
-    font: "ARC (residus/vidre) + ICAEN (consum domèstic) + Idescat (habitatge/padró)"
     date: "2024/2025"
     table: mart_municipi
     column: confianca_score
@@ -1198,8 +1200,6 @@ metrics:
 
   divergencia_senyals:
     label: {ca: "Divergència dels senyals (0-100)", es: "Divergencia de las señales (0-100)"}
-    label_ca: "Divergència dels senyals (0-100)"
-    label_es: "Divergencia de las señales (0-100)"
     definicio:
       ca: "Com de DISCREPANTS són els tres senyals físics de presència (residus, elèctric, % habitatge no principal) un cop normalitzats a la comarca. 0 = concordants (estimació fiable) · 100 = màxima discrepància (llegir amb prudència). És el component de concordança del `confianca_score`, exposat sol perquè el «per què» de la confiança sigui auditable."
       es: "Cómo de DISCREPANTES son las tres señales físicas de presencia (residuos, eléctrico, % vivienda no principal) una vez normalizadas a la comarca. 0 = concordantes (estimación fiable) · 100 = máxima discrepancia (leer con prudencia). Es el componente de concordancia del `confianca_score`, expuesto solo para que el «por qué» de la confianza sea auditable."
@@ -1307,14 +1307,17 @@ metrics:
 
 # ----------------------------------------------------------------------------
 # Preguntas tipo (semilla para evals de la IA)
+# sample_questions — exemples que el producte SUGGEREIX. No hi ha cap pregunta de vot a
+# propòsit (retirades 2026-07-20, E7a): les mètriques `dimension: politica` estan rere la
+# porta de Bea (packages/ai politics.py) i `pct_extrema_dreta` és `planned`, així que el
+# sistema responia «encara no està calculada» — anomenant la mètrica i prometent que arriba.
+# Suggerir la pregunta i després prometre la resposta és pitjor que no tenir-la.
 sample_questions:
   ca:
     - Quin municipi té més exposició turística-residencial?
     - Quants habitatges no principals té Castellar de n'Hug?
     - Quina relació hi ha entre l'índex i els residus?
-    - On creix més l'extrema dreta?
   es:
     - ¿Qué municipio tiene mayor exposición turística-residencial?
     - ¿Cuántas viviendas no principales tiene Castellar de n'Hug?
     - ¿Qué relación hay entre el índice y los residuos?
-    - ¿Dónde crece más la extrema derecha?

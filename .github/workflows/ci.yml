@@ -56,6 +56,12 @@ jobs:
       # Offline sobre una resposta real arxivada byte a byte.
       - name: D7 · connector Idescat EMEX (offline, sobre fixtura real)
         run: pytest packages/ingestion/tests/test_idescat_emex.py -q
+      # E7a · el CONTRACTE contra les DADES (owner Talaia). Neix perquè el caveat de
+      # pct_nacionalitat_estrangera afirmava «Sempre ≤ % nascuts a l'estranger» i és FALS a 37
+      # dels 938 municipis: el text d'un caveat era prosa lliure que cap test mirava. Provat en
+      # negatiu abans de cablar-lo (reinjectada la frase original → cau amb el missatge correcte).
+      - name: Verify contracte semàntic (invariants dels caveats · offline)
+        run: python semantic/verify_contracte.py
       - name: Verify mart_pols_mensual (àncores byte-match + doctrina <5 · offline)
         run: python packages/transform/verify_pols_mensual.py
       # D4 · mart_govern: rang «k de n» per comarca recalculat i comparat, comarca de
