@@ -30,14 +30,15 @@
 	import { currentLocale, pick, localizeHref } from '$lib/i18n';
 	import { formatMetric, formatDecimal, formatInteger } from '$lib/format';
 	import { provenanceOf } from '$lib/map/provenance';
-	import { toSlug, slugForIne5 } from '$lib/contract/slug';
+	import { toSlug, slugForIne5, nomCanonic } from '$lib/contract/slug';
 	import Espina from '$lib/components/Espina.svelte';
 	import MirallConstel from '$lib/components/MirallConstel.svelte';
 	import { m } from '$lib/paraglide/messages';
-	import type { MetricDef, MetricKey, MetricValue, MunicipiRow } from '$lib/contract/types';
+	import type { Frescor, MetricDef, MetricKey, MetricValue, MunicipiRow } from '$lib/contract/types';
 	import type { LectTo } from '$lib/contract/lectures';
 	import { GOVERN_KPIS, provenanceLine } from '$lib/govern/kpis';
 	import type { GovernEntry } from '$lib/contract/govern';
+	import type { AturPunt, TaulerEntry, TaulerMeta, TendenciaEntry } from '$lib/contract/tauler';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -55,6 +56,10 @@
 	// què discrepar. El rang «k de n» es LLEGEIX del mart via `data.govern` (D4) — el front no
 	// calcula cap rang (C6 §4).
 	const govern = $derived<GovernEntry | null>(data.govern ?? null);
+	// TAULER v2 (D7 · E4/E6/E11): atur mensual + tendència amb PERÍODE. Mateixa frontera dura que
+	// el rang: es LLEGEIX, no es calcula (cap delta, cap direcció, cap interval es deriva aquí).
+	const tauler = $derived<TaulerEntry | null>(data.tauler ?? null);
+	const taulerMeta = $derived<TaulerMeta | null>(data.taulerMeta ?? null);
 	// Compatibilitat d'enllaços ja compartits: `?vista=govern` NO trenca res (la pàgina és la
 	// mateixa amb i sense el paràmetre). En hidratar, si el paràmetre hi és, es neteja de la URL
 	// amb `replaceState` (no navega, no toca l'historial) perquè l'enllaç canònic quedi net.
@@ -295,6 +300,156 @@
 		return s.startsWith('-') || s.startsWith('−') ? s : `+${s}`;
 	}
 
+	// ── D9 · TENDÈNCIA (E6/E11) ───────────────────────────────────────────────────────────────
+	// Quatre regles de pintura, i totes surten de la dada, no del copy:
+	//  1. Cap fletxa sense període: els dos períodes vénen del JSON (`periode_actual` /
+	//     `periode_anterior`) i es pinten SEMPRE. Cap període escrit a mà a un missatge.
+	//  2. L'atur porta DUES comparacions i sovint apunten en sentits contraris (la Pobla, juny
+	//     2026: +4 contra maig, −3 contra juny de 2025). Es pinten LES DUES. Triar-ne una seria
+	//     triar la narrativa.
+	//  3. `sense_serie` → es pinta el `motiu` literal del mart. Mai una fletxa grisa, un guionet
+	//     mut ni un 0.
+	//  4. `delta_emmascarat` → INTERVAL [min,max], mai un número; i si l'interval travessa el
+	//     zero, el mart diu `indeterminat` i aquí no es pinta cap direcció.
+
+	/** Període del JSON → text llegible. `2026-06` → «juny 2026»; `2025` → `2025`. */
+	function fmtPeriode(p: string | null): string {
+		if (!p) return '';
+		const mm = /^(\d{4})-(\d{2})$/.exec(p);
+		if (!mm) return p;
+		const d = new Date(Date.UTC(Number(mm[1]), Number(mm[2]) - 1, 1));
+		return new Intl.DateTimeFormat(locale === 'es' ? 'es-ES' : 'ca-ES', {
+			month: 'long',
+			year: 'numeric',
+			timeZone: 'UTC'
+		}).format(d);
+	}
+
+	/** Entrades de tendència d'una clau (llista: l'atur en té dues). Buida si no n'hi ha cap. */
+	function trendsOf(key: string | undefined): TendenciaEntry[] {
+		if (!key) return [];
+		return tauler?.tendencia?.[key] ?? [];
+	}
+
+	/** Fletxa segons la direcció AFIRMADA pel mart. `indeterminat` no en té: no es pot afirmar. */
+	function trendArrow(dir: TendenciaEntry['direccio']): string {
+		return dir === 'puja' ? '↑' : dir === 'baixa' ? '↓' : dir === 'igual' ? '=' : '·';
+	}
+
+	/** Unitat del delta (l'emet el mart); només se'n localitza l'etiqueta curta. */
+	function trendUnit(u: string | null): string {
+		if (u === 'persones') return m.gov_tend_u_persones();
+		if (u === 'punts_percentuals') return m.gov_tend_u_punts();
+		return u ?? '';
+	}
+
+	/** Un número del delta segons la seva unitat (enter per a persones, 2 decimals per a punts). */
+	function fmtDeltaNum(v: number, unit: string | null): string {
+		return unit === 'punts_percentuals' ? formatDecimal(v, locale, 2) : formatInteger(v, locale);
+	}
+
+	/**
+	 * Magnitud del canvi: número si el mart en dona un; INTERVAL si el «<5» l'ha emmascarat.
+	 * Mai un 0 de consol, mai un buit, mai un NaN (doctrina del «<5», D1/D7).
+	 */
+	function trendMagnitude(e: TendenciaEntry): string {
+		if (e.delta !== null) return signed(fmtDeltaNum(e.delta, e.unitat_delta));
+		if (e.delta_min !== null && e.delta_max !== null) {
+			return m.gov_tend_interval({
+				min: signed(fmtDeltaNum(e.delta_min, e.unitat_delta)),
+				max: signed(fmtDeltaNum(e.delta_max, e.unitat_delta))
+			});
+		}
+		return m.value_not_available();
+	}
+
+	/** Etiqueta de QUINA comparació és (l'enum el fixa el mart; aquí només se'n tradueix el nom). */
+	function trendCmpLabel(c: TendenciaEntry['comparacio']): string {
+		if (c === 'mes_anterior') return m.gov_tend_cmp_mes();
+		if (c === 'mateix_mes_any_anterior') return m.gov_tend_cmp_any();
+		if (c === 'finestra_anual') return m.gov_tend_cmp_finestra();
+		return '';
+	}
+
+	// ── D9 · FRESCOR PER TARGETA (E5) ─────────────────────────────────────────────────────────
+	// Regla vinculant: la frescor va A CADA TARGETA, mai a un peu de pàgina global. Els vintages
+	// NO són iguals (població 2025, habitatges 2021) i una sola data els aplanaria en una mentida.
+	// Es diu la veritat sencera: cadència, darrera càrrega i SI hi ha procés que la refresqui
+	// (avui, 1 font de 10). `actualitzacio: null` (derivades sense `origin_source` al contracte)
+	// tampoc s'arrodoneix a un «anual» de consol: es diu que no està declarada.
+	function cadenciaLabel(c: string | null): string {
+		if (c === 'mensual') return m.gov_frescor_mensual();
+		if (c === 'anual') return m.gov_frescor_anual();
+		if (c === 'puntual') return m.gov_frescor_puntual();
+		if (c === 'irregular') return m.gov_frescor_irregular();
+		if (!c) return m.gov_frescor_nd();
+		return c;
+	}
+	/** Línia de frescor d'una targeta: cadència · darrera càrrega · procés (o la seva absència). */
+	function frescorLine(f: Frescor | null | undefined): string {
+		if (!f) return '';
+		const parts = [cadenciaLabel(f.actualitzacio)];
+		if (f.darrera_carrega) parts.push(m.gov_frescor_carrega({ data: f.darrera_carrega }));
+		if (f.proces_refresc === 'cap') parts.push(m.gov_frescor_sense_proces());
+		else if (f.proces_refresc) parts.push(m.gov_frescor_amb_proces());
+		return parts.join(' · ');
+	}
+
+	// ── D9 · ATUR (E4) ────────────────────────────────────────────────────────────────────────
+	const atur = $derived(tauler?.atur ?? null);
+	const aturFrescor = $derived(taulerMeta?.atur?.frescor ?? null);
+
+	/** Valor d'un punt d'atur: xifra, o INTERVAL si el SEPE l'emmascara. Mai un zero. */
+	function aturValor(p: AturPunt): string {
+		if (p.valor !== null) return formatInteger(p.valor, locale);
+		return m.gov_tend_interval({
+			min: formatInteger(p.min, locale),
+			max: formatInteger(p.max, locale)
+		});
+	}
+
+	/**
+	 * Sparkline de la sèrie d'atur (25 mesos), SVG inline sense cap dependència.
+	 * Honestedat del traç: un mes emmascarat NO és un punt —seria inventar-ne el valor—, és una
+	 * BANDA vertical [min,max]; i la línia es trenca allà on no hi ha xifra exacta, en comptes de
+	 * travessar-la com si la sabéssim.
+	 */
+	const SPARK_W = 260;
+	const SPARK_H = 46;
+	const spark = $derived.by(() => {
+		const s = atur?.serie ?? [];
+		if (s.length < 2) return null;
+		const lo = Math.min(...s.map((p) => p.min));
+		const hi = Math.max(...s.map((p) => p.max));
+		const span = hi - lo || 1;
+		const x = (i: number) => (i / (s.length - 1)) * SPARK_W;
+		const y = (v: number) => SPARK_H - ((v - lo) / span) * SPARK_H;
+		// Segments continus només entre mesos amb xifra exacta consecutius (la sèrie es trenca
+		// als emmascarats: no s'interpola sobre el que no sabem).
+		const segs: string[] = [];
+		let cur: string[] = [];
+		s.forEach((p, i) => {
+			if (p.valor === null) {
+				if (cur.length > 1) segs.push(cur.join(' '));
+				cur = [];
+			} else cur.push(`${x(i).toFixed(1)},${y(p.valor).toFixed(1)}`);
+		});
+		if (cur.length > 1) segs.push(cur.join(' '));
+		const bands = s
+			.map((p, i) => (p.valor === null ? { x: x(i), y1: y(p.max), y2: y(p.min) } : null))
+			.filter((b): b is { x: number; y1: number; y2: number } => b !== null);
+		const last = s[s.length - 1];
+		return {
+			segs,
+			bands,
+			lo,
+			hi,
+			first: s[0].date,
+			lastDate: last.date,
+			lastPt: last.valor !== null ? { x: x(s.length - 1), y: y(last.valor) } : null
+		};
+	});
+
 	// Pobles mirall a escala Catalunya: bessons funcionals (no geogràfics) de tot el país, resolts al
 	// loader des de l'artefacte `municipis-mirall.json` (Nivell C). Per a QUALSEVOL muni, no només Berguedà.
 	// (La confiança del model —score, divergència, validats— està APARCADA amb el model: les dades
@@ -303,14 +458,24 @@
 
 	// Nom del municipi (topònim, igual en ambdós locales): del dataset (Berguedà) o del CATÀLEG de
 	// tota Catalunya (`data.nom`, qualsevol poble); en últim cas, el codi.
-	const muniNom = $derived(row?.nom ?? data.nom ?? ine5 ?? '');
+	// D9 · serrell: el nom arriba en DUES formes segons la fila —«Pobla de Lillet, la» (marts) vs
+	// «la Pobla de Lillet» (geometria oficial i tauler)—. La clau del join és l'`ine5`, així que
+	// cap xifra en depèn; però el títol es pinta en la forma corrent, no en la d'índex.
+	const muniNom = $derived(nomCanonic(row?.nom ?? data.nom ?? ine5 ?? ''));
 
 	// ── Selector de municipi: salta a un altre dels 31 (ordenat per nom, localitzat) ──────────
 	// Es deriva del dataset (no llista codificada). El canvi navega a la fitxa corresponent.
+	// Es MOSTRA la forma corrent («la Pobla de Lillet») però s'ORDENA per la forma d'índex del
+	// dataset («Pobla de Lillet, la»), que és justament per a què serveix: l'article final no ha
+	// d'apilar mig Berguedà sota la lletra «L».
 	const muniOptions = $derived.by(() => {
-		const items = Object.values(dataset.municipis).map((mr) => ({ ine5: mr.ine5, nom: mr.nom }));
+		const items = Object.values(dataset.municipis).map((mr) => ({
+			ine5: mr.ine5,
+			nom: nomCanonic(mr.nom),
+			ordre: mr.nom
+		}));
 		const coll = new Intl.Collator(locale === 'es' ? 'es-ES' : 'ca-ES');
-		return items.sort((a, b) => coll.compare(a.nom, b.nom));
+		return items.sort((a, b) => coll.compare(a.ordre, b.ordre));
 	});
 	function onPickMuni(e: Event) {
 		const v = (e.currentTarget as HTMLSelectElement).value; // value = ine5 (clau interna)
@@ -342,6 +507,55 @@
 				>{/if}</span
 		>
 	</div>
+{/snippet}
+
+<!-- TENDÈNCIA d'una targeta (D9 · E6/E11). Una entrada = una comparació; l'atur en té DUES i
+     es pinten totes. Cap fletxa sense el seu període, i el període surt del JSON.
+     `sense_serie` → el motiu literal del mart; mai una fletxa grisa ni un 0. -->
+{#snippet tendencia(entries: TendenciaEntry[])}
+	{#if entries.length}
+		<div class="gov-tend">
+			{#each entries as e, i (e.comparacio ?? `s${i}`)}
+				{#if e.estat === 'sense_serie'}
+					<!-- E11 · l'absència es DECLARA amb el seu motiu (la població i les franges hi són
+					     per límit de la font: l'API d'EMEX no serveix sèrie). El motiu és dada del
+					     mart i encara arriba només en català → handoff a Sondeig per localitzar-lo. -->
+					<p class="gov-tend__no" lang="ca">
+						<span class="gov-tend__nok">{m.gov_tend_sense_serie()}</span>{e.motiu}
+					</p>
+				{:else}
+					<p class="gov-tend__l">
+						<span class="gov-tend__ar gov-tend__ar--{e.direccio ?? 'nd'}" aria-hidden="true"
+							>{trendArrow(e.direccio)}</span
+						>
+						{#if e.direccio === 'indeterminat'}
+							<span class="gov-tend__ind">{m.gov_tend_indeterminat()}</span>
+							<span class="gov-tend__d">{trendMagnitude(e)} {trendUnit(e.unitat_delta)}</span>
+						{:else}
+							<span class="gov-tend__d">{trendMagnitude(e)} {trendUnit(e.unitat_delta)}</span>
+						{/if}
+						<span class="gov-tend__p"
+							>{trendCmpLabel(e.comparacio)} · {fmtPeriode(e.periode_anterior)} → {fmtPeriode(
+								e.periode_actual
+							)}</span
+						>
+					</p>
+				{/if}
+			{/each}
+		</div>
+	{:else}
+		<!-- Ni sèrie ni motiu: la mètrica no és a `mart_tendencia`. Es diu, en comptes de callar
+		     (una absència muda es llegeix com un «no ha canviat»). Handoff a Sondeig. -->
+		<p class="gov-tend__no"><span class="gov-tend__nok">{m.gov_tend_no_declarada()}</span></p>
+	{/if}
+{/snippet}
+
+<!-- FRESCOR d'una targeta (D9 · E5): cadència · darrera càrrega · procés que la refresca (o la
+     seva absència declarada). Per targeta i mai global: els vintages no són iguals. -->
+{#snippet frescor(f: Frescor | null | undefined)}
+	{#if f}
+		<p class="gov-kpi__fresc">{frescorLine(f)}</p>
+	{/if}
 {/snippet}
 
 <svelte:head>
@@ -417,9 +631,8 @@
 										<p class="gov-kpi__v">
 											{fmt(row, kpi.key as MetricKey)}{#if gUnit(kpi.key)}<span class="u">{gUnit(kpi.key)}</span>{/if}
 										</p>
-										{#if kpi.deltaKey}
-											<p class="gov-kpi__delta">{signed(fmt(row, kpi.deltaKey as MetricKey))} pts · {m.gov_nova_delta_label()}</p>
-										{/if}
+										<!-- E6/E11 · la tendència, amb el seu període SEMPRE (o el motiu de no tenir-ne). -->
+										{@render tendencia(trendsOf(kpi.trendKey ?? kpi.key))}
 										{#if cell && cell.rang != null}
 											<p class="gov-kpi__rank">
 												<span class="gov-kpi__rankk">{m.gov_rang_val({ k: String(cell.rang), n: String(cell.n_amb_dada) })}</span>
@@ -437,6 +650,7 @@
 										{:else}
 											<p class="gov-kpi__src">{prv.src}</p>
 										{/if}
+										{@render frescor(def.frescor)}
 									</article>
 								{:else if kpi.kind === 'etca'}
 									<article class="gov-kpi">
@@ -449,10 +663,67 @@
 										<p class="gov-kpi__src">{m.muni_etca_srcline()}</p>
 									</article>
 								{:else if kpi.kind === 'atur'}
-									<article class="gov-kpi gov-kpi--pending">
+									<!-- E4 · L'ATUR, servit de veritat (D7): darrer mes + 25 mesos de sèrie + les
+									     DUES comparacions. La targeta ocupa tota l'amplada perquè hi càpiga la
+									     sèrie sense encongir la resta de la graella. -->
+									<article class="gov-kpi gov-kpi--wide">
 										<p class="gov-kpi__lab"><span class="pd dot--measured"></span>{m.gov_kpi_atur()}</p>
-										<p class="gov-kpi__v gov-kpi__v--absent">{m.gov_kpi_atur_pending()}</p>
+										{#if atur}
+											<p class="gov-kpi__v">
+												{aturValor(atur.darrer)}<span class="u">{m.gov_atur_u()}</span>
+											</p>
+											<p class="gov-kpi__delta">{fmtPeriode(atur.darrer.date)}</p>
+											{#if atur.darrer.emmascarat}
+												<!-- Doctrina del «<5»: interval, MAI un zero ni un buit. -->
+												<p class="gov-kpi__norank">{m.gov_atur_masked()}</p>
+											{/if}
+											{@render tendencia(trendsOf(kpi.trendKey))}
+											{#if spark}
+												<figure class="gov-spark">
+													<svg
+														viewBox="0 0 {SPARK_W} {SPARK_H}"
+														preserveAspectRatio="none"
+														role="img"
+														aria-label={m.gov_atur_serie_alt({
+															n: String(atur.serie.length),
+															ini: fmtPeriode(spark.first),
+															fi: fmtPeriode(spark.lastDate),
+															min: formatInteger(spark.lo, locale),
+															max: formatInteger(spark.hi, locale)
+														})}
+													>
+														<!-- Mesos emmascarats: BANDA [min,max], no un punt inventat. -->
+														{#each spark.bands as b, i (i)}
+															<line
+																class="gov-spark__band"
+																x1={b.x}
+																x2={b.x}
+																y1={b.y1}
+																y2={b.y2}
+															/>
+														{/each}
+														{#each spark.segs as pts, i (i)}
+															<polyline class="gov-spark__ln" points={pts} />
+														{/each}
+														{#if spark.lastPt}
+															<circle class="gov-spark__pt" cx={spark.lastPt.x} cy={spark.lastPt.y} r="2.6" />
+														{/if}
+													</svg>
+													<figcaption class="gov-spark__cap">
+														{m.gov_atur_serie_cap({
+															n: String(atur.serie.length),
+															ini: fmtPeriode(spark.first),
+															fi: fmtPeriode(spark.lastDate)
+														})}
+													</figcaption>
+												</figure>
+											{/if}
+										{:else}
+											<!-- Sense l'artefacte del tauler no s'inventa cap xifra: es diu. -->
+											<p class="gov-kpi__v gov-kpi__v--absent">{m.gov_atur_absent()}</p>
+										{/if}
 										<p class="gov-kpi__src">{m.gov_kpi_atur_src()}</p>
+										{@render frescor(aturFrescor)}
 									</article>
 								{:else if kpi.kind === 'serveis'}
 									{@const sDef = gDef('serveis_estab')}
@@ -461,7 +732,9 @@
 										<p class="gov-kpi__v">
 											{fmt(row, 'serveis_estab')}<span class="u">{m.gov_kpi_serveis_a()}</span> · {fmt(row, 'restauracio_estab')}<span class="u">{m.gov_kpi_serveis_b()}</span>
 										</p>
+										{@render tendencia(trendsOf('serveis_estab'))}
 										<p class="gov-kpi__src">{srcLine(sDef)}</p>
+										{@render frescor(sDef.frescor)}
 									</article>
 								{/if}
 							{/each}
@@ -1160,8 +1433,9 @@
 		border: 1px solid var(--dp-border);
 		border-radius: var(--dp-radius-md);
 	}
-	.gov-kpi--pending {
-		opacity: 0.72;
+	/* L'atur (E4) ocupa la fila sencera: hi cap la sèrie de 25 mesos sense encongir la graella. */
+	.gov-kpi--wide {
+		grid-column: 1 / -1;
 	}
 	.gov-kpi__lab {
 		display: inline-flex;
@@ -1256,6 +1530,115 @@
 		color: var(--dp-text-subtle);
 		line-height: 1.4;
 	}
+	/* Frescor per targeta (E5): cadència · darrera càrrega · procés (o la seva absència). Va
+	   SEMPRE a cada targeta i mai a un peu global — els vintages no són iguals. */
+	.gov-kpi__fresc {
+		margin: 0;
+		font-family: var(--dp-font-mono);
+		font-size: 0.58rem;
+		letter-spacing: 0.02em;
+		color: var(--dp-text-subtle);
+		line-height: 1.4;
+		opacity: 0.85;
+	}
+
+	/* ── Tendència (E6/E11) ─────────────────────────────────────────────────────────────── */
+	/* Cap fletxa sense període; l'atur en porta DUES (mes anterior i mateix mes de l'any
+	   anterior), que sovint apunten en sentits oposats: es pinten totes dues. */
+	.gov-tend {
+		display: grid;
+		gap: 3px;
+		margin: 2px 0 0;
+	}
+	.gov-tend__l {
+		margin: 0;
+		display: flex;
+		align-items: baseline;
+		flex-wrap: wrap;
+		gap: 5px;
+		font-family: var(--dp-font-mono);
+		font-size: 0.66rem;
+		line-height: 1.35;
+		color: var(--dp-text-muted);
+	}
+	.gov-tend__ar {
+		font-weight: 700;
+		font-size: 0.8rem;
+		line-height: 1;
+		color: var(--dp-text-subtle);
+	}
+	/* La direcció no és «bona» ni «dolenta» (puja l'atur, puja la població): el color marca
+	   sentit, no judici — mateix to per a les dues, i apagat per a l'indeterminat. */
+	.gov-tend__ar--puja,
+	.gov-tend__ar--baixa,
+	.gov-tend__ar--igual {
+		color: var(--dp-text);
+	}
+	.gov-tend__ar--indeterminat,
+	.gov-tend__ar--nd {
+		color: var(--dp-text-subtle);
+	}
+	.gov-tend__d {
+		color: var(--dp-text);
+		font-weight: 600;
+	}
+	/* «No es pot dir»: l'interval del «<5» travessa el zero. És una resposta, no un buit. */
+	.gov-tend__ind {
+		font-style: italic;
+		color: var(--dp-text-muted);
+	}
+	.gov-tend__p {
+		color: var(--dp-text-subtle);
+	}
+	/* `sense_serie`: el MOTIU literal del mart. Mai una fletxa grisa, mai un guionet mut. */
+	.gov-tend__no {
+		margin: 2px 0 0;
+		font-family: var(--dp-font-mono);
+		font-size: 0.6rem;
+		line-height: 1.45;
+		color: var(--dp-text-subtle);
+	}
+	.gov-tend__nok {
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: var(--dp-text-muted);
+		margin-right: 5px;
+	}
+
+	/* Sèrie d'atur (25 mesos). El traç es TRENCA als mesos emmascarats i aquests es dibuixen
+	   com una banda [min,max]: no s'interpola damunt del que el SEPE no publica. */
+	.gov-spark {
+		margin: 6px 0 0;
+	}
+	.gov-spark svg {
+		display: block;
+		width: 100%;
+		height: 46px;
+		overflow: visible;
+	}
+	.gov-spark__ln {
+		fill: none;
+		stroke: var(--dp-forest, currentColor);
+		stroke-width: 1.4;
+		vector-effect: non-scaling-stroke;
+		stroke-linejoin: round;
+	}
+	.gov-spark__band {
+		stroke: var(--dp-text-subtle);
+		stroke-width: 3;
+		opacity: 0.4;
+		vector-effect: non-scaling-stroke;
+	}
+	.gov-spark__pt {
+		fill: var(--dp-forest, currentColor);
+	}
+	.gov-spark__cap {
+		margin: 4px 0 0;
+		font-family: var(--dp-font-mono);
+		font-size: 0.58rem;
+		color: var(--dp-text-subtle);
+	}
+
 	/* (`.gov-kpi__bea` i `.gov-tag` retirats amb l'E10: la frase interpretativa ja no es
 	   renderitza i el seu distintiu de «vot pendent» se n'anava amb ella.) */
 	.gov-board__foot {

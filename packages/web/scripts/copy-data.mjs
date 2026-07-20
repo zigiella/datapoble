@@ -52,7 +52,11 @@ const FILES = [
 	{ src: resolve(REPO_ROOT, 'data/web/indicadors-catalunya.json'), name: 'indicadors-catalunya.json' },
 	// Vista de govern (D5): rang «k de n» per comarca LLEGIT del mart_govern (D4) — el front
 	// NO el calcula (C6 §4). El genera `tools/export_govern_web.py` des del parquet versionat.
-	{ src: resolve(REPO_ROOT, 'data/web/govern.bergueda.json'), name: 'govern.json' }
+	{ src: resolve(REPO_ROOT, 'data/web/govern.bergueda.json'), name: 'govern.json' },
+	// Tauler v2 (D7 · E4/E6): atur mensual (darrer mes + 25 punts) i tendència amb PERÍODE per
+	// mètrica. Mateixa frontera que el rang: es LLEGEIX, no es calcula al front. El genera
+	// `tools/export_tauler_web.py` (amb `--check` cablat al CI des del dia que va néixer).
+	{ src: resolve(REPO_ROOT, 'data/web/tauler.bergueda.json'), name: 'tauler.json' }
 ];
 
 mkdirSync(DEST_DIR, { recursive: true });

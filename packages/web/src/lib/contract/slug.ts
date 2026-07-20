@@ -35,6 +35,28 @@ export function toSlug(nom: string): string {
 		.replace(/^-+|-+$/g, ''); // trim guions
 }
 
+/**
+ * Nom del municipi en la seva forma CORRENT (article al davant), sigui quina sigui la forma
+ * amb què arribi la fila.
+ *
+ * Per què cal: el mateix municipi ens arriba en DUES formes segons l'artefacte —
+ * `municipis.*.json` (marts) el serveix en forma d'índex, «Pobla de Lillet, la», i la geometria
+ * oficial (d'on surt el catàleg dels 947) i el tauler el serveixen com «la Pobla de Lillet».
+ * La clau del join és sempre l'`ine5`, així que la divergència NO afecta cap xifra; però pintada
+ * a un `<h1>` la forma d'índex es llegeix com un error. Aquí es normalitza NOMÉS per mostrar.
+ *
+ * Reutilitza la mateixa regla d'article que `toSlug` (una sola font de veritat), i per això els
+ * dos noms ja donaven —i segueixen donant— el MATEIX slug: la URL no es toca.
+ */
+export function nomCanonic(nom: string): string {
+	const s = nom.trim();
+	const m = s.match(ARTICLE);
+	if (!m) return s;
+	// "Nom, l'" → "l'Nom" (sense espai); "Nom, la" → "la Nom".
+	const art = m[2].toLowerCase();
+	return /['’]$/.test(art) ? `${art}${m[1]}` : `${art} ${m[1]}`;
+}
+
 /** Slug d'un municipi pel seu `ine5` (via el nom oficial del dataset). */
 export function slugForIne5(ine5: string, dataset: MunicipisDataset): string {
 	return toSlug(dataset.municipis[ine5]?.nom ?? ine5);

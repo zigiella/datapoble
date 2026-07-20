@@ -28,6 +28,7 @@ import type { CatalegData } from '$lib/contract/cataleg';
 import type { TerritoriData, MuniTerritori } from '$lib/contract/territori';
 import type { MirallData, MirallVei } from '$lib/contract/mirall';
 import type { GovernData, GovernEntry } from '$lib/contract/govern';
+import type { TaulerData, TaulerEntry, TaulerMeta } from '$lib/contract/tauler';
 import type { EntryGenerator, PageLoad } from './$types';
 
 export const prerender = true;
@@ -197,6 +198,28 @@ export const load: PageLoad = async ({ fetch, params }) => {
 		}
 	}
 
+	// TAULER v2 (D7 · E4/E6): atur mensual + tendència amb període, servits per
+	// `tools/export_tauler_web.py` a `/data/tauler.json`. Mateixa frontera dura que el rang
+	// (C6 §4): el front LLEGEIX deltes, intervals i períodes; no en calcula cap.
+	// `_meta.atur` (frescor + doctrina del «<5») és a l'arrel, no per municipi.
+	// Prerender-safe, no-fatal: sense l'artefacte, l'atur i les tendències simplement no es pinten
+	// (mai una fletxa sense la seva dada al darrere).
+	let tauler: TaulerEntry | null = null;
+	let taulerMeta: TaulerMeta | null = null;
+	if (isBergueda && ine5) {
+		try {
+			const res = await fetch('/data/tauler.json');
+			if (res.ok) {
+				const all = (await res.json()) as TaulerData;
+				tauler = all.municipis?.[ine5] ?? null;
+				taulerMeta = all._meta ?? null;
+			}
+		} catch {
+			tauler = null;
+			taulerMeta = null;
+		}
+	}
+
 	// Lectura-IA és un artefacte del BERGUEDÀ: només es carrega si el muni hi és (`row`). Així la
 	// resta de Catalunya no fa fetches inútils en prerender. Prerender-safe.
 	// (Licitacions aparcades per al llançament —decisió Bea—: la fitxa no en mostra secció.)
@@ -213,5 +236,8 @@ export const load: PageLoad = async ({ fetch, params }) => {
 		}
 	}
 
-	return { dataset, ine5, nom, row, isBergueda, lectura, etca, govern, territori, veins, veinsTotal, miralls };
+	return {
+		dataset, ine5, nom, row, isBergueda, lectura, etca, govern, tauler, taulerMeta,
+		territori, veins, veinsTotal, miralls
+	};
 };
