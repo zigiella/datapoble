@@ -497,8 +497,8 @@ metrics:
     column: pct_nacionalitat_estrangera
     visibility: public
     caveat:
-      ca: "Sempre ≤ % nascuts a l'estranger: la diferència són els qui s'han naturalitzat. Lectura ECOLÒGICA, mai individual."
-      es: "Siempre ≤ % nacidos en el extranjero: la diferencia son quienes se han naturalizado. Lectura ECOLÓGICA, nunca individual."
+      ca: "Normalment ≤ % nascuts a l'estranger —la diferència són els qui s'han naturalitzat—, però NO sempre: a 37 dels 938 municipis amb dada la supera (pitjor cas Tornabous, 27,42 vs 24,76). El mecanisme és banal: una criatura nascuda aquí de pares estrangers té passaport estranger i lloc de naixement català, així que suma a nacionalitat i no a naixement. Allà on passa, `bretxa_naturalitzacio` surt NEGATIVA i s'ha de llegir com això, no com un error. Lectura ECOLÒGICA, mai individual."
+      es: "Normalmente ≤ % nacidos en el extranjero —la diferencia son quienes se han naturalizado—, pero NO siempre: en 37 de los 938 municipios con dato lo supera (peor caso Tornabous, 27,42 vs 24,76). El mecanismo es banal: un niño nacido aquí de padres extranjeros tiene pasaporte extranjero y lugar de nacimiento catalán, así que suma a nacionalidad y no a nacimiento. Donde ocurre, `bretxa_naturalitzacio` sale NEGATIVA y debe leerse como eso, no como un error. Lectura ECOLÓGICA, nunca individual."
 
   bretxa_naturalitzacio:
     label: {ca: Bretxa de naturalització (arrelament), es: Brecha de naturalización (arraigo)}
@@ -515,8 +515,8 @@ metrics:
     column: bretxa_naturalitzacio
     visibility: public
     caveat:
-      ca: "Com més alta, més població d'origen estranger ARRELADA (naturalitzada). Dona la volta al marc de l'«extranjería»: mesura integració, no amenaça. Lectura ecològica."
-      es: "Cuanto más alta, más población de origen extranjero ARRAIGADA (naturalizada). Da la vuelta al marco de la «extranjería»: mide integración, no amenaza. Lectura ecológica."
+      ca: "Com més alta, més població d'origen estranger ARRELADA (naturalitzada). Dona la volta al marc de l'«extranjería»: mesura integració, no amenaça. Lectura ecològica. Pot ser NEGATIVA i no és cap error: passa a 37 dels 938 municipis amb dada, quan hi ha més passaports estrangers que persones nascudes fora — típicament criatures nascudes aquí de pares estrangers. En aquests casos la mètrica NO mesura arrelament: no se'n pot llegir «poc arrelament», només que la naturalització encara no ha arribat a una població jove nascuda al municipi."
+      es: "Cuanto más alta, más población de origen extranjero ARRAIGADA (naturalizada). Da la vuelta al marco de la «extranjería»: mide integración, no amenaza. Lectura ecológica. Puede ser NEGATIVA y no es ningún error: ocurre en 37 de los 938 municipios con dato, cuando hay más pasaportes extranjeros que personas nacidas fuera — típicamente niños nacidos aquí de padres extranjeros. En esos casos la métrica NO mide arraigo: no puede leerse «poco arraigo», solo que la naturalización aún no ha alcanzado a una población joven nacida en el municipio."
 
   delta_pct_estrangera_finestra:
     label: {ca: "Variació % estrangera (2021→)", es: "Variación % extranjera (2021→)"}
