@@ -1302,14 +1302,17 @@ metrics:
 
 # ----------------------------------------------------------------------------
 # Preguntas tipo (semilla para evals de la IA)
+# sample_questions — exemples que el producte SUGGEREIX. No hi ha cap pregunta de vot a
+# propòsit (retirades 2026-07-20, E7a): les mètriques `dimension: politica` estan rere la
+# porta de Bea (packages/ai politics.py) i `pct_extrema_dreta` és `planned`, així que el
+# sistema responia «encara no està calculada» — anomenant la mètrica i prometent que arriba.
+# Suggerir la pregunta i després prometre la resposta és pitjor que no tenir-la.
 sample_questions:
   ca:
     - Quin municipi té més exposició turística-residencial?
     - Quants habitatges no principals té Castellar de n'Hug?
     - Quina relació hi ha entre l'índex i els residus?
-    - On creix més l'extrema dreta?
   es:
     - ¿Qué municipio tiene mayor exposición turística-residencial?
     - ¿Cuántas viviendas no principales tiene Castellar de n'Hug?
     - ¿Qué relación hay entre el índice y los residuos?
-    - ¿Dónde crece más la extrema derecha?
