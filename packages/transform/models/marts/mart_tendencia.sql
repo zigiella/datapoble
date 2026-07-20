@@ -275,6 +275,40 @@ sense as (
     ) as s(metric, motiu_ca, motiu_es, valor)
 ),
 
+-- SENSE SÈRIE · la capa d'ORIGEN, que viu a mart_demografia i no a mart_municipi.
+-- D10 (2a passada): el LLOC DE NAIXEMENT entra al tauler amb D11 i tampoc no tenia fila. El
+-- seu límit té DUES meitats i totes dues s'han de dir, perquè la segona és la perillosa:
+--   1r · ve d'EMEX (f69/f72/f73), que no serveix sèrie per API — el mateix límit de font que
+--        la població i les franges.
+--   2n · aquí SÍ que hi ha una sèrie a tocar —la de NACIONALITAT, 2021→2025— i NO es pot
+--        fer servir com si fos aquesta: són conjunts diferents. Qui es nacionalitza surt del
+--        de nacionalitat estrangera i es queda al de nascuts a l'estranger. Substituir-la
+--        seria la confusió que el propi contracte prohibeix, i és pitjor que no tenir-ne cap.
+sense_origen as (
+    select d.ine5, m.codi6, d.municipi, s.metric, s.motiu_ca, s.motiu_es, s.valor
+    from {{ ref('mart_demografia') }} d
+    join {{ ref('mart_municipi') }} m on d.ine5 = m.ine5
+    cross join lateral (
+        values
+            ('poblacio_nascuda_catalunya',
+             'Lloc de naixement d''EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D''aquesta xifra en tenim la foto, no l''evolució.',
+             'Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución.',
+             cast(d.poblacio_nascuda_catalunya as double)),
+            ('poblacio_nascuda_resta_espanya',
+             'Lloc de naixement d''EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.',
+             'Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución.',
+             cast(d.poblacio_nascuda_resta_espanya as double)),
+            ('poblacio_nascuda_estranger',
+             'Lloc de naixement d''EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l''evolució d''aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.',
+             'Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución.',
+             cast(d.poblacio_nascuda_estranger as double)),
+            ('pct_nascuda_estranger',
+             'Es deriva del lloc de naixement d''EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.',
+             'Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro.',
+             cast(d.pct_nascuda_estranger as double))
+    ) as s(metric, motiu_ca, motiu_es, valor)
+),
+
 sense_out as (
     select
         ine5, codi6, municipi, metric,
@@ -291,7 +325,7 @@ sense_out as (
         cast(null as double)       as delta_max,
         false                      as delta_emmascarat,
         cast(null as varchar)      as unitat_delta
-    from sense
+    from (select * from sense union all select * from sense_origen)
 ),
 
 unio as (

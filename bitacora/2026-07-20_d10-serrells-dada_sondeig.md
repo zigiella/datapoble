@@ -57,6 +57,48 @@ El parser és deliberadament fràgil cap a fora: peta si el fitxer no hi és, si
 llegir, si l'array surt buit o si apareix un `kind` que no sap mapejar. Provat adversarialment, els
 quatre casos peten. *Un parser que falla en silenci hauria estat pitjor que la llista a mà.*
 
+### 🎯 La guarda va caure a la primera, i tenia raó
+
+**Val la pena llegir això sencer, perquè és l'única prova que una guarda serveix: que caigui.**
+
+Mentre jo treballava, **D11 (Mirador, #281) es va fusionar a main** i va portar al tauler quatre
+targetes noves de **lloc de naixement** (`poblacio_nascuda_catalunya` / `_resta_espanya` /
+`_estranger` i `pct_nascuda_estranger`). **Cap de les quatre tenia fila a `mart_tendencia`** — la
+mateixa forma exacta del bug que aquest PR arreglava, reintroduïda **el mateix dia**.
+
+El primer CI del PR va caure amb el missatge que li tocava:
+
+```
+[x] 4 mètriques que el TAULER PINTA i que no tenen cap fila al mart:
+    ['pct_nascuda_estranger', 'poblacio_nascuda_catalunya',
+     'poblacio_nascuda_estranger', 'poblacio_nascuda_resta_espanya']
+```
+
+Amb la llista escrita a mà no hauria petat res: el meu conjunt hauria estat el de fa quatre hores i
+les quatre targetes haurien quedat mudes en producció. **Aquesta és tota la diferència entre
+derivar el conjunt i copiar-lo**, i és la resposta empírica a la pregunta que el brief plantejava
+(«si es manté a mà, la propera també faltarà»): la propera no va trigar un mes, va trigar unes hores.
+
+**Fet (2a passada):** les quatre entren al mart amb el seu motiu, i aquí el motiu té **dues meitats
+i totes dues calen**:
+
+1. Vénen d'EMEX (f69/f72/f73) → el mateix límit de font que la població i les franges: cap sèrie
+   per API.
+2. **I aquesta és la perillosa:** aquí SÍ que hi ha una sèrie a tocar —la de **nacionalitat**
+   estrangera, 2021→2025— i **no es pot fer servir com si fos aquesta**. Són conjunts diferents:
+   qui es nacionalitza surt del de nacionalitat estrangera i **es queda** al de nascuts a
+   l'estranger. Substituir-la seria exactament la confusió que el contracte prohibeix, i és **pitjor
+   que no tenir cap sèrie**. Per això el motiu ho diu explícit en comptes de dir només «no en tenim».
+
+Viuen a `mart_demografia` (no a `mart_municipi`), així que hi entren per un CTE `sense_origen` propi.
+Files: 17.014 → **20.802 = +4 × 947**.
+
+*Nota de mètode, i em toca a mi: la guarda va caure al CI, no a la meva màquina, perquè jo treballava
+sobre el `kpis.js` del merge-base i main s'havia mogut sota meu. El CI de PR sí que fusiona. No és un
+error del disseny —la guarda va fer la seva feina al lloc on toca— però la propera vegada que
+treballi en paral·lel amb un front que toca `kpis.js`, el `git fetch` va abans de donar per bo el
+verd local.*
+
 ---
 
 ## (a) El motiu, en els dos idiomes
@@ -65,7 +107,7 @@ quatre casos peten. *Un parser que falla en silenci hauria estat pitjor que la l
 cablat. Mirador no el traduïa, i feia bé: traduir dada al front és inventar-la.
 
 **Fet:** el mart emet `motiu_ca` i `motiu_es` (no queda cap `motiu` a seques, precisament perquè no
-s'hi pugui tornar a colar un idioma implícit). Els 14 motius estan escrits en tots dos idiomes i el
+s'hi pugui tornar a colar un idioma implícit). Els 18 motius estan escrits en tots dos idiomes i el
 verificador cau si en falta un, si és massa curt per informar, o **si `motiu_ca` i `motiu_es` són
 idèntics** (senyal que s'ha copiat el català en comptes de traduir-lo).
 
@@ -133,8 +175,8 @@ MATEIX SQL del model amb els `ref()` apuntats als parquets versionats.
 **La fidelitat s'ha provat abans de tocar res:** la reconstrucció del model *sense cap canvi*
 reprodueix el `mart_tendencia.parquet` committejat **valor a valor** (`DataFrame.equals` → `True`,
 mateixes 18 columnes, mateixos dtypes, 15.120 files). Només després s'ha aplicat el canvi. El
-resultat: **17.014 files = 15.120 + 2 × 947**, exactament les dues mètriques noves × els 947
-municipis, cap fila més.
+primer resultat: **17.014 files = 15.120 + 2 × 947**, exactament les dues mètriques noves × els 947
+municipis, cap fila més; després de la 2a passada (lloc de naixement), **20.802 = 17.014 + 4 × 947**.
 
 `dbt parse` corre net amb el model i l'`_marts.yml` nous.
 
@@ -148,7 +190,7 @@ YAML, no confiat):
 
 | Guarda | On corre | Provada adversarialment |
 |---|---|---|
-| Cap targeta del tauler sense fila al mart (derivada de `kpis.js`) | `verify_tendencia.py` (job `data`) | ✅ cau amb el mart pre-D10, amb el missatge llegible |
+| Cap targeta del tauler sense fila al mart (derivada de `kpis.js`) | `verify_tendencia.py` (job `data`) | ✅ cau amb el mart pre-D10 — **i va caure de veritat al primer CI, amb les 4 targetes que D11 acabava d'afegir** |
 | Motiu en ca **i** es, no buit, no copiat | `verify_tendencia.py` + invariants de `export_tauler_web.py` | ✅ |
 | Catàleg: cap clau sense valor ni excepció; cap cadència nul·la no declarada; excepcions que caduquen | `export_web_municipis.py --check` (job `data`) | ✅ les tres branques |
 
@@ -161,11 +203,11 @@ s'entén.*
 ## Verificació local
 
 Tot el job `data` corregut sencer en local: ruff net · `dbt parse` OK · `verify_pols_mensual`
-(224.439 files, 9 àncores byte-match) · `verify_govern` · `verify_tendencia` (17.014 files, els
+(224.439 files, 9 àncores byte-match) · `verify_govern` · `verify_tendencia` (20.802 files, els
 1.894 Δ d'atur recalculats a mà segueixen byte-match) · `verify_marts` · els 9 `--check` d'exports ·
 `pytest packages/signals` 180/180 · connectors 21/21.
-`node scripts/verify-govern.mjs` (el verificador de Mirador, sobre la dada nova): **OK, 17 mètriques
-amb tendència** (abans 15).
+`node scripts/verify-govern.mjs` (el verificador de Mirador, sobre la dada nova): **OK, 20 KPIs i 21
+mètriques amb tendència** (abans 15), amb les 4 de lloc de naixement pintades amb el seu límit.
 
 ---
 
@@ -243,6 +285,13 @@ proposo (i) + el `date` que falta, però el vot és teu. Quan baixi, retiro les 
    la tendència de `serveis_estab` (`trendsOf('serveis_estab')`); ara que hi ha les dues, decidiu
    vosaltres si la de restauració també s'ensenya — la dada hi és i el motiu és diferent prou poc
    perquè potser no calgui pintar-lo dos cops.
+5. **D11 · el límit del lloc de naixement ja és DADA.** Les quatre targetes noves de #281 duen el
+   límit escrit al copy (`note: 'gov_naix_foto'` i `gov_nac_serie_es_nacionalitat`). Ara les quatre
+   mètriques tenen fila a `mart_tendencia` amb el motiu **a la dada**, en ca i es, i amb la meitat
+   que el copy no pot portar sola: no només «és una foto», sinó **per què la sèrie del costat no
+   serveix** (qui es nacionalitza canvia de conjunt). Podeu deixar-ho com està, però mentre el
+   límit visqui al copy tornem a tenir una cadena del tauler que no surt del contracte — que és
+   exactament el que (d) acaba de treure de la targeta d'atur. La decisió és vostra; la dada ja hi és.
 
 ### A qui reculli el pattern «guardes que no corren» — un quart cas
 

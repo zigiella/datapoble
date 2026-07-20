@@ -178,6 +178,15 @@ publicable per si sola.*
 >    terreny no es poden separar—. I el problema de fons: el conjunt estava escrit **a mà
 >    tres vegades**; ara es DERIVA de `kpis.js` (`tools/tauler_kpis.py`, nou) i el CI cau si
 >    el tauler pinta una targeta sense fila al mart.
+>    **🎯 I LA GUARDA VA CAURE A LA PRIMERA, AMB RAÓ.** Mentre jo treballava es va fusionar
+>    **D11 (#281)**, que porta al tauler 4 targetes de **lloc de naixement** — i **cap tenia
+>    fila al mart**: la mateixa forma del bug que aquest PR arreglava, reintroduïda el mateix
+>    dia. El primer CI va petar amb les quatre pel seu nom. *Amb la llista a mà no hauria
+>    petat res i haurien quedat mudes en producció.* La pregunta del brief («si es manté a
+>    mà, la propera també faltarà») té resposta empírica: **la propera va trigar hores**.
+>    Les 4 entren amb motiu de DUES meitats, i la segona és la que importa: no només «EMEX no
+>    serveix sèrie», sinó que **la sèrie del costat —nacionalitat 2021→2025— NO la substitueix**
+>    (qui es nacionalitza surt d'un conjunt i es queda a l'altre). 17.014 → 20.802 files.
 >    (d) `atur_registrat` al catàleg servit: cauen les dues últimes cadenes del tauler
 >    escrites al codi i no llegides del contracte.
 >    *Parquet regenerat sense `dbt build` (no hi ha `data/raw/` en checkout net) executant el
@@ -193,6 +202,9 @@ publicable per si sola.*
 >    i la font de l'atur ja es poden llegir del catàleg · **i una troballa nova de la MATEIXA
 >    forma que el bug arreglat**: el glossari agrupa per `DIM_ORDER` fix i **`treball` no hi
 >    és**, així que `atur_registrat` hi arribarà i el glossari **el descartarà en silenci**.
+>    · I el límit del lloc de naixement de D11 ja és DADA (motiu al mart, ca+es) en comptes de
+>    copy (`gov_naix_foto`): mentre visqui al copy tornem a tenir una cadena del tauler que no
+>    surt del contracte, que és just el que (d) acaba de treure de la targeta d'atur.
 >    **➡️ Quart cas del pattern «guardes que no corren» (Talaia en comptava tres):**
 >    `tools/export_indicadors_cat.py` emet `data/web/indicadors-catalunya.json`, **versionat**,
 >    sense `--check` ni pas al CI. Comprovat que **avui NO és estale** → forat obert, no ferida.

@@ -330,6 +330,27 @@
             "direccio": "puja"
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 7.11,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -472,6 +493,69 @@
             "delta_emmascarat": false,
             "unitat_delta": "persones",
             "direccio": "puja"
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 2017,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 161,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 85,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
           }
         ],
         "renda_neta_persona": [
@@ -888,6 +972,27 @@
             "direccio": "puja"
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 7.38,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -1030,6 +1135,69 @@
             "delta_emmascarat": false,
             "unitat_delta": "persones",
             "direccio": "puja"
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 1741,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 160,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 266,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
           }
         ],
         "renda_neta_persona": [
@@ -1446,6 +1614,27 @@
             "direccio": "puja"
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 23.33,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -1588,6 +1777,69 @@
             "delta_emmascarat": false,
             "unitat_delta": "persones",
             "direccio": "puja"
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 12059,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 4092,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 1388,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
           }
         ],
         "renda_neta_persona": [
@@ -2004,6 +2256,27 @@
             "direccio": "baixa"
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 13.13,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -2146,6 +2419,69 @@
             "delta_emmascarat": false,
             "unitat_delta": "persones",
             "direccio": "baixa"
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 356,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 57,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 21,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
           }
         ],
         "renda_neta_persona": [
@@ -2544,6 +2880,27 @@
             "direccio": null
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 3.23,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -2661,6 +3018,69 @@
             "periode_actual": null,
             "periode_anterior": null,
             "valor_actual": 93,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 89,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 3,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 1,
             "valor_anterior": null,
             "delta": null,
             "delta_min": null,
@@ -3084,6 +3504,27 @@
             "direccio": "puja"
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 8.41,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -3226,6 +3667,69 @@
             "delta_emmascarat": false,
             "unitat_delta": "persones",
             "direccio": "puja"
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 1453,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 140,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 72,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
           }
         ],
         "renda_neta_persona": [
@@ -3642,6 +4146,27 @@
             "direccio": "igual"
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 3.31,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -3784,6 +4309,69 @@
             "delta_emmascarat": false,
             "unitat_delta": "persones",
             "direccio": "igual"
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 139,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 5,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 7,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
           }
         ],
         "renda_neta_persona": [
@@ -4200,6 +4788,27 @@
             "direccio": "puja"
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 7.83,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -4342,6 +4951,69 @@
             "delta_emmascarat": false,
             "unitat_delta": "persones",
             "direccio": "puja"
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 144,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 13,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 9,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
           }
         ],
         "renda_neta_persona": [
@@ -4740,6 +5412,27 @@
             "direccio": null
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 2.94,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -4857,6 +5550,69 @@
             "periode_actual": null,
             "periode_anterior": null,
             "valor_actual": 68,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 64,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 2,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 2,
             "valor_anterior": null,
             "delta": null,
             "delta_min": null,
@@ -5280,6 +6036,27 @@
             "direccio": "baixa"
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 3.46,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -5422,6 +6199,69 @@
             "delta_emmascarat": false,
             "unitat_delta": "persones",
             "direccio": "baixa"
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 248,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 9,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 3,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
           }
         ],
         "renda_neta_persona": [
@@ -5838,6 +6678,27 @@
             "direccio": "puja"
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": null,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -5980,6 +6841,69 @@
             "delta_emmascarat": false,
             "unitat_delta": "persones",
             "direccio": "puja"
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 34,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 6,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 1,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
           }
         ],
         "renda_neta_persona": [
@@ -6396,6 +7320,27 @@
             "direccio": "puja"
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 14.46,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -6538,6 +7483,69 @@
             "delta_emmascarat": false,
             "unitat_delta": "persones",
             "direccio": "puja"
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 3895,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 735,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 452,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
           }
         ],
         "renda_neta_persona": [
@@ -6936,6 +7944,27 @@
             "direccio": null
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": null,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -7053,6 +8082,69 @@
             "periode_actual": null,
             "periode_anterior": null,
             "valor_actual": 28,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 26,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 0,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 2,
             "valor_anterior": null,
             "delta": null,
             "delta_min": null,
@@ -7476,6 +8568,27 @@
             "direccio": "puja"
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 14.14,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -7618,6 +8731,69 @@
             "delta_emmascarat": false,
             "unitat_delta": "persones",
             "direccio": "puja"
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 709,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 136,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 117,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
           }
         ],
         "renda_neta_persona": [
@@ -8034,6 +9210,27 @@
             "direccio": "igual"
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 2.26,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -8176,6 +9373,69 @@
             "delta_emmascarat": false,
             "unitat_delta": "persones",
             "direccio": "igual"
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 128,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 3,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 2,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
           }
         ],
         "renda_neta_persona": [
@@ -8592,6 +9852,27 @@
             "direccio": "puja"
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 9.55,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -8734,6 +10015,69 @@
             "delta_emmascarat": false,
             "unitat_delta": "persones",
             "direccio": "puja"
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 409,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 45,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 17,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
           }
         ],
         "renda_neta_persona": [
@@ -9150,6 +10494,27 @@
             "direccio": "puja"
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 11.04,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -9292,6 +10657,69 @@
             "delta_emmascarat": false,
             "unitat_delta": "persones",
             "direccio": "puja"
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 141,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 18,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 4,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
           }
         ],
         "renda_neta_persona": [
@@ -9708,6 +11136,27 @@
             "direccio": "puja"
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 10.04,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -9850,6 +11299,69 @@
             "delta_emmascarat": false,
             "unitat_delta": "persones",
             "direccio": "puja"
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 773,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 93,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 60,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
           }
         ],
         "renda_neta_persona": [
@@ -10266,6 +11778,27 @@
             "direccio": "puja"
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 12.12,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -10408,6 +11941,69 @@
             "delta_emmascarat": false,
             "unitat_delta": "persones",
             "direccio": "puja"
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 846,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 134,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 126,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
           }
         ],
         "renda_neta_persona": [
@@ -10824,6 +12420,27 @@
             "direccio": "puja"
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 16.39,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -10966,6 +12583,69 @@
             "delta_emmascarat": false,
             "unitat_delta": "persones",
             "direccio": "puja"
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 3377,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 747,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 434,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
           }
         ],
         "renda_neta_persona": [
@@ -11382,6 +13062,27 @@
             "direccio": "puja"
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": null,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -11524,6 +13225,69 @@
             "delta_emmascarat": false,
             "unitat_delta": "persones",
             "direccio": "igual"
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 36,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 6,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 2,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
           }
         ],
         "renda_neta_persona": [
@@ -11940,6 +13704,27 @@
             "direccio": "baixa"
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 3.27,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -12082,6 +13867,69 @@
             "delta_emmascarat": false,
             "unitat_delta": "persones",
             "direccio": "baixa"
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 144,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 5,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 4,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
           }
         ],
         "renda_neta_persona": [
@@ -12498,6 +14346,27 @@
             "direccio": "puja"
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 7.64,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -12640,6 +14509,69 @@
             "delta_emmascarat": false,
             "unitat_delta": "persones",
             "direccio": "puja"
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 260,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 23,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 18,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
           }
         ],
         "renda_neta_persona": [
@@ -13038,6 +14970,27 @@
             "direccio": null
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": null,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -13155,6 +15108,69 @@
             "periode_actual": null,
             "periode_anterior": null,
             "valor_actual": 25,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 21,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 2,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 2,
             "valor_anterior": null,
             "delta": null,
             "delta_min": null,
@@ -13578,6 +15594,27 @@
             "direccio": "baixa"
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 1.12,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -13720,6 +15757,69 @@
             "delta_emmascarat": false,
             "unitat_delta": "persones",
             "direccio": "igual"
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 171,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 2,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 6,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
           }
         ],
         "renda_neta_persona": [
@@ -14136,6 +16236,27 @@
             "direccio": "puja"
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 8.66,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -14278,6 +16399,69 @@
             "delta_emmascarat": false,
             "unitat_delta": "persones",
             "direccio": "puja"
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 982,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 107,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 147,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
           }
         ],
         "renda_neta_persona": [
@@ -14694,6 +16878,27 @@
             "direccio": "puja"
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 4.23,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -14836,6 +17041,69 @@
             "delta_emmascarat": false,
             "unitat_delta": "persones",
             "direccio": "puja"
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 231,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 11,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 18,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
           }
         ],
         "renda_neta_persona": [
@@ -15252,6 +17520,27 @@
             "direccio": "puja"
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 3.95,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -15394,6 +17683,69 @@
             "delta_emmascarat": false,
             "unitat_delta": "persones",
             "direccio": "puja"
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 385,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 17,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 28,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
           }
         ],
         "renda_neta_persona": [
@@ -15810,6 +18162,27 @@
             "direccio": "puja"
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 5.06,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -15952,6 +18325,69 @@
             "delta_emmascarat": false,
             "unitat_delta": "persones",
             "direccio": "puja"
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 167,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 9,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 2,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
           }
         ],
         "renda_neta_persona": [
@@ -16350,6 +18786,27 @@
             "direccio": null
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 0.43,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -16467,6 +18924,69 @@
             "periode_actual": null,
             "periode_anterior": null,
             "valor_actual": 234,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 226,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 1,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 7,
             "valor_anterior": null,
             "delta": null,
             "delta_min": null,
@@ -16890,6 +19410,27 @@
             "direccio": "puja"
           }
         ],
+        "pct_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+            "motiu_l10n": {
+              "ca": "Es deriva del lloc de naixement d'EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.",
+              "es": "Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 11.59,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
         "pct_noprincipal": [
           {
             "estat": "sense_serie",
@@ -17032,6 +19573,69 @@
             "delta_emmascarat": false,
             "unitat_delta": "persones",
             "direccio": "puja"
+          }
+        ],
+        "poblacio_nascuda_catalunya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D'aquesta xifra en tenim la foto, no l'evolució.",
+              "es": "Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 168,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_estranger": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l'evolució d'aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 24,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
+          }
+        ],
+        "poblacio_nascuda_resta_espanya": [
+          {
+            "estat": "sense_serie",
+            "comparacio": null,
+            "motiu": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+            "motiu_l10n": {
+              "ca": "Lloc de naixement d'EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.",
+              "es": "Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución."
+            },
+            "periode_actual": null,
+            "periode_anterior": null,
+            "valor_actual": 15,
+            "valor_anterior": null,
+            "delta": null,
+            "delta_min": null,
+            "delta_max": null,
+            "delta_emmascarat": false,
+            "unitat_delta": null,
+            "direccio": null
           }
         ],
         "renda_neta_persona": [

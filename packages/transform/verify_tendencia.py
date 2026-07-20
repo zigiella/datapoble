@@ -62,6 +62,11 @@ SENSE_SERIE = {
     "rtc_per_1000hab",
     # D10 · les dues que es pintaven i no hi eren (targeta «comerç i serveis», bloc C).
     "serveis_estab", "restauracio_estab",
+    # D10 (2a passada) · el LLOC DE NAIXEMENT, que D11 va portar al tauler el mateix dia i
+    # que tampoc no tenia fila. Ho va destapar aquesta mateixa guarda al primer CI: és el
+    # cas d'ús per al qual es va escriure, i va caure a les poques hores.
+    "poblacio_nascuda_catalunya", "poblacio_nascuda_resta_espanya",
+    "poblacio_nascuda_estranger", "pct_nascuda_estranger",
 }
 
 # Àncores A MÀ · la Pobla de Lillet (08166), atur. Llegides del pols i restades a mà:
