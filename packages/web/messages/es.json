@@ -478,6 +478,8 @@
   "gov_rang_cap": " · por valor en {comarca}",
   "gov_rang_empat": "empatados",
   "gov_nova_norank": "Sin rango comarcal todavía: esta métrica no la rankea el mart de gobierno, y aquí no la calculamos.",
+  "gov_naix_foto": "Foto, no serie: del lugar de nacimiento no tenemos evolución ingerida. La única evolución de este bloque es la de nacionalidad, que mide otra cosa.",
+  "gov_nac_serie_es_nacionalitat": "Esta evolución es de NACIONALIDAD (pasaporte), no de lugar de nacimiento: quien se naturaliza deja de contar aquí sin irse del pueblo.",
   "gov_kpi_atur": "Paro registrado",
   "gov_kpi_atur_src": "SEPE · Observatori del Treball (serie mensual)",
   "gov_kpi_serveis": "Comercio, servicios y restauración",

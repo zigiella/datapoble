@@ -289,12 +289,29 @@
 		kwh_hab: 'kWh',
 		kg_hab_any: 'kg',
 		vidre_hab: 'kg',
-		rtc_per_1000hab: '‰'
+		rtc_per_1000hab: '‰',
+		// D11 · les tres xifres de lloc de naixement són persones, com la població de la qual són
+		// partició (nascuts a Catalunya + resta d'Espanya + estranger = `poblacio`, exacte als 947).
+		poblacio_nascuda_catalunya: 'hab.',
+		poblacio_nascuda_resta_espanya: 'hab.',
+		poblacio_nascuda_estranger: 'hab.'
 	};
 	function gUnit(key: string): string {
 		if (gDef(key)?.format === 'percent') return '%';
 		return GOV_UNIT[key] ?? '';
 	}
+
+	// ── D11 · NOTES DE LÍMIT per targeta (E11) ────────────────────────────────────────────────
+	// Alguns límits no es dedueixen de la dada i s'han de DIR: que d'una xifra en tenim la foto i
+	// no la sèrie, o que la sèrie que acompanya una targeta mesura una altra cosa que l'etiqueta
+	// del costat. El descriptor (`kpis.js`) només porta la CLAU i18n; el text viu als catàlegs
+	// ca/es, com la resta del copy. Una clau sense entrada aquí no pintaria res: `verify-govern`
+	// comprova que totes les que el descriptor declara existeixen i estan cablejades.
+	const GOV_NOTE: Record<string, () => string> = {
+		gov_naix_foto: () => m.gov_naix_foto(),
+		gov_nac_serie_es_nacionalitat: () => m.gov_nac_serie_es_nacionalitat()
+	};
+	const govNote = (k: string | undefined): string => (k ? (GOV_NOTE[k]?.() ?? '') : '');
 	// Prefixa el signe a una variació ja formatada (la negativa ja porta el «−» d'Intl).
 	function signed(s: string): string {
 		return s.startsWith('-') || s.startsWith('−') ? s : `+${s}`;
@@ -633,6 +650,13 @@
 										</p>
 										<!-- E6/E11 · la tendència, amb el seu període SEMPRE (o el motiu de no tenir-ne). -->
 										{@render tendencia(trendsOf(kpi.trendKey ?? kpi.key))}
+										<!-- D11 · el límit que la dada NO diu de si mateixa: va DARRERE la tendència
+										     perquè és el que la interpreta (el mecànic «no és al mart» primer, la
+										     raó editorial després). Lloc de naixement = foto; l'única sèrie del
+										     bloc és de nacionalitat, i la seva targeta ho declara. -->
+										{#if kpi.note}
+											<p class="gov-kpi__note">{govNote(kpi.note)}</p>
+										{/if}
 										{#if cell && cell.rang != null}
 											<p class="gov-kpi__rank">
 												<span class="gov-kpi__rankk">{m.gov_rang_val({ k: String(cell.rang), n: String(cell.n_amb_dada) })}</span>
@@ -1508,6 +1532,18 @@
 		font-size: 0.62rem;
 		color: var(--dp-text-subtle);
 		line-height: 1.4;
+	}
+	/* D11 · nota de LÍMIT de lectura (E11): el que la xifra no diu de si mateixa. Filet a
+	   l'esquerra perquè es llegeixi com una advertència de la targeta i no com més procedència. */
+	.gov-kpi__note {
+		margin: 4px 0 0;
+		padding-left: 7px;
+		border-left: 2px solid var(--dp-accent-weak);
+		font-family: var(--dp-font-sans);
+		font-size: 0.66rem;
+		color: var(--dp-text-muted);
+		line-height: 1.45;
+		text-wrap: pretty;
 	}
 	/* Procedència (regla de ferro C6 §8.1): fórmula (inferida) o font (mesurada). */
 	.gov-kpi__prov {
