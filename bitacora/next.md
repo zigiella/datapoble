@@ -120,6 +120,32 @@ publicable per si sola.*
 >    `mart_pols_mensual` està desacoblat a propòsit.
 >    · Encuades també: sèries de residus/ICAEN/renda (les tres fonts en tenen; el pipeline n'ingereix
 >      una sola foto) → desbloquejaria la tendència de 4 targetes més.
+> **🚨 E7/E8 — LES LECTURES P1/P2, AUDITADES PER TALAIA (2026-07-20). La sospita de Bea es queda
+> curta.** Bea: «que no estiguin basades en mètriques de les antigues». Comptat sobre
+> `data/web/lectures.bergueda.json`, que és el que se serveix ARA:
+> - **532 frases amb evidència · 310 (58%) citen una mètrica aparcada, deprecada o inexistent · 31
+>   municipis de 31 afectats.**
+> - **260 frases** citen el **model de pernocta APARCAT** (`gap_pernocta_pct` 138, `poblacio_pernocta_est`
+>   104, `carrega_funcional_est` 88). Al contracte encara consten com a **vives**: el vot d'aparcar de
+>   Bea (2026-07-16) va sortir de la vista de govern però **mai va baixar al contracte** → forat de
+>   Talaia.
+> - **32 frases** citen **`index_turisme`**, que Bea va votar deprecar i que ja és fora del tauler.
+> - **110 frases** citen **claus que NO existeixen al contracte**: `pernocta_rang` (92), `etca_idescat`
+>   (16), `tipus_territorial` (8). Això no és una mètrica antiga: és una **evidència fantasma**. La
+>   promesa de la fitxa és «cada frase traçable fins a la font»; per a aquestes, qui estiri el fil no
+>   troba res.
+> **Ordre de treball (la doctrina va primer, la regeneració després):**
+> - **E7a (Talaia)** — baixar al contracte el que ja s'havia decidit a la vista: marcar el model de
+>   pernocta com a aparcat i resoldre les 3 claus fantasma (o existeixen i s'escriuen, o no es poden
+>   citar). Definir la **regla**: *una lectura només pot citar com a evidència una mètrica viva i
+>   publicable del contracte*.
+> - **E7b (Sondeig, `tools/gen_fitxa.py`)** — regenerar P1/P2 sobre mètriques oficials + **guarda**
+>   que faci caure el CI si una lectura cita una clau que no compleix la regla. *Sense la guarda això
+>   torna: és el mateix patró que el `caveat` esborrat i que els `--check` absents.*
+> - **E8 (dins de la regeneració)** — «Confiança mitjana» tal com surt avui no diu res a un lector
+>   normal (esmena de Bea): el text ha d'explicar de què és la confiança i què vol dir que sigui
+>   mitjana.
+>
 > **⚠️ D11 (Mirador) — E11 és MÉS possible del que D9 va concloure. Verificat per Talaia 2026-07-20.**
 > Mirador va tancar E11 dient «el mart només té **nacionalitat**, i Bea demana nascuts fora / nascuts
 > a l'estranger». **Això no és cert:** el contracte i el web JA serveixen les quatre mètriques de
