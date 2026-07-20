@@ -420,8 +420,8 @@
     "rtc_per_1000hab": {
       "key": "rtc_per_1000hab",
       "label": {
-        "ca": "Establiments / 1000 hab",
-        "es": "Establecimientos / 1000 hab"
+        "ca": "Establiments turístics / 1.000 hab",
+        "es": "Establecimientos turísticos / 1.000 hab"
       },
       "unit": {
         "ca": "per mil",
@@ -432,8 +432,8 @@
       "source": "indicador derivat — vegeu la metodologia",
       "formula": "rtc_total / poblacio * 1000",
       "definicio": {
-        "ca": "Intensitat turística reglada per càpita.",
-        "es": "Intensidad turística reglada per cápita."
+        "ca": "Establiments d'allotjament turístic REGLATS (Registre de Turisme de Catalunya: habitatges d'ús turístic, hotels, càmpings, turisme rural) per cada 1.000 habitants.",
+        "es": "Establecimientos de alojamiento turístico REGLADOS (Registro de Turismo de Cataluña: viviendas de uso turístico, hoteles, campings, turismo rural) por cada 1.000 habitantes."
       },
       "status": "public"
     },
