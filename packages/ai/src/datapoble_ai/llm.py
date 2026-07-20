@@ -229,7 +229,7 @@ class OpenRouterBackend(LLMBackend):
         # municipality) at zero cost. Only when it can't even find a metric do
         # we pay for the LLM, which may parse phrasing the router missed.
         if self.deterministic_first:
-            parsed = self.router.parse(question, loc)
+            parsed = self.router.parse(question, loc, unlocked=unlocked)
             if isinstance(parsed, RefusalReason):
                 if parsed not in _ESCALATABLE_REFUSALS:
                     return self.router._refuse(question, loc, parsed, self.name)

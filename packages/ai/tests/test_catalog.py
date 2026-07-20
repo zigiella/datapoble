@@ -48,10 +48,24 @@ def test_match_terms_include_synonyms_accent_folded(catalog):
     assert terms == sorted(terms, key=len, reverse=True)
 
 
-def test_tables_only_reference_available_metrics(catalog):
+def test_tables_only_reference_served_metrics(catalog):
     tables = catalog.tables()
     assert "mart_municipi" in tables
+    # mart_electoral stays in the SQL allow-list even though `politica` is held
+    # back: the dimension is KEYED, so the unlocked path has to be able to
+    # execute. The allow-list bounds the blast radius; it is not the policy
+    # gate. (This test used to assert the same line for the opposite reason —
+    # back when the electoral metrics were simply available.)
     assert "mart_electoral" in tables
+    # mart_demografia is where the `origen` metrics live. That dimension has no
+    # key, so nothing can reach it and it drops out of the allow-list entirely.
+    origen_tables = {
+        m.table for m in catalog.metrics.values() if m.dimension == "origen"
+    }
+    assert origen_tables, "no origen metrics (test would be vacuous)"
+    assert tables.isdisjoint(origen_tables), (
+        f"unkeyed held-back tables in the SQL allow-list: {origen_tables & tables}"
+    )
 
 
 def test_provenance_fields_present_on_contract(catalog):
@@ -75,6 +89,61 @@ def test_origen_metrics_are_held_back_from_agent(catalog):
     sentinel = catalog.metric("pct_nascuda_estranger")
     assert sentinel is not None and sentinel.dimension == "origen"
     assert sentinel.is_available() is False
+
+
+def test_politica_metrics_are_held_back_from_agent(catalog):
+    # Bea's call, 2026-07-20: electoral goes behind the fence. A refusal already
+    # existed at the ANSWER layer (politics.PoliticsGate), but it keys off a
+    # *resolved* metric, so every surface that merely enumerates the catalog
+    # walked around it and advertised what the agent would then refuse. This is
+    # the gate at the catalog, where enumeration happens. Sibling of the origen
+    # guard above; the difference is that politica is KEYED (see below).
+    politica = [m for m in catalog.metrics.values() if m.dimension == "politica"]
+    assert politica, "no politica-dimension metrics in the contract (test would be vacuous)"
+    for m in politica:
+        assert m.is_available() is False, f"{m.key} (politica) leaked: must not be agent-available"
+    available = {m.key for m in catalog.available_metrics()}
+    assert available.isdisjoint({m.key for m in politica}), "politica metrics leaked into the available set"
+    # The four the contract declares, named so a fifth cannot be added silently.
+    for key in ("pct_indep", "pct_esquerra", "pct_extrema_dreta", "guanya"):
+        m = catalog.metric(key)
+        assert m is not None and m.dimension == "politica", key
+        assert m.is_available() is False, key
+
+
+def test_politica_is_held_back_but_keyed_origen_is_not(catalog):
+    # The two held-back dimensions are NOT the same door, and the difference is
+    # load-bearing: `origen` is unconditional (no escape hatch until the origen
+    # frontier of task #71 exists), `politica` is openable with the runtime
+    # secret PoliticsGate reads. Collapsing them would have silently revoked a
+    # key that is Bea's to revoke, not this layer's.
+    keyed = {m.key for m in catalog.keyed_metrics()}
+    # Computed politica metrics are keyed...
+    assert "pct_indep" in keyed and "guanya" in keyed
+    # ...but a planned one has no data to open, key or not.
+    assert "pct_extrema_dreta" not in keyed
+    # ...and origen is never keyed.
+    for m in catalog.metrics.values():
+        if m.dimension == "origen":
+            assert m.key not in keyed, f"{m.key} (origen) must have no key"
+
+
+def test_deprecated_metrics_are_not_available(catalog):
+    # Handoff from Sondeig (#268): is_available() only excluded `planned`, so a
+    # metric retired by editorial vote was still served. index_turisme is the
+    # live case (Bea, 2026-07-18) — and its column still sits in mart_municipi,
+    # so nothing failed: the agent just kept answering with a number the
+    # project had decided not to stand behind. Silent, which is the bad kind.
+    m = catalog.metric("index_turisme")
+    assert m is not None and m.status == "deprecated"
+    assert m.is_computed() is False
+    assert m.is_available() is False
+    available = {x.key for x in catalog.available_metrics()}
+    assert "index_turisme" not in available
+    # General form: no deprecated metric anywhere in the served set.
+    deprecated = {k for k, x in catalog.metrics.items() if x.status == "deprecated"}
+    assert deprecated, "no deprecated metric in the contract (test would be vacuous)"
+    assert available.isdisjoint(deprecated)
 
 
 # --- Guarda de la unificació de claus (2026-07-17) -----------------------------------

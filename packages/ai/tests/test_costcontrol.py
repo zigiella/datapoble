@@ -154,14 +154,26 @@ def test_only_unmatched_refusals_escalate():
     assert RefusalReason.UNKNOWN_MUNICIPALITY not in _ESCALATABLE_REFUSALS
 
 
-def test_planned_metric_does_not_escalate_to_llm(monkeypatch):
-    # A planned-metric question is a *precise* refusal: it must be answered
-    # deterministically (no key needed), never sent to the LLM.
+def test_gated_metric_does_not_escalate_to_llm(monkeypatch):
+    # An unserved-metric question is a *precise* refusal: answered
+    # deterministically (no key needed), never sent to the LLM. The property
+    # under test is the non-escalation; the reason is now POLITICAL_GATED
+    # because a vote metric no longer names itself via the "planned" copy.
     monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
     with Agent(mode="openrouter") as a:
         ans = a.ask("On creix més l'extrema dreta?", locale="ca")
         assert ans.kind == AnswerKind.REFUSAL
-        assert ans.refusal_reason == RefusalReason.METRIC_PLANNED
+        assert ans.refusal_reason == RefusalReason.POLITICAL_GATED
+        assert a.backend.last_call_used_llm is False
+
+
+def test_deprecated_metric_does_not_escalate_to_llm(monkeypatch):
+    # Same property for the deprecated route: precise, deterministic, unpaid.
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+    with Agent(mode="openrouter") as a:
+        ans = a.ask("Quin municipi té més pressió turística?", locale="ca")
+        assert ans.kind == AnswerKind.REFUSAL
+        assert ans.refusal_reason == RefusalReason.METRIC_DEPRECATED
         assert a.backend.last_call_used_llm is False
 
 

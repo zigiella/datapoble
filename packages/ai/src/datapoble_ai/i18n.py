@@ -62,6 +62,13 @@ PHRASES: dict[str, dict[str, str]] = {
             "està calculada (status: planned), així que encara no la puc "
             "consultar."
         ),
+        # Retirada ≠ pendent. Dir «encara no» d'una mètrica deprecada és
+        # prometre que tornarà, i la decisió va ser justament que no.
+        # (Còpia pendent del vot narratiu de Bea.)
+        "refusal_deprecated": (
+            "La mètrica «{label}» va estar publicada però s'ha retirat del "
+            "catàleg, així que ja no la consulto. No tornarà en aquesta forma."
+        ),
         "refusal_unknown_municipality": (
             "No reconec el municipi «{name}» dins l'àmbit de dades "
             "(Berguedà). Comprova el topònim."
@@ -122,6 +129,10 @@ PHRASES: dict[str, dict[str, str]] = {
             "La métrica «{label}» está definida en el contrato pero aún no "
             "está calculada (status: planned), así que todavía no puedo "
             "consultarla."
+        ),
+        "refusal_deprecated": (
+            "La métrica «{label}» estuvo publicada pero se ha retirado del "
+            "catálogo, así que ya no la consulto. No volverá en esta forma."
         ),
         "refusal_unknown_municipality": (
             "No reconozco el municipio «{name}» dentro del ámbito de datos "

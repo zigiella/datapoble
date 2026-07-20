@@ -243,9 +243,44 @@ publicable per si sola.*
 > KPI queda sense línia de procedència. Petits: treure `index_turisme` del tipus `MetricKey`
 > (metodologia ja net, #269) · serrell B3: el copy del refús del xat diu «(Berguedà)» i el mart és
 > Catalunya-947 · loader que embeu pernocta sencer per l'ETCA.
-> **🔵 COLA DE BRÚIXOLA:** **deprecated-refús** (handoff de Sondeig #268: `is_available()` a `packages/ai`
-> només exclou `planned`, no `deprecated` — el xat encara serviria `index_turisme` si el pregunten;
-> ha d'excloure també `deprecated`) · X3 (catàleg govern + 8 preguntes curades, darrere D4✅) · **B3 ✅ (PR
+> **🔵 COLA DE BRÚIXOLA — electoral ✅ + deprecated ✅ (PR obert, 2026-07-20).** Bitàcola:
+> `bitacora/2026-07-20_electoral-rere-tanca_bruixola.md`. 220 tests verds, ruff net.
+> **⛔ TRES PREMISSES DEL BRIEF, FALSES:** (a) **l'electoral SÍ que tenia porta** —
+> `packages/ai/src/datapoble_ai/politics.py` (`PoliticsGate`, fail-safe, còpia discreta) existia i
+> Bea ja hi havia decidit; (b) **el xat NO responia preguntes electorals** en configuració de
+> producció: refusava `political_gated` — només responia darrere la clau de runtime; (c)
+> `mart_electoral` és **31 files / 31 municipis**, no 372: les 372 són de `mart_consum_electric`
+> (12 mesos × 31). Els dos parquets es van creuar al traspàs de D9.
+> **El forat real:** la porta tanca la RESPOSTA (s'activa sobre una mètrica ja resolta), i **tot el
+> que només ENUMERA hi passava pel costat** — 4 fuites verificades executant: el prompt i l'enum del
+> LLM oferien `pct_indep`/`pct_esquerra`/`guanya`; la llista «Mètriques disponibles» del refús
+> `out_of_catalog` les anunciava totes tres (contradient la doctrina que `api.py` té escrita per a
+> `/metrics`); `pct_extrema_dreta`, per ser `planned`, es refusava a `parse()` **abans** de la porta
+> i responia «la mètrica "% vot extrema dreta" … encara no està calculada» —anomenant-la i prometent
+> que arribava—, i les dues frases que hi porten són **`sample_questions` del contracte**; i
+> `mart_electoral` era a l'allow-list de SQL.
+> **La porta triada: mateixa FORMA que `origen`, frontissa diferent.** `origen` és incondicional;
+> `politica` té la clau que Bea va dissenyar, i revocar-la no és meu (role: capes sensibles → Bea).
+> Separats `HELD_BACK_DIMENSIONS {origen, politica}` i `KEYED_DIMENSIONS {politica}`, i
+> `is_computed()` vs `is_available()`. La clau segueix funcionant igual; el que desapareix és
+> l'anunci. `mart_electoral` es queda a l'allow-list (la ruta amb clau ha de poder executar-se);
+> `mart_demografia` (origen, sense clau) en surt. **Mart NO reconstruït**, com manava el brief.
+> **Deprecated (#268):** `NOT_SERVED_STATUSES = {planned, deprecated}`. `index_turisme` encara té
+> columna al mart real (55 cols) → no fallava res, el xat servia un número que el projecte havia
+> decidit no sostenir. Afegit `METRIC_DEPRECATED` amb còpia pròpia, perquè dir «encara no està
+> calculada» d'una mètrica **retirada** és prometre un retorn que es va decidir que no. **Còpia
+> pendent del vot narratiu de Bea.**
+> **➡️ Handoff a: Bea (decisió).** La clau segueix oberta i darrere hi ha **31 de 947 municipis**
+> sense avís de cobertura: Berga contesta 49,10%, els altres 916 tornarien buit — i el buit per
+> pilot es llegeix igual que el buit per «no ho sabem». (a) revocar la clau, (b) reconstruir el mart
+> (editorial: agregats electorals dels 947 en repo públic), o (c) clau + avís de cobertura.
+> **➡️ Handoff a: Talaia** — `sample_questions` sembra dues preguntes de vot; el contracte posa
+> d'exemple el que hem decidit no respondre (diff exacte a la bitàcola).
+> **➡️ Handoff a: Mirador** — `packages/web/src/lib/ask/api.ts`: la unió `RefusalReason` no té
+> `political_gated` (ja passava abans) ni `metric_deprecated` (nou); cauen al `default` genèric.
+> **Serrell propi encuat:** `Warehouse.query` no embolcalla els errors de DuckDB (una
+> `BinderException` puja crua fins al cridador) — ha de ser `WarehouseError` i acabar en refús.
+> **Pendents:** X3 (catàleg govern + 8 preguntes curades, darrere D4✅) · **B3 ✅ (PR
 > obert)** — xips de /pregunta-li re-basats en 6 KPIs oficials (ca+es, copy pendent de vot de Bea),
 > provats contra fixtures I marts reals; de passada, 3 forats del router tancats (mes arbitrari del
 > pols, topònims amb article INE, variant «per habitant» que robava la mètrica) — bitàcola

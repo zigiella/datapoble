@@ -66,10 +66,31 @@ def test_out_of_catalog_is_refused_with_reason(agent):
     assert ans.refusal_reason == RefusalReason.OUT_OF_CATALOG
 
 
-def test_planned_metric_is_refused_as_planned(agent):
+def test_planned_vote_metric_is_refused_discreetly_not_as_planned(agent):
+    # Was: asserted METRIC_PLANNED. That was the leak, encoded as expected
+    # behaviour. `pct_extrema_dreta` is status: planned, so parse refused it
+    # before the political gate (which only fires on a *resolved* metric) and
+    # the reader got «la mètrica "% vot extrema dreta" ... encara no està
+    # calculada» — naming a vote metric and promising it was coming. A vote
+    # metric now leaves by the discreet door whatever its status.
     ans = agent.ask("On creix més l'extrema dreta?", locale="ca")
     assert ans.kind == AnswerKind.REFUSAL
-    assert ans.refusal_reason == RefusalReason.METRIC_PLANNED
+    assert ans.refusal_reason == RefusalReason.POLITICAL_GATED
+    assert "extrema dreta" not in ans.text.lower()
+
+
+def test_deprecated_metric_is_refused_as_retired_not_as_planned(agent):
+    # `index_turisme` was deprecated by editorial vote (Bea, 2026-07-18). Its
+    # column still sits in mart_municipi, so before the fix the agent simply
+    # served the number. Refusing is the point; refusing *accurately* is the
+    # other half — "not yet calculated" would promise a return that was
+    # decided against.
+    # "pressió turística" is index_turisme's own label; "índex de turisme"
+    # legitimately resolves to IETR, a different and live metric.
+    ans = agent.ask("Quin municipi té més pressió turística?", locale="ca")
+    assert ans.kind == AnswerKind.REFUSAL
+    assert ans.refusal_reason == RefusalReason.METRIC_DEPRECATED
+    assert "planned" not in ans.text.lower()
 
 
 def test_unknown_municipality_refused(agent):

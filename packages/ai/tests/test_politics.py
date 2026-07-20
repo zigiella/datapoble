@@ -220,6 +220,72 @@ def test_openrouter_backend_unlocks_with_word(monkeypatch):
 
 # --- /metrics endpoint: politica metrics are not advertised -------------------
 
+# --- the fence must not be announced through --------------------------------
+# Everything below was leaking *before* the electoral hold-back (2026-07-20).
+# The PoliticsGate closed the ANSWER; these are the surfaces that merely
+# ENUMERATE the catalog, which the gate structurally cannot reach because it
+# keys off a resolved metric. Each assertion here is a hole that was open.
+
+def test_vote_metrics_are_not_advertised_to_the_llm():
+    # The model was told pct_indep/pct_esquerra/guanya existed, in both the tool
+    # enum and the system prompt. It could pick one, and only then be refused —
+    # and a prompt that lists an electoral table is a prompt that leaks it.
+    from datapoble_ai.llm import _intent_tool_schema, _system_prompt
+
+    cat = load_catalog()
+    enum = _intent_tool_schema(cat, "ca")["function"]["parameters"]["properties"]["metric"]["enum"]
+    prompt = _system_prompt(cat, "ca")
+    for key in ("pct_indep", "pct_esquerra", "pct_extrema_dreta", "guanya"):
+        assert key not in enum, f"{key} offered to the LLM in the tool enum"
+        assert key not in prompt, f"{key} named in the LLM system prompt"
+    assert "poblacio" in enum and "poblacio" in prompt  # not a vacuous test
+
+
+def test_out_of_catalog_refusal_does_not_list_vote_metrics():
+    # The out-of-catalog refusal ends with "Mètriques disponibles: {…}", built
+    # from available_metrics(). It listed «% vot independentista», «% vot
+    # esquerra» and «Candidatura guanyadora» as things the agent could answer —
+    # directly contradicting the doctrine written down for /metrics, and then
+    # refusing them if you asked.
+    with _offline_agent() as a:
+        ans = a.ask("Quin és el preu del peix a Berga?", locale="ca")
+    assert ans.refusal_reason == RefusalReason.OUT_OF_CATALOG
+    lowered = ans.text.lower()
+    for leak in ("vot independentista", "vot esquerra", "candidatura guanyadora",
+                 "vot extrema dreta"):
+        assert leak not in lowered, f"refusal advertises «{leak}»"
+
+
+def test_electoral_mart_is_not_reachable_while_sealed():
+    # mart_electoral holds 31 of 947 municipalities (pilot-era artifact, kept on
+    # purpose — rebuilding it would publish electoral aggregates for 947
+    # municipalities in a public repo, which is an editorial decision). While
+    # sealed, no question may reach it at all: an empty result from a stale
+    # artifact is indistinguishable from an honest "we don't know".
+    with _offline_agent() as a:
+        for q in VOTE_QUESTIONS_CA:
+            ans = a.ask(q, locale="ca")
+            assert ans.kind == AnswerKind.REFUSAL
+            assert ans.provenance is None, "a gated question produced a query"
+
+
+@pytest.mark.parametrize("q,locale", [
+    ("On creix més l'extrema dreta?", "ca"),
+    ("¿Dónde crece más la extrema derecha?", "es"),
+])
+def test_planned_vote_metric_uses_the_discreet_door(q, locale):
+    # pct_extrema_dreta is status: planned, so parse() refused it *before* the
+    # gate — which only fires on a resolved metric — and answered «la mètrica
+    # "% vot extrema dreta" ... encara no està calculada»: it named a vote
+    # metric and promised it was coming. Both phrasings are seed questions in
+    # the contract's own sample_questions, so this route was reachable.
+    with _offline_agent() as a:
+        ans = a.ask(q, locale=locale)
+    assert ans.refusal_reason == RefusalReason.POLITICAL_GATED
+    lowered = ans.text.lower()
+    assert "extrema" not in lowered and "planned" not in lowered
+
+
 def test_metrics_endpoint_hides_politica(monkeypatch):
     monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
     from fastapi.testclient import TestClient
