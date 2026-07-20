@@ -120,6 +120,43 @@ publicable per si sola.*
 >    `mart_pols_mensual` està desacoblat a propòsit.
 >    · Encuades també: sèries de residus/ICAEN/renda (les tres fonts en tenen; el pipeline n'ingereix
 >      una sola foto) → desbloquejaria la tendència de 4 targetes més.
+> **📋 TANCAMENT DEL CICLE DEL TAULER (2026-07-20). Fusionats: D7 #276 · D9 #278 · D11 #281 ·
+> D10 #283 · electoral #282 · doctrina #280.** Les esmenes de Bea E4/E5/E6/E11/E12 són al tauler.
+> Queda obert, per ordre:
+> 1. **E7b (Sondeig) — regenerar P1/P2** amb la regla d'evidència citable ja al contracte (#280) i
+>    **guarda al CI**. Recordatori del número: només 164 de 532 frases (30%) la compleixen avui, i
+>    31 municipis de 31 estan afectats. **No és un filtre, és una regeneració.** Inclou E8: el text
+>    «Confiança mitjana» no diu res a un lector normal (esmena de Bea).
+> 2. **«Nascuts fora de Catalunya» (la petició LITERAL de Bea a E11)** — encara no existeix. Ordre
+>    obligat i no invertible: **Sondeig** calcula la columna a `mart_demografia` → **Talaia** la
+>    declara al contracte → **Mirador** la pinta. Talaia NO l'ha declarada avui tot i ser trivial:
+>    sense columna seria exactament l'evidència fantasma que #280 acaba de prohibir.
+> 3. **Mirador** — dos forats de la mateixa forma (una llista fixa que descarta en silenci):
+>    (a) el glossari agrupa per `DIM_ORDER` i **`treball` no hi és**, així que `atur_registrat`
+>    hi arribarà i el glossari el descartarà sense dir res (handoff de Sondeig);
+>    (b) la unió `RefusalReason` no té `political_gated` ni `metric_deprecated` i cauen al genèric
+>    (handoff de Brúixola). Degrada bé, però el refús discret perd el seu to.
+> 4. **QUART cas del patró «guardes que existeixen i no corren»** (en comptàvem tres):
+>    `tools/export_indicadors_cat.py` emet artefacte versionat **sense `--check` ni pas al CI**.
+>    Comprovat per Sondeig que avui NO és estale → forat obert, no ferida. Amb els altres tres, ja
+>    justifica la meta-guarda encuada: que el CI caigui si un verificador versionat no l'invoca cap
+>    workflow.
+> 5. **RISC DE MÈTODE que he creat jo** despatxant tres agents en paral·lel: comparteixen una sola
+>    instal·lació editable del paquet d'IA, així que un va importar el contracte de l'arbre d'un
+>    altre (`index_turisme` encara públic allà) i **hauria conclòs el contrari del que passava al
+>    seu arbre**. Ho va veure per una ruta en un traceback. `pytest` no hi cau (`pythonpath=src`);
+>    les sondes ad-hoc sí. A tancar abans del proper paral·lel de tres.
+>
+> **🟠 PENDENT DE BEA (2026-07-20):**
+> - **La clau política.** L'anunci ja està tancat (#282) però la clau segueix oberta i **darrere hi
+>   ha 31 municipis de 947 sense avís de cobertura**: Berga contestaria 49,10% i els altres 916
+>   tornarien buit — el buit per pilot es llegeix igual que el buit per «no ho sabem». Tres
+>   sortides, totes seves: revocar la clau · reconstruir el mart (editorial) · clau + avís de
+>   cobertura.
+> - **Vot narratiu** de tres cadenes noves: les dues de D11 (`gov_naix_foto`,
+>   `gov_nac_serie_es_nacionalitat`) i la de `METRIC_DEPRECATED` de Brúixola. El copy de D9 ja té
+>   el seu vot («el copy nou està guai»).
+>
 > **🚨 E7/E8 — LES LECTURES P1/P2, AUDITADES PER TALAIA (2026-07-20). La sospita de Bea es queda
 > curta.** Bea: «que no estiguin basades en mètriques de les antigues». Comptat sobre
 > `data/web/lectures.bergueda.json`, que és el que se serveix ARA:
