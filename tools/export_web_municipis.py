@@ -271,7 +271,7 @@ def resolve_frescor(spec: dict, sources: dict) -> dict[str, Any]:
 #     aquesta llista s'ha de buidar sola: si una clau d'aquí deixa d'estar trencada, la guarda
 #     també cau (una excepció que sobreviu al seu motiu és una mentida amb bona intenció).
 FRESCOR_NULL_HONEST = {"IETR", "IETR_rank"}
-FRESCOR_NULL_PENDENT_CONTRACTE = {"rtc_per_1000hab", "rtc_per_100hab_viv", "hab_per_hab"}
+FRESCOR_NULL_PENDENT_CONTRACTE = {"rtc_per_1000hab", "hab_per_hab"}
 
 # Claus del catàleg que NO porten valor a `values` (no són columnes de cap mart d'aquí).
 # Han de ser DECLARADES: un catàleg que promet una mètrica i no la serveix enlloc és una
