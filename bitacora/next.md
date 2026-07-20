@@ -120,11 +120,40 @@ publicable per si sola.*
 >    `mart_pols_mensual` està desacoblat a propòsit.
 >    · Encuades també: sèries de residus/ICAEN/renda (les tres fonts en tenen; el pipeline n'ingereix
 >      una sola foto) → desbloquejaria la tendència de 4 targetes més.
-> **➡️ Handoff a: Talaia** — `mart_electoral` i `mart_consum_electric` **versionats estan ESTALE**:
-> els parquets committejats són de l'època del pilot (31 munis / 372 files) i els seus models ja
-> cobreixen tot Catalunya (947 / 11.364). D7 NO els ha reconstruït a propòsit: publicaria dades
-> electorals de 947 municipis com a efecte lateral d'una tasca de tauler, i aquesta capa té política
-> editorial de Bea.
+> 9. **D10 — els quatre serrells que D9 ha destapat** (handoffs de Mirador, tots de dada):
+>    (a) el `motiu` de `mart_tendencia` és **només en català** → ha de ser `{ca,es}` com `label`/
+>    `definicio`; Mirador no el tradueix al front (seria inventar dada, i fa bé).
+>    (b) **5 mètriques amb `frescor.actualitzacio: null`** i una és targeta del tauler
+>    (`rtc_per_1000hab`): no és bug de l'export sinó `origin_source` absent al contracte.
+>    (c) `serveis_estab` i `restauracio_estab` **no són a `mart_tendencia` ni com a `sense_serie` amb
+>    motiu** — i això sí que trenca la regla: una fila que falta és INVISIBLE, un motiu es pot llegir.
+>    *Verificat per Talaia: 15 mètriques al mart, aquestes dues absents. La meva verificació de D7 va
+>    comprovar «cap `sense_serie` sense motiu» però no «cap mètrica del tauler sense fila» — el forat
+>    era del meu test, i el va trobar Mirador.*
+>    (d) **`atur_registrat` cap al catàleg servit al front.** *Esmena a l'enunciat del handoff: Mirador
+>    m'ho va passar com «no és al contracte semàntic», i SÍ que hi és (`semantic/metrics.yml` L1223,
+>    amb caveat i doctrina del «<5»). El que passa és que **no arriba a `data/web/municipis.*.json`**,
+>    així que l'etiqueta i la font de la targeta d'atur són les dues úniques cadenes del tauler
+>    escrites al codi i no llegides del contracte.* Fix: `atur_registrat` als `METRIC_KEYS` de
+>    l'export web (Sondeig) → després Mirador les llegeix del catàleg (dues línies).
+> **➡️ Handoff a: Talaia — RESOLT (2026-07-20), amb una troballa pitjor que l'estale.**
+> `mart_electoral` i `mart_consum_electric` versionats són de l'època del pilot (31 munis / 372 files)
+> i els seus models ja cobreixen 947. Sondeig no els va reconstruir a propòsit (publicaria dades
+> electorals de 947 municipis com a efecte lateral d'una tasca de tauler) i **va fer bé**. Estirant el
+> fil, Talaia:
+> - **Consum elèctric: no s'ha de tocar.** El KPI viu del tauler no en beu (ve per `int_consum_electric_pc`,
+>   desacoblat a posta) i aquest parquet és el **substrat congelat del geo-rag**, on 31 munis és
+>   l'abast CORRECTE. No és estale: és pilot volgut. Cal **documentar-ho** perquè ningú el «arregli».
+> - **Electoral: el problema no és l'estale.** No arriba al web (comprovat als tres JSON: cap mètrica
+>   electoral), **però `mart_electoral` SÍ que és al catàleg del xat** i 3 de les seves 4 mètriques no
+>   tenen `status`, o sigui que compten com a vives. El xat pot respondre preguntes electorals contra
+>   un parquet de 31 municipis: per als altres 916 tornaria buit, i un buit per artefacte estale es
+>   llegeix igual que un buit per «no ho sabem». Ja existeix el mecanisme per tancar-ho: la dimensió
+>   `origen` està **retinguda de l'agent** amb test de regressió; l'electoral no té aquesta porta.
+>   **Recomanació de Talaia a Bea: mateixa porta que `origen`, i NO reconstruir el mart** — tanca el
+>   forat avui i deixa a Bea la decisió editorial de fons (**vol que el xat pugui respondre preguntes
+>   electorals?**; si sí, cal decidir a part si publiquem agregats dels 947 en un repo públic).
+>   **Pendent del vot de Bea; mentrestant Talaia no toca aquesta capa.** Executor: Brúixola.
 >
 > **🟡 COLA DE MIRADOR — D9 ✅ FETA (PR obert, 2026-07-20).** Capa de WEB de les esmenes
 > E4/E5/E6/E11/E12: el tauler ja ensenya el que D7 (#276) servia i ningú veia. Bitàcola:
@@ -181,6 +210,19 @@ publicable per si sola.*
 > pols, topònims amb article INE, variant «per habitant» que robava la mètrica) — bitàcola
 > `2026-07-18_b3-xips-kpis-oficials_bruixola.md` · serrell nou: copy del refús diu «(Berguedà)» i el
 > mart ja és Catalunya-947.
+> **🟣 TALAIA (2026-07-20):** ✅ **forat de mètode tancat** — hi havia **un sol `role.md`** (el meu)
+> per a un equip de sis. Escrits `mirador_role.md`, `sondeig_role.md`, `bruixola_role.md`,
+> `cabal_role.md` i `llegenda_role.md` (dorment, amb la frontera amb Mirador escrita ABANS de
+> despertar-lo), i **esmenat el meu**: deia que jo «encarnava» els fronts i que no eren agents
+> separats en execució, cosa que va deixar de ser certa el dia que vaig començar a despatxar-los com
+> a subagents reals — i no ho vaig escriure. Per això Mirador no va trobar el seu i no va poder
+> complir el ritual de reconstrucció del §III. També hi consta la meva segona falta del mateix dia:
+> **vaig llençar el latido de D9 amb el PR de la cua encara obert**, així que Mirador va fer pull i va
+> trobar «D5 fusionat» — el latido com a tasca, l'antipatró que el Charter §IV nomena.
+> **Patró que ja va per tres i cal tallar:** guardes que existeixen i no corren (`--check` de D4/D5
+> absent fins a #272 · `verify-govern.mjs` des de D8 sense córrer fins a D9 · cap test de `signals` al
+> CI quan el `per_poblacio` es va diluir ×196). Encuat: una meta-guarda que faci caure el CI si un
+> verificador versionat no és invocat per cap workflow.
 > **🟣 TALAIA:** ✅ nota:/caveat: unificat (#252/#253) · ✅ C4 v2 dues capes + C3 §6bis · ✅ regla de
 > procedència C6 §8.1 + `index_turisme` marcat deprecat + bundle orfe fora (#267) · vot de copy de
 > Mirador presentat a Bea.
