@@ -146,6 +146,7 @@ publicable per si sola.*
 >   normal (esmena de Bea): el text ha d'explicar de què és la confiança i què vol dir que sigui
 >   mitjana.
 >
+> **✅ D11 (Mirador) — FETA (PR obert, 2026-07-20). Vegeu el bloc de la cola de Mirador, més avall.**
 > **⚠️ D11 (Mirador) — E11 és MÉS possible del que D9 va concloure. Verificat per Talaia 2026-07-20.**
 > Mirador va tancar E11 dient «el mart només té **nacionalitat**, i Bea demana nascuts fora / nascuts
 > a l'estranger». **Això no és cert:** el contracte i el web JA serveixen les quatre mètriques de
@@ -196,7 +197,41 @@ publicable per si sola.*
 >   electorals?**; si sí, cal decidir a part si publiquem agregats dels 947 en un repo públic).
 >   **Pendent del vot de Bea; mentrestant Talaia no toca aquesta capa.** Executor: Brúixola.
 >
-> **🟡 COLA DE MIRADOR — D9 ✅ FETA (PR obert, 2026-07-20).** Capa de WEB de les esmenes
+> **🟡 COLA DE MIRADOR — D11 ✅ FETA (PR obert, 2026-07-20).** El **lloc de naixement** ja és al
+> tauler. Bitàcola: `bitacora/2026-07-20_d11-lloc-naixement_mirador.md`.
+> Quatre targetes noves al bloc A, davant de la nacionalitat (la Pobla: **846** nascuts a
+> Catalunya · **126** a la resta d'Espanya · **134** a l'estranger · **12,1 %**), perquè són
+> l'altra **partició** de la població — verificat: quadren amb `poblacio` als **947/947**.
+> **Talaia tenia raó i jo no:** la D9 va tancar E11 deduint una absència en comptes de comprovar-la.
+> **El límit honest va escrit a la targeta** (mecanisme nou `note` al descriptor de KPI): del lloc
+> de naixement en tenim **la foto, no la sèrie** (`mart_tendencia` no en porta cap fila), i la
+> targeta que SÍ que porta evolució (**↑ +5,61 punts · 2021 → 2025**) diu que és de **NACIONALITAT**,
+> no de lloc de naixement. `verify-govern.mjs` creix amb 5 guardes que van **de la dada al
+> descriptor** (cauen si el tauler deixa de pintar lloc de naixement havent-hi dada, si una targeta
+> es queda sense nota, si algú penja la sèrie de nacionalitat sota una etiqueta de naixement, o si
+> una nota es declara i no es cabla); provades **en negatiu**, 5/5. check 0/0 · build verd ·
+> verificat al HTML prerenderitzat en ca i es. **Copy nou pendent del vot narratiu de Bea.**
+> **NO s'ha pintat:** «nascuts fora de Catalunya» com a xifra única (126+134 al front seria fabricar
+> una xifra sense procedència, C6 §8.1 → ha de néixer al contracte) ni `bretxa_naturalitzacio`
+> (derivada de dues xifres ja presents; la feina la fa la nota, amb paraules).
+> **⛔ PREMISSA FALSA TROBADA, i és del CONTRACTE:** la `note` de `pct_nacionalitat_estrangera` diu
+> «**Sempre** ≤ % nascuts a l'estranger». **No és sempre:** a **37 dels 938** municipis amb dada la
+> nacionalitat estrangera supera el lloc de naixement i `bretxa_naturalitzacio` surt **negativa**
+> (Tornabous −2,66, el Cogul −2,47, Maials −2,44). Mecanisme real: criatura nascuda aquí de pares
+> estrangers = passaport estranger + naixement català. Cap dels 37 és al Berguedà (el tauler no en
+> mostra cap), **però la fitxa serveix els 947 i allà la frase es llegeix al costat d'una bretxa
+> negativa**. **➡️ Handoff a: Sondeig** (és `semantic/metrics.yml`, no el toco).
+> **➡️ Handoff a: Sondeig**, la resta: 1) les 4 mètriques de lloc de naixement **no són a
+> `mart_tendencia`** ni com a `sense_serie` amb motiu (mateix forat que D10(c)) — avui el front ho
+> diu amb el text genèric, amb una fila diria el motiu REAL de la font; 2) els tres recomptes porten
+> `formula: "EMEX f69 (darrer any)"`, que és un **localitzador de camp i no una fórmula**: la targeta
+> pinta un «ƒ» damunt d'una xifra mesurada directament (fix natural: `formula: "directe"` + el
+> localitzador al seu camp). **No ho he arreglat al front:** un cas especial a la UI amagaria el que
+> diu el contracte. **Matís al brief de D11:** demanava deixar `pendingRank` a `vidre_hab` i **no ho
+> he fet** — avui no en porta per decisió editorial explícita de D9, i reobrir-la des d'una tasca de
+> lloc de naixement seria fora d'abast. Si Talaia la vol canviar, és una línia i una tasca pròpia.
+>
+> **[HISTÒRIC] Mirador — D9 ✅ FETA (PR obert, 2026-07-20).** Capa de WEB de les esmenes
 > E4/E5/E6/E11/E12: el tauler ja ensenya el que D7 (#276) servia i ningú veia. Bitàcola:
 > `bitacora/2026-07-20_d9-superficie-tauler_mirador.md`.
 > **E4** atur real (darrer mes o interval «<5», sparkline de 25 mesos i les **DUES** comparacions

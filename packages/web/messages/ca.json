@@ -478,6 +478,8 @@
   "gov_rang_cap": " · per valor a {comarca}",
   "gov_rang_empat": "empatats",
   "gov_nova_norank": "Sense rang comarcal encara: aquesta mètrica no la rankeja el mart de govern, i aquí no la calculem.",
+  "gov_naix_foto": "Foto, no sèrie: del lloc de naixement no en tenim evolució ingerida. L'única evolució d'aquest bloc és la de nacionalitat, que mesura una altra cosa.",
+  "gov_nac_serie_es_nacionalitat": "Aquesta evolució és de NACIONALITAT (passaport), no de lloc de naixement: qui es naturalitza deixa de comptar-hi sense marxar del poble.",
   "gov_kpi_atur": "Atur registrat",
   "gov_kpi_atur_src": "SEPE · Observatori del Treball (sèrie mensual)",
   "gov_kpi_serveis": "Comerç, serveis i restauració",

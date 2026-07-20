@@ -224,6 +224,87 @@ if (tp) {
 //     ve de `_meta.atur.frescor`. Sense això la targeta no es podria datar.
 ok(!!tauler._meta?.atur?.frescor?.actualitzacio, `_meta.atur.frescor sense cadència declarada`);
 
+// ── D11 · LLOC DE NAIXEMENT (E11) ──────────────────────────────────────────────────────────
+// Aquesta secció existeix perquè la troballa de D11 no pugui tornar. D9 va tancar l'E11 de Bea
+// amb una premissa falsa («el mart només té nacionalitat») i el tauler va quedar sense CAP
+// mètrica de lloc de naixement tot i que les quatre arribaven servides al web. Un test que
+// només mirés el que el tauler pinta no ho hauria vist mai: el forat era el que NO pintava.
+// Per això la guarda es planta a l'altre costat — de la DADA cap al descriptor.
+const NAIX_KEYS = [
+	'poblacio_nascuda_catalunya',
+	'poblacio_nascuda_resta_espanya',
+	'poblacio_nascuda_estranger',
+	'pct_nascuda_estranger'
+];
+const kpiFor = (k) => GOVERN_KPIS.find((x) => x.kind === 'metric' && x.key === k);
+
+// 9a · Si la dada hi és, el tauler l'ha de pintar. Aquesta és LA guarda de D11.
+for (const k of NAIX_KEYS) {
+	const v = dataset.municipis[POBLA]?.values?.[k];
+	if (v == null) continue; // sense dada no hi ha res a exigir (el «no» és una resposta vàlida)
+	ok(
+		!!kpiFor(k),
+		`'${k}' té dada a la Pobla (${v}) i el tauler NO la pinta — E11 de Bea demana lloc de ` +
+			`naixement, i tenir-lo servit i no ensenyar-lo és la regressió que D11 va tancar`
+	);
+}
+
+// 9b · La foto NO es pot vendre com a sèrie. Cada targeta de lloc de naixement declara el seu
+//      límit, i cap d'elles pren prestada la tendència d'una sèrie de NACIONALITAT (que mesura
+//      una altra gent: qui es naturalitza en surt sense marxar del poble).
+for (const k of NAIX_KEYS) {
+	const kpi = kpiFor(k);
+	if (!kpi) continue;
+	ok(
+		!!kpi.note,
+		`KPI '${k}': sense nota de límit — la foto es llegiria com si tingués evolució`
+	);
+	ok(
+		!/nacionalitat|estrangera/.test(kpi.trendKey ?? kpi.key),
+		`KPI '${k}': agafa la tendència de '${kpi.trendKey}', que és una sèrie de NACIONALITAT ` +
+			`presentada sota una etiqueta de lloc de naixement`
+	);
+	// Si un dia el mart SÍ que serveix sèrie de lloc de naixement, la nota «foto, no sèrie»
+	// passa a ser mentida: el test cau per obligar a reescriure-la, no per castigar la millora.
+	for (const e of tauler.municipis?.[POBLA]?.tendencia?.[k] ?? []) {
+		ok(
+			e.estat !== 'amb_serie',
+			`el mart ja serveix SÈRIE de '${k}': la nota de límit d'aquesta targeta ha quedat ` +
+				`obsoleta i s'ha d'actualitzar (ja no és «foto, no sèrie»)`
+		);
+	}
+}
+
+// 9c · A l'inrevés: la targeta que SÍ que porta la sèrie de nacionalitat ha de dir que ho és.
+const nacKpi = kpiFor('pct_nacionalitat_estrangera');
+const nacAmbSerie = (tauler.municipis?.[POBLA]?.tendencia?.pct_nacionalitat_estrangera ?? []).some(
+	(e) => e.estat === 'amb_serie'
+);
+if (nacKpi && nacAmbSerie) {
+	ok(
+		!!nacKpi.note,
+		`el tauler pinta l'evolució de nacionalitat al costat del lloc de naixement i NO declara ` +
+			`que és de nacionalitat — són conjunts diferents (a la Pobla: 134 nascuts a l'estranger ` +
+			`vs ~106 amb passaport estranger)`
+	);
+}
+
+// 9d · Tota `note` declarada al descriptor ha d'existir a ca+es I estar cablejada al component.
+//      Sense el cablatge, la clau seria un text que no es pinta enlloc: un límit declarat en un
+//      fitxer i invisible a la pantalla és pitjor que no declarar-lo.
+const pageSrc = readFileSync(
+	resolve(WEB, 'src/routes/municipi/[slug]/+page.svelte'),
+	'utf8'
+);
+for (const kpi of GOVERN_KPIS) {
+	if (!kpi.note) continue;
+	ok(!!ca[kpi.note] && !!es[kpi.note], `i18n de la nota '${kpi.note}' absent (ca/es)`);
+	ok(
+		pageSrc.includes(kpi.note),
+		`la nota '${kpi.note}' es declara a kpis.js però no està cablejada a la fitxa (GOV_NOTE)`
+	);
+}
+
 if (fails.length) {
 	console.error('VERIFICACIÓ vista de govern: FALLA');
 	for (const f of fails) console.error(`  [x] ${f}`);
@@ -232,10 +313,13 @@ if (fails.length) {
 const nCards = GOVERN_KPIS.length;
 const nRank = GOVERN_KPIS.filter((k) => GOVERN_RANK_KEYS.includes(k.key)).length;
 const nTend = Object.keys(tauler.municipis?.[POBLA]?.tendencia ?? {}).length;
+const nNaix = NAIX_KEYS.filter((k) => !!kpiFor(k)).length;
 console.log(
 	`VERIFICACIÓ tauler de dades: OK — ${nCards} KPIs (tots amb font O fórmula i amb frescor), ` +
 		`${nRank} amb rang comarcal LLEGIT del mart, paritat dataset↔mart a la Pobla, ` +
 		`${nTend} mètriques amb tendència (cap fletxa sense període, cap 'sense_serie' sense motiu, ` +
 		`atur amb les DUES comparacions i el «<5» com a interval), ` +
+		`${nNaix}/${NAIX_KEYS.length} mètriques de lloc de naixement pintades amb el seu límit ` +
+		`declarat (foto, no sèrie) i l'evolució de nacionalitat etiquetada com a tal, ` +
 		`i18n ca/es complet i sense claus òrfenes, index_turisme fora.`
 );
