@@ -181,6 +181,14 @@ jobs:
         run: npm ci
       - name: Type-check (svelte-check)
         run: npm run check
+      # D9: el verificador del TAULER existia des de D8 pero NUNCA corría en CI — una guarda
+      # que no se ejecuta decora, no protege (misma lección que el `--check` de export_govern,
+      # #272). Guarda la regla de ferro C6 §8.1 (cada KPI con fuente O fórmula) y, desde D9,
+      # las reglas de pintura sobre el dato servido: ninguna flecha sin período, ningún
+      # 'sense_serie' sin motivo, ningún Δ enmascarado sin intervalo, y el ancla de que el
+      # paro pinta SUS DOS comparaciones. Offline: lee `data/web/*.json` versionados.
+      - name: Verificador del tauler (procedència + regles de pintura · offline)
+        run: npm run verify:govern
       - name: Build (producción)
         run: npm run build
 

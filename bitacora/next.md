@@ -126,29 +126,35 @@ publicable per si sola.*
 > electorals de 947 municipis com a efecte lateral d'una tasca de tauler, i aquesta capa té política
 > editorial de Bea.
 >
-> **🟡 COLA DE MIRADOR — SEGÜENT: D9 · treure a la superfície el que D7 ja serveix.**
-> D7 (#276) ha deixat servit al web tot això, i el tauler encara no ho ensenya:
-> `data/web/tauler.{bergueda}.json` → per municipi `atur.darrer` + `atur.serie` (25 mesos) i
-> `tendencia[metric][]`; `_meta.atur.frescor` (`actualitzacio`/`darrera_carrega`/`proces_refresc`) i
-> `_meta.tendencia.regla`; i a `municipis.*.json` les franges d'edat (`pob_0_14`/`pob_15_64`/
-> `pob_65_84`/`pob_85_mes`, la 15-64 derivada i quadrada). Feina de D9:
-> - **E4 · atur**: targeta amb el darrer mes i la sèrie. La doctrina del «<5»: si `emmascarat`,
->   l'interval `[min,max]`, MAI un 0 ni un buit.
-> - **E6 · tendència**: fletxes NOMÉS des de `tendencia[]`, i **cada fletxa diu contra quin període
->   compara** (regla de ferro de Bea). L'atur en porta DUES (mes anterior · mateix mes any anterior):
->   ensenyar les dues, no triar-ne una — triar-ne una és triar la narrativa. `estat: 'sense_serie'` →
->   **pinta el `motiu`**, mai una fletxa grisa ni un guionet mut.
-> - **E5 · frescor**: cada targeta diu cada quan s'actualitza i de quan és. ⚠️ **Els vintages NO són
->   iguals** (població 2025 vs habitatges 2021): no posis una data global de tauler.
-> - **E12 · franges d'edat**: quantes persones a cada franja, al bloc «Qui hi ha (i qui hi haurà)».
-> - **E11 · evolució**: població i franges surten `sense_serie` **per límit de font** (EMEX no en
->   serveix; verificat). Pinta el motiu. L'origen SÍ que en té (2021→2025): +5,61 punts / +64 persones
->   a la Pobla.
-> - **Tipus**: `MetricKey` és una unió tancada i li falten les claus noves; `MetricDef` no declara
->   `frescor?`. Snippet a la bitàcola de D7 §6.
-> - Serrell cosmètic detectat per Talaia: el nom del municipi arriba en dues formes segons la fila
->   (`la Pobla de Lillet` a l'atur, `Pobla de Lillet, la` a la resta) — la clau del join és `ine5`,
->   però si el front pinta el nom des d'aquí, normalitza'l.
+> **🟡 COLA DE MIRADOR — D9 ✅ FETA (PR obert, 2026-07-20).** Capa de WEB de les esmenes
+> E4/E5/E6/E11/E12: el tauler ja ensenya el que D7 (#276) servia i ningú veia. Bitàcola:
+> `bitacora/2026-07-20_d9-superficie-tauler_mirador.md`.
+> **E4** atur real (darrer mes o interval «<5», sparkline de 25 mesos i les **DUES** comparacions
+> —la Pobla, juny 2026: +4 vs maig i −3 vs juny 2025—) · **E6** cap fletxa sense període, i els
+> períodes surten de la dada: es RETIRA `gov_nova_delta_label` («variació 2021→»), que portava el
+> període escrit al copy · **E5** frescor PER TARGETA (cadència · darrera càrrega · procés o la
+> seva absència; 1 font de 10 en té) · **E12** les 4 franges d'edat al bloc A (sense `pob_65_mes`:
+> és 65-84 + 85+, seria comptar la mateixa gent dues vegades) · **E11** motiu literal del mart on
+> no hi ha sèrie. Tipus ampliats (5 claus + `MetricDef.frescor?`), `nomCanonic()` per al serrell
+> del nom, `verify-govern.mjs` ampliat amb les regles de pintura (cau si algun dia l'atur pinta
+> UNA sola comparació). `npm run check` 0/0 · build verd · verificat al HTML prerenderitzat propi.
+> **⛔ DUES PREMISSES DEL BRIEF, FALSES:** (a) `docs/equipo/mirador_role.md` **no existeix** (a
+> `docs/equipo/` només hi ha `talaia_role.md`) — reconstrucció feta des de CHARTER+REGLAS+
+> CONTRIBUTING §1; **➡️ Handoff a: Talaia**, o s'escriuen els `role.md` o el ritual de
+> reconstrucció del Charter §III no es pot complir. (b) **la tasca D9 no era a `next.md`**: va
+> arribar pel latido i no pel repo (antipatró nomenat al Charter §IV). Aquesta línia ho esmena.
+> **➡️ Handoff a: Sondeig** (dada, no pintura): 1) el `motiu` de `mart_tendencia` és **només en
+> català** → hauria de ser `{ca,es}` com `label`/`definicio`; 2) **5 mètriques amb
+> `frescor.actualitzacio: null`**, i una és targeta del tauler (`rtc_per_1000hab`) — no és bug de
+> l'export sinó `origin_source` absent al contracte (`rtc_per_1000hab`/`rtc_per_100hab_viv` → `rtc`;
+> `hab_per_hab` → `idescat_emex`; a `IETR`/`IETR_rank` el null és honest); 3) `serveis_estab` i
+> `restauracio_estab` **no són a `mart_tendencia`** ni com a `sense_serie` amb motiu; 4) **E11 només
+> es pot complir a mitges**: Bea demana «nascuts fora / nascuts a l'estranger» i el mart només té
+> **nacionalitat** — confondre-les és el marc que el propi contracte prohibeix; `pct_nascuda_estranger`
+> no té cap fila de tendència. **➡️ Handoff a: Talaia** — `atur_registrat` no és al contracte
+> semàntic: la seva etiqueta i la seva font són les dues úniques cadenes del tauler que no surten
+> del contracte.
+>
 > **[HISTÒRIC] Mirador D5 ✅ FUSIONAT (#271) — DASHBOARD NIQUELAT.** Mode govern viu (?vista=govern):
 > 12 KPIs amb rang comarcal LLEGIT del mart (mai calculat al front), cada targeta amb font O fórmula
 > (regla de Bea §8.1), pernocta aparcada, política editorial. **➡️ Handoff a Sondeig:** el pont

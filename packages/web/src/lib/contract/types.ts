@@ -43,6 +43,14 @@ export type MetricKey =
 	| 'index_envelliment'
 	| 'densitat_hab_km2'
 	| 'renda_neta_persona'
+	// Franges d'edat (D7 · E12 de Bea): ja s'ingerien d'EMEX i el mart les llençava. `pob_15_64`
+	// i `pob_65_mes` són DERIVADES (la primera per resta, i pot ser `null` si algun dia no quadra);
+	// la seva línia de procedència és, doncs, FÓRMULA, no font (C6 §8.1).
+	| 'pob_0_14'
+	| 'pob_15_64'
+	| 'pob_65_84'
+	| 'pob_85_mes'
+	| 'pob_65_mes'
 	// Origen: composició i arrelament (capa sensible; lectura ecològica, mai individual)
 	| 'poblacio_nascuda_catalunya'
 	| 'poblacio_nascuda_resta_espanya'
@@ -112,6 +120,29 @@ export type MetricKey =
 export type MetricFormat = 'integer' | 'decimal' | 'percent' | 'ratio' | 'rank' | 'text';
 
 /**
+ * FRESCOR d'una mètrica (D7 · E5 de Bea): les dues coses que la frescor és, separades —
+ * la CADÈNCIA declarada i el PROCÉS que la refresca de veritat.
+ *
+ * Ve de `sources.<font>` del contracte, amb override per mètrica quan la seva cadència no és
+ * la de la font (p. ex. els habitatges: font anual, però Cens decennal → `puntual`).
+ *
+ * Honestedat (E5): `proces_refresc: "cap"` NO és un forat a amagar, és la declaració que cal
+ * ensenyar — «anual · darrera càrrega 2026-06-21 · sense procés automàtic». I `actualitzacio:
+ * null` (les 5 mètriques compostes amb `font_frescor: "datapoble"`, que creuen fonts) tampoc
+ * s'arrodoneix: es diu que la cadència no està declarada.
+ */
+export interface Frescor {
+	/** Cadència declarada: `mensual|anual|puntual|irregular`. `null` = no declarada al contracte. */
+	actualitzacio: string | null;
+	/** Data (ISO) de l'última càrrega de la font al pipeline. */
+	darrera_carrega: string | null;
+	/** Procés que la refresca: ruta del workflow, `"cap"` si no n'hi ha, `null` si no es declara. */
+	proces_refresc: string | null;
+	/** Clau de la font de la qual s'hereta la frescor (`datapoble` = mètrica composta). */
+	font_frescor: string | null;
+}
+
+/**
  * Definició d'un indicador (metadades del contracte, independents del municipi).
  * Reflecteix els camps de metrics.yml que la UI necessita per pintar amb procedència.
  */
@@ -149,6 +180,12 @@ export interface MetricDef {
 	 * les inferides. No és `Localized`: la fórmula és la mateixa en tots dos locales.
 	 */
 	formula?: string;
+	/**
+	 * Cadència + procés de refresc (D7 · E5). Opcional perquè és additiu; el tauler la mostra
+	 * PER TARGETA i mai de forma global: els vintages NO són iguals (població 2025 vs habitatges
+	 * 2021) i una sola data de peu de pàgina els aplanaria.
+	 */
+	frescor?: Frescor;
 	/** Nota/caveat (ex.: lectura ecològica, falàcia ecològica). */
 	note?: Localized;
 	/** public = visible · planned = definit, encara no calculat. */
