@@ -92,8 +92,13 @@ publicable per si sola.*
 >    el mart pot seguir calculant-lo. (d) **Esmena L1/L3** al contracte (handoff de Mirador, #256):
 >    les notes de kwh/vidre/restauració citen «capa L1/L3» (model aparcat) → termes oficials.
 >    · **D2** (HERMES selectiu, C1 §1.2) queda DARRERE de D4.
-> 6. **D7 — la dada del tauler v2 ✅ FETA (PR obert, Sondeig 2026-07-20).** Capa de dades de les
+> 6. **D7 — la dada del tauler v2 ✅ FUSIONADA (#276, Sondeig 2026-07-20).** Capa de dades de les
 >    esmenes E4/E5/E6/E11/E12. Bitàcola: `2026-07-20_d7-dada-tauler-v2_sondeig.md`.
+>    *Verificació adversarial de Talaia abans de fusionar: els 1.894 Δ d'atur recomputats a mà des de
+>    `mart_pols_mensual` (1.894/1.894 coincideixen, cap sense origen) · partició d'edat exacta (suma de
+>    franges = població total als 947, residu 0; la Pobla 98+609+322+77=1.106) · 0 fletxes sense període,
+>    0 «sense sèrie» sense motiu, 0 deltes colats en files sense sèrie · `--check` del nou exportador
+>    present al CI (comprovat al YAML, no confiat) · cap ruta local ni secret al diff.*
 >    Franges d'edat exposades (quadren als 947 i casen amb el total de CAT) · `mart_tendencia` nou
 >    (Δ amb període declarat; «sense sèrie» explícit amb motiu; «<5» propagat com a interval) ·
 >    `export_tauler_web.py` amb `--check` **cablat al CI el mateix dia** · frescor al contracte
@@ -121,7 +126,30 @@ publicable per si sola.*
 > electorals de 947 municipis com a efecte lateral d'una tasca de tauler, i aquesta capa té política
 > editorial de Bea.
 >
-> **🟡 COLA DE MIRADOR: D5 ✅ FUSIONAT (#271) — DASHBOARD NIQUELAT.** Mode govern viu (?vista=govern):
+> **🟡 COLA DE MIRADOR — SEGÜENT: D9 · treure a la superfície el que D7 ja serveix.**
+> D7 (#276) ha deixat servit al web tot això, i el tauler encara no ho ensenya:
+> `data/web/tauler.{bergueda}.json` → per municipi `atur.darrer` + `atur.serie` (25 mesos) i
+> `tendencia[metric][]`; `_meta.atur.frescor` (`actualitzacio`/`darrera_carrega`/`proces_refresc`) i
+> `_meta.tendencia.regla`; i a `municipis.*.json` les franges d'edat (`pob_0_14`/`pob_15_64`/
+> `pob_65_84`/`pob_85_mes`, la 15-64 derivada i quadrada). Feina de D9:
+> - **E4 · atur**: targeta amb el darrer mes i la sèrie. La doctrina del «<5»: si `emmascarat`,
+>   l'interval `[min,max]`, MAI un 0 ni un buit.
+> - **E6 · tendència**: fletxes NOMÉS des de `tendencia[]`, i **cada fletxa diu contra quin període
+>   compara** (regla de ferro de Bea). L'atur en porta DUES (mes anterior · mateix mes any anterior):
+>   ensenyar les dues, no triar-ne una — triar-ne una és triar la narrativa. `estat: 'sense_serie'` →
+>   **pinta el `motiu`**, mai una fletxa grisa ni un guionet mut.
+> - **E5 · frescor**: cada targeta diu cada quan s'actualitza i de quan és. ⚠️ **Els vintages NO són
+>   iguals** (població 2025 vs habitatges 2021): no posis una data global de tauler.
+> - **E12 · franges d'edat**: quantes persones a cada franja, al bloc «Qui hi ha (i qui hi haurà)».
+> - **E11 · evolució**: població i franges surten `sense_serie` **per límit de font** (EMEX no en
+>   serveix; verificat). Pinta el motiu. L'origen SÍ que en té (2021→2025): +5,61 punts / +64 persones
+>   a la Pobla.
+> - **Tipus**: `MetricKey` és una unió tancada i li falten les claus noves; `MetricDef` no declara
+>   `frescor?`. Snippet a la bitàcola de D7 §6.
+> - Serrell cosmètic detectat per Talaia: el nom del municipi arriba en dues formes segons la fila
+>   (`la Pobla de Lillet` a l'atur, `Pobla de Lillet, la` a la resta) — la clau del join és `ine5`,
+>   però si el front pinta el nom des d'aquí, normalitza'l.
+> **[HISTÒRIC] Mirador D5 ✅ FUSIONAT (#271) — DASHBOARD NIQUELAT.** Mode govern viu (?vista=govern):
 > 12 KPIs amb rang comarcal LLEGIT del mart (mai calculat al front), cada targeta amb font O fórmula
 > (regla de Bea §8.1), pernocta aparcada, política editorial. **➡️ Handoff a Sondeig:** el pont
 > `tools/export_govern_web.py` + `data/web/govern.bergueda.json` el va CREAR Mirador (D4 emetia parquet
