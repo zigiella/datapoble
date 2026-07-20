@@ -83,6 +83,14 @@ ind as (
         cast(emex.hab_noprincipal as integer)                       as hab_noprincipal,
         round(emex.hab_noprincipal / nullif(emex.hab_total, 0) * 100, 2) as pct_noprincipal,
         round(emex.hab_total / nullif(emex.poblacio, 0), 3)             as hab_per_hab,
+        -- FRANGES D'EDAT (E12 de les esmenes de Bea). Ja s'ingerien d'EMEX (f167/f28/f29)
+        -- i el model les feia servir per a index_envelliment i LES LLENÇAVA: ara s'exposen.
+        -- Mateix vintage que `poblacio` (f321): les quatre pengen de la mateixa taula EMEX
+        -- amb r=2025 (Cens de població anual de l'INE) — verificat en viu 2026-07-20.
+        cast(emex.pob_0_14 as integer)                              as pob_0_14,
+        cast(emex.pob_65_84 as integer)                             as pob_65_84,
+        cast(emex.pob_85_mes as integer)                            as pob_85_mes,
+        cast(emex.pob_65_mes as integer)                            as pob_65_mes,
         round(emex.pob_65_mes / nullif(emex.pob_0_14, 0) * 100, 1)      as index_envelliment,
         cast(emex.densitat_hab_km2 as double)                       as densitat_hab_km2,
         renda.renda_neta_persona                                    as renda_neta_persona,
@@ -317,6 +325,32 @@ select
     ind.hab_noprincipal,
     ind.pct_noprincipal,
     ind.hab_per_hab,
+
+    -- FRANGES D'EDAT (E12). Les tres d'EMEX + la INTERMÈDIA DERIVADA.
+    --
+    -- REGLA DE PUBLICACIÓ DE pob_15_64 («només si quadra», encàrrec explícit): EMEX no
+    -- serveix la franja 15-64, així que es deriva per resta. Es publica NOMÉS si la resta
+    -- és aritmèticament possible: cap component NULL i resultat ≥ 0. Si no quadra
+    -- (arrodoniments, secret estadístic, o un dia vintages diferents entre f321 i f167/
+    -- f28/f29), s'emet NULL — un forat declarat, mai un número fabricat.
+    --
+    -- QUADRA AVUI, verificat sobre la raw (2026-07-20, 947/947 municipis):
+    --   · cap NULL a cap de les tres franges; cap resta negativa; mínim observat = 13.
+    --   · la suma dels 947 municipis casa EXACTAMENT amb el total de Catalunya que serveix
+    --     la mateixa API per a les quatre xifres: poblacio 8.124.126 · 0-14 1.079.859 ·
+    --     65-84 1.356.476 · 85+ 245.511 → 15-64 5.442.280. Zero residu d'arrodoniment.
+    -- El test `assert_mart_municipi_franges_edat` guarda la regla a cada build.
+    ind.pob_0_14,
+    case
+        when ind.poblacio is null or ind.pob_0_14 is null
+             or ind.pob_65_84 is null or ind.pob_85_mes is null then null
+        when ind.poblacio - ind.pob_0_14 - ind.pob_65_84 - ind.pob_85_mes < 0 then null
+        else ind.poblacio - ind.pob_0_14 - ind.pob_65_84 - ind.pob_85_mes
+    end                                                         as pob_15_64,
+    ind.pob_65_84,
+    ind.pob_85_mes,
+    ind.pob_65_mes,
+
     ind.index_envelliment,
     round(ind.densitat_hab_km2, 1)                              as densitat_hab_km2,
     round(ind.renda_neta_persona, 0)                           as renda_neta_persona,

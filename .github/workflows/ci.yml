@@ -49,6 +49,13 @@ jobs:
         run: |
           pip install -e packages/ingestion --no-deps
           pytest packages/ingestion/tests/test_atur_sepe.py -q
+      # D7 · connector EMEX: l'any de referència HEREDA del node pare (abans `year`
+      # sortia NULL a 12 dels 13 indicadors) + els vintages NO són tots el mateix
+      # (població 2025 vs habitatges 2021: la base de la frescor, E5) + les franges
+      # d'edat quadren amb el total (precondició de la derivació de la 15-64, E12).
+      # Offline sobre una resposta real arxivada byte a byte.
+      - name: D7 · connector Idescat EMEX (offline, sobre fixtura real)
+        run: pytest packages/ingestion/tests/test_idescat_emex.py -q
       - name: Verify mart_pols_mensual (àncores byte-match + doctrina <5 · offline)
         run: python packages/transform/verify_pols_mensual.py
       # D4 · mart_govern: rang «k de n» per comarca recalculat i comparat, comarca de
@@ -56,6 +63,12 @@ jobs:
       # contra el Ripollès (no els 31). Offline, sobre el parquet versionat.
       - name: Verify mart_govern (rang per comarca + àncores a mà · offline)
         run: python packages/transform/verify_govern.py
+      # D7 · mart_tendencia (E6): guarda la regla d'honestedat de Bea — cap fletxa sense
+      # període, cap Δ inventat, «sense sèrie» EXPLÍCIT amb motiu, i la doctrina del «<5»
+      # propagada al delta (interval, no número). Recalcula A MÀ els 1.894 deltes d'atur
+      # des de mart_pols_mensual i els compara byte a byte.
+      - name: Verify mart_tendencia (Δ d'atur recalculats a mà + regla del període · offline)
+        run: python packages/transform/verify_tendencia.py
       # Suite COMPLETA de `signals`, 100% OFFLINE (fixtures reals arxivades +
       # sessions HTTP falses + parquets versionats; cap crida de xarxa, cap clau).
       # Cobreix: BDNS/R1 (la trampa de les regions NUTS — la pare no cascada),
@@ -95,6 +108,11 @@ jobs:
       # (el forat que D4/D5 van destapar: D4 emetia parquet, no JSON web). Ownership → Sondeig.
       - name: Export govern web al dia (mart_govern → web · offline)
         run: python tools/export_govern_web.py --check
+      # D7 · tauler v2: l'atur (E4) i la tendència (E6) servibles. Neix amb --check CABLAT
+      # AQUÍ el mateix dia que l'exportador — no repetim el forat de D4/D5, on el mart
+      # existia i el JSON web no, i el --check va haver d'arribar en un PR posterior (#272).
+      - name: Export tauler v2 al dia (atur + tendència → web · offline)
+        run: python tools/export_tauler_web.py --check
 
   # Brúixola: evals de la capa de IA (texto→SQL trazable). Corre OFFLINE
   # (sin OPENROUTER_API_KEY): determinista, sin red. Gate anti-regresión.

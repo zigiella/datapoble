@@ -18,6 +18,23 @@
 #     Regla del join heretada: qualsevol creuament verd × vermell dona vermell.
 #     Obligatori a les mètriques noves des de C1 (2026-07-16); el backfill de les
 #     anteriors és un chore separat (owner Talaia).
+#
+# FRESCOR (E5 de les esmenes de Bea, docs/ajuntaments/tauler-v2-esmenes-bea.md §3 —
+# vinculant). Fins ara el contracte deia QUAN és la dada (`date`) però no CADA QUAN es
+# refresca ni QUI la refresca. Una dada anual sense procés és honesta si es diu; una que
+# sembla viva i no ho és, no. Tres camps nous, tots a `sources.<font>`:
+#   · `actualitzacio`   — cadència de la FONT: mensual | anual | puntual | irregular.
+#                          'puntual' = operació tancada (un cens, unes eleccions): no
+#                          tornarà a canviar. 'irregular' = canvia sense calendari públic.
+#   · `darrera_carrega` — data (YYYY-MM-DD) de la darrera ingesta que ha produït els
+#                          artefactes versionats. La bump qui carrega (el workflow, si
+#                          n'hi ha; si no, qui ho fa a mà, al mateix PR).
+#   · `proces_refresc`  — ruta del workflow que la refresca, o `cap` LITERAL. `cap` no és
+#                          un forat oblidat: és la declaració que aquesta font s'actualitza
+#                          a mà. L'inventari raonat és a la bitàcola (2026-07-20, Sondeig).
+# Una mètrica pot sobreescriure `actualitzacio` quan la seva cadència NO és la de la font
+# (p. ex. EMEX es refresca cada any, però el bloc d'habitatge que en penja és el Cens 2021).
+# L'export web els emet al catàleg `metrics` perquè el tauler ho pugui mostrar a cada xifra.
 
 meta:
   project: datapoble
@@ -38,11 +55,18 @@ sources:
     producte: El municipi en xifres (EMEX) / Cens 2021
     acces: "https://api.idescat.cat/emex/v1/dades.json?id={codi6}"
     llicencia: "Idescat, reutilització amb atribució"
+    actualitzacio: anual
+    darrera_carrega: "2026-06-21"
+    proces_refresc: cap
+    nota: "SENSE SÈRIE PER API (verificat en viu 2026-07-20, contra l'API i contra la documentació oficial https://www.idescat.cat/dev/api/emex/): l'operació `dades` només admet els filtres `id`, `i` i `tipus` — cap de temporal. Els paràmetres temporals que s'hi provin (t/any/periode/r) s'ignoren EN SILENCI i la resposta torna sempre el darrer període. EMEX és una FOTO, no una sèrie: la tendència de població i franges d'edat NO es pot construir des d'aquí (vegeu mart_tendencia, estat 'sense_serie'). La sèrie municipal de població SÍ que existeix per una altra via oberta d'Idescat (Cens de població anual, `https://www.idescat.cat/pub/?id=censph&n=538&geo=mun:{codi6}&f=ssv`, 1975→ amb ruptura de font documentada) — ingesta ENCUADA, no feta."
   idescat_pobestr:
     organisme: Idescat
     producte: Població estrangera (sèrie municipal per nacionalitat)
     acces: "https://www.idescat.cat/poblacioestrangera/?b=6&geo=mun:{codi6}&f=ssv"
     llicencia: "Idescat, reutilització amb atribució"
+    actualitzacio: anual
+    darrera_carrega: "2026-06-21"
+    proces_refresc: cap
     nota: "ÚNICA via municipal oberta amb SÈRIE temporal de població estrangera. S'ingereix NOMÉS 2021→ (Cens anual, homogeni) per no barrejar-ho amb el Padró pre-2021 (ruptura de font). El marcador (..) = secret estadístic dels micromunicipis → NULL."
   rtc:
     organisme: Generalitat — Registre de Turisme de Catalunya
@@ -50,49 +74,89 @@ sources:
     dataset_id: t2h3-cgys
     acces: "https://analisi.transparenciacatalunya.cat/resource/t2h3-cgys.json"
     llicencia: Dades Obertes de Catalunya
+    actualitzacio: irregular
+    darrera_carrega: "2026-06-21"
+    proces_refresc: cap
+    nota: "REGISTRE VIU (altes i baixes contínues, sense calendari públic de publicació) → es llegeix com una FOTO del dia de la càrrega, no com una estadística d'un període tancat. No se'n conserva cap tall anterior: per això rtc_per_1000hab no té tendència (mart_tendencia, 'sense_serie')."
   residus:
     organisme: Agència de Residus de Catalunya (ARC)
     producte: Estadístiques de residus municipals
     dataset_id: 69zu-w48s
     llicencia: Dades Obertes de Catalunya
-    nota: "Inclou les fraccions de recollida selectiva (vidre, paper, FORM…). El VIDRE/hab és un senyal físic d'hostaleria (les ampolles de bar/restaurant)."
+    actualitzacio: anual
+    darrera_carrega: "2026-06-21"
+    proces_refresc: cap
+    nota: "Inclou les fraccions de recollida selectiva (vidre, paper, FORM…). El VIDRE/hab és un senyal físic d'hostaleria (les ampolles de bar/restaurant). La font SÍ que té sèrie multianual; el pipeline n'ingereix el darrer any tancat (int_residus_latest) → tendència encuada, no impossible."
   icaen:
     organisme: ICAEN
     producte: Certificats d'eficiència energètica d'edificis
     dataset_id: j6ii-t3w2
     llicencia: Dades Obertes de Catalunya
+    actualitzacio: irregular
+    darrera_carrega: null
+    proces_refresc: cap
+    nota: "Connector NO escrit: pct_icaen_EFG és un buit declarat (status planned), no un valor pendent de càrrega. darrera_carrega null = mai carregada."
   icaen_consum:
     organisme: Institut Català d'Energia (ICAEN)
     producte: Consum d'energia elèctrica per municipis i sectors de Catalunya
     dataset_id: 8idm-becu
     llicencia: Dades Obertes de Catalunya
-    nota: "Sector USOS DOMÈSTICS, darrer any de cobertura plena (2024). kWh/hab és la mesura física del consum elèctric residencial per habitant."
+    actualitzacio: anual
+    darrera_carrega: "2026-06-21"
+    proces_refresc: cap
+    nota: "Sector USOS DOMÈSTICS, darrer any de cobertura plena (2024). kWh/hab és la mesura física del consum elèctric residencial per habitant. La font té sèrie; el pipeline en fixa un any (var any_corroborador_electric) → tendència encuada."
   electoral:
     organisme: Generalitat
     producte: Processos electorals - Vots
     dataset_id: ntc4-rnwr
     llicencia: Dades Obertes de Catalunya
-    nota: "Lectura ECOLÒGICA (no individual). Volàtil en micromunicipis."
+    actualitzacio: puntual
+    darrera_carrega: "2026-06-21"
+    proces_refresc: cap
+    nota: "Lectura ECOLÒGICA (no individual). Volàtil en micromunicipis. 'puntual' = per convocatòria: entre eleccions la dada NO canvia, i això és el contrari d'estar desactualitzada."
   osm_overpass:
     organisme: OpenStreetMap (col·laboradors) — via Overpass API
     producte: Punts d'interès de restauració (amenity=restaurant/cafe/bar/fast_food/pub/biergarten/ice_cream)
     acces: "https://overpass-api.de/api/interpreter (POST Overpass QL; sense auth)"
     llicencia: "ODbL (OpenStreetMap) — atribució + compartir-igual"
-    nota: "2n proxy físic d'hostaleria (complement del vidre). POIs assignats al municipi per PUNT-EN-POLÍGON amb la geometria real (ine5). OSM INFRA-MAPEJA el rural → el compte és un MÍNIM observat, NO un cens. Idescat (ee, CCAE-56) oficial NO és municipal per API oberta (secret estadístic; l'EMEX només dóna 'serveis' agregat)."
+    actualitzacio: irregular
+    darrera_carrega: "2026-06-27"
+    proces_refresc: cap
+    nota: "2n proxy físic d'hostaleria (complement del vidre). POIs assignats al municipi per PUNT-EN-POLÍGON amb la geometria real (ine5). OSM INFRA-MAPEJA el rural → el compte és un MÍNIM observat, NO un cens. Idescat (ee, CCAE-56) oficial NO és municipal per API oberta (secret estadístic; l'EMEX només dóna 'serveis' agregat). Cartografia col·laborativa: canvia contínuament i sense calendari → 'irregular'."
   ine_adrh:
     organisme: INE — Instituto Nacional de Estadística
     producte: Atlas de distribución de renta de los hogares (ADRH) — renda neta per persona
     acces: "https://www.ine.es/ (ADRH, taula municipal)"
     llicencia: "INE, reutilització amb atribució"
+    actualitzacio: anual
+    darrera_carrega: "2026-06-21"
+    proces_refresc: cap
+    nota: "L'ADRH publica sèrie anual des de 2015; el pipeline n'extreu una sola foto (tools/extract_renda.py) → renda_neta_persona surt 'sense_serie' a mart_tendencia. Tendència encuada, no impossible."
   sepe:
     organisme: SEPE — Servicio Público de Empleo Estatal
     producte: Paro registrado por municipios (CSV mensual, un fitxer per any, des de 2006)
     acces: "https://sede.sepe.gob.es/es/portaltrabaja/resources/sede/datos_abiertos/datos/Paro_por_municipios_{any}_csv.csv"
     llicencia: "Datos abiertos SEPE — reutilització comercial i no comercial (art. 7 RD 1495/2011, que desplega la Llei 37/2007); cita obligada: «Origen de los datos: Servicio Público de Empleo Estatal» + data d'actualització. Verificada literalment a l'avís legal de la seu (2026-07-17)."
+    # ÚNICA font amb procés automàtic de refresc a data d'avui (2026-07-20). La resta
+    # diuen `cap`: s'actualitzen a mà. Inventari raonat a la bitàcola de Sondeig.
+    #
+    # darrera_carrega: valor INFERIT en sembrar el camp (D7), no observat — la raw de
+    # l'atur és gitignored i no en queda provenança al repo. S'ha pres la data del cron
+    # (dia 5) coherent amb el darrer mes carregat (2026-06). A partir del pròxim refresc
+    # l'escriu `refresh_atur.py` amb la data REAL de la càrrega, i deixa de ser inferit.
+    actualitzacio: mensual
+    darrera_carrega: "2026-07-05"
+    proces_refresc: ".github/workflows/refresh-atur.yml"
     nota: "FONT ESMENADA (C1 §1.1, 2026-07-16): la premissa Socrata de l'spec era falsa — no existeix cap dataset Socrata d'atur municipal mensual. Filtre pel CATÀLEG de Catalunya sencer (947 ine5), MAI per província (Gósol=25100 Lleida, Gombrèn=17080 Girona). Doctrina del «<5»: interval [1,4], mai zero ni NaN silenciós."
   datapoble:
     organisme: indicador derivat
     producte: vegeu la metodologia
+    # Una derivada NO té cadència pròpia: es refresca quan es refresca el seu input.
+    # `origin_source` de cada mètrica diu quin és; el resolutor de frescor de l'export
+    # web hi recau (mai inventa una cadència per a una derivada).
+    actualitzacio: derivada
+    darrera_carrega: null
+    proces_refresc: "hereta de l'origin_source"
     nota: "Inferència pròpia a partir de fonts oficials."
 
 # ----------------------------------------------------------------------------
@@ -135,6 +199,9 @@ metrics:
     date: "2021"
     table: mart_municipi
     column: hab_total
+    # Override de cadència: EMEX es refresca cada any, però aquest bloc penja del
+    # CENS D'HABITATGE 2021 (decennal) i NO canviarà fins al pròxim cens.
+    actualitzacio: puntual
     visibility: public
 
   hab_principal:
@@ -149,6 +216,9 @@ metrics:
     date: "2021"
     table: mart_municipi
     column: hab_principal
+    # Override de cadència: EMEX es refresca cada any, però aquest bloc penja del
+    # CENS D'HABITATGE 2021 (decennal) i NO canviarà fins al pròxim cens.
+    actualitzacio: puntual
     visibility: public
 
   hab_noprincipal:
@@ -163,6 +233,9 @@ metrics:
     date: "2021"
     table: mart_municipi
     column: hab_noprincipal
+    # Override de cadència: EMEX es refresca cada any, però aquest bloc penja del
+    # CENS D'HABITATGE 2021 (decennal) i NO canviarà fins al pròxim cens.
+    actualitzacio: puntual
     visibility: public
     synonyms: {ca: [segona residència, buides], es: [segunda residencia, vacías]}
 
@@ -195,6 +268,94 @@ metrics:
     column: hab_per_hab
     visibility: public
 
+  # --- Franges d'edat (E12 de les esmenes de Bea) -----------------------------
+  # Ja s'ingerien d'EMEX i el mart les feia servir per a index_envelliment i LES
+  # LLENÇAVA: ara es publiquen. Mateix vintage que `poblacio` (les quatre pengen de la
+  # mateixa taula EMEX, r=2025, Cens de població anual de l'INE — verificat en viu).
+  # SENSE SÈRIE: EMEX serveix una foto, no una evolució (vegeu sources.idescat_emex).
+  pob_0_14:
+    label: {ca: "Població de 0 a 14 anys", es: "Población de 0 a 14 años"}
+    definicio:
+      ca: "Habitants de 0 a 14 anys (infància i primera adolescència)."
+      es: "Habitantes de 0 a 14 años (infancia y primera adolescencia)."
+    dimension: demografia
+    unit: {ca: habitants, es: habitantes}
+    formula: directe
+    source: idescat_emex
+    date: "2025"
+    table: mart_municipi
+    column: pob_0_14
+    visibility: public
+    visibilitat: verd
+    synonyms: {ca: [canalla, infants, nens, menors de 15], es: [niños, infancia, menores de 15]}
+
+  pob_15_64:
+    label: {ca: "Població de 15 a 64 anys", es: "Población de 15 a 64 años"}
+    definicio:
+      ca: "Habitants de 15 a 64 anys (la franja intermèdia, sovint llegida com a «edat de treballar»)."
+      es: "Habitantes de 15 a 64 años (la franja intermedia, a menudo leída como «edad de trabajar»)."
+    dimension: demografia
+    unit: {ca: habitants, es: habitantes}
+    formula: "poblacio - pob_0_14 - pob_65_84 - pob_85_mes"
+    source: datapoble
+    origin_source: idescat_emex
+    date: "2025"
+    table: mart_municipi
+    column: pob_15_64
+    visibility: public
+    visibilitat: verd
+    caveat:
+      ca: "DERIVADA per resta: EMEX no serveix aquesta franja. Es publica NOMÉS on la resta quadra (cap component absent i resultat ≥0); on no quadraria s'emet buit, mai un número fabricat. Verificat el 2026-07-20: quadra als 947 municipis i la suma dels 947 casa EXACTAMENT amb el total de Catalunya de la mateixa font (5.442.280), sense residu d'arrodoniment. «Edat de treballar» és una etiqueta convencional, no una mesura d'activitat: aquí dins hi ha qui estudia, qui cuida i qui està jubilat abans d'hora."
+      es: "DERIVADA por resta: EMEX no sirve esta franja. Se publica SOLO donde la resta cuadra (ningún componente ausente y resultado ≥0); donde no cuadraría se emite vacío, nunca un número fabricado. Verificado el 2026-07-20: cuadra en los 947 municipios y la suma de los 947 casa EXACTAMENTE con el total de Cataluña de la misma fuente (5.442.280), sin residuo de redondeo. «Edad de trabajar» es una etiqueta convencional, no una medida de actividad: aquí dentro hay quien estudia, quien cuida y quien está jubilado antes de tiempo."
+    synonyms: {ca: [edat de treballar, població activa potencial, franja intermèdia], es: [edad de trabajar, población activa potencial, franja intermedia]}
+
+  pob_65_84:
+    label: {ca: "Població de 65 a 84 anys", es: "Población de 65 a 84 años"}
+    definicio:
+      ca: "Habitants de 65 a 84 anys."
+      es: "Habitantes de 65 a 84 años."
+    dimension: demografia
+    unit: {ca: habitants, es: habitantes}
+    formula: directe
+    source: idescat_emex
+    date: "2025"
+    table: mart_municipi
+    column: pob_65_84
+    visibility: public
+    visibilitat: verd
+
+  pob_85_mes:
+    label: {ca: "Població de 85 anys i més", es: "Población de 85 años y más"}
+    definicio:
+      ca: "Habitants de 85 anys o més (gent gran de més edat: la franja que marca la demanda de cures)."
+      es: "Habitantes de 85 años o más (personas mayores de más edad: la franja que marca la demanda de cuidados)."
+    dimension: demografia
+    unit: {ca: habitants, es: habitantes}
+    formula: directe
+    source: idescat_emex
+    date: "2025"
+    table: mart_municipi
+    column: pob_85_mes
+    visibility: public
+    visibilitat: verd
+    synonyms: {ca: [grans grans, sobreenvelliment], es: [mayores de 85, sobreenvejecimiento]}
+
+  pob_65_mes:
+    label: {ca: "Població de 65 anys i més", es: "Población de 65 años y más"}
+    definicio:
+      ca: "Habitants de 65 anys o més (suma de 65-84 i 85+). És el numerador de l'índex d'envelliment."
+      es: "Habitantes de 65 años o más (suma de 65-84 y 85+). Es el numerador del índice de envejecimiento."
+    dimension: demografia
+    unit: {ca: habitants, es: habitantes}
+    formula: "pob_65_84 + pob_85_mes"
+    source: datapoble
+    origin_source: idescat_emex
+    date: "2025"
+    table: mart_municipi
+    column: pob_65_mes
+    visibility: public
+    visibilitat: verd
+
   index_envelliment:
     label: {ca: Índex d'envelliment, es: Índice de envejecimiento}
     definicio:
@@ -202,7 +363,7 @@ metrics:
       es: "Población de 65 años o más por cada 100 habitantes de 0 a 14. Mide el relevo generacional: por encima de 100, hay más gente mayor que niños."
     dimension: demografia
     unit: {ca: "65+/0-14 ×100", es: "65+/0-14 ×100"}
-    formula: "poblacio_65_mes / poblacio_0_14 * 100"
+    formula: "pob_65_mes / pob_0_14 * 100"
     source: idescat_emex
     date: "2025"
     table: mart_municipi
