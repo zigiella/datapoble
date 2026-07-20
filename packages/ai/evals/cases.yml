@@ -40,12 +40,19 @@ cases:
     metric: IETR
     contains: ["Spearman"]
 
-  - id: ca_extrema_dreta_planned
+  # The contract seeds this as a sample_question, so it is a *reachable* route,
+  # not a hypothetical. It used to answer «la mètrica "% vot extrema dreta" ...
+  # encara no està calculada»: naming a vote metric and promising it was on the
+  # way. `pct_extrema_dreta` is status: planned, so it was refused during parse
+  # and never reached the political gate (which only fires on a resolved
+  # metric). Now every politica metric — planned, held back or otherwise —
+  # exits through the one discreet refusal.
+  - id: ca_extrema_dreta_gated
     locale: ca
     source: sample_questions
     question: "On creix més l'extrema dreta?"
     expect: refusal
-    reason: metric_planned        # pct_extrema_dreta is status: planned
+    reason: political_gated
 
   # ---- es · contract sample_questions -------------------------------------
   - id: es_ietr_ranking
@@ -74,12 +81,12 @@ cases:
     metric: IETR
     contains: ["Spearman"]
 
-  - id: es_extrema_dreta_planned
+  - id: es_extrema_dreta_gated
     locale: es
     source: sample_questions
     question: "¿Dónde crece más la extrema derecha?"
     expect: refusal
-    reason: metric_planned
+    reason: political_gated
 
   # ---- guardrails & extra coverage ----------------------------------------
   - id: ca_poblacio_lookup

@@ -25,6 +25,7 @@ class RefusalReason(str, Enum):
 
     OUT_OF_CATALOG = "out_of_catalog"        # no metric in the contract matches
     METRIC_PLANNED = "metric_planned"        # defined but not yet computed
+    METRIC_DEPRECATED = "metric_deprecated"  # retired by editorial vote; never served
     UNKNOWN_MUNICIPALITY = "unknown_municipality"
     UNSUPPORTED_QUESTION = "unsupported_question"  # understood metric, can't map intent
     GUARDRAIL_VIOLATION = "guardrail_violation"    # write/raw/illegal SQL attempt

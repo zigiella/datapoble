@@ -166,17 +166,39 @@ class Router:
         return merged
 
     # -------------------------------------------------------------- matching
+    @staticmethod
+    def _is_eligible(metric: Metric, include_keyed: bool) -> bool:
+        """Whether ``metric`` may be resolved by the matcher on this call.
+
+        Normally: only what the agent advertises (:meth:`Metric.is_available`).
+        With ``include_keyed`` — set when the political gate has been opened by
+        the runtime secret — a held-back-but-keyed metric becomes resolvable
+        too, provided it is actually computed. Without this, unlocking would
+        stop working the moment ``politica`` became a held-back dimension: the
+        matcher would never surface the metric for the gate to let through.
+        """
+        if metric.is_available():
+            return True
+        return (
+            include_keyed
+            and metric.is_held_back
+            and metric.is_keyed
+            and metric.is_computed()
+        )
+
     def match_metric(self, question_norm: str, locale: str,
-                     exclude: Metric | None = None) -> Metric | None:
+                     exclude: Metric | None = None,
+                     include_keyed: bool = False) -> Metric | None:
         """Best catalog metric whose label/synonym appears in the question.
 
         Longest match wins (most specific phrase). Only *available* metrics are
-        eligible here; ``planned`` metrics are matched separately so we can give
-        a precise "not yet computed" refusal.
+        eligible here (plus keyed ones when ``include_keyed``); ``planned`` and
+        held-back metrics are matched separately so we can give a precise
+        refusal instead of a bare "out of catalog".
         """
         best: tuple[int, Metric] | None = None
         for metric in self.catalog.metrics.values():
-            if not metric.is_available():
+            if not self._is_eligible(metric, include_keyed):
                 continue
             if exclude is not None and metric.key == exclude.key:
                 continue
@@ -189,7 +211,7 @@ class Router:
         return best[1] if best else None
 
     def _matched_metrics_by_position(
-        self, question_norm: str, locale: str
+        self, question_norm: str, locale: str, include_keyed: bool = False
     ) -> list[tuple[int, int, Metric]]:
         """Available metrics that match, as ``(position, -length, metric)``.
 
@@ -199,7 +221,7 @@ class Router:
         """
         found: list[tuple[int, int, Metric]] = []
         for metric in self.catalog.metrics.values():
-            if not metric.is_available():
+            if not self._is_eligible(metric, include_keyed):
                 continue
             earliest: tuple[int, int] | None = None
             for term in metric.match_terms(locale):
@@ -274,8 +296,14 @@ class Router:
         return False
 
     # ---------------------------------------------------------------- parse
-    def parse(self, question: str, locale: str) -> Intent | RefusalReason:
-        """Turn a question into an :class:`Intent`, or a refusal reason."""
+    def parse(self, question: str, locale: str,
+              unlocked: bool = False) -> Intent | RefusalReason:
+        """Turn a question into an :class:`Intent`, or a refusal reason.
+
+        ``unlocked`` carries the political gate's decision (see
+        :meth:`ask`). It widens the matcher to keyed metrics so an unlocked vote
+        question can still resolve; it changes nothing else.
+        """
         qn = normalize(question)
 
         corr_cues = _CORR_CUES.get(locale, _CORR_CUES["ca"])
@@ -285,7 +313,7 @@ class Router:
 
         # --- correlation: two distinct metrics + a relationship cue ---
         if self._has_cue(qn, corr_cues):
-            ordered = self._matched_metrics_by_position(qn, locale)
+            ordered = self._matched_metrics_by_position(qn, locale, unlocked)
             if len(ordered) >= 2:
                 # Primary = first to appear in the question; secondary = next.
                 m1 = ordered[0][2]
@@ -293,12 +321,24 @@ class Router:
                 return Intent(kind="correlation", metric=m1, metric_b=m2)
 
         # --- otherwise we need one primary metric ---
-        metric = self.match_metric(qn, locale)
+        metric = self.match_metric(qn, locale, include_keyed=unlocked)
         if metric is None:
-            # Did it match a planned/non-public metric? Give a precise refusal.
+            # Did it match a planned/held-back metric? Give a precise refusal.
             any_metric = self._match_any_metric(qn, locale)
             if any_metric is not None and not any_metric.is_available():
-                return RefusalReason.METRIC_PLANNED
+                # A vote metric must get the DISCREET political refusal, never
+                # the "planned" one, which would name it. This path is how the
+                # gate used to be walked around: `pct_extrema_dreta` is
+                # `status: planned`, so it never reached the gate in
+                # `execute_intent` (that only fires on a *resolved* metric) and
+                # the refusal answered «la mètrica "% vot extrema dreta" ...
+                # encara no està calculada» — naming the metric *and* promising
+                # it was coming. Reachable from the contract's own seed question
+                # («On creix més l'extrema dreta?»). Same path now covers the
+                # other three, which are held back rather than planned.
+                if is_political_metric(any_metric):
+                    return RefusalReason.POLITICAL_GATED
+                return self._unserved_reason(any_metric)
             return RefusalReason.OUT_OF_CATALOG
 
         # --- ranking vs lookup ---
@@ -327,10 +367,23 @@ class Router:
             want_list=wants_list,
         )
 
+    @staticmethod
+    def _unserved_reason(metric: Metric) -> RefusalReason:
+        """Why an unavailable metric is not served — accurately.
+
+        ``deprecated`` is not ``planned``. Telling a reader that a retired
+        metric is "not yet calculated" promises it is on its way, when the
+        decision was precisely that it is not (``index_turisme``, Bea's vote of
+        2026-07-18).
+        """
+        if metric.status == "deprecated":
+            return RefusalReason.METRIC_DEPRECATED
+        return RefusalReason.METRIC_PLANNED
+
     def _availability_guard(self, metric: Metric) -> RefusalReason | None:
         """Refusal reason if a metric must not be queried, else None."""
         if not metric.is_available():
-            return RefusalReason.METRIC_PLANNED
+            return self._unserved_reason(metric)
         return None
 
     # ----------------------------------------------------------------- ask
@@ -351,7 +404,7 @@ class Router:
         unlocked = self.politics_gate.is_unlocked(question)
         if unlocked:
             question = self.politics_gate.strip_unlock(question)
-        parsed = self.parse(question, loc)
+        parsed = self.parse(question, loc, unlocked=unlocked)
         if isinstance(parsed, RefusalReason):
             return self._refuse(question, loc, parsed, backend)
         return self.execute_intent(question, loc, parsed, backend, unlocked=unlocked)
@@ -383,8 +436,19 @@ class Router:
                         question, loc, RefusalReason.POLITICAL_GATED, backend)
         # Defensive availability re-check (the LLM path could pass anything).
         for m in (intent.metric, intent.metric_b):
-            if m is not None and not m.is_available():
-                return self._refuse(question, loc, RefusalReason.METRIC_PLANNED,
+            if m is None:
+                continue
+            if unlocked and is_political_metric(m):
+                # The gate above already let this through. Hold-back does not
+                # apply to an unlocked call, but "computed" still does: an
+                # unlocked `pct_extrema_dreta` has no data to serve, and must
+                # refuse discreetly rather than name itself.
+                if not m.is_computed():
+                    return self._refuse(question, loc,
+                                        RefusalReason.POLITICAL_GATED, backend)
+                continue
+            if not m.is_available():
+                return self._refuse(question, loc, self._unserved_reason(m),
                                     backend, label=m.label(loc))
         try:
             if intent.kind == "lookup":
@@ -659,7 +723,18 @@ class Router:
             text = t(locale, "refusal_out_of_catalog", metrics=metrics)
         elif reason == RefusalReason.METRIC_PLANNED:
             any_m = self._match_any_metric(normalize(question), locale)
-            text = t(locale, "refusal_planned",
+            # Belt to the parse-level braces: whatever route reached here, a vote
+            # metric is never named back to the reader. Downgrading to the
+            # discreet copy is the safe direction — the reverse would leak.
+            if is_political_metric(any_m):
+                text = t(locale, "refusal_political_gated")
+                reason = RefusalReason.POLITICAL_GATED
+            else:
+                text = t(locale, "refusal_planned",
+                         label=any_m.label(locale) if any_m else (label or "?"))
+        elif reason == RefusalReason.METRIC_DEPRECATED:
+            any_m = self._match_any_metric(normalize(question), locale)
+            text = t(locale, "refusal_deprecated",
                      label=any_m.label(locale) if any_m else (label or "?"))
         elif reason == RefusalReason.UNKNOWN_MUNICIPALITY:
             text = t(locale, "refusal_unknown_municipality", name=name or "?")

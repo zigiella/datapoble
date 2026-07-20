@@ -13,6 +13,8 @@ Design notes
 - ``status: planned`` metrics are *defined but not yet computed*. They stay in
   the catalog (so we can answer "that exists but isn't available yet") but the
   router must refuse to query them. See :meth:`Metric.is_available`.
+- Some whole *dimensions* are held back from what the agent advertises, even
+  though the contract keeps them public. See :data:`HELD_BACK_DIMENSIONS`.
 """
 
 from __future__ import annotations
@@ -29,6 +31,53 @@ import yaml
 # Locales the contract declares it supports. Kept in sync with metrics.yml meta.
 SUPPORTED_LOCALES: tuple[str, ...] = ("ca", "es")
 DEFAULT_LOCALE = "ca"
+
+#: Contract ``status`` values that mean **never serve this metric**.
+#:
+#: - ``planned``: declared in the contract, not yet produced by the pipeline.
+#:   Querying it would hit a missing column.
+#: - ``deprecated``: produced once, then retired by an editorial vote
+#:   (``index_turisme``, Bea 2026-07-18). The column may still physically exist
+#:   in the mart, so nothing *fails* — the agent would just quietly keep serving
+#:   a number the project has decided not to stand behind. That is the worse
+#:   failure mode of the two, and the reason this is a set and not an ``!=``.
+#:
+#: Both stay in the contract on purpose: we want to be able to say "that metric
+#: exists, and here is why you are not getting it".
+NOT_SERVED_STATUSES: frozenset[str] = frozenset({"planned", "deprecated"})
+
+#: Dimensions held back from the catalogue the agent **advertises and queries**.
+#:
+#: These are public on the web and in the glossary; what is withheld is the
+#: agent's ability to enumerate and answer them. Holding back *here*, at the
+#: catalog, is what keeps them out of every derived surface at once: the LLM
+#: tool enum and system prompt (:mod:`llm`), the SQL table allow-list
+#: (:meth:`Catalog.tables` -> ``Warehouse.allowed_tables``), the "metrics I can
+#: answer" list in the out-of-catalog refusal, and the ``/metrics`` endpoint.
+#:
+#: - ``origen`` (nationality / birthplace / naturalisation) — **unconditional**.
+#:   Held until the origen frontier exists: the guardrail that refuses
+#:   individual-level, causal or ethnic-framing queries and enforces the
+#:   ecological, non-«extranjería» reading (task #71).
+#: - ``politica`` (vote orientation) — **conditional**, see
+#:   :data:`KEYED_DIMENSIONS`. Bea's call, 2026-07-20: electoral goes behind the
+#:   fence. A refusal already existed at the answer layer
+#:   (:class:`~datapoble_ai.politics.PoliticsGate`), but it keys off a *resolved*
+#:   metric, so every path that merely *enumerates* the catalog walked around it
+#:   and advertised what the agent would then refuse.
+HELD_BACK_DIMENSIONS: frozenset[str] = frozenset({"origen", "politica"})
+
+#: The held-back dimensions a runtime key can still open.
+#:
+#: ``politica`` is gated, not removed: :class:`~datapoble_ai.politics.PoliticsGate`
+#: opens it for a question carrying the secret read from ``AI_POLITICS_UNLOCK``.
+#: Whether the team keeps that key is Bea's call, not this module's — so the
+#: hold-back deliberately does **not** revoke it. The practical consequence is
+#: that the tables of these dimensions must stay in the SQL allow-list (see
+#: :meth:`Catalog.tables`), or the unlocked path would die at the guardrail.
+#:
+#: ``origen`` is *not* here: it has no key, so its tables leave the allow-list.
+KEYED_DIMENSIONS: frozenset[str] = frozenset({"politica"})
 
 
 def _repo_root() -> Path:
@@ -145,25 +194,58 @@ class Metric:
 
     @property
     def status(self) -> str:
-        # Absent status means it is live; the contract only tags `planned`.
+        # Absent status means it is live; the contract only tags the exceptions
+        # (`planned`, `deprecated`).
         return self.raw.get("status", "public")
 
-    def is_available(self) -> bool:
-        """True when the metric is public, computed, and exposable to the agent.
+    @property
+    def is_held_back(self) -> bool:
+        """True when the metric's whole dimension is withheld from the agent.
 
-        ``status: planned`` => defined but not yet produced by the pipeline, so
-        the router must not query it (it would hit a missing column).
-
-        The ``origen`` dimension (composició i arrelament: nationality / birthplace
-        / naturalisation) is SENSITIVE. It is public on the web and the glossary,
-        but it is deliberately HELD BACK from the agent's catalogue until the origen
-        frontier exists — the guardrail that refuses individual-level, causal or
-        ethnic-framing queries and enforces the ecological, non-«extranjería»
-        reading (task #71). Until then the router must not query it.
+        See :data:`HELD_BACK_DIMENSIONS`. Held back is orthogonal to computed:
+        an ``origen`` metric is fully produced and live on the web; the agent
+        just does not get to enumerate or query it.
         """
-        if self.dimension == "origen":
+        return self.dimension in HELD_BACK_DIMENSIONS
+
+    @property
+    def is_keyed(self) -> bool:
+        """True when a runtime key can still open this held-back metric.
+
+        See :data:`KEYED_DIMENSIONS`. Only meaningful together with
+        :attr:`is_held_back`.
+        """
+        return self.dimension in KEYED_DIMENSIONS
+
+    def is_computed(self) -> bool:
+        """True when the pipeline actually produces this metric.
+
+        Ignores the hold-back gate on purpose: this is the question "is there a
+        number behind this key?", not "may the agent show it?". The unlocked
+        political path checks *this* — a held-back metric may be openable with a
+        key, but a ``planned`` one has no data to open.
+        """
+        return self.visibility == "public" and self.status not in NOT_SERVED_STATUSES
+
+    def is_available(self) -> bool:
+        """True when the agent may advertise **and** query this metric.
+
+        Two independent gates, both of which must be open:
+
+        1. **Computed** — :meth:`is_computed`. ``planned`` was never produced;
+           ``deprecated`` was retired by an editorial vote and must not be
+           served even though its column may still sit in the mart.
+        2. **Not held back** — :attr:`is_held_back`. Sensitive dimensions
+           (``origen``, ``politica``) stay out of everything derived from this
+           predicate, whatever their status.
+
+        This is the single predicate every downstream surface reads, which is
+        the point: a gate that has to be re-implemented per surface is a gate
+        that will be missing from one of them.
+        """
+        if self.is_held_back:
             return False
-        return self.visibility == "public" and self.status != "planned"
+        return self.is_computed()
 
     # --- localized accessors ---
     def label(self, locale: str = DEFAULT_LOCALE) -> str:
@@ -282,15 +364,40 @@ class Catalog:
         return self.sources.get(key)
 
     def available_metrics(self) -> list[Metric]:
-        """Public + computed metrics (what the agent is allowed to query)."""
+        """Public + computed + not held back — what the agent may advertise.
+
+        Every derived surface reads this: the LLM tool enum and system prompt,
+        the deterministic router's matcher, the ``/metrics`` endpoint and the
+        "metrics I can answer" list in the out-of-catalog refusal.
+        """
         return [m for m in self.metrics.values() if m.is_available()]
 
-    def tables(self) -> set[str]:
-        """The set of mart tables referenced by available metrics.
+    def keyed_metrics(self) -> list[Metric]:
+        """Computed metrics that are held back but a runtime key can open.
 
-        These are the *only* tables the SQL layer may touch (guardrail).
+        See :data:`KEYED_DIMENSIONS`. Never advertised; reachable only once
+        :class:`~datapoble_ai.politics.PoliticsGate` has opened.
         """
-        return {m.table for m in self.available_metrics() if m.table}
+        return [
+            m for m in self.metrics.values()
+            if m.is_held_back and m.is_keyed and m.is_computed()
+        ]
+
+    def tables(self) -> set[str]:
+        """The set of mart tables the SQL layer may touch (guardrail).
+
+        Available metrics **plus** the keyed ones. The keyed tables have to be
+        here or the unlocked political path would be built, then rejected by the
+        allow-list — a confusing failure for a route that is meant to work.
+
+        This allow-list is a *blast-radius* bound (no SQL outside contract
+        tables), not the policy gate. Who may read a keyed table is decided
+        above, at :meth:`Metric.is_available` and in the router. Note what this
+        does exclude: ``origen`` has no key, so ``mart_demografia`` drops out of
+        the allow-list entirely.
+        """
+        served = self.available_metrics() + self.keyed_metrics()
+        return {m.table for m in served if m.table}
 
     def resolve_locale(self, locale: str | None) -> str:
         """Coerce a requested locale into a supported one."""
