@@ -399,10 +399,10 @@ metrics:
     visibility: public
 
   rtc_per_1000hab:
-    label: {ca: Establiments / 1000 hab, es: Establecimientos / 1000 hab}
+    label: {ca: Establiments turístics / 1.000 hab, es: Establecimientos turísticos / 1.000 hab}
     definicio:
-      ca: Intensitat turística reglada per càpita.
-      es: Intensidad turística reglada per cápita.
+      ca: "Establiments d'allotjament turístic REGLATS (Registre de Turisme de Catalunya: habitatges d'ús turístic, hotels, càmpings, turisme rural) per cada 1.000 habitants."
+      es: "Establecimientos de alojamiento turístico REGLADOS (Registro de Turismo de Cataluña: viviendas de uso turístico, hoteles, campings, turismo rural) por cada 1.000 habitantes."
     dimension: turisme
     unit: {ca: per mil, es: por mil}
     formula: "rtc_total / poblacio * 1000"
