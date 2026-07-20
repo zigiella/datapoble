@@ -120,6 +120,21 @@ publicable per si sola.*
 >    `mart_pols_mensual` està desacoblat a propòsit.
 >    · Encuades també: sèries de residus/ICAEN/renda (les tres fonts en tenen; el pipeline n'ingereix
 >      una sola foto) → desbloquejaria la tendència de 4 targetes més.
+> **⚠️ D11 (Mirador) — E11 és MÉS possible del que D9 va concloure. Verificat per Talaia 2026-07-20.**
+> Mirador va tancar E11 dient «el mart només té **nacionalitat**, i Bea demana nascuts fora / nascuts
+> a l'estranger». **Això no és cert:** el contracte i el web JA serveixen les quatre mètriques de
+> **lloc de naixement** (dimensió `origen`, totes vives): `poblacio_nascuda_catalunya`,
+> `poblacio_nascuda_resta_espanya`, `poblacio_nascuda_estranger`, `pct_nascuda_estranger`.
+> La Pobla, avui, a `data/web/municipis.bergueda.json`: **846 nascuts a Catalunya · 126 a la resta
+> d'Espanya · 134 a l'estranger (12,12%)**. El tauler **no en pinta cap** (comprovat a `kpis.js`),
+> perquè D9 va donar per fet que no hi eren.
+> **La distinció importa i és exactament la que Bea demana:** 134 nascuts a l'estranger vs 9,58% de
+> nacionalitat estrangera (~106 persones) NO són el mateix conjunt — qui es nacionalitza surt d'un i
+> es queda a l'altre. Confondre-les és el marc que el propi contracte prohibeix.
+> **Feina de D11:** pintar el lloc de naixement al bloc «Qui hi ha (i qui hi haurà)» **com a NIVELL**,
+> amb la seva font. **Límit honest a declarar a la targeta:** l'**evolució** només existeix per a
+> nacionalitat (finestra 2021→2025); del lloc de naixement en tenim la foto, no la sèrie — i la sèrie
+> de nacionalitat **no** es pot presentar com si fos la del lloc de naixement.
 > 9. **D10 — els quatre serrells que D9 ha destapat** (handoffs de Mirador, tots de dada):
 >    (a) el `motiu` de `mart_tendencia` és **només en català** → ha de ser `{ca,es}` com `label`/
 >    `definicio`; Mirador no el tradueix al front (seria inventar dada, i fa bé).
