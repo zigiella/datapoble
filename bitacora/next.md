@@ -170,7 +170,15 @@ publicable per si sola.*
 > destí d'excursió/dinar (monestir romànic + restaurant) → residu de visitants de dia sense consum
 > elèctric nocturn. **Alerta a escriure al caveat:** la sèrie oscil·la (total ~30-39 t 2009-2015 →
 > ~17-24 t 2016-2020 → ~30 t 2021-2024, població quieta): fa pinta de canvi de comptabilització, no
-> defensem cap any concret. **Ordre:** doctrina + camp `micromunicipi` al contracte (Talaia) → el
+> defensem cap any concret. **Prova de la COVID (idea de Bea, feta per Talaia 2026-07-20):** usar el
+> confinament com a període "sense gent extra" NO aïlla els residents aquí — el 2020 l'electricitat
+> domèstica va PUJAR (índex 104 vs 2019: confinament + segones residències ocupades), i el residu
+> baix del 2020 és el sot preexistent des del 2016, no un efecte COVID. El que sí que en surt: del
+> 2020 al 2024 el residu +56% i l'electricitat −31%, **direccions oposades**; en tot el tram
+> 2016-2024 estan gairebé anticorrelacionats. Dos senyals de població movent-se al revés ⇒ **no es
+> pot triangular població des d'ells** (és la cara física de `divergencia_senyals`). El caveat ho ha
+> de dir. L'experiment de Bea seria vàlid amb resolució MENSUAL del confinament dur (març-juny 2020),
+> però l'ARC i l'ICAEN són anuals; el 2020 anual barreja primavera buida + estiu de rebot rural. **Ordre:** doctrina + camp `micromunicipi` al contracte (Talaia) → el
 > caveat viatja a l'export web (Sondeig, si cal camp nou) → pintura a la targeta (Mirador). NO
 > emmascarar: el número és el senyal.
 >
