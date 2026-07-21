@@ -157,6 +157,23 @@ publicable per si sola.*
 >   `gov_nac_serie_es_nacionalitat`) i la de `METRIC_DEPRECATED` de Brúixola. El copy de D9 ja té
 >   el seu vot («el copy nou està guai»).
 >
+> **📐 E13 — CAVEAT DE MICROMUNICIPI ALS «PER CÀPITA» FÍSICS (decisió de Bea, 2026-07-20: caveat, NO
+> emmascarar).** Als municipis amb el flag `micromunicipi` (padró < 250), els senyals per càpita
+> (`kg_hab_any`, `kwh_hab`, `vidre_hab`, `index_envelliment`) i les estimacions de població real
+> porten un caveat visible: el denominador és minúscul i una sola persona/casa mou el número. On
+> `divergencia_senyals` sigui alta, el caveat ho ha de DIR: els nostres dos models de població real
+> es contradiuen. **Cas que ho origina — Sant Jaume de Frontanyà (08216), investigat a fons per
+> Talaia:** 25 hab / 39 habitatges (22 no principals). Residu 1.132 kg/hab/any NO és artefacte del
+> nostre denominador (l'ARC ja divideix per la seva població, 26 el 2024, estable). Són ~29 t reals,
+> que a 450 kg/persona implicarien ~65 persones. El nostre model per residus estima **69**, el
+> d'electricitat **28** → `divergencia_senyals=83`, confiança baixa. Hipòtesi coherent (no provada):
+> destí d'excursió/dinar (monestir romànic + restaurant) → residu de visitants de dia sense consum
+> elèctric nocturn. **Alerta a escriure al caveat:** la sèrie oscil·la (total ~30-39 t 2009-2015 →
+> ~17-24 t 2016-2020 → ~30 t 2021-2024, població quieta): fa pinta de canvi de comptabilització, no
+> defensem cap any concret. **Ordre:** doctrina + camp `micromunicipi` al contracte (Talaia) → el
+> caveat viatja a l'export web (Sondeig, si cal camp nou) → pintura a la targeta (Mirador). NO
+> emmascarar: el número és el senyal.
+>
 > **🚨 E7/E8 — LES LECTURES P1/P2, AUDITADES PER TALAIA (2026-07-20). La sospita de Bea es queda
 > curta.** Bea: «que no estiguin basades en mètriques de les antigues». Comptat sobre
 > `data/web/lectures.bergueda.json`, que és el que se serveix ARA:
