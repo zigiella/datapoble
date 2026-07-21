@@ -95,6 +95,12 @@
 	// els cinc números i la maquinària. Mai una al·lucinació, mai una pantalla trencada.
 	const lectura = $derived(locale === 'es' ? (data.lectura?.es ?? null) : (data.lectura?.ca ?? null));
 	const hasLectura = $derived(!!lectura && lectura._gen !== 'fallback');
+	// P1 (veredicte) i P2 (lectura narrativa) OCULTS de moment (decisió de Bea, 2026-07-20): es
+	// refaran en uns dies sobre mètriques CITABLES (E7b — avui només 164 de 532 frases servides
+	// compleixen la regla d'evidència). La maquetació es conserva SENCERA aquí sota; això només
+	// tanca la porta. Quan E7b torni amb les lectures regenerades, es torna a posar a `true`.
+	// (Les preguntes suggerides NO són P1/P2: es queden, però des d'avui sense enllaç — vegeu avall.)
+	const MOSTRA_LECTURES_IA = false;
 	const veredicte = $derived(hasLectura && lectura?.veredicte?.text ? lectura.veredicte : null);
 	const lectClaims = $derived(hasLectura ? (lectura?.lectures ?? null) : null);
 	const hasCiutadania = $derived((lectClaims?.ciutadania?.length ?? 0) > 0);
@@ -139,7 +145,9 @@
 		});
 	}
 
-	// Preguntes suggerides → enllaç a Pregunta-li amb la consulta precarregada (?q=). Capades a 6.
+	// Preguntes suggerides, capades a 6. Des del 2026-07-20 (decisió de Bea) es mostren com a text
+	// ESTÀTIC, sense enllaç a /pregunta-li: són exemples del que es podrà preguntar, no un botó que
+	// dispari una consulta al xat encara. Per això ja no hi ha `preguntaHref`.
 	const preguntesFlat = $derived.by<string[]>(() => {
 		const p = hasLectura ? lectura?.preguntes : null;
 		if (!p) return [];
@@ -148,7 +156,6 @@
 			.filter(Boolean)
 			.slice(0, 6);
 	});
-	const preguntaHref = (q: string) => localizeHref(`/pregunta-li?q=${encodeURIComponent(q)}`);
 
 	// «Mode dades» (spec §1.2): desplega la P3 (la maquinària) per defecte i es recorda.
 	let modeDades = $state(browser ? localStorage.getItem('rdg-dades') === '1' : false);
@@ -769,8 +776,9 @@
 			{/if}
 
 			<!-- P1 · EL VEREDICTE: la frase-mare de la IA (verificada), el primer cop d'ull. Només si
-			     la lectura ve del model; si és reserva o no hi és, s'omet (degradació honesta). -->
-			{#if veredicte}
+			     la lectura ve del model; si és reserva o no hi és, s'omet (degradació honesta).
+			     OCULT per `MOSTRA_LECTURES_IA` fins a E7b (vegeu el <script>); la maquetació es conserva. -->
+			{#if MOSTRA_LECTURES_IA && veredicte}
 				<section class="ds-sec muni-vd">
 					<p class="muni-vd__cap"><span class="ref">P1</span>{m.muni_veredicte_cap()}</p>
 					<p class="muni-vd__text">{veredicte.text}</p>
@@ -803,8 +811,9 @@
 			</section>
 
 			<!-- P2 · LA LECTURA: la narració de la IA (verificada), per perfil. Cada afirmació porta la
-			     seva naturalesa (mesura/inferència/interpretació) i la seva evidència (mètriques). -->
-			{#if hasLectures}
+			     seva naturalesa (mesura/inferència/interpretació) i la seva evidència (mètriques).
+			     OCULT per `MOSTRA_LECTURES_IA` fins a E7b (vegeu el <script>); la maquetació es conserva. -->
+			{#if MOSTRA_LECTURES_IA && hasLectures}
 				<section class="ds-sec">
 					<div class="ds-sec__hd"><span class="ref">P2</span><h2>{m.muni_lect_title()}</h2></div>
 					<p class="muni-sec__sub">{m.muni_lect_ai_note()}</p>
@@ -925,7 +934,7 @@
 					<p class="muni-sec__sub">{m.muni_preg_sub()}</p>
 					<ul class="preg">
 						{#each preguntesFlat as q (q)}
-							<li><a class="preg__chip" href={preguntaHref(q)}>{q}</a></li>
+							<li><span class="preg__chip">{q}</span></li>
 						{/each}
 					</ul>
 				</section>
@@ -1254,7 +1263,8 @@
 		max-width: 64ch;
 	}
 
-	/* Pregunta-li (preguntes suggerides → IA). Pastilles enllaçades. */
+	/* Pregunta-li (preguntes suggerides). Pastilles de text ESTÀTIC des del 2026-07-20 (decisió de
+	   Bea): no enllacen, així que no porten hover ni cap senyal d'interacció. */
 	.preg {
 		list-style: none;
 		margin: 8px 0 0;
@@ -1269,22 +1279,14 @@
 		border: 1px solid var(--dp-border);
 		border-radius: var(--dp-radius-md);
 		background: var(--dp-surface);
-		text-decoration: none;
 		color: var(--dp-text);
 		font-size: 0.92rem;
 		line-height: 1.4;
-		transition:
-			border-color 0.15s ease,
-			background 0.15s ease;
 	}
 	.preg__chip::before {
 		content: '? ';
 		color: var(--dp-text-subtle);
 		font-family: var(--dp-font-mono);
-	}
-	.preg__chip:hover {
-		border-color: var(--dp-border-strong);
-		background: var(--dp-accent-weak);
 	}
 
 	/* Municipis veïns de la comarca: llista compacta de xips-enllaç (navegació territorial). */
