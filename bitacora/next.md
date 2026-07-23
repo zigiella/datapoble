@@ -447,8 +447,21 @@ publicable per si sola.*
 > **🟣 TALAIA:** ✅ nota:/caveat: unificat (#252/#253) · ✅ C4 v2 dues capes + C3 §6bis · ✅ regla de
 > procedència C6 §8.1 + `index_turisme` marcat deprecat + bundle orfe fora (#267) · vot de copy de
 > Mirador presentat a Bea.
+> **✅ BANC C4 CONGELAT (2026-07-20, #288).** Bea ha etiquetat les 66 files (#286, autoria seva
+> preservada via cherry-pick); congelat a `packages/signals/datapoble_signals/banc_c4_congelat.json`
+> amb guarda de deriva a la suite del CI. **Recompte d'or:** Capa A 0 elegible / 25 desc / 1 frontera
+> (els 0 confirmen Marea). Capa B 7 elegible (4 verd, 3 groc) / 13 desc / 20 frontera.
+> **denominador_recall_B = 7** — CAVEAT vinculant a arrossegar quan es reporti el radar: denominador
+> petit (un encert = 14 punts) + 20 fronteres que no hi compten; mai un «86%» com a robust.
+> *La feina la va fer Cabal, que es va penjar just abans de committejar; Talaia la va recuperar del
+> worktree i verificar (0 errors, 182 tests). Cabal no va deixar bitàcola pròpia: aquesta línia i el
+> commit #288 la substitueixen.*
+> **➡️ Això TANCA la 1a de les 3 condicions de la porta de sortida del radar** (banc C4 aprovat).
+> Queden: **1 mes de validació paral·lela** + **vistiplau de Bea**. I aigües avall, ara desbloquejat:
+> **R3** (semàfor Haiku, Brúixola) → **R4** (workflow correu, destinataris de Bea) — tots dos poden
+> córrer contra el banc congelat com a joc de prova.
 > **🟠 BEA (decisions 2026-07-18):** ✅ deprecar index_turisme · ✅ copy tot OK (xips B3 + aparcaments
-> Mirador validats) · 🔑 ETIQUETANT el banc (A+B, es congela quan digui «etiquetat») · pendents:
+> Mirador validats) · ✅ **banc etiquetat i congelat (#288)** · pendents:
 > validar amb l'Ajuntament la llista de
 > projectes del perfil (R-FUNC §3) · crear el repo PRIVAT de sortides del radar (fase dev de l'espai
 > del radar, R-FUNC §9.2 — p. ex. datapoble-radar-out; el workflow R4 hi escriurà).
