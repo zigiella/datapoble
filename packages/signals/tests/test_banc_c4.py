@@ -1,12 +1,23 @@
 """Guardes del transcriptor del banc C4 (parser del full d'etiquetatge).
 
-AVUI (pre-congelació): el full és a mig etiquetar per Bea — aquests tests validen el
-PARSER i el VALIDADOR amb files sintètiques, i que el full REAL parseja (66 files, cap
-etiqueta encara o les que hi hagi, sense petar). POST-CONGELACIÓ: s'hi afegirà el test de
-fidelitat full↔JSON congelat (mateix patró que test_parafrasis).
+CONGELAT (2026-07-20): Bea ha etiquetat les 66 files (C4 §2 v2 — cap agent, cap model
+posa cap golden) i el banc s'ha congelat a `banc_c4_congelat.json`. Aquests tests
+validen el PARSER i el VALIDADOR amb files sintètiques, que el full REAL parseja net
+(66 files, 0 errors), i —la guarda de CONGELACIÓ— que el JSON congelat coincideix byte
+a byte, en dada, amb `to_banc_json(parse_full())` i que el recompte no ha derivat (mateix
+patró de fidelitat que test_parafrasis): ni el full ni el JSON es poden editar en silenci.
 """
 
-from datapoble_signals.banc_c4 import FULL_PATH, parse_full, recompte, valida
+from datapoble_signals.banc_c4 import (
+    BANC_CONGELAT_PATH,
+    FULL_PATH,
+    carrega_banc_congelat,
+    construeix_banc_congelat,
+    parse_full,
+    recompte,
+    to_banc_json,
+    valida,
+)
 
 
 def _fila(num, bdns, golden="", semafor="", motiu=""):
@@ -70,3 +81,51 @@ def test_solapament_a_b_es_warning_no_error(tmp_path):
     errors, warnings = valida(files)
     assert errors == []
     assert any("solapament" in w for w in warnings)
+
+
+# --- La guarda de CONGELACIÓ (substitueix l'anti-pre-etiquetatge, ja complerta) ---
+# Fins que Bea va etiquetar, la guarda dura era que el full NO portés etiquetes
+# (test_les_tres_columnes_de_la_direccio_son_buides_al_full, a test_capa_b.py). Un cop
+# etiquetat i congelat, aquella guarda és falsa per disseny; la substitueix aquesta, que
+# congela el sentit contrari: el JSON d'or ha de coincidir SEMPRE amb el full etiquetat i
+# el recompte no pot moure's. És el patró del projecte: quan una guarda es retira, la que
+# la substitueix neix al mateix PR.
+
+def test_el_full_real_valida_net_zero_errors_zero_warnings():
+    """La precondició de la congelació: el full etiquetat per Bea valida sense res pendent."""
+    errors, warnings = valida(parse_full())
+    assert errors == [], f"el full ja NO valida net (mai s'arregla un golden — atura't): {errors}"
+    assert warnings == [], f"warnings inesperats (p. ex. una fila sense motiu): {warnings}"
+
+
+def test_el_banc_congelat_coincideix_amb_el_full_i_no_deriva():
+    """Fidelitat full↔JSON congelat: el banc no pot derivar ni editar-se en silenci."""
+    assert BANC_CONGELAT_PATH.exists(), "falta el banc congelat — corre `--congela`"
+    files = parse_full()
+    banc_del_full = to_banc_json(files)
+    assert carrega_banc_congelat() == banc_del_full, (
+        "el JSON congelat NO coincideix amb el full etiquetat: o algú ha editat el full "
+        "sense regenerar, o ha tocat el JSON a mà. Regenera amb "
+        "`python -m datapoble_signals.banc_c4 --congela` (mai s'edita el JSON a mà)."
+    )
+    # tota l'estructura (procedència + recompte + banc) ha de reconstruir-se des del full
+    import json
+
+    congelat = json.loads(BANC_CONGELAT_PATH.read_text(encoding="utf-8"))
+    assert congelat == construeix_banc_congelat(files)
+
+
+def test_el_recompte_congelat_es_el_que_bea_va_etiquetar():
+    """El recompte d'or, clavat: cap deriva silenciosa del nombre d'elegibles/fronteres."""
+    r = recompte(parse_full())
+    assert r["A"] == {
+        "total": 26, "elegible": 0, "verd": 0, "groc": 0,
+        "descartable": 25, "frontera": 1, "fora": 0,
+    }
+    assert r["B"] == {
+        "total": 40, "elegible": 7, "verd": 4, "groc": 3,
+        "descartable": 13, "frontera": 20, "fora": 0,
+    }
+    assert r["denominador_recall_B"] == 7
+    # el banc congelat porta EXACTAMENT les 66 files etiquetades (cap «fora»)
+    assert len(carrega_banc_congelat()) == 66
