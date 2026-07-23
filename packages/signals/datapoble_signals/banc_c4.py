@@ -21,12 +21,18 @@ coincideix amb el full — cap deriva silenciosa.
 
 from __future__ import annotations
 
+import json
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 FULL_PATH = _REPO_ROOT / "docs" / "ajuntaments" / "banc-c4-etiquetatge.md"
+
+# Banc CONGELAT (veritat d'or del radar). Viu DINS el paquet perquè el pipeline el
+# consumeixi sense dependre de l'arbre del repo; el full markdown segueix sent la
+# font humana, aquest JSON n'és la transcripció mecànica i immutable.
+BANC_CONGELAT_PATH = Path(__file__).resolve().parent / "banc_c4_congelat.json"
 
 GOLDENS = {"elegible", "descartable", "frontera", "fora"}
 SEMAFORS = {"verd", "groc"}
@@ -162,3 +168,80 @@ def to_banc_json(files: list[FilaBanc]) -> list[dict]:
         for f in files
         if f.golden and f.golden != "fora"
     ]
+
+
+# --- Congelació (veritat d'or del radar) --------------------------------------
+
+_NOTA_CONGELACIO = (
+    "Banc CONGELAT — veritat d'or del radar de subvencions (C4). Etiquetatge HUMÀ de "
+    "Bea (C4 §2 v2: cap agent, cap model posa cap golden); transcripció MECÀNICA per "
+    "datapoble_signals.banc_c4. NO editar a mà: regenera amb "
+    "`python -m datapoble_signals.banc_c4 --congela`. La guarda de fidelitat "
+    "(packages/signals/tests/test_banc_c4.py) cau si aquest JSON deriva del full o si "
+    "valida() no torna 0 errors — ni el full ni el JSON es poden editar en silenci."
+)
+
+
+def construeix_banc_congelat(files: list[FilaBanc] | None = None) -> dict:
+    """L'estructura congelable: procedència + recompte + el banc (sense «fora»)."""
+    files = parse_full() if files is None else files
+    return {
+        "_meta": {
+            "font": "docs/ajuntaments/banc-c4-etiquetatge.md",
+            "etiquetat_per": "Bea (direcció humana) — C4 §2 v2: cap agent, cap model",
+            "etiquetatge_origen": "commit 78e8d27 · PR #286 · branca c4/etiquetes-bea",
+            "transcripcio": "to_banc_json(parse_full()) — mecànica, sense interpretació",
+            "recompte": recompte(files),
+            "nota": _NOTA_CONGELACIO,
+        },
+        "banc": to_banc_json(files),
+    }
+
+
+def _serialitza_banc_congelat(files: list[FilaBanc] | None = None) -> str:
+    return json.dumps(construeix_banc_congelat(files), ensure_ascii=False, indent=2) + "\n"
+
+
+def carrega_banc_congelat() -> list[dict]:
+    """El banc congelat (veritat d'or): la llista d'etiquetes, sense les «fora»."""
+    return json.loads(BANC_CONGELAT_PATH.read_text(encoding="utf-8"))["banc"]
+
+
+def _main(argv: list[str] | None = None) -> int:
+    """`--congela` (re)genera el JSON congelat des del full; `--check` verifica que no ha derivat."""
+    import argparse
+
+    parser = argparse.ArgumentParser(prog="datapoble_signals.banc_c4")
+    grup = parser.add_mutually_exclusive_group(required=True)
+    grup.add_argument("--congela", action="store_true", help="(re)genera el banc congelat des del full")
+    grup.add_argument("--check", action="store_true", help="verifica que el banc congelat no ha derivat del full")
+    args = parser.parse_args(argv)
+
+    files = parse_full()
+    errors, _ = valida(files)
+    if errors:
+        print("::error:: valida() torna errors — NO es congela:")
+        for e in errors:
+            print(f"  {e}")
+        return 1
+
+    esperat = construeix_banc_congelat(files)
+    if args.congela:
+        BANC_CONGELAT_PATH.write_text(_serialitza_banc_congelat(files), encoding="utf-8", newline="\n")
+        print(f"banc congelat escrit: {BANC_CONGELAT_PATH.name} ({len(esperat['banc'])} files)")
+        return 0
+
+    # --check: comparació SEMÀNTICA (immune a finals de línia), no de bytes.
+    if not BANC_CONGELAT_PATH.exists():
+        print(f"::error:: no existeix {BANC_CONGELAT_PATH.name} — corre --congela")
+        return 1
+    actual = json.loads(BANC_CONGELAT_PATH.read_text(encoding="utf-8"))
+    if actual != esperat:
+        print("::error:: el banc congelat ha DERIVAT del full — regenera amb --congela")
+        return 1
+    print(f"banc congelat al dia ({len(esperat['banc'])} files, 0 errors de validació)")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(_main())

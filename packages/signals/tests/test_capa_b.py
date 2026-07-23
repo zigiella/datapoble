@@ -2,13 +2,16 @@
 
 Tres guardes, per aquest ordre d'importància:
 
-1. **Anti-pre-etiquetatge (C4 §2 v2, vinculant):** cap `golden`/`semafor`/`motiu`
-   a les fixtures, les tres columnes de la direcció BUIDES al full, ordre
-   mecànic. Qui etiqueta és NOMÉS la direcció humana, sobre A+B juntes.
-2. **Transcripció mecànica fixtures↔taula** (patró `test_parafrasis`): la segona
-   taula de `docs/ajuntaments/banc-c4-etiquetatge.md` és exactament
-   `render_fila_taula()` de cada entrada — si algú edita una fila a mà o toca la
-   fixture sense regenerar, això cau.
+1. **Anti-pre-etiquetatge de la COMPOSICIÓ (C4 §2 v2, vinculant):** cap
+   `golden`/`semafor`/`motiu` a les fixtures, ordre mecànic. Qui etiqueta és NOMÉS la
+   direcció humana, sobre A+B juntes. *(La guarda germana que exigia les columnes del full
+   BUIDES es va retirar a la congelació —Bea ja ha etiquetat— i la substitueix la fidelitat
+   full↔JSON congelat de test_banc_c4.py; vegeu el comentari on vivia.)*
+2. **Transcripció mecànica fixtures↔taula** (patró `test_parafrasis`): les 7 columnes
+   de dada (num…termini) de la segona taula de
+   `docs/ajuntaments/banc-c4-etiquetatge.md` són exactament `render_fila_taula()` de cada
+   entrada — si algú edita una fila a mà o toca la fixture sense regenerar, això cau. Les 3
+   columnes d'etiqueta les posa Bea i es comparen a part (congelades).
 3. **La trampa de noms:** «Sant Salvador de Guardiola» (Bages) ≠ «Guardiola de
    Berguedà». Les #9–10 de la capa A l'exerceixen; aquí queda l'àncora que un
    matching per substring confondria els dos municipis (avís per a R2).
@@ -52,7 +55,12 @@ def _files_b_del_doc() -> list[str]:
 # --- 1. La guarda anti-pre-etiquetatge (C4 §2 v2) -----------------------------
 
 def test_cap_entrada_porta_golden_ni_cap_altre_camp_de_judici():
-    """La fixture no pot contenir NI el camp: l'etiqueta és de la direcció."""
+    """La fixture no pot contenir NI el camp: l'etiqueta és de la direcció.
+
+    Aquesta guarda ES QUEDA després de la congelació: protegeix la COMPOSICIÓ (que
+    Sondeig arxiva sense etiquetar), no l'estat del full. Les etiquetes viuen NOMÉS al
+    full de Bea i al banc congelat, mai a les fixtures del repositori de la capa B.
+    """
     prohibides = {"golden", "semafor", "semafor_esperat", "motiu", "motiu_daurat", "elegible"}
     for c in CONVOCATORIES_B:
         assert set(c.keys()) == {"programa", "busqueda", "detall"}
@@ -62,9 +70,14 @@ def test_cap_entrada_porta_golden_ni_cap_altre_camp_de_judici():
         assert not (prohibides & set(c["busqueda"].keys()))
 
 
-def test_les_tres_columnes_de_la_direccio_son_buides_al_full():
-    for fila in _files_b_del_doc():
-        assert fila.endswith("| | | |"), f"columnes golden/semafor/motiu NO buides: {fila[:80]}"
+# RETIRAT (2026-07-20, congelació del banc): test_les_tres_columnes_de_la_direccio_son_buides_al_full
+# assertava que les columnes golden/semafor/motiu del full eren BUIDES — va complir la
+# seva funció el dia que va néixer (impedir el pre-etiquetatge) i fins que Bea va etiquetar
+# les 66 files (C4 §2 v2). Ara és FALSA PER DISSENY: el full JA porta etiquetes. La guarda
+# que la substitueix viu a test_banc_c4.py (test_el_banc_congelat_coincideix_amb_el_full_i_no_deriva):
+# congela el sentit contrari —el JSON d'or ha de coincidir amb el full etiquetat—, així ni
+# el full ni el JSON deriven en silenci. NO es retira la guarda de composició de sobre
+# (les FIXTURES segueixen sense etiquetes): només la que congelava el DOC sense etiquetar.
 
 
 def test_ordre_mecanic_per_codi_cap_ordenacio_per_encaix():
@@ -92,13 +105,31 @@ def test_el_recompte_per_programa_coincideix_amb_les_consultes_declarades():
 
 # --- 2. Transcripció mecànica fixtures ↔ taula (patró test_parafrasis) --------
 
+def _sense_etiquetes(fila: str) -> str:
+    """Treu les 3 columnes finals (golden/semafor/motiu) — de la direcció, no mecàniques.
+
+    Post-congelació el full JA porta les etiquetes de Bea, així que la comparació de
+    transcripció mecànica es fa sobre les 7 columnes de dada (num…termini): la resta és
+    judici humà, congelat a part (test_banc_c4.py). Les etiquetes no porten mai `|` (si en
+    portessin, el parser del transcriptor petaria i valida() ho cridaria)."""
+    return re.sub(r"\|[^|]*\|[^|]*\|[^|]*\|\s*$", "|", fila)
+
+
 def test_la_taula_del_doc_es_exactament_la_render_de_les_fixtures():
-    """Cap fila editada a mà, cap fila de més, cap de menys, mateix ordre."""
+    """Cap fila editada a mà, cap fila de més, cap de menys, mateix ordre.
+
+    La comparació és sobre les columnes MECÀNIQUES (num…termini): les 3 columnes
+    d'etiqueta les posa Bea al full i divergeixen de la fixture PER DISSENY des de la
+    congelació — la seva fidelitat la guarda test_banc_c4.py (full↔JSON congelat)."""
     del_doc = _files_b_del_doc()
     generades = taula_capa_b(primer_num=27)
     assert len(del_doc) == len(generades) == len(CONVOCATORIES_B) == 40
     for i, (fd, fg) in enumerate(zip(del_doc, generades)):
-        assert fd == fg, f"fila {27 + i} divergeix de la fixture:\n  doc: {fd}\n  gen: {fg}"
+        fd_mec, fg_mec = _sense_etiquetes(fd), _sense_etiquetes(fg)
+        assert fd_mec == fg_mec, (
+            f"fila {27 + i} divergeix de la fixture (columnes mecàniques):\n"
+            f"  doc: {fd_mec}\n  gen: {fg_mec}"
+        )
 
 
 def test_la_numeracio_continua_la_capa_a():
