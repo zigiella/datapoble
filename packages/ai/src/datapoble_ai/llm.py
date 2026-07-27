@@ -213,15 +213,9 @@ class OpenRouterBackend(LLMBackend):
         self.last_call_used_llm = False
         self.last_call_generation = None
 
-        # --- (0) political gate: resolve unlock once, strip the secret word ----
-        # Mirrors Router.ask: the gate keys off the resolved metric, but the
-        # *unlock* decision needs the raw question (before the word is removed).
-        # We decide it here and strip the word so it never reaches the router's
-        # keyword matching nor the LLM prompt; the decision is threaded into the
-        # shared executor below.
-        unlocked = self.router.politics_gate.is_unlocked(question)
-        if unlocked:
-            question = self.router.politics_gate.strip_unlock(question)
+        # The political gate is applied inside the shared Router executor and is
+        # unconditional (Bea revoked the runtime unlock key on 2026-07-27): a
+        # vote metric is refused discreetly no matter which backend resolved it.
 
         # --- (1) deterministic-first: keep free LLM-free answers free ---------
         # The keyword router resolves most real questions (lookup / ranking /
@@ -229,7 +223,7 @@ class OpenRouterBackend(LLMBackend):
         # municipality) at zero cost. Only when it can't even find a metric do
         # we pay for the LLM, which may parse phrasing the router missed.
         if self.deterministic_first:
-            parsed = self.router.parse(question, loc, unlocked=unlocked)
+            parsed = self.router.parse(question, loc)
             if isinstance(parsed, RefusalReason):
                 if parsed not in _ESCALATABLE_REFUSALS:
                     return self.router._refuse(question, loc, parsed, self.name)
@@ -237,7 +231,7 @@ class OpenRouterBackend(LLMBackend):
             else:
                 # A confident structured interpretation — execute it offline.
                 return self.router.execute_intent(
-                    question, loc, parsed, self.name, unlocked=unlocked)
+                    question, loc, parsed, self.name)
 
         # --- (2) hard spend cap: stop before the network if over the ceiling --
         if self.spend_guard is not None and not self.spend_guard.can_spend(
@@ -267,7 +261,7 @@ class OpenRouterBackend(LLMBackend):
         self.last_call_used_llm = True  # pragma: no cover - needs key
         self._record_generation(resp)  # pragma: no cover - needs key
         self._record_spend(resp)  # pragma: no cover - needs key
-        answer = self._dispatch(question, loc, resp, unlocked)  # pragma: no cover - needs key
+        answer = self._dispatch(question, loc, resp)  # pragma: no cover - needs key
         if answer.is_answer:  # pragma: no cover - needs key
             answer.generation = self.last_call_generation  # pragma: no cover - needs key
         return answer  # pragma: no cover - needs key
@@ -307,13 +301,12 @@ class OpenRouterBackend(LLMBackend):
                     cost = actual
         self.spend_guard.record(cost)
 
-    def _dispatch(self, question: str, locale: str, resp,
-                  unlocked: bool = False) -> Answer:  # pragma: no cover - needs key
+    def _dispatch(self, question: str, locale: str, resp) -> Answer:  # pragma: no cover - needs key
         """Turn the model's tool call into a guarded Router execution.
 
-        ``unlocked`` carries the political-gate decision made on the raw question
-        in :meth:`ask` (before the secret word was stripped), so the LLM path
-        honours the same gate as the offline path.
+        The political gate is applied inside :meth:`Router.execute_intent` and is
+        unconditional, so the LLM path honours the same discreet vote refusal as
+        the offline path.
         """
         choice = resp.choices[0].message
         tool_calls = getattr(choice, "tool_calls", None) or []
@@ -351,4 +344,4 @@ class OpenRouterBackend(LLMBackend):
             want_list=args.get("want_list", False),
         )
         return self.router.execute_intent(
-            question, locale, intent, self.name, unlocked=unlocked)
+            question, locale, intent, self.name)

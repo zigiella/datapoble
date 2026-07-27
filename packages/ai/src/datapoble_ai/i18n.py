@@ -64,7 +64,7 @@ PHRASES: dict[str, dict[str, str]] = {
         ),
         # Retirada ≠ pendent. Dir «encara no» d'una mètrica deprecada és
         # prometre que tornarà, i la decisió va ser justament que no.
-        # (Còpia pendent del vot narratiu de Bea.)
+        # (Còpia ratificada pel vot narratiu de Bea, 2026-07-27.)
         "refusal_deprecated": (
             "La mètrica «{label}» va estar publicada però s'ha retirat del "
             "catàleg, així que ja no la consulto. No tornarà en aquesta forma."
