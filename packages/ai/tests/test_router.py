@@ -144,15 +144,20 @@ def test_qualifier_variant_does_not_steal_the_metric(agent):
     assert ans.metric_key == "kg_hab_any"
 
 
-def test_note_caveat_surfaced_for_political_metric(monkeypatch):
-    # pct_indep carries an "ecological reading" caveat note in the contract.
-    # Vote metrics are gated off by default (see test_politics.py), so to reach
-    # the answer (and its note) we must unlock the gate with the secret word.
+def test_vote_metric_is_gated_and_its_caveat_never_leaks(monkeypatch):
+    # pct_indep carries an "ecological reading" caveat in the contract. That
+    # caveat must NEVER reach a reader through the agent: vote metrics are held
+    # back unconditionally, and Bea revoked the runtime unlock key (2026-07-27).
+    # Setting the dead env var and inlining the old secret word changes nothing —
+    # the question is refused discreetly, and neither the caveat nor the metric
+    # name surfaces. (Note-surfacing for non-political inference metrics is
+    # covered in test_doctrine.py.)
     monkeypatch.setenv("AI_POLITICS_UNLOCK", "obretesim")
     with Agent(mode="offline", use_fixtures=True) as a:
         ans = a.ask("obretesim Quin municipi té més % vot independentista?", locale="ca")
-    assert ans.kind == AnswerKind.ANSWER
-    assert "ecol" in ans.text.lower() or "ECOL" in ans.text   # nota present
-    # The secret word must never echo back in the answer or the question.
-    assert "obretesim" not in ans.text.lower()
-    assert "obretesim" not in ans.question.lower()
+    assert ans.kind == AnswerKind.REFUSAL
+    assert ans.refusal_reason.value == "political_gated"
+    lowered = ans.text.lower()
+    assert "ecol" not in lowered                 # the caveat never leaks
+    assert "independentista" not in lowered      # the metric is never named
+    assert "obretesim" not in lowered            # the dead word never echoes

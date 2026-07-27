@@ -30,7 +30,7 @@ from dataclasses import dataclass
 
 from .catalog import Catalog, Metric, normalize
 from .i18n import format_number, t
-from .politics import PoliticsGate, is_political_metric
+from .politics import is_political_metric
 from .types import (
     Answer,
     AnswerKind,
@@ -111,14 +111,13 @@ class Intent:
 class Router:
     """The deterministic agent backend."""
 
-    def __init__(self, catalog: Catalog, warehouse: Warehouse,
-                 politics_gate: PoliticsGate | None = None):
+    def __init__(self, catalog: Catalog, warehouse: Warehouse):
         self.catalog = catalog
         self.warehouse = warehouse
-        # The political gate (see politics.py). Read from the env by default so
-        # the secret is runtime-only; a gate with no word configured stays sealed
-        # for every vote question (fail-safe). Injectable for deterministic tests.
-        self.politics_gate = politics_gate or PoliticsGate.from_env()
+        # The political gate lives in `execute_intent` / `parse` and keys off the
+        # resolved metric's dimension (see politics.is_political_metric). It is
+        # unconditional: Bea revoked the runtime unlock key on 2026-07-27, so
+        # there is no gate object to construct and no state to carry.
         # Precompute the municipality directory from the marts so we can resolve
         # toponyms. Falls back gracefully if a mart lacks `municipi`.
         self._muni_index = self._build_muni_index()
@@ -166,39 +165,18 @@ class Router:
         return merged
 
     # -------------------------------------------------------------- matching
-    @staticmethod
-    def _is_eligible(metric: Metric, include_keyed: bool) -> bool:
-        """Whether ``metric`` may be resolved by the matcher on this call.
-
-        Normally: only what the agent advertises (:meth:`Metric.is_available`).
-        With ``include_keyed`` — set when the political gate has been opened by
-        the runtime secret — a held-back-but-keyed metric becomes resolvable
-        too, provided it is actually computed. Without this, unlocking would
-        stop working the moment ``politica`` became a held-back dimension: the
-        matcher would never surface the metric for the gate to let through.
-        """
-        if metric.is_available():
-            return True
-        return (
-            include_keyed
-            and metric.is_held_back
-            and metric.is_keyed
-            and metric.is_computed()
-        )
-
     def match_metric(self, question_norm: str, locale: str,
-                     exclude: Metric | None = None,
-                     include_keyed: bool = False) -> Metric | None:
+                     exclude: Metric | None = None) -> Metric | None:
         """Best catalog metric whose label/synonym appears in the question.
 
         Longest match wins (most specific phrase). Only *available* metrics are
-        eligible here (plus keyed ones when ``include_keyed``); ``planned`` and
-        held-back metrics are matched separately so we can give a precise
-        refusal instead of a bare "out of catalog".
+        eligible here; ``planned`` and held-back metrics (``origen``,
+        ``politica``) are matched separately so we can give a precise refusal
+        instead of a bare "out of catalog".
         """
         best: tuple[int, Metric] | None = None
         for metric in self.catalog.metrics.values():
-            if not self._is_eligible(metric, include_keyed):
+            if not metric.is_available():
                 continue
             if exclude is not None and metric.key == exclude.key:
                 continue
@@ -211,7 +189,7 @@ class Router:
         return best[1] if best else None
 
     def _matched_metrics_by_position(
-        self, question_norm: str, locale: str, include_keyed: bool = False
+        self, question_norm: str, locale: str
     ) -> list[tuple[int, int, Metric]]:
         """Available metrics that match, as ``(position, -length, metric)``.
 
@@ -221,7 +199,7 @@ class Router:
         """
         found: list[tuple[int, int, Metric]] = []
         for metric in self.catalog.metrics.values():
-            if not self._is_eligible(metric, include_keyed):
+            if not metric.is_available():
                 continue
             earliest: tuple[int, int] | None = None
             for term in metric.match_terms(locale):
@@ -296,14 +274,8 @@ class Router:
         return False
 
     # ---------------------------------------------------------------- parse
-    def parse(self, question: str, locale: str,
-              unlocked: bool = False) -> Intent | RefusalReason:
-        """Turn a question into an :class:`Intent`, or a refusal reason.
-
-        ``unlocked`` carries the political gate's decision (see
-        :meth:`ask`). It widens the matcher to keyed metrics so an unlocked vote
-        question can still resolve; it changes nothing else.
-        """
+    def parse(self, question: str, locale: str) -> Intent | RefusalReason:
+        """Turn a question into an :class:`Intent`, or a refusal reason."""
         qn = normalize(question)
 
         corr_cues = _CORR_CUES.get(locale, _CORR_CUES["ca"])
@@ -313,7 +285,7 @@ class Router:
 
         # --- correlation: two distinct metrics + a relationship cue ---
         if self._has_cue(qn, corr_cues):
-            ordered = self._matched_metrics_by_position(qn, locale, unlocked)
+            ordered = self._matched_metrics_by_position(qn, locale)
             if len(ordered) >= 2:
                 # Primary = first to appear in the question; secondary = next.
                 m1 = ordered[0][2]
@@ -321,7 +293,7 @@ class Router:
                 return Intent(kind="correlation", metric=m1, metric_b=m2)
 
         # --- otherwise we need one primary metric ---
-        metric = self.match_metric(qn, locale, include_keyed=unlocked)
+        metric = self.match_metric(qn, locale)
         if metric is None:
             # Did it match a planned/held-back metric? Give a precise refusal.
             any_metric = self._match_any_metric(qn, locale)
@@ -397,55 +369,34 @@ class Router:
         executor.
         """
         loc = self.catalog.resolve_locale(locale)
-        # Political gate (resolution layer): if the secret word is present we
-        # open the gate AND strip the word *before* routing, so it can never
-        # pollute keyword matching nor echo back. The cleaned question is what we
-        # parse, display and pass downstream.
-        unlocked = self.politics_gate.is_unlocked(question)
-        if unlocked:
-            question = self.politics_gate.strip_unlock(question)
-        parsed = self.parse(question, loc, unlocked=unlocked)
+        parsed = self.parse(question, loc)
         if isinstance(parsed, RefusalReason):
             return self._refuse(question, loc, parsed, backend)
-        return self.execute_intent(question, loc, parsed, backend, unlocked=unlocked)
+        return self.execute_intent(question, loc, parsed, backend)
 
     def execute_intent(self, question: str, locale: str, intent: Intent,
-                       backend: str, unlocked: bool | None = None) -> Answer:
+                       backend: str) -> Answer:
         """Execute a (trusted, already-validated) intent under the guardrails.
 
-        Shared by the offline router and the OpenRouter backend. Re-checks
-        metric availability defensively, applies the political gate, then runs
-        the parametrized read-only SQL. Any guardrail violation surfaces as a
+        Shared by the offline router and the OpenRouter backend. Applies the
+        political gate, re-checks metric availability defensively, then runs the
+        parametrized read-only SQL. Any guardrail violation surfaces as a
         reasoned refusal, never an exception to the caller.
-
-        ``unlocked`` carries the political-gate decision from the entrypoint
-        (which saw the raw question before the secret word was stripped). When
-        ``None`` (a direct caller that did not pre-compute it) we evaluate it
-        from ``question`` here, so the gate holds for every path into the
-        executor — including the OpenRouter backend.
         """
         loc = self.catalog.resolve_locale(locale)
-        if unlocked is None:
-            unlocked = self.politics_gate.is_unlocked(question)
         # Political gate: a resolved vote-orientation metric (dimension: politica)
-        # is refused, neutrally and discreetly, unless the gate was unlocked.
-        if not unlocked:
-            for m in (intent.metric, intent.metric_b):
-                if is_political_metric(m):
-                    return self._refuse(
-                        question, loc, RefusalReason.POLITICAL_GATED, backend)
+        # is refused, neutrally and discreetly — **unconditionally**. Bea revoked
+        # the runtime unlock key on 2026-07-27, so there is no bypass. This runs
+        # BEFORE the availability re-check below so a vote metric always takes
+        # the discreet door (which names nothing), never the `planned`/
+        # `deprecated` refusal (which would name the metric back to the reader).
+        for m in (intent.metric, intent.metric_b):
+            if is_political_metric(m):
+                return self._refuse(
+                    question, loc, RefusalReason.POLITICAL_GATED, backend)
         # Defensive availability re-check (the LLM path could pass anything).
         for m in (intent.metric, intent.metric_b):
             if m is None:
-                continue
-            if unlocked and is_political_metric(m):
-                # The gate above already let this through. Hold-back does not
-                # apply to an unlocked call, but "computed" still does: an
-                # unlocked `pct_extrema_dreta` has no data to serve, and must
-                # refuse discreetly rather than name itself.
-                if not m.is_computed():
-                    return self._refuse(question, loc,
-                                        RefusalReason.POLITICAL_GATED, backend)
                 continue
             if not m.is_available():
                 return self._refuse(question, loc, self._unserved_reason(m),

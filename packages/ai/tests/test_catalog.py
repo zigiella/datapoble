@@ -51,20 +51,19 @@ def test_match_terms_include_synonyms_accent_folded(catalog):
 def test_tables_only_reference_served_metrics(catalog):
     tables = catalog.tables()
     assert "mart_municipi" in tables
-    # mart_electoral stays in the SQL allow-list even though `politica` is held
-    # back: the dimension is KEYED, so the unlocked path has to be able to
-    # execute. The allow-list bounds the blast radius; it is not the policy
-    # gate. (This test used to assert the same line for the opposite reason —
-    # back when the electoral metrics were simply available.)
-    assert "mart_electoral" in tables
-    # mart_demografia is where the `origen` metrics live. That dimension has no
-    # key, so nothing can reach it and it drops out of the allow-list entirely.
-    origen_tables = {
-        m.table for m in catalog.metrics.values() if m.dimension == "origen"
+    # Both held-back dimensions drop out of the SQL allow-list entirely, because
+    # neither has a key any more. `mart_electoral` used to stay in for the
+    # unlocked political path to execute against; Bea revoked that key
+    # (2026-07-27), so no SQL path can touch a vote mart at all.
+    assert "mart_electoral" not in tables
+    # `mart_demografia` is where the `origen` metrics live — same story, always.
+    held_back_tables = {
+        m.table for m in catalog.metrics.values()
+        if m.dimension in ("origen", "politica")
     }
-    assert origen_tables, "no origen metrics (test would be vacuous)"
-    assert tables.isdisjoint(origen_tables), (
-        f"unkeyed held-back tables in the SQL allow-list: {origen_tables & tables}"
+    assert held_back_tables, "no held-back metrics (test would be vacuous)"
+    assert tables.isdisjoint(held_back_tables), (
+        f"held-back tables in the SQL allow-list: {held_back_tables & tables}"
     )
 
 
@@ -93,11 +92,12 @@ def test_origen_metrics_are_held_back_from_agent(catalog):
 
 def test_politica_metrics_are_held_back_from_agent(catalog):
     # Bea's call, 2026-07-20: electoral goes behind the fence. A refusal already
-    # existed at the ANSWER layer (politics.PoliticsGate), but it keys off a
-    # *resolved* metric, so every surface that merely enumerates the catalog
+    # existed at the ANSWER layer (politics.is_political_metric), but it keys off
+    # a *resolved* metric, so every surface that merely enumerates the catalog
     # walked around it and advertised what the agent would then refuse. This is
     # the gate at the catalog, where enumeration happens. Sibling of the origen
-    # guard above; the difference is that politica is KEYED (see below).
+    # guard above — and, since Bea revoked the key (2026-07-27), just as
+    # unconditional (see test_both_held_back_dimensions_are_unconditional).
     politica = [m for m in catalog.metrics.values() if m.dimension == "politica"]
     assert politica, "no politica-dimension metrics in the contract (test would be vacuous)"
     for m in politica:
@@ -111,21 +111,20 @@ def test_politica_metrics_are_held_back_from_agent(catalog):
         assert m.is_available() is False, key
 
 
-def test_politica_is_held_back_but_keyed_origen_is_not(catalog):
-    # The two held-back dimensions are NOT the same door, and the difference is
-    # load-bearing: `origen` is unconditional (no escape hatch until the origen
-    # frontier of task #71 exists), `politica` is openable with the runtime
-    # secret PoliticsGate reads. Collapsing them would have silently revoked a
-    # key that is Bea's to revoke, not this layer's.
-    keyed = {m.key for m in catalog.keyed_metrics()}
-    # Computed politica metrics are keyed...
-    assert "pct_indep" in keyed and "guanya" in keyed
-    # ...but a planned one has no data to open, key or not.
-    assert "pct_extrema_dreta" not in keyed
-    # ...and origen is never keyed.
-    for m in catalog.metrics.values():
-        if m.dimension == "origen":
-            assert m.key not in keyed, f"{m.key} (origen) must have no key"
+def test_both_held_back_dimensions_are_unconditional(catalog):
+    # The two held-back dimensions are now the SAME door: unconditional, no key.
+    # `politica` used to be openable with the runtime secret; Bea revoked that
+    # key (2026-07-27), so it is held back exactly like `origen` — until the
+    # origen frontier of task #71 exists for one, and forever for votes.
+    #
+    # There is no `keyed_metrics()` and no `Metric.is_keyed` any more: proving
+    # they are gone is proving the key cannot come back as data.
+    assert not hasattr(catalog, "keyed_metrics")
+    for key in ("pct_indep", "guanya", "pct_esquerra", "pct_extrema_dreta"):
+        m = catalog.metric(key)
+        assert m is not None and m.is_held_back
+        assert m.is_available() is False, f"{key} (politica) must never be available"
+        assert not hasattr(m, "is_keyed"), "Metric.is_keyed must be gone"
 
 
 def test_deprecated_metrics_are_not_available(catalog):

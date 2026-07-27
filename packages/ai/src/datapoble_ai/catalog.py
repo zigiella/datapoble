@@ -55,29 +55,23 @@ NOT_SERVED_STATUSES: frozenset[str] = frozenset({"planned", "deprecated"})
 #: (:meth:`Catalog.tables` -> ``Warehouse.allowed_tables``), the "metrics I can
 #: answer" list in the out-of-catalog refusal, and the ``/metrics`` endpoint.
 #:
-#: - ``origen`` (nationality / birthplace / naturalisation) — **unconditional**.
-#:   Held until the origen frontier exists: the guardrail that refuses
-#:   individual-level, causal or ethnic-framing queries and enforces the
-#:   ecological, non-«extranjería» reading (task #71).
-#: - ``politica`` (vote orientation) — **conditional**, see
-#:   :data:`KEYED_DIMENSIONS`. Bea's call, 2026-07-20: electoral goes behind the
-#:   fence. A refusal already existed at the answer layer
-#:   (:class:`~datapoble_ai.politics.PoliticsGate`), but it keys off a *resolved*
-#:   metric, so every path that merely *enumerates* the catalog walked around it
-#:   and advertised what the agent would then refuse.
+#: **Both dimensions are now unconditional** — there is no runtime key for either.
+#:
+#: - ``origen`` (nationality / birthplace / naturalisation). Held until the origen
+#:   frontier exists: the guardrail that refuses individual-level, causal or
+#:   ethnic-framing queries and enforces the ecological, non-«extranjería»
+#:   reading (task #71).
+#: - ``politica`` (vote orientation). Bea's call, 2026-07-20: electoral goes
+#:   behind the fence. A refusal already existed at the answer layer
+#:   (:func:`~datapoble_ai.politics.is_political_metric` in the router), but it
+#:   keys off a *resolved* metric, so every path that merely *enumerates* the
+#:   catalog walked around it and advertised what the agent would then refuse —
+#:   holding the dimension back here closes those enumeration paths too.
+#:   **Bea revoked the runtime key on 2026-07-27** (*«revocar la clau; tot el vot
+#:   polític, fora»*): ``politica`` is now held back exactly like ``origen``,
+#:   with no escape hatch. The old ``KEYED_DIMENSIONS`` / ``AI_POLITICS_UNLOCK``
+#:   plumbing is gone.
 HELD_BACK_DIMENSIONS: frozenset[str] = frozenset({"origen", "politica"})
-
-#: The held-back dimensions a runtime key can still open.
-#:
-#: ``politica`` is gated, not removed: :class:`~datapoble_ai.politics.PoliticsGate`
-#: opens it for a question carrying the secret read from ``AI_POLITICS_UNLOCK``.
-#: Whether the team keeps that key is Bea's call, not this module's — so the
-#: hold-back deliberately does **not** revoke it. The practical consequence is
-#: that the tables of these dimensions must stay in the SQL allow-list (see
-#: :meth:`Catalog.tables`), or the unlocked path would die at the guardrail.
-#:
-#: ``origen`` is *not* here: it has no key, so its tables leave the allow-list.
-KEYED_DIMENSIONS: frozenset[str] = frozenset({"politica"})
 
 
 def _repo_root() -> Path:
@@ -208,22 +202,14 @@ class Metric:
         """
         return self.dimension in HELD_BACK_DIMENSIONS
 
-    @property
-    def is_keyed(self) -> bool:
-        """True when a runtime key can still open this held-back metric.
-
-        See :data:`KEYED_DIMENSIONS`. Only meaningful together with
-        :attr:`is_held_back`.
-        """
-        return self.dimension in KEYED_DIMENSIONS
-
     def is_computed(self) -> bool:
         """True when the pipeline actually produces this metric.
 
         Ignores the hold-back gate on purpose: this is the question "is there a
-        number behind this key?", not "may the agent show it?". The unlocked
-        political path checks *this* — a held-back metric may be openable with a
-        key, but a ``planned`` one has no data to open.
+        number behind this key?", not "may the agent show it?". Kept distinct
+        from :meth:`is_available` because ``planned`` (no data yet) and
+        ``deprecated`` (retired) are not the same failure as a held-back
+        dimension — the refusals must name them differently.
         """
         return self.visibility == "public" and self.status not in NOT_SERVED_STATUSES
 
@@ -372,32 +358,20 @@ class Catalog:
         """
         return [m for m in self.metrics.values() if m.is_available()]
 
-    def keyed_metrics(self) -> list[Metric]:
-        """Computed metrics that are held back but a runtime key can open.
-
-        See :data:`KEYED_DIMENSIONS`. Never advertised; reachable only once
-        :class:`~datapoble_ai.politics.PoliticsGate` has opened.
-        """
-        return [
-            m for m in self.metrics.values()
-            if m.is_held_back and m.is_keyed and m.is_computed()
-        ]
-
     def tables(self) -> set[str]:
         """The set of mart tables the SQL layer may touch (guardrail).
 
-        Available metrics **plus** the keyed ones. The keyed tables have to be
-        here or the unlocked political path would be built, then rejected by the
-        allow-list — a confusing failure for a route that is meant to work.
+        Exactly the tables of the **available** metrics. This allow-list is a
+        *blast-radius* bound (no SQL outside contract tables), not the policy
+        gate — who may read a table is decided above, at :meth:`Metric.is_available`
+        and in the router.
 
-        This allow-list is a *blast-radius* bound (no SQL outside contract
-        tables), not the policy gate. Who may read a keyed table is decided
-        above, at :meth:`Metric.is_available` and in the router. Note what this
-        does exclude: ``origen`` has no key, so ``mart_demografia`` drops out of
-        the allow-list entirely.
+        Both held-back dimensions drop out entirely: ``mart_demografia``
+        (``origen``) and ``mart_electoral`` (``politica``) are unreachable, since
+        the runtime key that used to keep the electoral table here was revoked
+        (Bea, 2026-07-27). No SQL path can touch a vote mart at all.
         """
-        served = self.available_metrics() + self.keyed_metrics()
-        return {m.table for m in served if m.table}
+        return {m.table for m in self.available_metrics() if m.table}
 
     def resolve_locale(self, locale: str | None) -> str:
         """Coerce a requested locale into a supported one."""

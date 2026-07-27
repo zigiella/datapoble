@@ -40,11 +40,12 @@ def _agent(catalog, narrator) -> Agent:
 # --- politics.py rules over the generative layer (C5 §4) ----------------------
 
 
-def test_no_generative_answer_about_a_vote_metric(catalog, monkeypatch):
-    """The gate holds *before* any model is asked to write about a vote.
+def test_dead_env_var_cannot_open_generative_prose_about_a_vote(catalog, monkeypatch):
+    """No model ever writes about a vote — the dead unlock word cannot reopen it.
 
-    The unlock opens the deterministic answer; it never opens a model's prose
-    about how a municipality voted. `politics.py` is untouched and wins.
+    The unlock key was revoked (Bea, 2026-07-27): a vote question is refused, so
+    no deterministic answer exists to narrate and no model is called. Setting the
+    dead env var and inlining the old word changes nothing.
     """
     monkeypatch.setenv("AI_POLITICS_UNLOCK", "obrelaporta")
     redactor = ScriptedBackend(["ACCIO: RESPONDRE\nprosa que no s'ha d'escriure"])
@@ -55,13 +56,35 @@ def test_no_generative_answer_about_a_vote_metric(catalog, monkeypatch):
         ans = a.ask("Quin municipi té més vot independentista? obrelaporta",
                     locale="ca")
 
-    # The unlock worked (the deterministic answer exists)...
-    assert ans.is_answer
-    assert ans.metric_key == "pct_indep"
-    # ...but nothing generative was produced, and no model was even called.
-    assert ans.narration["status"] == "fallback_political_gate"
+    # The question is refused (the key is gone), and refusals are never dressed.
+    assert ans.is_refusal
+    assert ans.refusal_reason.value == "political_gated"
+    assert ans.narration["status"] == "fallback_refusal"
+    # No model was asked to write about a vote.
     assert redactor.calls == [], "a model was asked to write about a vote"
     assert validator.calls == []
+    assert "obrelaporta" not in ans.text.lower()
+
+
+def test_narrator_refuses_to_dress_a_political_answer(catalog):
+    """Defence in depth: even a (hypothetical) political ANSWER is never narrated.
+
+    The router gate means a vote metric never reaches an answer, so this path is
+    unreachable in normal flow — but the narrator keeps its own wall. If an
+    Answer with a vote metric ever arrived, `can_narrate` refuses it, keyed off
+    the resolved metric's dimension, with no model call.
+    """
+    from datapoble_ai.types import Answer, AnswerKind
+
+    narrator = _narrator(catalog, ["ACCIO: RESPONDRE\nno s'ha d'escriure"], [OK])
+    political = Answer(
+        kind=AnswerKind.ANSWER, locale="ca", question="(injectat)",
+        backend="offline", text="pct_indep de Berga: 49,1%.",
+        metric_key="pct_indep",
+    )
+    allowed, why = narrator.can_narrate(political)
+    assert allowed is False
+    assert why == "fallback_political_gate"
 
 
 def test_political_gate_still_refuses_without_the_unlock(catalog):

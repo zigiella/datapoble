@@ -24,7 +24,7 @@ from .costcontrol import (
 from .doctrine import OFICIAL, SENYAL, SOROLL, distinguishable, register_for
 from .llm import LLMBackend, OfflineBackend, OpenRouterBackend
 from .narrator import Narrator, OpenRouterNarratorBackend, ScriptedBackend
-from .politics import PoliticsGate, is_political_metric
+from .politics import is_political_metric
 from .types import Answer, AnswerKind, Provenance, RefusalReason
 from .warehouse import Warehouse, WarehouseError
 
@@ -50,7 +50,6 @@ __all__ = [
     "RateLimiter",
     "SpendGuard",
     "normalize_question",
-    "PoliticsGate",
     "is_political_metric",
     # The doctrine and the cage (X1 / contract C5).
     "Cage",

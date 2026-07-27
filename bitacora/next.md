@@ -19,6 +19,19 @@ publicable per si sola.*
 >   passa a retinguda INCONDICIONAL (com `origen`, però sense clau); Talaia marca les mètriques
 >   `dimension: politica` / `source: electoral` com a **deprecades** al contracte perquè no se serveixin
 >   mai i el `mart_electoral` estale deixi de ser una amenaça. Test de regressió que ho manté tancat.
+>   **✅ P-POL (Brúixola) — FETA, PR obert (2026-07-27).** Bitàcola:
+>   `bitacora/2026-07-27_revoca-clau-politica_bruixola.md`. La part de `packages/ai` de la decisió de
+>   Bea: mecanisme de clau **ELIMINAT** del tot (no inertitzat) — `PoliticsGate`, `KEYED_DIMENSIONS`,
+>   `keyed_metrics`, `Metric.is_keyed`, `AI_POLITICS_UNLOCK` i el camí `include_keyed` del router:
+>   fora. `politica` retinguda INCONDICIONAL com `origen`; `mart_electoral` fora de l'allow-list de SQL.
+>   Refús discret CONSERVAT i ara incondicional (verificat: mai el que anomena la mètrica). Guarda de
+>   regressió nova «cap clau latent» (`test_the_key_machinery_no_longer_exists`). 218 tests verds ·
+>   `ruff check` net · diff només a `packages/ai/` · **`semantic/metrics.yml` NO tocat** (la meva part
+>   NO deprecava al contracte: deprecar l'electoral faria caure el vot al refús que ANOMENA la mètrica →
+>   filtraria la seva existència; el correcte és retingut incondicional + clau revocada). **La part de
+>   Talaia (marcar `dimension: politica`/`source: electoral` al contracte) segueix sent seva.** NO
+>   fusiono jo — la clau de merge i la verificació prèvia són de Talaia. **➡️ Handoff a: Mirador** —
+>   `packages/web/src/lib/ask/api.ts`: `RefusalReason` sense `political_gated`/`metric_deprecated`.
 > - **RADAR: APARCAT fins la setmana que ve, i com a PROJECTE A PART.** Tot el track R (R3 semàfor, R4
 >   correu, validació paral·lela, repo privat de sortides) queda congelat aquí. El banc C4 ja està
 >   congelat (#288) i esperarà. NO s'hi treballa fins que Bea ho reobri.
