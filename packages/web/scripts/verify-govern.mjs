@@ -26,14 +26,24 @@ const REPO = resolve(__dirname, '../../..');
 const WEB = resolve(__dirname, '..');
 
 const read = (p) => JSON.parse(readFileSync(p, 'utf8'));
+const POBLA = '08166';
 const dataset = read(resolve(REPO, 'data/web/municipis.bergueda.json'));
-const govern = read(resolve(REPO, 'data/web/govern.bergueda.json'));
-const tauler = read(resolve(REPO, 'data/web/tauler.bergueda.json'));
+// P-947: el front ja NO consumeix els monòlits del Berguedà. Es verifica el que la fitxa LLEGEIX
+// ARA: el rang comarcal dels 947 (`govern.catalunya.json`, {ine5: GovernEntry}) i el tauler pel
+// SHARD del municipi (`tauler/<ine5>.json` = el `TaulerEntry` directe) + el sidecar compartit
+// (`tauler/_meta.json`, on el bloc consumit és `_meta`). Es reconstrueix aquí la forma
+// `{_meta, municipis}` que la resta del verificador espera, a partir del que se serveix — sense
+// tornar a llegir cap monòlit.
+const govern = read(resolve(REPO, 'data/web/govern.catalunya.json'));
+const taulerMetaFile = read(resolve(REPO, 'data/web/tauler/_meta.json'));
+const tauler = {
+	_meta: taulerMetaFile._meta,
+	municipis: { [POBLA]: read(resolve(REPO, `data/web/tauler/${POBLA}.json`)) }
+};
 const ca = read(resolve(WEB, 'messages/ca.json'));
 const es = read(resolve(WEB, 'messages/es.json'));
 
 const metrics = dataset.metrics;
-const POBLA = '08166';
 const fails = [];
 const ok = (cond, msg) => {
 	if (!cond) fails.push(msg);
@@ -74,9 +84,9 @@ for (const k of GOVERN_RANK_KEYS) ok(!!metrics[k], `clau rankejable '${k}' absen
 // 3 · El rang es LLEGEIX del mart i quadra amb el dataset (paritat). Cap KPI de rang buit
 //     hauria de ser NULL a la Pobla (té dada a tots 7).
 const gp = govern[POBLA];
-ok(!!gp, `govern.json sense la Pobla (${POBLA})`);
+ok(!!gp, `govern.catalunya.json sense la Pobla (${POBLA})`);
 if (gp) {
-	ok(gp.comarca === 'Berguedà', `la Pobla no surt al Berguedà al govern.json`);
+	ok(gp.comarca === 'Berguedà', `la Pobla no surt al Berguedà al govern.catalunya.json`);
 	for (const k of GOVERN_RANK_KEYS) {
 		const cell = gp.metrics?.[k];
 		ok(!!cell, `govern[${POBLA}] sense la mètrica '${k}'`);
@@ -143,7 +153,7 @@ for (const kpi of GOVERN_KPIS) {
 
 // 7 · TENDÈNCIA (E6): el tauler ha d'existir amb la Pobla, i CAP entrada pot trencar les regles.
 const tp = tauler.municipis?.[POBLA];
-ok(!!tp, `tauler.bergueda.json sense la Pobla (${POBLA})`);
+ok(!!tp, `shard tauler/${POBLA}.json sense la Pobla (${POBLA})`);
 if (tp) {
 	// 7a · Cap fletxa sense període, i cap 'sense_serie' sense motiu (les dues regles dures).
 	let nAmbSerie = 0;
@@ -305,8 +315,55 @@ for (const kpi of GOVERN_KPIS) {
 	);
 }
 
+// ── P-947 · EL RANG ÉS DE LA SEVA COMARCA, NO DELS 31 ───────────────────────────────────────
+// La promesa de P-947 (Bea, 2026-07-27): el MATEIX tauler per a TOTS els 947, amb el rang «k de n»
+// de la comarca del PROPI municipi. Aquesta guarda ho exerceix sobre un municipi de FORA del
+// Berguedà — Barcelona (Barcelonès) — perquè la resta del verificador mira la Pobla, que és del
+// pilot. Si el rang es filtrés per la llista fixa del Berguedà (31) o pels 947 sencers, el
+// denominador `n_amb_dada` NO cabria dins la seva comarca. El shard del municipi també ha de
+// servir (atur), com per a qualsevol dels 947.
+const territori = read(resolve(REPO, 'data/web/municipis-territori.json'));
+const comarcaSize = {};
+for (const t of Object.values(territori)) {
+	if (t?.comarca) comarcaSize[t.comarca] = (comarcaSize[t.comarca] ?? 0) + 1;
+}
+ok(
+	Object.keys(govern).length > 900,
+	`govern.catalunya.json cobreix ${Object.keys(govern).length} munis, no els ~947`
+);
+const BCN = '08019';
+const gb = govern[BCN];
+ok(!!gb, `govern.catalunya.json sense un municipi de fora del Berguedà (${BCN}, Barcelona)`);
+if (gb) {
+	ok(
+		gb.comarca === 'Barcelonès',
+		`Barcelona (${BCN}) hauria de sortir al Barcelonès, surt a '${gb.comarca}'`
+	);
+	const nCom = comarcaSize[gb.comarca] ?? 0;
+	ok(nCom > 0 && nCom < 31, `mida del ${gb.comarca} inesperada (${nCom}) — hauria de ser < 31 (Berguedà)`);
+	for (const k of GOVERN_RANK_KEYS) {
+		const cell = gb.metrics?.[k];
+		if (!cell || cell.rang == null) continue; // sense dada, res a exigir (el «no» és vàlid)
+		ok(
+			cell.n_amb_dada <= nCom,
+			`rang de '${k}' a Barcelona compta ${cell.n_amb_dada} munis, més que la seva comarca ` +
+				`(${gb.comarca}, ${nCom}): el rang NO seria de la seva comarca`
+		);
+		ok(
+			cell.rang >= 1 && cell.rang <= cell.n_amb_dada,
+			`rang de '${k}' a Barcelona fora de [1, ${cell.n_amb_dada}]`
+		);
+	}
+	// El SHARD d'un municipi de fora del pilot també ha de servir (atur), com per a qualsevol dels 947.
+	const bcnShard = read(resolve(REPO, `data/web/tauler/${BCN}.json`));
+	ok(
+		!!bcnShard?.atur?.darrer?.date,
+		`shard tauler/${BCN}.json sense atur (el tauler no arribaria a Barcelona)`
+	);
+}
+
 if (fails.length) {
-	console.error('VERIFICACIÓ vista de govern: FALLA');
+	console.error('VERIFICACIÓ tauler de dades: FALLA');
 	for (const f of fails) console.error(`  [x] ${f}`);
 	process.exit(1);
 }
@@ -321,5 +378,7 @@ console.log(
 		`atur amb les DUES comparacions i el «<5» com a interval), ` +
 		`${nNaix}/${NAIX_KEYS.length} mètriques de lloc de naixement pintades amb el seu límit ` +
 		`declarat (foto, no sèrie) i l'evolució de nacionalitat etiquetada com a tal, ` +
-		`i18n ca/es complet i sense claus òrfenes, index_turisme fora.`
+		`i18n ca/es complet i sense claus òrfenes, index_turisme fora. ` +
+			`P-947: ${Object.keys(govern).length} munis amb rang, i a Barcelona (fora del pilot) el ` +
+			`rang es de la SEVA comarca (Barcelones) i el shard hi serveix l'atur.`
 );

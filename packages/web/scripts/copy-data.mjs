@@ -19,7 +19,15 @@
  * Ús:  node scripts/copy-data.mjs       (l'invoca `prebuild`/`predev` via npm)
  */
 
-import { copyFileSync, existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import {
+	copyFileSync,
+	existsSync,
+	mkdirSync,
+	readdirSync,
+	readFileSync,
+	statSync,
+	writeFileSync
+} from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -49,14 +57,12 @@ const FILES = [
 	{ src: resolve(REPO_ROOT, 'data/web/pernocta-catalunya.json'), name: 'pernocta-catalunya.json' },
 	{ src: resolve(REPO_ROOT, 'data/web/municipis-territori.json'), name: 'municipis-territori.json' },
 	{ src: resolve(REPO_ROOT, 'data/web/municipis-mirall.json'), name: 'municipis-mirall.json' },
-	{ src: resolve(REPO_ROOT, 'data/web/indicadors-catalunya.json'), name: 'indicadors-catalunya.json' },
-	// Vista de govern (D5): rang «k de n» per comarca LLEGIT del mart_govern (D4) — el front
-	// NO el calcula (C6 §4). El genera `tools/export_govern_web.py` des del parquet versionat.
-	{ src: resolve(REPO_ROOT, 'data/web/govern.bergueda.json'), name: 'govern.json' },
-	// Tauler v2 (D7 · E4/E6): atur mensual (darrer mes + 25 punts) i tendència amb PERÍODE per
-	// mètrica. Mateixa frontera que el rang: es LLEGEIX, no es calcula al front. El genera
-	// `tools/export_tauler_web.py` (amb `--check` cablat al CI des del dia que va néixer).
-	{ src: resolve(REPO_ROOT, 'data/web/tauler.bergueda.json'), name: 'tauler.json' }
+	{ src: resolve(REPO_ROOT, 'data/web/indicadors-catalunya.json'), name: 'indicadors-catalunya.json' }
+	// Vista de govern (D5 → P-947) i tauler v2 (D7 → P-947): NO es copien sencers aquí. El govern es
+	// parteix per municipi a `buildGovernSplit()` (si no, SvelteKit incrustaria els 0,67 MB sencers a
+	// CADA una de les 947×2 pàgines prerenderitzades en fer-ne `fetch` al loader) i el tauler es copia
+	// per shard a `copyTaulerShards()`. El monòlit `govern.bergueda.json` es manté a `data/web/` com a
+	// retrocompat del pipeline de dades, però el web ja no el copia ni el consumeix.
 ];
 
 mkdirSync(DEST_DIR, { recursive: true });
@@ -159,6 +165,34 @@ function buildMuniSplit() {
 }
 
 buildMuniSplit();
+
+/**
+ * Parteix `govern.catalunya.json` (947 munis, `{ine5: GovernEntry}`) en un fitxer PER MUNICIPI a
+ * `static/data/govern/<ine5>.json` (el rang «k de n» de la seva comarca, ~0,3 kB). Per què (EL
+ * MATEIX motiu que `buildMuniSplit`): la fitxa es prerenderitza per muni (947×2) i, si el loader fes
+ * `fetch` del fitxer sencer (0,67 MB), SvelteKit n'INCRUSTARIA la resposta a CADA pàgina per a la
+ * hidratació — 0,67 MB × 1.894 pàgines. Amb un fitxer per muni, cada fitxa només incrusta el SEU
+ * rang. Frontera honesta: la font (`govern.catalunya.json`, de Sondeig) NO es modifica; aquí només
+ * la partim per servir-la, igual que amb `municipis.catalunya.json`. Build-only (static/ gitignored).
+ */
+function buildGovernSplit() {
+	const src = resolve(REPO_ROOT, 'data/web/govern.catalunya.json');
+	if (!existsSync(src)) {
+		console.warn(`[copy-data] AVÍS: no s'ha trobat ${src}; no es parteix el govern per municipi.`);
+		return;
+	}
+	const data = JSON.parse(readFileSync(src, 'utf8'));
+	const dir = resolve(DEST_DIR, 'govern');
+	mkdirSync(dir, { recursive: true });
+	let n = 0;
+	for (const [ine5, entry] of Object.entries(data)) {
+		writeFileSync(resolve(dir, `${ine5}.json`), JSON.stringify(entry));
+		n++;
+	}
+	console.log(`[copy-data] OK: ${n} fitxes de govern → static/data/govern/ (de govern.catalunya.json)`);
+}
+
+buildGovernSplit();
 
 /**
  * Parser CSV mínim però correcte (camps entre cometes amb comes, p. ex. «Prat de Llobregat, el»).
@@ -282,6 +316,36 @@ buildMetodologiaModel();
 
 // (`validats.json` — el conjunt d'ine5 amb ETCA — ja NO es genera: només servia per capar la
 // confiança del model, i el model està aparcat. Si mai cal, git en recorda el builder.)
+
+/**
+ * Copia els SHARDS del tauler v2 (D7 · P-947): un fitxer per municipi (`tauler/<ine5>.json`,
+ * ~19 kB, el `TaulerEntry` directe) + el sidecar compartit `tauler/_meta.json` (frescor +
+ * doctrina del «<5», una sola vegada). Sondeig parteix el tauler per municipi A POSTA: a 947 el
+ * monòlit faria 17-24 MB que la fitxa carregaria sencer per pintar un sol poble. La fitxa carrega
+ * NOMÉS el shard del seu `ine5` (loader `+page.ts`). Frontera honesta: aquí només copiem; la font
+ * (de Sondeig) no es modifica. Idempotent, cross-platform, no-fatal si la font no hi és (CI).
+ */
+function copyTaulerShards() {
+	const srcDir = resolve(REPO_ROOT, 'data/web/tauler');
+	if (!existsSync(srcDir)) {
+		console.warn(
+			`[copy-data] AVÍS: no s'ha trobat ${srcDir}. No es copien els shards del tauler ` +
+				`(regenera'ls amb el pipeline: Sondeig). Es manté la còpia existent, si n'hi ha.`
+		);
+		return;
+	}
+	const destDir = resolve(DEST_DIR, 'tauler');
+	mkdirSync(destDir, { recursive: true });
+	let n = 0;
+	for (const f of readdirSync(srcDir)) {
+		if (!f.endsWith('.json')) continue;
+		copyFileSync(resolve(srcDir, f), resolve(destDir, f));
+		n++;
+	}
+	console.log(`[copy-data] OK: ${n} fitxers del tauler → static/data/tauler/ (shards + _meta.json)`);
+}
+
+copyTaulerShards();
 
 for (const f of FILES) {
 	if (!existsSync(f.src)) {

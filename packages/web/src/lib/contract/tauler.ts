@@ -1,8 +1,12 @@
 /**
- * TAULER v2 — atur mensual + tendència (D7, Sondeig · D9, Mirador).
+ * TAULER v2 — atur mensual + tendència (D7, Sondeig · D9, Mirador · P-947).
  *
- * Mirall de `data/web/tauler.bergueda.json` (`tools/export_tauler_web.py` des de
- * `mart_pols_mensual` + `mart_tendencia`), servit a `/data/tauler.json`.
+ * Font: `tools/export_tauler_web.py` des de `mart_pols_mensual` + `mart_tendencia`. A escala
+ * Catalunya (947) NO es serveix cap monòlit: cada municipi és un SHARD `/data/tauler/<ine5>.json`
+ * (el `TaulerEntry` directe, ~19 kB) i la frescor + doctrina viuen una sola vegada al sidecar
+ * compartit `/data/tauler/_meta.json` (`TaulerMetaFile`). La fitxa carrega NOMÉS el shard del seu
+ * municipi. (El monòlit `tauler.bergueda.json` es manté com a retrocompat del pipeline de dades,
+ * però el web ja no el consumeix.)
  *
  * FRONTERA DURA, igual que amb el rang comarcal (C6 §4): el front NOMÉS LLEGEIX. Cap delta,
  * cap direcció, cap interval i cap període es calcula aquí — tot ve del mart, que els recalcula
@@ -99,8 +103,14 @@ export interface TaulerMeta {
 	tendencia?: { regla?: string; fonts?: string[] };
 }
 
-/** Artefacte sencer. */
-export interface TaulerData {
+/**
+ * Sidecar compartit `tauler/_meta.json` (P-947): frescor + doctrina + regla, a l'arrel i no
+ * repetides a cada shard. El bloc que el front consumeix és `_meta` (`TaulerMeta`); la resta
+ * (`contractVersion`, `abast`) és metadada del fitxer. Els municipis ja NO viuen en un monòlit:
+ * cada `tauler/<ine5>.json` és un `TaulerEntry` directe.
+ */
+export interface TaulerMetaFile {
+	contractVersion?: string;
+	abast?: string;
 	_meta: TaulerMeta;
-	municipis: Record<string, TaulerEntry>;
 }

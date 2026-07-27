@@ -287,6 +287,8 @@
   "pl_refusal_intro": "L'observatori no pot respondre això. Aquí no improvisem: t'expliquem per què.",
   "pl_refusal_out_of_catalog": "Això no és al catàleg de dades de l'observatori. Només responem sobre el que mesurem i amb procedència.",
   "pl_refusal_metric_planned": "Aquest indicador està definit al contracte, però encara no s'ha calculat. Arribarà.",
+  "pl_refusal_metric_deprecated": "Aquest indicador va estar publicat però s'ha retirat del catàleg: ja no el consultem, i no tornarà en aquesta forma.",
+  "pl_refusal_political_gated": "Aquest observatori no respon preguntes sobre orientació de vot.",
   "pl_refusal_unknown_municipality": "No reconeixem aquest municipi. Comprova que sigui un municipi de Catalunya.",
   "pl_refusal_unsupported_question": "No hem sabut convertir aquesta pregunta en una consulta a les dades. Prova de formular-la d'una altra manera o mira els exemples.",
   "pl_refusal_guardrail_violation": "Aquesta pregunta queda fora del que l'observatori pot respondre amb rigor i procedència.",
