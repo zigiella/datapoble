@@ -4,7 +4,18 @@
 publicable per si sola.*
 
 > **🧭 DECISIONS DE BEA (2026-07-27) — REORIENTACIÓ DEL FOCUS.**
-> - **FOCUS ÚNIC ARA: una web de dashboards útils per als municipis.** «Farem els rangs per Comarca.
+> - **✅✅ P-947 COMPLET (dades #290 + web #291, fusionats i verificats en local 2026-07-27).** El
+>   dashboard renderitza per a **tots els 947 municipis** amb el rang de la SEVA comarca. Verificat
+>   al navegador: Barcelona → població real 1.713.247, comarca Barcelonès, rang «de 5», mai «de 31»
+>   ni «de 947»; build sencer verd (5.931 fitxers < 20k de Cloudflare, 3.013 pàgines, 2,3 GB).
+>   **➡️ Pendent per a la Trazo (Actions avall fins dia 1):** desplegar; és un build gran (2,3 GB /
+>   ~5.931 fitxers) — feasible a Cloudflare Pages però pesat, avisar-la.
+>   **➡️ Handoff a Sondeig (neteja, no urgent):** retirar els monòlits `govern.bergueda.json` /
+>   `tauler.bergueda.json` (el web ja no els llegeix; encara emesos+`--check`+regenerats per `tools/`
+>   i `refresh-atur.yml` — retirada coordinada seva).
+>   **➡️ Neteja menor (Mirador):** `svelte.config.js` encara prerenderitza `/index` i `/day-tripper`
+>   (stubs eliminats amb els aparcaments) → dos 404 benignes al build; treure les entrades mortes.
+> - **[HISTÒRIC del pla] FOCUS ÚNIC ARA: una web de dashboards útils per als municipis.** «Farem els rangs per Comarca.
 >   Farem el MATEIX dashboard a TOTS els municipis de Catalunya.» → **P-947: escalar el dashboard de
 >   govern/tauler dels 31 del Berguedà als 947 de Catalunya.** Bona notícia verificada: el rang
 >   comarcal de `mart_govern` JA es calcula contra la comarca del PROPI municipi (no una llista fixa
