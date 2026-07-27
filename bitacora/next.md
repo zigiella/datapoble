@@ -14,7 +14,11 @@ publicable per si sola.*
 >   `municipi/[slug]/+page.ts` (avui la vista de govern només carrega si el muni és al dataset del
 >   Berguedà, C6 §1.2) perquè la fitxa renderitzi per a qualsevol dels 947. Doctrina intacta: `<5`,
 >   `sense_serie` amb motiu, frescor per targeta, font O fórmula, cap fletxa sense període.
-> - **VOT POLÍTIC: FORA DEL TOT.** «Revocar la clau. Tot el que és vot polític va fora.» → **P-POL:**
+> - **VOT POLÍTIC: FORA DEL TOT ✅ FET (#289, 2026-07-27).** Brúixola va eliminar el mecanisme sencer
+>   (PoliticsGate/AI_POLITICS_UNLOCK/KEYED_DIMENSIONS); `politica` retinguda incondicional, electoral
+>   fora de l'allow-list SQL, refús discret conservat. Verificat per Talaia en LOCAL (218 tests, prova
+>   funcional directa: pregunta de vot → refús discret sense filtrar, i amb la variable posada segueix
+>   tancat). Contracte NO tocat a posta. **[històric del pla] P-POL:**
 >   Brúixola treu el mecanisme de clau (`AI_POLITICS_UNLOCK`/`KEYED_DIMENSIONS`); la dimensió `politica`
 >   passa a retinguda INCONDICIONAL (com `origen`, però sense clau); Talaia marca les mètriques
 >   `dimension: politica` / `source: electoral` com a **deprecades** al contracte perquè no se serveixin
