@@ -36,8 +36,10 @@ publicable per si sola.*
 >   desplegament a producció (posar online) el fa **Trazo**, no un workflow. **Correcció d'honestedat:**
 >   el que vaig dir «online a producció» (#285 P1/P2) és **fusionat a main**, no necessàriament desplegat
 >   — el desplegament real és de Trazo a partir del dia 1.
-> - **PENDENT DEL VOT DE BEA (cadenes, presentades al xat 2026-07-27):** `gov_naix_foto`,
->   `gov_nac_serie_es_nacionalitat` (D11) i `refusal_deprecated` (xat). Es fixen quan Bea digui.
+> - **✅ CADENES APROVADES PER BEA (2026-07-27):** `gov_naix_foto`, `gov_nac_serie_es_nacionalitat`
+>   (D11) i `refusal_deprecated` (xat) — ratificades tal com són. Ja eren al codi; queda treure els
+>   comentaris «pendent del vot» (el de `refusal_deprecated` el neteja P-POL; els de `gov_naix` van amb
+>   la propera passada de Mirador, p. ex. P-947).
 
 > **🏛️ TRACK ACTIU (2026-07-16): datapoble per a ajuntaments — `docs/spec-ajuntaments-v1.md`**
 > (direcció de Bea, redacció Marea #239, ADOPTADA amb esmenes per Talaia — §10 de l'spec és vinculant).
