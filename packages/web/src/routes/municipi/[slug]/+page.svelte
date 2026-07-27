@@ -634,9 +634,12 @@
 			<!-- TAULER DE DADES (D8 · E1): UNA SOLA VISTA. Els KPIs de la gorra §3 al capdamunt, amb
 			     el rang comarcal «k de n» LLEGIT del mart (C6 §4, mai calculat aquí) i, a cada
 			     targeta, la seva procedència: FONT (mesurada) o FÓRMULA (inferida) — regla de ferro
-			     de Bea (C6 §8.1). Abast del rang = Berguedà (C6 §1.2), que és on `data.govern` existeix;
-			     per això el tauler es manté al pilot i la resta de Catalunya conserva la seva espina. -->
-			{#if isBergueda}
+			     de Bea (C6 §8.1). P-947 (Bea, 2026-07-27): el tauler ja NO és exclusiu del Berguedà —
+			     es pinta per a QUALSEVOL dels 947 que tingui l'artefacte (rang de la SEVA comarca via
+			     `govern.catalunya.json`, tauler pel shard del municipi). Es mostra quan hi ha dada de
+			     tauler (`govern`/`tauler`); en un entorn sense els artefactes (CI sense dades)
+			     simplement no es pinta, mai una graella buida. -->
+			{#if govern || tauler}
 				<section class="ds-sec gov-board" aria-labelledby="gov-board-h">
 					<div class="ds-sec__hd"><span class="ref">◆</span><h2 id="gov-board-h">{m.gov_board_title()}</h2></div>
 					<p class="muni-sec__sub">{m.gov_board_sub()}</p>

@@ -11,6 +11,12 @@
  * La presència només es mostra com a dada OFICIAL (ETCA d'Idescat) o «sense dada oficial»: el
  * model d'estimació de pernocta està APARCAT del web (vot de Bea 2026-07-16).
  *
+ * P-947 (Bea, 2026-07-27): el TAULER DE DADES (rang comarcal «k de n» LLEGIT del mart + atur i
+ * tendències) ja NO és exclusiu del Berguedà. Es carrega per municipi, mai un blob sencer: el rang
+ * del seu `/data/govern/<ine5>.json` (la font `govern.catalunya.json` es parteix al prebuild, com
+ * l'espina) i el tauler del seu shard `/data/tauler/<ine5>.json`. `isBergueda` només distingeix la
+ * lectura-IA (artefacte encara del pilot), no el tauler.
+ *
  * La join key és l'`ine5`; el slug públic es resol del nom oficial (`toSlug`). La columna vertebral
  * de «tota Catalunya» és el CATÀLEG (`data/municipis-cataleg.json`, cens de noms+codis dels 947,
  * generat pel prebuild des de la geometria oficial), que resol QUALSEVOL slug → ine5 + nom.
@@ -27,8 +33,8 @@ import type { PernoctaData } from '$lib/contract/pernocta';
 import type { CatalegData } from '$lib/contract/cataleg';
 import type { TerritoriData, MuniTerritori } from '$lib/contract/territori';
 import type { MirallData, MirallVei } from '$lib/contract/mirall';
-import type { GovernData, GovernEntry } from '$lib/contract/govern';
-import type { TaulerData, TaulerEntry, TaulerMeta } from '$lib/contract/tauler';
+import type { GovernEntry } from '$lib/contract/govern';
+import type { TaulerEntry, TaulerMeta, TaulerMetaFile } from '$lib/contract/tauler';
 import type { EntryGenerator, PageLoad } from './$types';
 
 export const prerender = true;
@@ -180,42 +186,47 @@ export const load: PageLoad = async ({ fetch, params }) => {
 		}
 	}
 
-	// VISTA DE GOVERN (D5): el rang comarcal «k de n» que D4 va calcular al mart_govern i que
-	// `export_govern_web.py` serveix a `/data/govern.json`. El front NOMÉS el LLEGEIX (C6 §4):
-	// aquí n'agafem l'entrada del municipi (cel·les {valor, rang, n_amb_dada, data, empat} per
-	// mètrica). Abast de la vista = Berguedà (C6 §1.2), així que només es carrega si `isBergueda`.
-	// Prerender-safe, no-fatal (sense l'artefacte, la vista de govern simplement no mostra rang).
+	// VISTA DE GOVERN (D5 → P-947): el rang comarcal «k de n» que el mart_govern (D4) calcula
+	// contra la comarca del PROPI municipi (mai una llista fixa: Gombrèn → k de n del Ripollès).
+	// La font (`govern.catalunya.json`, 947, de Sondeig) es parteix per municipi al prebuild
+	// (`copy-data.mjs`) a `/data/govern/<ine5>.json` (~0,3 kB, el `GovernEntry` directe), pel mateix
+	// motiu que l'espina per muni: si el loader fes `fetch` del fitxer sencer, SvelteKit incrustaria
+	// els 0,67 MB a cada pàgina prerenderitzada. La fitxa carrega NOMÉS el rang del seu `ine5`. El
+	// front NOMÉS el LLEGEIX (C6 §4). Prerender-safe, no-fatal (sense l'artefacte, no mostra rang).
 	let govern: GovernEntry | null = null;
-	if (isBergueda && ine5) {
+	if (ine5) {
 		try {
-			const res = await fetch('/data/govern.json');
-			if (res.ok) {
-				const all = (await res.json()) as GovernData;
-				govern = all[ine5] ?? null;
-			}
+			const res = await fetch(`/data/govern/${ine5}.json`);
+			if (res.ok) govern = (await res.json()) as GovernEntry;
 		} catch {
 			govern = null;
 		}
 	}
 
-	// TAULER v2 (D7 · E4/E6): atur mensual + tendència amb període, servits per
-	// `tools/export_tauler_web.py` a `/data/tauler.json`. Mateixa frontera dura que el rang
-	// (C6 §4): el front LLEGEIX deltes, intervals i períodes; no en calcula cap.
-	// `_meta.atur` (frescor + doctrina del «<5») és a l'arrel, no per municipi.
-	// Prerender-safe, no-fatal: sense l'artefacte, l'atur i les tendències simplement no es pinten
-	// (mai una fletxa sense la seva dada al darrere).
+	// TAULER v2 (D7 · E4/E6 → P-947): atur mensual + tendència amb període. A escala Catalunya el
+	// monòlit faria 17-24 MB i la fitxa el carregaria sencer per pintar un sol poble, així que
+	// Sondeig el parteix en un SHARD per municipi (`/data/tauler/<ine5>.json` = el `TaulerEntry`
+	// directe, ~19 kB), amb un sidecar compartit `/data/tauler/_meta.json` (frescor + doctrina del
+	// «<5», a l'arrel). La fitxa carrega NOMÉS el shard del seu `ine5`, mai el conjunt. Mateixa
+	// frontera dura que el rang (C6 §4): el front LLEGEIX deltes, intervals i períodes; no en
+	// calcula cap. Prerender-safe, no-fatal: sense l'artefacte, l'atur i les tendències simplement
+	// no es pinten (mai una fletxa sense la seva dada al darrere).
 	let tauler: TaulerEntry | null = null;
 	let taulerMeta: TaulerMeta | null = null;
-	if (isBergueda && ine5) {
+	if (ine5) {
 		try {
-			const res = await fetch('/data/tauler.json');
-			if (res.ok) {
-				const all = (await res.json()) as TaulerData;
-				tauler = all.municipis?.[ine5] ?? null;
-				taulerMeta = all._meta ?? null;
-			}
+			const res = await fetch(`/data/tauler/${ine5}.json`);
+			if (res.ok) tauler = (await res.json()) as TaulerEntry;
 		} catch {
 			tauler = null;
+		}
+		try {
+			const res = await fetch('/data/tauler/_meta.json');
+			if (res.ok) {
+				const meta = (await res.json()) as TaulerMetaFile;
+				taulerMeta = meta._meta ?? null;
+			}
+		} catch {
 			taulerMeta = null;
 		}
 	}

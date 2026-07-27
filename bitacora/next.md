@@ -26,6 +26,23 @@ publicable per si sola.*
 >     verify-govern.mjs OK, cobertura 947/947). **NO fusiono jo. ➡️ Handoff a: Mirador** — obrir la
 >     porta `isBergueda` + copy-data (font govern.catalunya.json; copiar el dir `tauler/`) + loader
 >     (tauler per shard + `_meta.json`); detall a la bitàcola. Encuat rere Mirador: retirar els monòlits.
+>   - **✅ P-947 CAPA WEB (Mirador) — FETA, PR obert (2026-07-27, branca `mirador/p947-web`).**
+>     Bitàcola: `bitacora/2026-07-27_p947-web_mirador.md`. Porta `isBergueda` oberta: el tauler
+>     (rang comarcal + atur + tendències) es pinta per a QUALSEVOL dels 947, rang de la SEVA comarca.
+>     `copy-data.mjs` copia els shards del tauler (948) i PARTEIX el govern per municipi; el loader
+>     llegeix `/data/govern/<ine5>.json` + `/data/tauler/<ine5>.json`, mai un blob. `verify-govern.mjs`
+>     migrada a la font dels 947 + guarda P-947 (Barcelona: rang del Barcelonès, no dels 31). Handoff
+>     de Brúixola tancat (`RefusalReason` amb `political_gated`/`metric_deprecated` + i18n espejant el
+>     backend ratificat). Cadenes `gov_naix_foto`/`gov_nac_serie` ja netes (no quedava cap comentari
+>     «pendent del vot» al codi). Verificat en LOCAL: `check` 0/0 · `build` verd · `verify:govern` OK ·
+>     DOM prerenderitzat de Barcelona/Girona/La Febró (buit honest, `<5` interval, rang de la comarca).
+>     **⛔ Premissa del brief tombada:** «govern.catalunya, un sol fitxer de 0,67 MB» → SvelteKit
+>     l'incrustava sencer a cada pàgina (build 4,4 GB); resolt partint-lo per muni com `buildMuniSplit`
+>     (build → 2,3 GB, pàgina 1,48→0,71 MB). **NO fusiono jo.**
+>     **➡️ Handoff a: Sondeig** — els monòlits `govern.bergueda.json`/`tauler.bergueda.json` NO els he
+>     retirat: el web ja no els llegeix, però `export_govern_web.py`/`export_tauler_web.py` encara els
+>     emeten, `ci.yml` els `--check`-verifica (retrocompat) i `refresh-atur.yml` els regenera. Retirar-los
+>     de debò és canvi a `tools/`+`.github/workflows/` (teu), no meu; retirar-los a mitges els regeneraria.
 > - **VOT POLÍTIC: FORA DEL TOT ✅ FET (#289, 2026-07-27).** Brúixola va eliminar el mecanisme sencer
 >   (PoliticsGate/AI_POLITICS_UNLOCK/KEYED_DIMENSIONS); `politica` retinguda incondicional, electoral
 >   fora de l'allow-list SQL, refús discret conservat. Verificat per Talaia en LOCAL (218 tests, prova

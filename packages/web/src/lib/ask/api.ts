@@ -30,9 +30,11 @@ export type AskBackend = 'offline' | 'openrouter';
 export type RefusalReason =
 	| 'out_of_catalog'
 	| 'metric_planned'
+	| 'metric_deprecated'
 	| 'unknown_municipality'
 	| 'unsupported_question'
 	| 'guardrail_violation'
+	| 'political_gated'
 	| 'budget_exceeded'
 	| 'rate_limited';
 

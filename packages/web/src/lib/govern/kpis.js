@@ -24,7 +24,7 @@
  *                `metrics[key]` (font O fórmula, C6 §8.1), rang de `govern[key]` si n'hi ha.
  *  · 'etca'    → presència oficial (ETCA d'Idescat) o «sense dada oficial»; sense rang.
  *  · 'atur'    → atur registrat (SEPE): darrer mes + sèrie de 25 mesos + les DUES comparacions,
- *                servits per `tauler.bergueda.json` (D7). Sense rang (el mart no el rankeja).
+ *                servits pel shard `tauler/<ine5>.json` (D7 · P-947). Sense rang (el mart no el rankeja).
  *  · 'serveis' → comerç/serveis + restauració (dos comptes OSM); sense rang (no oficial).
  *
  * D9 · E12 (Bea): les FRANGES D'EDAT entren al bloc A com a targetes de ple dret. No hi entra

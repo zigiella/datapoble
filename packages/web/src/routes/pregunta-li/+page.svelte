@@ -96,12 +96,20 @@
 				return m.pl_refusal_out_of_catalog();
 			case 'metric_planned':
 				return m.pl_refusal_metric_planned();
+			case 'metric_deprecated':
+				// Retirada ≠ pendent: NO promet que tornarà (a diferència de `metric_planned`).
+				return m.pl_refusal_metric_deprecated();
 			case 'unknown_municipality':
 				return m.pl_refusal_unknown_municipality();
 			case 'unsupported_question':
 				return m.pl_refusal_unsupported_question();
 			case 'guardrail_violation':
 				return m.pl_refusal_guardrail_violation();
+			case 'political_gated':
+				// Discret i neutre (doctrina #289): declara la política, mai revela cap clau ni
+				// anomena la mètrica. Sense això queia al genèric «ara mateix», que insinua «prova
+				// més tard» d'una porta que és permanent.
+				return m.pl_refusal_political_gated();
 			case 'budget_exceeded':
 				return m.pl_refusal_budget_exceeded();
 			case 'rate_limited':
