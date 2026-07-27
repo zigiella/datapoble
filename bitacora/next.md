@@ -3,6 +3,42 @@
 *Mètode: **Cambium Charter v0.5**. Es treballa de dalt a baix; cada tasca = un PR. Cada **fase** és
 publicable per si sola.*
 
+> **🧭 DECISIONS DE BEA (2026-07-27) — REORIENTACIÓ DEL FOCUS.**
+> - **FOCUS ÚNIC ARA: una web de dashboards útils per als municipis.** «Farem els rangs per Comarca.
+>   Farem el MATEIX dashboard a TOTS els municipis de Catalunya.» → **P-947: escalar el dashboard de
+>   govern/tauler dels 31 del Berguedà als 947 de Catalunya.** Bona notícia verificada: el rang
+>   comarcal de `mart_govern` JA es calcula contra la comarca del PROPI municipi (no una llista fixa
+>   del Berguedà) — «Gombrèn → k de 19 del Ripollès». O sigui: és sobretot **escala de dades**, no
+>   redisseny. Feina: **Sondeig** — `mart_govern` + `tauler` + `govern.json`/`tauler.json` per als 947,
+>   rang per cada comarca, amb `--check`; **Mirador** — obrir la porta `isBergueda` de
+>   `municipi/[slug]/+page.ts` (avui la vista de govern només carrega si el muni és al dataset del
+>   Berguedà, C6 §1.2) perquè la fitxa renderitzi per a qualsevol dels 947. Doctrina intacta: `<5`,
+>   `sense_serie` amb motiu, frescor per targeta, font O fórmula, cap fletxa sense període.
+> - **VOT POLÍTIC: FORA DEL TOT.** «Revocar la clau. Tot el que és vot polític va fora.» → **P-POL:**
+>   Brúixola treu el mecanisme de clau (`AI_POLITICS_UNLOCK`/`KEYED_DIMENSIONS`); la dimensió `politica`
+>   passa a retinguda INCONDICIONAL (com `origen`, però sense clau); Talaia marca les mètriques
+>   `dimension: politica` / `source: electoral` com a **deprecades** al contracte perquè no se serveixin
+>   mai i el `mart_electoral` estale deixi de ser una amenaça. Test de regressió que ho manté tancat.
+> - **RADAR: APARCAT fins la setmana que ve, i com a PROJECTE A PART.** Tot el track R (R3 semàfor, R4
+>   correu, validació paral·lela, repo privat de sortides) queda congelat aquí. El banc C4 ja està
+>   congelat (#288) i esperarà. NO s'hi treballa fins que Bea ho reobri.
+> - **P1/P2: en uns dies** (E7b segueix encuat; la bandera `MOSTRA_LECTURES_IA` es reactiva llavors).
+> - **«Nascuts fora de Catalunya»: APARCAT.** Bea no ho veu clar («no sé si és important»); no es
+>   declara la mètrica fins que no en surti la necessitat. (E11 ja serveix el lloc de naixement com a
+>   nivell; el que s'aparca és la xifra composta «fora de Catalunya».)
+> - **GLOSSARI + METODOLOGIA: repassar que estiguin al dia.** → **P-DOC:** auditar `/glossari` i
+>   `/metodologia` contra el contracte d'AVUI (index_turisme deprecat, IETR/IETR_rank marcats derived,
+>   `tipus_territorial` afegit, caveats de nacionalitat/bretxa corregits, regla d'evidència). Risc
+>   conegut: `/metodologia` es trencava en render en treure una mètrica del JSON (acoblament) — mirar-ho.
+> - **⚙️ GITHUB ACTIONS NO FUNCIONEN FINS EL DIA 1.** «Si les feies servir, avisa per posar online; ho
+>   farà la Trazo.» → Conseqüència operativa: **fusionar a `main` ≠ online.** Verifico TOT en LOCAL
+>   abans de fusionar (pytest, svelte-check, build, `--check`) en comptes de confiar en el CI, i el
+>   desplegament a producció (posar online) el fa **Trazo**, no un workflow. **Correcció d'honestedat:**
+>   el que vaig dir «online a producció» (#285 P1/P2) és **fusionat a main**, no necessàriament desplegat
+>   — el desplegament real és de Trazo a partir del dia 1.
+> - **PENDENT DEL VOT DE BEA (cadenes, presentades al xat 2026-07-27):** `gov_naix_foto`,
+>   `gov_nac_serie_es_nacionalitat` (D11) i `refusal_deprecated` (xat). Es fixen quan Bea digui.
+
 > **🏛️ TRACK ACTIU (2026-07-16): datapoble per a ajuntaments — `docs/spec-ajuntaments-v1.md`**
 > (direcció de Bea, redacció Marea #239, ADOPTADA amb esmenes per Talaia — §10 de l'spec és vinculant).
 > **Demo Magda (Diba): SENSE DATA (decisió de Bea, 2026-07-16)** — es valorarà presentar-la **quan sigui
