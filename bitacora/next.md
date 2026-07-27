@@ -14,6 +14,18 @@ publicable per si sola.*
 >   `municipi/[slug]/+page.ts` (avui la vista de govern només carrega si el muni és al dataset del
 >   Berguedà, C6 §1.2) perquè la fitxa renderitzi per a qualsevol dels 947. Doctrina intacta: `<5`,
 >   `sense_serie` amb motiu, frescor per targeta, font O fórmula, cap fletxa sense període.
+>   - **✅ P-947 CAPA DE DADES (Sondeig) — FETA, PR obert (2026-07-27, branca `sondeig/p947-dades`).**
+>     Bitàcola: `bitacora/2026-07-27_p947-dades_sondeig.md`. `export_govern_web.py` afegeix
+>     `data/web/govern.catalunya.json` (947, 0,67 MB, rang per la comarca del propi municipi);
+>     `export_tauler_web.py` afegeix `data/web/tauler/<ine5>.json` (947 shards ~19 kB) + `_meta.json`
+>     — **DECISIÓ amb el número a la mà: shard per municipi, no monòlit** (el monòlit a 947 faria
+>     17-24 MB que la fitxa carregaria sencer per un poble). Els DOS monòlits del Berguedà es mantenen
+>     **byte-idèntics** (verify-govern.mjs de Mirador i copy-data hi depenen; retirar-los és de Mirador,
+>     no atòmic entre jurisdiccions). Guarda anti-fuita electoral amb dents (test + `--check`); cap
+>     mètrica de vot pot entrar. Verificat en LOCAL (`--check` 31+947 verds, 5 tests, ruff net,
+>     verify-govern.mjs OK, cobertura 947/947). **NO fusiono jo. ➡️ Handoff a: Mirador** — obrir la
+>     porta `isBergueda` + copy-data (font govern.catalunya.json; copiar el dir `tauler/`) + loader
+>     (tauler per shard + `_meta.json`); detall a la bitàcola. Encuat rere Mirador: retirar els monòlits.
 > - **VOT POLÍTIC: FORA DEL TOT ✅ FET (#289, 2026-07-27).** Brúixola va eliminar el mecanisme sencer
 >   (PoliticsGate/AI_POLITICS_UNLOCK/KEYED_DIMENSIONS); `politica` retinguda incondicional, electoral
 >   fora de l'allow-list SQL, refús discret conservat. Verificat per Talaia en LOCAL (218 tests, prova
