@@ -15,10 +15,12 @@ Passos:
   3. Verificació offline (``verify_pols_mensual.py``): àncores byte-match,
      doctrina del «<5», cobertura 947, forats declarats.
   4. **Aigües avall de l'atur** (D7): ``mart_tendencia`` (el Δ mensual i l'interanual
-     canvien cada mes) + ``verify_tendencia.py`` + l'export web ``tauler.bergueda.json``.
-     Sense aquest pas, el refresc mensual deixaria el JSON servit ENRERE respecte al
-     parquet i el ``--check`` del CI cauria al PR següent — el forat de D4/D5, que aquí
-     es tanca d'entrada.
+     canvien cada mes) + ``verify_tendencia.py`` + l'export web del tauler. Des de P-947,
+     aquell export emet el monòlit ``tauler.bergueda.json`` (31, retrocompat) I els 947
+     shards per municipi de ``data/web/tauler/`` — l'atur canvia cada mes a TOTS els
+     municipis, així que el refresc mensual els reescriu tots. Sense aquest pas, el refresc
+     mensual deixaria el JSON servit ENRERE respecte al parquet i el ``--check`` del CI
+     cauria al PR següent — el forat de D4/D5, que aquí es tanca d'entrada.
   5. Actualitza ``semantic/metrics.yml``: el camp ``date:`` d'``atur_registrat`` amb el
      darrer mes carregat i el ``darrera_carrega:`` de la font ``sepe`` amb la data d'avui
      (E5 · frescor). Edició quirúrgica: els comentaris del fitxer són contracte i no es toquen.

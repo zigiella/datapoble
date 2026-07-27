@@ -1,0 +1,25 @@
+{
+  "contractVersion": "1.0",
+  "abast": "Catalunya",
+  "_meta": {
+    "atur": {
+      "darrer_mes": "2026-06",
+      "mesos_serie": 25,
+      "frescor": {
+        "actualitzacio": "mensual",
+        "darrera_carrega": "2026-07-05",
+        "proces_refresc": ".github/workflows/refresh-atur.yml",
+        "font_frescor": "sepe",
+        "date": "2026-06"
+      },
+      "doctrina_menys_de_5": "Des de gener de 2022 el SEPE emmascara els valors 1-4 com a «<5». Aquests mesos surten amb valor null + min/max = [1,4] + emmascarat true, MAI zero. Un delta que toqui un mes emmascarat és un interval (delta null + delta_min/delta_max), no un número."
+    },
+    "tendencia": {
+      "regla": "Cap fletxa sense període: tota entrada amb direcció diu contra quin període compara. Les mètriques sense sèrie hi són EXPLÍCITES amb estat 'sense_serie' i el motiu escrit — no s'ometen, perquè una absència es llegeix com un zero i un 'sense_serie' no. Quines mètriques hi han de ser es deriva de la composició del tauler, no d'una llista a mà: si el tauler pinta una targeta sense fila aquí, aquest export falla.",
+      "motiu": "El motiu és DADA i ve del mart en ca i es (`motiu_l10n`); el front el pinta literal i traduir-lo allà seria inventar-se'l. El camp pla `motiu` (català) és transitori i desapareixerà quan el web llegeixi `motiu_l10n`.",
+      "fonts": [
+        "mart_tendencia.parquet"
+      ]
+    }
+  }
+}

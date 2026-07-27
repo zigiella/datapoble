@@ -7,31 +7,41 @@ des de 2006 (224.439 files) i `mart_tendencia` porta la tendència amb el seu pe
 forat que D4 va deixar amb `mart_govern` i que #272 va haver de tapar després — aquí
 l'export neix amb `--check` i CABLAT AL CI el mateix dia, no en un PR posterior.
 
-Per què un fitxer separat i no dins `municipis.*.json`:
+ABAST (P-947, 2026-07-27): s'emeten DUES formes, cadascuna amb el seu `--check`:
+  · `tauler.bergueda.json` — MONÒLIT dels 31 del Berguedà (RETROCOMPATIBILITAT: el
+    prebuild `copy-data.mjs` i el verificador `verify-govern.mjs` de Mirador encara hi
+    depenen; no es toca fins que Mirador migri a l'abast 947).
+  · `data/web/tauler/<ine5>.json` — UN FITXER PER MUNICIPI (947) + `data/web/tauler/_meta.json`.
+    DECISIÓ D'ARQUITECTURA amb el número a la mà: el monòlit a 947 faria ~17 MB compacte
+    (~24 MB indentat) que la fitxa carregaria SENCER per pintar UN municipi — inacceptable
+    al navegador. Partit per municipi, cada fitxa només llegeix el SEU shard (~19 kB) + el
+    `_meta` compartit (~1 kB). És el mateix patró que `copy-data.mjs` ja fa amb
+    `municipis.catalunya.json` → `static/data/muni/<ine5>.json`, però resolt A L'ORIGEN
+    (data/web) perquè el repo no carregui mai el monòlit. El `_meta` (frescor + doctrina del
+    «<5» + darrer mes) és compartit i va al sidecar; els shards només porten el municipi.
+
+Per què un fitxer separat del dataset (`municipis.*.json`):
   · CADÈNCIA DIFERENT. L'atur es refresca cada MES (refresh-atur.yml); la resta del
-    tauler, un cop l'any o menys. Ficar-ho al mateix JSON faria que el refresc mensual
-    rebregués un artefacte de 947 municipis × 54 mètriques cada 30 dies, per una xifra.
+    tauler, un cop l'any o menys.
   · FORMA DIFERENT: una sèrie temporal no cap a `values: {clau: número}`.
 
 Frontera honesta (aquí NO es calcula res que no vingui dels marts):
   · L'atur es re-serialitza de `mart_pols_mensual` tal com hi és.
   · La tendència ve SENCERA de `mart_tendencia` (deltes, períodes, estat, motiu EN ELS
-    DOS IDIOMES): aquest fitxer no resta cap parell de números ni tradueix cap text. Si un
-    dia un delta és dubtós, el lloc on mirar-lo és el mart, no aquest exportador.
+    DOS IDIOMES): aquest fitxer no resta cap parell de números ni tradueix cap text.
   · QUINES mètriques hi ha d'haver es deriva de la composició del tauler
     (`tools/tauler_kpis.py` → `packages/web/src/lib/govern/kpis.js`), mai d'una llista
     escrita aquí: dues llistes a mà divergeixen, i divergeixen en silenci (D10).
   · La DOCTRINA DEL «<5» (C1 §1.1) es propaga literalment: un mes emmascarat surt amb
-    `valor: null` + `min`/`max` (l'interval [1,4]) + `emmascarat: true`. MAI zero. Un
-    delta que toqui un mes emmascarat surt amb `delta: null` + l'interval. El
-    verificador `--check` ho comprova a cada CI.
+    `valor: null` + `min`/`max` (l'interval [1,4]) + `emmascarat: true`. MAI zero.
 
-Abast: els municipis del **Berguedà** (mateixa porta que la vista de govern, C6 §1.2).
-Per ampliar: `SCOPE_COMARCA = None`.
+GUARDA ANTI-FUITA (P-947): cap mètrica `dimension: politica` / `source: electoral` (res de
+`mart_electoral`) pot entrar en aquest export. mart_tendencia només porta mètriques segures
+(atur, edat, origen, residus…); la guarda ho ASSERTA a cada execució llegint el contracte.
 
 Ús:
-    python tools/export_tauler_web.py            # (re)genera data/web/tauler.bergueda.json
-    python tools/export_tauler_web.py --check    # falla si el fitxer versionat és estale
+    python tools/export_tauler_web.py            # (re)genera monòlit + shards (31 + 947)
+    python tools/export_tauler_web.py --check    # falla si algun artefacte versionat és estale
 
 Jurisdicció: Sondeig (exportadors `tools/export_*.py` + artefactes `data/web/*.json`).
 """
@@ -53,23 +63,52 @@ MART_POLS = REPO / "data" / "marts" / "mart_pols_mensual.parquet"
 MART_TEND = REPO / "data" / "marts" / "mart_tendencia.parquet"
 TERRITORI = REPO / "data" / "web" / "municipis-territori.json"
 METRICS_YML = REPO / "semantic" / "metrics.yml"
-OUT = REPO / "data" / "web" / "tauler.bergueda.json"
-
-# Comarca de l'abast (C6 §1.2). None = tota Catalunya.
-SCOPE_COMARCA: str | None = "Berguedà"
+OUT_BERGUEDA = REPO / "data" / "web" / "tauler.bergueda.json"
+# Abast 947: un fitxer per municipi + un sidecar de metadades compartides.
+TAULER_DIR = REPO / "data" / "web" / "tauler"
+META_NAME = "_meta.json"
 
 # Mesos de sèrie que s'emeten (comptant el darrer). 25 = el darrer mes + 24 enrere:
 # el mínim que permet al front pintar dos anys sencers I ensenyar el mateix mes de
 # l'any anterior sense una segona petició. La sèrie completa (2006→) es queda al mart:
-# servir 20 anys × 31 municipis al navegador seria pes sense lectura.
+# servir 20 anys × 947 municipis al navegador seria pes sense lectura.
 MESOS_SERIE = 25
 
-# Mètriques que el mart de tendència ha de portar sí o sí. D10: aquesta llista ja NO
-# s'escriu aquí. Es DERIVA de l'autoritat del front (`packages/web/src/lib/govern/kpis.js`,
-# via `tools/tauler_kpis.py`), perquè escrita a mà divergia en silenci: `serveis_estab` i
-# `restauracio_estab` es pintaven al tauler, no eren al mart, i ni aquest export ni el
-# verificador se n'adonaven — la targeta quedava muda i una absència es llegeix com un zero.
-# Ara, el dia que Mirador afegeixi una targeta sense fila al mart, això peta.
+
+def forbidden_metric_keys(contract: dict) -> set[str]:
+    """Claus de mètrica de la capa de VOT que no poden sortir mai al web: qualsevol de
+    ``dimension: politica`` o ``source: electoral`` o ``table: mart_electoral``. Derivat del
+    contracte (no una llista a mà) perquè una mètrica nova d'aquestes la culli sola."""
+    forbidden: set[str] = set()
+    for key, spec in contract.get("metrics", {}).items():
+        if (
+            spec.get("dimension") == "politica"
+            or spec.get("source") == "electoral"
+            or spec.get("table") == "mart_electoral"
+        ):
+            forbidden.add(key)
+    return forbidden
+
+
+def emitted_metrics(payload: dict) -> set[str]:
+    """Claus de mètrica que aquest payload serveix (les de tendència; l'atur és una sola
+    mètrica segura, `atur_registrat`, i va a part)."""
+    keys: set[str] = set()
+    for muni in payload["municipis"].values():
+        keys |= set(muni["tendencia"].keys())
+    return keys
+
+
+def assert_no_electoral(payload: dict, forbidden: set[str], label: str) -> None:
+    """GUARDA ANTI-FUITA: peta l'export (write O --check) si el tauler servís cap mètrica
+    de la capa de vot. Font: el contracte."""
+    leak = emitted_metrics(payload) & forbidden
+    if leak:
+        raise SystemExit(
+            f"FUITA ELECTORAL: {label} contindria mètriques de la capa de vot "
+            f"{sorted(leak)} (dimension: politica / source: electoral). El tauler només "
+            f"pot servir mètriques segures; revisa mart_tendencia i el contracte."
+        )
 
 
 def _num(v: Any) -> Any:
@@ -84,13 +123,14 @@ def _txt(v: Any) -> Any:
     return None if v is None or pd.isna(v) else str(v)
 
 
-def scope_ine5() -> dict[str, str]:
+def scope_ine5(scope: str | None) -> dict[str, str]:
     """ine5 → comarca des de l'AUTORITAT territorial (data/web/municipis-territori.json),
-    mai una llista fixa cablejada: el mateix criteri que fa servir mart_govern."""
+    mai una llista fixa cablejada: el mateix criteri que fa servir mart_govern. ``scope`` =
+    nom de comarca a filtrar, o None per a tots els municipis (947)."""
     terr = json.loads(TERRITORI.read_text(encoding="utf-8"))
     out = {k: v.get("comarca") for k, v in terr.items()}
-    if SCOPE_COMARCA is not None:
-        out = {k: c for k, c in out.items() if c == SCOPE_COMARCA}
+    if scope is not None:
+        out = {k: c for k, c in out.items() if c == scope}
     return out
 
 
@@ -205,9 +245,10 @@ def invariants(payload: dict) -> list[str]:
     return errs
 
 
-def build() -> dict:
+def build(scope: str | None) -> dict:
+    """Payload complet del tauler per a un abast. ``scope`` = comarca o None (947)."""
     contract = yaml.safe_load(METRICS_YML.read_text(encoding="utf-8"))
-    comarques = scope_ine5()
+    comarques = scope_ine5(scope)
     ine5s = set(comarques)
 
     pols = pd.read_parquet(MART_POLS)
@@ -245,7 +286,7 @@ def build() -> dict:
 
     return {
         "contractVersion": str(contract["meta"]["version"]),
-        "abast": SCOPE_COMARCA or "Catalunya",
+        "abast": scope or "Catalunya",
         "_meta": {
             "atur": {
                 "darrer_mes": darrer_mes,
@@ -281,10 +322,73 @@ def build() -> dict:
     }
 
 
+def render_monolith(payload: dict) -> str:
+    """Monòlit del Berguedà (retrocompatibilitat): mateixa forma indentada de sempre,
+    per no moure ni un byte del que Mirador (`copy-data.mjs`, `verify-govern.mjs`) llegeix."""
+    return json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=False) + "\n"
+
+
+def shard_files(payload: dict) -> dict[str, str]:
+    """Abast 947 partit: `{nom_de_fitxer: text}`. `_meta.json` = tot menys `municipis`
+    (compartit, indentat i llegible); un fitxer COMPACTE per municipi amb el seu payload."""
+    files: dict[str, str] = {}
+    meta = {k: v for k, v in payload.items() if k != "municipis"}
+    files[META_NAME] = json.dumps(meta, ensure_ascii=False, indent=2, sort_keys=False) + "\n"
+    for ine5, row in payload["municipis"].items():
+        # Compacte (com el split de `municipis.catalunya.json` a copy-data.mjs): els shards
+        # els llegeix el navegador, no un humà. sort_keys → forma canònica i diff estable.
+        files[f"{ine5}.json"] = (
+            json.dumps(row, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n"
+        )
+    return files
+
+
+def _read_lf(path: Path) -> str:
+    """Llegeix sense traduir finals de línia (comparació byte-estable; eol=lf)."""
+    with path.open("r", encoding="utf-8", newline="") as fh:
+        return fh.read()
+
+
+def _write_lf(path: Path, text: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8", newline="\n") as fh:
+        fh.write(text)
+
+
+def check_shards(files: dict[str, str]) -> list[str]:
+    """Compara el directori 947 amb el conjunt esperat: detecta shards estale, absents I
+    ESTRANYS (un municipi retirat deixaria un fitxer orfe que es llegiria com a dada viva)."""
+    errs: list[str] = []
+    if not TAULER_DIR.exists():
+        return [f"no existeix {TAULER_DIR}/ (executa'l sense --check)"]
+    actual = {p.name for p in TAULER_DIR.glob("*.json")}
+    expected = set(files)
+    for name in sorted(expected - actual):
+        errs.append(f"tauler/{name}: absent")
+    for name in sorted(actual - expected):
+        errs.append(f"tauler/{name}: estrany (no correspon a cap municipi de l'abast)")
+    for name in sorted(expected & actual):
+        if _read_lf(TAULER_DIR / name) != files[name]:
+            errs.append(f"tauler/{name}: estale")
+    return errs
+
+
+def write_shards(files: dict[str, str]) -> None:
+    """Escriu els 947 shards + `_meta.json` i ESBORRA els `*.json` orfes (municipi retirat)
+    perquè el directori sigui exactament el conjunt esperat (i el --check hi casi)."""
+    TAULER_DIR.mkdir(parents=True, exist_ok=True)
+    for name, text in files.items():
+        _write_lf(TAULER_DIR / name, text)
+    expected = set(files)
+    for p in TAULER_DIR.glob("*.json"):
+        if p.name not in expected:
+            p.unlink()
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="export_tauler_web")
     ap.add_argument("--check", action="store_true",
-                    help="no escriu; falla (codi 1) si el JSON al disc no coincideix")
+                    help="no escriu; falla (codi 1) si algun artefacte al disc no coincideix")
     args = ap.parse_args(argv)
 
     for p in (MART_POLS, MART_TEND, TERRITORI, METRICS_YML):
@@ -292,38 +396,62 @@ def main(argv: list[str] | None = None) -> int:
             print(f"FALLA: no existeix {p} (executa abans el pipeline transform)", file=sys.stderr)
             return 2
 
-    payload = build()
-    errs = invariants(payload)
-    if errs:
-        print(f"FALLA: {len(errs)} invariants d'honestedat trencades:", file=sys.stderr)
-        for e in errs[:10]:
-            print(f"  · {e}", file=sys.stderr)
-        return 1
+    contract = yaml.safe_load(METRICS_YML.read_text(encoding="utf-8"))
+    forbidden = forbidden_metric_keys(contract)
 
-    text = json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=False) + "\n"
+    # Berguedà (monòlit, retrocompatibilitat) + Catalunya (shards). Construïm i validem els
+    # DOS abans de tocar el disc: invariants d'honestedat + guarda anti-fuita a cadascun.
+    berg = build("Berguedà")
+    if errs := invariants(berg):
+        _report(errs, "tauler.bergueda")
+        return 1
+    assert_no_electoral(berg, forbidden, OUT_BERGUEDA.name)
+    berg_text = render_monolith(berg)
+
+    cat = build(None)
+    if errs := invariants(cat):
+        _report(errs, "tauler/ (947)")
+        return 1
+    assert_no_electoral(cat, forbidden, "tauler/<ine5>.json")
+    files = shard_files(cat)
 
     if args.check:
-        if not OUT.exists():
-            print(f"FALLA (--check): no existeix {OUT} (executa'l sense --check)", file=sys.stderr)
+        stale: list[str] = []
+        if not OUT_BERGUEDA.exists():
+            print(f"FALLA (--check): no existeix {OUT_BERGUEDA} (executa'l sense --check)", file=sys.stderr)
             return 1
-        with OUT.open("r", encoding="utf-8", newline="") as fh:
-            on_disk = fh.read()
-        if on_disk != text:
-            print(f"FALLA (--check): {OUT.name} està estale — regenera'l "
-                  f"(python tools/export_tauler_web.py)", file=sys.stderr)
+        if _read_lf(OUT_BERGUEDA) != berg_text:
+            stale.append(f"{OUT_BERGUEDA.name}: estale")
+        stale.extend(check_shards(files))
+        if stale:
+            print(f"FALLA (--check): {len(stale)} artefactes del tauler estale/absents/estranys — "
+                  f"regenera'l (python tools/export_tauler_web.py):", file=sys.stderr)
+            for e in stale[:10]:
+                print(f"  · {e}", file=sys.stderr)
+            if len(stale) > 10:
+                print(f"  · … i {len(stale) - 10} més", file=sys.stderr)
             return 1
-        print(f"OK (--check): {OUT.name} al dia ({len(payload['municipis'])} municipis, "
-              f"darrer mes d'atur {payload['_meta']['atur']['darrer_mes']}).")
+        print(f"OK (--check): tauler al dia — {OUT_BERGUEDA.name} ({len(berg['municipis'])} munis) "
+              f"+ tauler/ ({len(cat['municipis'])} munis + _meta), darrer mes d'atur "
+              f"{cat['_meta']['atur']['darrer_mes']}.")
         return 0
 
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    with OUT.open("w", encoding="utf-8", newline="\n") as fh:
-        fh.write(text)
-    n_tend = sum(len(v) for m in payload["municipis"].values() for v in m["tendencia"].values())
-    print(f"Escrit {OUT.relative_to(REPO).as_posix()} · {len(payload['municipis'])} municipis "
-          f"· atur fins {payload['_meta']['atur']['darrer_mes']} ({MESOS_SERIE} mesos) "
-          f"· {n_tend} entrades de tendència · {OUT.stat().st_size / 1024:.1f} kB.")
+    _write_lf(OUT_BERGUEDA, berg_text)
+    write_shards(files)
+    berg_kb = OUT_BERGUEDA.stat().st_size / 1024
+    shard_total = sum((TAULER_DIR / n).stat().st_size for n in files) / 1048576
+    print(f"Escrit {OUT_BERGUEDA.relative_to(REPO).as_posix()} ({len(berg['municipis'])} munis, "
+          f"{berg_kb:.1f} kB) + data/web/tauler/ ({len(cat['municipis'])} shards + _meta, "
+          f"{shard_total:.1f} MB) · atur fins {cat['_meta']['atur']['darrer_mes']} ({MESOS_SERIE} mesos).")
     return 0
+
+
+def _report(errs: list[str], label: str) -> None:
+    print(f"FALLA: {len(errs)} invariants d'honestedat trencades a {label}:", file=sys.stderr)
+    for e in errs[:10]:
+        print(f"  · {e}", file=sys.stderr)
+    if len(errs) > 10:
+        print(f"  · … i {len(errs) - 10} més", file=sys.stderr)
 
 
 if __name__ == "__main__":

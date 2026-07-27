@@ -122,13 +122,24 @@ jobs:
       # D5 · mode govern: el pont mart_govern → JSON servible (rang comarcal per al front).
       # Sense aquest --check, el JSON versionat es podia desincronitzar en silenci del parquet
       # (el forat que D4/D5 van destapar: D4 emetia parquet, no JSON web). Ownership → Sondeig.
-      - name: Export govern web al dia (mart_govern → web · offline)
+      # P-947: el --check verifica ELS DOS abasts en una passada — govern.bergueda.json (31,
+      # retrocompat) i govern.catalunya.json (947, rang per la comarca del propi municipi).
+      - name: Export govern web al dia (mart_govern → web · 31 + 947 · offline)
         run: python tools/export_govern_web.py --check
       # D7 · tauler v2: l'atur (E4) i la tendència (E6) servibles. Neix amb --check CABLAT
       # AQUÍ el mateix dia que l'exportador — no repetim el forat de D4/D5, on el mart
       # existia i el JSON web no, i el --check va haver d'arribar en un PR posterior (#272).
-      - name: Export tauler v2 al dia (atur + tendència → web · offline)
+      # P-947: el --check verifica tauler.bergueda.json (31, monòlit retrocompat) I el
+      # directori data/web/tauler/ (947 shards per municipi + _meta.json) — inclosos els
+      # fitxers ESTRANYS (un municipi retirat deixaria un shard orfe llegit com a dada viva).
+      - name: Export tauler v2 al dia (atur + tendència → web · 31 + 947 · offline)
         run: python tools/export_tauler_web.py --check
+      # P-947 · guarda ANTI-FUITA amb dents: obrir els exports als 947 no pot destapar mai la
+      # capa de vot (dimension: politica / source: electoral / mart_electoral). Els exports ja
+      # la tenen cablada (assert_no_electoral a write i --check); el test comprova que la
+      # DETECCIÓ funciona (troba les 4 mètriques electorals del contracte) i que la guarda peta.
+      - name: Guarda anti-fuita electoral dels exports web (offline)
+        run: pytest tools/tests/test_export_web_antileak.py -q
 
   # Brúixola: evals de la capa de IA (texto→SQL trazable). Corre OFFLINE
   # (sin OPENROUTER_API_KEY): determinista, sin red. Gate anti-regresión.
