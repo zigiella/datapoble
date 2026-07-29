@@ -4,10 +4,16 @@
 	 *
 	 * Explica, un per un, cada indicador de l'observatori: QUÈ mesura · COM es calcula (fórmula)
 	 * · FONT i data · si és dada OFICIAL 🟦 o INFERÈNCIA 🟪. El contingut surt de dues fonts:
-	 *  - docs/poblacio-real-metode.md (v2, les 3 capes, el catch del vidre, l'honestedat) i
-	 *    semantic/metrics.yml (fórmules, fonts, caveats) → text explicatiu (copy i18n nou).
-	 *  - el dataset real (contracte) → label, unitat, font, data i procedència de cada mètrica;
-	 *    així cap font/data es codifica a mà: és el mateix contracte que pinta la resta del web.
+	 *  - el dataset real (contracte) → label, DEFINICIÓ (`definicio`), FÓRMULA (`formula`),
+	 *    ADVERTIMENT (`note`), unitat, font, data i procedència de cada mètrica; així cap
+	 *    font/data/definició es codifica a mà: és el mateix contracte que pinta la resta del web.
+	 *  - copy i18n de funcionalitat (WHAT/HOW) NOMÉS on el contracte no en diu prou (fitxes
+	 *    velles i annex del model); per a la resta mana el fallback del contracte.
+	 *
+	 * P-DOC (2026-07-27): la COMPOSICIÓ dels blocs (refs + claus + annex) viu a
+	 * `$lib/metodologia/blocs.js` (font única amb `scripts/verify-docs.mjs`). La pàgina FILTRA
+	 * les claus que el dataset no serveix (avís al build, mai un 500 en render: la guarda del
+	 * verificador és qui cau) i pinta el `note` del contracte com a advertiment de cada fitxa.
 	 *
 	 * Estètica coherent amb el lloc: hero + .ds-main/.ds-sec del design-system, Archivo als
 	 * titulars, tokens --dp-*; procedència amb la signatura `.prov` (slate=oficial, porpra=inferència).
@@ -15,9 +21,10 @@
 	import ContourField from '$lib/components/ContourField.svelte';
 	import MetodologiaModel from '$lib/components/MetodologiaModel.svelte';
 	import { currentLocale, pick } from '$lib/i18n';
+	import { METODOLOGIA_BLOCS } from '$lib/metodologia/blocs.js';
 	import { provenanceOf } from '$lib/map/provenance';
 	import { m } from '$lib/paraglide/messages';
-	import type { MetricKey } from '$lib/contract/types';
+	import type { MetricDef, MetricKey } from '$lib/contract/types';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -34,6 +41,10 @@
 	const sgn = (v: number | null) => (v == null ? '—' : `${v > 0 ? '+' : ''}${dec(v)}%`);
 
 	// «Què mesura» (definició curta i clara) per clau de mètrica — copy i18n de funcionalitat.
+	// P-DOC: NOMÉS on el contracte no en diu prou; la resta de fitxes usen `def.definicio`
+	// (fallback del render). Els indicadors de vida (kg/kwh/vidre/restauració) ja NO hi són:
+	// el seu copy antic els emmarcava com a senyals L1/L2/L3 del model aparcat, i són targetes
+	// vives del tauler — ara parla el contracte.
 	const WHAT: Partial<Record<MetricKey, () => string>> = {
 		poblacio: () => m.met_poblacio_what(),
 		hab_noprincipal: () => m.met_habnop_what(),
@@ -41,13 +52,8 @@
 		hab_per_hab: () => m.met_habperhab_what(),
 		rtc_total: () => m.met_rtc_what(),
 		rtc_per_1000hab: () => m.met_rtcratio_what(),
-		kwh_hab: () => m.met_kwh_what(),
-		vidre_hab: () => m.met_vidre_what(),
-		kg_hab_any: () => m.met_residus_what(),
 		gap_pernocta_pct: () => m.met_pernocta_what(),
 		carrega_total_est: () => m.met_carrega_what(),
-		restauracio_per_1000hab: () => m.met_restauracio_what(),
-		restauracio_estab: () => m.met_restauracio_what(),
 		confianca: () => m.met_confianca_what(),
 		pct_icaen_EFG: () => m.met_efg_what()
 	};
@@ -59,28 +65,35 @@
 		hab_per_hab: () => m.met_habperhab_how(),
 		rtc_total: () => m.met_rtc_how(),
 		rtc_per_1000hab: () => m.met_rtcratio_how(),
-		kwh_hab: () => m.met_kwh_how(),
-		vidre_hab: () => m.met_vidre_how(),
-		kg_hab_any: () => m.met_residus_how(),
 		gap_pernocta_pct: () => m.met_pernocta_how(),
 		carrega_total_est: () => m.met_carrega_how(),
-		restauracio_per_1000hab: () => m.met_restauracio_how(),
-		restauracio_estab: () => m.met_restauracio_how(),
 		confianca: () => m.met_confianca_how(),
 		pct_icaen_EFG: () => m.met_efg_how()
 	};
-	// Fórmula curta (codi, sense i18n: idèntica ca/es) com a darrer recurs del «com es calcula».
+	// Fórmula curta (codi, sense i18n: idèntica ca/es) com a segon recurs del «com es calcula».
 	const FORMULA: Partial<Record<MetricKey, string>> = {
 		kwh_base_ratio: 'kwh_hab / 1224',
 		residu_base_ratio: 'kg_hab_any / 410',
 		vidre_base_ratio: 'vidre_hab / 26,5',
 		carrega_funcional_est: 'max(L1 pernocta, L2 càrrega)'
 	};
+	// «Com es calcula», en cascada honesta (P-DOC): copy i18n → fórmula curta → la FÓRMULA DEL
+	// CONTRACTE (`def.formula`, que l'export emet a 55/55). `directe` no és una fórmula sinó la
+	// declaració que la xifra es LLEGEIX de la font: es diu amb paraules, no es pinta el literal.
+	// El «—» queda com a darrer recurs real (contracte sense fórmula), no com a resposta habitual.
+	function howLine(key: MetricKey, def: MetricDef): string {
+		const own = HOW[key]?.() ?? FORMULA[key];
+		if (own) return own;
+		if (def.formula && def.formula !== 'directe') return def.formula;
+		if (def.formula === 'directe') return m.met_how_directe();
+		return '—';
+	}
 
-	// Blocs editorials de la metodologia (referència + títol + llista de claus, en ordre).
-	// `annex`: el bloc documenta el MODEL D'ESTIMACIÓ DE PERNOCTA, aparcat del web (vot de Bea
-	// 2026-07-16). NO s'esborra — la metodologia és el rastre honest — però s'etiqueta com a
-	// annex de recerca perquè ningú el llegeixi com a part del producte viu.
+	// Blocs editorials de la metodologia: la COMPOSICIÓ (refs + claus + annex) viu a
+	// `$lib/metodologia/blocs.js` (font única amb verify-docs.mjs); aquí només s'hi cablen
+	// títol i intro i18n per `ref`. `annex`: el bloc documenta el MODEL D'ESTIMACIÓ DE
+	// PERNOCTA, aparcat del web (vot de Bea 2026-07-16). NO s'esborra — la metodologia és el
+	// rastre honest — però s'etiqueta com a annex de recerca.
 	interface Block {
 		ref: string;
 		title: () => string;
@@ -88,45 +101,42 @@
 		keys: MetricKey[];
 		annex?: boolean;
 	}
-	const blocks: Block[] = [
-		{
-			ref: 'A',
-			title: () => m.met_block_demo(),
-			keys: ['poblacio', 'hab_noprincipal', 'pct_noprincipal', 'hab_per_hab']
-		},
-		{
-			ref: 'B',
-			title: () => m.met_block_turisme(),
-			keys: ['rtc_total', 'rtc_per_1000hab']
-		},
-		{
-			ref: 'C',
-			title: () => m.met_block_capes(),
-			intro: () => m.met_capes_intro(),
-			annex: true,
-			keys: ['kwh_hab', 'kwh_base_ratio', 'gap_pernocta_pct', 'kg_hab_any', 'residu_base_ratio', 'carrega_total_est', 'carrega_funcional_est', 'vidre_hab', 'vidre_base_ratio', 'restauracio_per_1000hab', 'restauracio_estab', 'confianca']
-		},
-		{
-			ref: 'D',
-			title: () => m.met_block_energia(),
-			keys: ['pct_icaen_EFG']
-		},
-		{
-			ref: 'E',
-			title: () => m.met_block_origen(),
-			intro: () => m.met_origen_intro(),
-			keys: [
-				'poblacio_nascuda_catalunya',
-				'poblacio_nascuda_resta_espanya',
-				'poblacio_nascuda_estranger',
-				'pct_nascuda_estranger',
-				'pct_nacionalitat_estrangera',
-				'bretxa_naturalitzacio',
-				'delta_pct_estrangera_finestra',
-				'confianca_origen'
-			]
-		}
-	];
+	const BLOC_TITLE: Record<string, () => string> = {
+		A: () => m.met_block_demo(),
+		B: () => m.met_block_treball(),
+		C: () => m.met_block_turisme(),
+		D: () => m.met_block_serveis(),
+		E: () => m.met_block_vida(),
+		F: () => m.met_block_energia(),
+		G: () => m.met_block_origen(),
+		H: () => m.met_block_capes()
+	};
+	const BLOC_INTRO: Partial<Record<string, () => string>> = {
+		G: () => m.met_origen_intro(),
+		H: () => m.met_capes_intro()
+	};
+	// GUARDA DEL 500 LATENT (P-DOC): abans es renderitzava `dataset.metrics[key]` sense xarxa —
+	// una clau fantasma als blocs petava la pàgina amb el build verd (va passar amb
+	// index_turisme). Ara les claus absents es FILTREN amb un avís al build (prerender) i és
+	// `verify-docs.mjs` qui cau en local/CI; la pàgina mai.
+	const blocks = $derived.by<Block[]>(() =>
+		METODOLOGIA_BLOCS.map((b) => {
+			const keys = (b.keys as MetricKey[]).filter((k) => {
+				if (dataset.metrics[k]) return true;
+				console.warn(
+					`[metodologia] clau '${k}' del bloc ${b.ref} absent del dataset — fitxa omesa (verify-docs.mjs ha de caure)`
+				);
+				return false;
+			});
+			return {
+				ref: b.ref,
+				title: BLOC_TITLE[b.ref] ?? (() => b.ref),
+				intro: BLOC_INTRO[b.ref],
+				keys,
+				annex: b.annex
+			};
+		}).filter((b) => b.keys.length > 0)
+	);
 
 	// Procedència d'una mètrica (oficial vs inferència) a partir del seu `source` (mateixa regla
 	// que el mapa i el resum). Assumim que la mètrica «existeix» per a la fitxa metodològica.
@@ -214,9 +224,16 @@
 								<dt>{m.met_lbl_what()}</dt>
 								<dd>{WHAT[key]?.() ?? (def.definicio ? pick(def.definicio, locale) : pick(def.label, locale))}</dd>
 								<dt>{m.met_lbl_how()}</dt>
-								<dd class="met-card__how">{HOW[key]?.() ?? FORMULA[key] ?? '—'}</dd>
+								<dd class="met-card__how">{howLine(key, def)}</dd>
 								<dt>{m.met_lbl_src()}</dt>
 								<dd class="met-card__src">{srcLine(key)}</dd>
+								{#if def.note}
+									<!-- P-DOC: l'ADVERTIMENT del contracte (`note` = el caveat renombrat) a la
+									     fitxa — aquí viuen la doctrina del «<5» de l'atur, la barreja de
+									     vintages de la penetració sobre el parc o el «MÍNIM, no cens» d'OSM. -->
+									<dt>{m.glo_lbl_note()}</dt>
+									<dd class="met-card__note">{pick(def.note, locale)}</dd>
+								{/if}
 							</dl>
 						</article>
 					{/each}
@@ -227,7 +244,7 @@
 		{#if model}
 			<section class="ds-sec">
 				<div class="ds-sec__hd">
-					<span class="ref">G</span><h2>{m.met_model_title()}</h2>
+					<span class="ref">I</span><h2>{m.met_model_title()}</h2>
 					<span class="met-annex-badge">{m.met_annex_badge()}</span>
 				</div>
 				<p class="met-annex-note">{m.met_annex_note()}</p>
@@ -240,7 +257,7 @@
 			{@const s = etca.pernocta_vs_etca}
 			<section class="ds-sec">
 				<div class="ds-sec__hd">
-					<span class="ref">H</span><h2>{m.met_block_validacio()}</h2>
+					<span class="ref">J</span><h2>{m.met_block_validacio()}</h2>
 					<span class="met-annex-badge">{m.met_annex_badge()}</span>
 				</div>
 				<p class="met-annex-note">{m.met_annex_note()}</p>
@@ -295,7 +312,7 @@
 		<!-- Nivell C · presència estimada a Catalunya, EN RANG (escala més enllà del Berguedà). -->
 		<section class="ds-sec">
 			<div class="ds-sec__hd">
-				<span class="ref">I</span><h2>{m.met_rang_title()}</h2>
+				<span class="ref">K</span><h2>{m.met_rang_title()}</h2>
 				<span class="met-annex-badge">{m.met_annex_badge()}</span>
 			</div>
 			<p class="met-annex-note">{m.met_annex_note()}</p>
@@ -452,6 +469,13 @@
 		font-size: 0.66rem;
 		color: var(--dp-text-subtle);
 		line-height: 1.45;
+	}
+	/* L'advertiment del contracte (`note`): mateixa veu discreta que al glossari. */
+	.met-card__note {
+		font-size: 0.78rem;
+		line-height: 1.5;
+		color: var(--dp-text-muted);
+		text-wrap: pretty;
 	}
 
 	/* ——— Validació externa ETCA (Pas 4) ——— */
