@@ -216,6 +216,13 @@ jobs:
       # paro pinta SUS DOS comparaciones. Offline: lee `data/web/*.json` versionados.
       - name: Verificador del tauler (procedència + regles de pintura · offline)
         run: npm run verify:govern
+      # P-DOC: el glossari descartava EN SILENCI les dimensions que no coneixia (treball,
+      # origen → «26 indicadors» amb 35 publicables) i la metodologia duia un 500 latent
+      # (clau fantasma als blocs = petada en render amb build verd). verify-docs.mjs fa
+      # caure la verificació, no la pàgina: dimensió nova no llistada, clau fantasma,
+      # targeta viva del tauler sense fitxa o peça del model fora de l'annex. Offline.
+      - name: Verificador de glossari i metodologia (composició · offline)
+        run: npm run verify:docs
       - name: Build (producción)
         run: npm run build
 

@@ -12,13 +12,18 @@
 	 * el mateix que pinta la resta del web → sempre sincronitzat. L'únic copy i18n d'aquesta pàgina
 	 * és el CHROME (títol, intro, etiquetes de dimensió/camp i el vocabulari de format de presentació).
 	 *
-	 * Nota honesta sobre la definició: l'export actual del dataset
-	 * (`tools/export_web_municipis.py`, jurisdicció Sondeig) encara NO emet el camp `definicio`
-	 * de metrics.yml; per això la definició recau en `note` quan no hi és. El dia que l'export
-	 * l'inclogui, la definició canònica apareix sola, sense tocar aquesta pàgina (handoff a la bitàcola).
+	 * Definició: l'export emet el camp `definicio` del contracte a totes les mètriques (D4);
+	 * la canònica es pinta sola i el `note` queda com a fallback (i com a advertiment quan
+	 * hi ha totes dues).
+	 *
+	 * P-DOC (2026-07-27): la composició (dimensions publicades + mètriques amagades) viu a
+	 * `$lib/glossari/dims.js` i la guarda `scripts/verify-docs.mjs` CAU si el dataset porta una
+	 * dimensió publicable que no hi sigui — perquè la propera dimensió nova no desaparegui en
+	 * silenci (com van desaparèixer `treball` i `origen`: capçalera «26» amb 35 publicables).
 	 */
 	import ContourField from '$lib/components/ContourField.svelte';
 	import { currentLocale, pick } from '$lib/i18n';
+	import { GLOSSARI_DIMS, GLOSSARI_HIDDEN } from '$lib/glossari/dims.js';
 	import { provenanceOf } from '$lib/map/provenance';
 	import { m } from '$lib/paraglide/messages';
 	import type { MetricDef, MetricFormat } from '$lib/contract/types';
@@ -29,20 +34,16 @@
 	const locale = $derived(currentLocale());
 
 	// Ordre de presentació de les dimensions del contracte (les que no apareguin al dataset
-	// se salten soles). Les etiquetes són chrome i18n; les CLAUS són del contracte (MetricDef.dimension).
-	const DIM_ORDER = [
-		'demografia',
-		'vivenda',
-		'turisme',
-		'serveis',
-		'pressio',
-		'index',
-		'energia'
-	] as const;
-	type Dim = (typeof DIM_ORDER)[number];
+	// se salten soles). Les CLAUS són del contracte (MetricDef.dimension) i viuen a
+	// `$lib/glossari/dims.js` (font única, guardada per verify-docs.mjs); les etiquetes són
+	// chrome i18n `glo_dim_<dim>` — el verificador comprova que cap dimensió llistada quedi
+	// sense la seva etiqueta ca+es.
+	type Dim = string;
 	const DIM_LABEL: Record<Dim, () => string> = {
 		demografia: () => m.glo_dim_demografia(),
+		origen: () => m.glo_dim_origen(),
 		vivenda: () => m.glo_dim_vivenda(),
+		treball: () => m.glo_dim_treball(),
 		turisme: () => m.glo_dim_turisme(),
 		serveis: () => m.glo_dim_serveis(),
 		pressio: () => m.glo_dim_pressio(),
@@ -62,34 +63,25 @@
 	};
 
 	// Agrupació dinàmica: recorre TOT el catàleg del contracte i agrupa per dimensió, en l'ordre
-	// de DIM_ORDER i conservant l'ordre del contracte dins de cada grup (diffs estables). No es
-	// codifica cap llista de mètriques: el que hi hagi al dataset és el que es pinta.
+	// de GLOSSARI_DIMS i conservant l'ordre del contracte dins de cada grup (diffs estables). No
+	// es codifica cap llista de mètriques: el que hi hagi al dataset és el que es pinta.
 	interface Group {
 		dim: Dim;
 		label: () => string;
 		entries: MetricDef[];
 	}
-	// Indicadors retirats del públic (no surten al diccionari): l'IETR i la seva família, el model
-	// d'una sola capa antic, els scores interns i — FASE NOVA (model aparcat, vot de Bea
-	// 2026-07-16) — TOTA la família del model d'estimació de pernocta (gap_pernocta*,
-	// poblacio_pernocta_est, carrega_*, index_turisme, ràtios de base, bandera de confiança i
-	// tipologia derivada). La dada segueix al contracte; només no es publica aquí.
-	const HIDDEN = new Set<string>([
-		'IETR', 'IETR_rank', 'IETR_stock', 'IETR_impact',
-		'poblacio_real_est', 'gap_abs', 'gap_pct', 'poblacio_real_rel',
-		'confianca_score', 'divergencia_senyals',
-		// Família del model aparcat (A8 · fase-nova-aparcaments.md):
-		'gap_pernocta', 'gap_pernocta_pct', 'poblacio_pernocta_est',
-		'carrega_total_est', 'carrega_funcional_est', 'index_turisme',
-		'kwh_base_ratio', 'residu_base_ratio', 'vidre_base_ratio',
-		'confianca', 'tipologia'
-	]);
+	// Indicadors retirats del públic (no surten al diccionari): la llista viu a
+	// `$lib/glossari/dims.js` (font única amb el verificador). La dada segueix al contracte;
+	// només no es publica aquí.
+	const HIDDEN = new Set<string>(GLOSSARI_HIDDEN);
 	const groups = $derived.by<Group[]>(() => {
 		const all = Object.values(dataset.metrics);
 		const out: Group[] = [];
-		for (const dim of DIM_ORDER) {
+		for (const dim of GLOSSARI_DIMS) {
 			const entries = all.filter((d) => d.dimension === dim && !HIDDEN.has(d.key));
-			if (entries.length) out.push({ dim, label: DIM_LABEL[dim], entries });
+			// Fallback honest: si una dimensió llistada no té etiqueta cablada, es pinta la CLAU
+			// del contracte (lleig i visible) en comptes de petar — i verify-docs.mjs ja ha caigut.
+			if (entries.length) out.push({ dim, label: DIM_LABEL[dim] ?? (() => dim), entries });
 		}
 		return out;
 	});

@@ -87,6 +87,22 @@ publicable per si sola.*
 >   `/metodologia` contra el contracte d'AVUI (index_turisme deprecat, IETR/IETR_rank marcats derived,
 >   `tipus_territorial` afegit, caveats de nacionalitat/bretxa corregits, regla d'evidència). Risc
 >   conegut: `/metodologia` es trencava en render en treure una mètrica del JSON (acoblament) — mirar-ho.
+>   - **✅ P-DOC (Mirador) — FETA, PR obert (2026-07-29, branca `mirador/pdoc-glossari-metodologia`).**
+>     Bitàcola: `bitacora/2026-07-27_pdoc-glossari-metodologia_mirador.md`. Glossari **26 → 35**
+>     indicadors (`treball` + `origen` ja al diccionari); metodologia amb fitxes per a les 10 vives
+>     que no en tenien (atur amb el «<5», 15-64 derivada, envelliment, renda, serveis, rtc_hut,
+>     penetració amb el caveat de vintages) i **residus/elèctric/vidre/restauració FORA de
+>     l'annex** (a l'annex hi queden només les peces del model); el 500 latent desarmat (claus
+>     absents filtrades + avís al build); COM amb fallback a `def.formula` i l'ADVERTIMENT del
+>     contracte (`note`) pintat a la fitxa. **Guarda nova `verify-docs.mjs`** (npm run verify:docs
+>     + pas al job web del CI): cau si el dataset porta una dimensió no llistada, si un bloc llista
+>     una clau fantasma, si una targeta viva del tauler queda sense fitxa o si l'emmarcament
+>     viu/annex es torça — provada EN NEGATIU 4/4. La composició de les dues pàgines ara és font
+>     única en JS pur (`glossari/dims.js`, `metodologia/blocs.js`, patró kpis.js). Tipus del
+>     contracte posats al dia (`atur_registrat` + dimensions `treball`/`origen` al mirall TS).
+>     Verificat en LOCAL: check 0/0 · build verd · verify:govern + verify:docs OK · DOM
+>     prerenderitzat ca+es. Matís del brief: `rtc_per_100hab_viv`/`rtc_hut` són publicades però NO
+>     targetes del tauler (fitxa feta igualment). Cap handoff: la dada hi era tota. **NO fusiono jo.**
 > - **⚙️ GITHUB ACTIONS NO FUNCIONEN FINS EL DIA 1.** «Si les feies servir, avisa per posar online; ho
 >   farà la Trazo.» → Conseqüència operativa: **fusionar a `main` ≠ online.** Verifico TOT en LOCAL
 >   abans de fusionar (pytest, svelte-check, build, `--check`) en comptes de confiar en el CI, i el

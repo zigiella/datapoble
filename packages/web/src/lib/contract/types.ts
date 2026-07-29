@@ -51,6 +51,9 @@ export type MetricKey =
 	| 'pob_65_84'
 	| 'pob_85_mes'
 	| 'pob_65_mes'
+	// Treball (D10(d): atur registrat al catàleg servit — l'etiqueta i la font de la targeta
+	// d'atur es llegeixen del contracte, no del codi)
+	| 'atur_registrat'
 	// Origen: composició i arrelament (capa sensible; lectura ecològica, mai individual)
 	| 'poblacio_nascuda_catalunya'
 	| 'poblacio_nascuda_resta_espanya'
@@ -152,16 +155,18 @@ export interface MetricDef {
 	label: Localized;
 	/**
 	 * Definició canònica del contracte (definicio.ca/.es de metrics.yml) — el text del
-	 * «diccionari» que pinta el glossari. Opcional perquè l'export actual del dataset
-	 * (`tools/export_web_municipis.py`) encara NO l'emet (handoff a Sondeig); el glossari
-	 * la llegeix si hi és i, si no, recau en `note`. Mai es codifica a la UI.
+	 * «diccionari» que pinta el glossari. L'export l'emet a totes les mètriques des de D4
+	 * (55/55); es manté opcional al tipus perquè és additiu i el glossari conserva el
+	 * fallback a `note`. Mai es codifica a la UI.
 	 */
 	definicio?: Localized;
 	/** Unitat de mesura (unit del contracte). "%" és comú a ambdós locales. */
 	unit: Localized;
 	dimension:
 		| 'demografia'
+		| 'origen'
 		| 'vivenda'
+		| 'treball'
 		| 'turisme'
 		| 'serveis'
 		| 'pressio'
