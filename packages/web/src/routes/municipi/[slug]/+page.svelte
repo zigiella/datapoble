@@ -409,11 +409,17 @@
 		if (!c) return m.gov_frescor_nd();
 		return c;
 	}
+	/** Data de càrrega ISO (YYYY-MM-DD, com viu al contracte) → DD-MM-YYYY per al lector
+	 *  (decisió de Bea, 2026-07-29). El contracte no es toca: només la presentació. */
+	function dataCarrega(iso: string): string {
+		const m2 = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+		return m2 ? `${m2[3]}-${m2[2]}-${m2[1]}` : iso;
+	}
 	/** Línia de frescor d'una targeta: cadència · darrera càrrega · procés (o la seva absència). */
 	function frescorLine(f: Frescor | null | undefined): string {
 		if (!f) return '';
 		const parts = [cadenciaLabel(f.actualitzacio)];
-		if (f.darrera_carrega) parts.push(m.gov_frescor_carrega({ data: f.darrera_carrega }));
+		if (f.darrera_carrega) parts.push(m.gov_frescor_carrega({ data: dataCarrega(f.darrera_carrega) }));
 		if (f.proces_refresc === 'cap') parts.push(m.gov_frescor_sense_proces());
 		else if (f.proces_refresc) parts.push(m.gov_frescor_amb_proces());
 		return parts.join(' · ');
