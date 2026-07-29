@@ -83,7 +83,15 @@ publicable per si sola.*
 > - **«Nascuts fora de Catalunya»: APARCAT.** Bea no ho veu clar («no sé si és important»); no es
 >   declara la mètrica fins que no en surti la necessitat. (E11 ja serveix el lloc de naixement com a
 >   nivell; el que s'aparca és la xifra composta «fora de Catalunya».)
-> - **GLOSSARI + METODOLOGIA: repassar que estiguin al dia.** → **P-DOC:** auditar `/glossari` i
+> - **✅ GLOSSARI + METODOLOGIA AL DIA (P-DOC, #292, 2026-07-27).** El glossari descartava EN SILENCI
+>   9 mètriques publicades (l'atur + tota la dimensió origen; deia «26 indicadors», ara 35 en 8
+>   dimensions) — la mateixa forma de bug que D10 (llista fixa). La metodologia: 10 targetes vives
+>   sense fitxa + els indicadors de vida NOMÉS dins l'annex del model aparcat (es llegien com a
+>   recerca aparcada). Ara: 38 fitxes en 8 blocs (atur amb el «<5», la 15-64 amb la fórmula de resta,
+>   vintages), vida en blocs vius, ràtios del model a l'annex, 500 latent desarmat, i guarda nova
+>   `verify-docs.mjs` (provada en negatiu per Mirador 4/4 i re-provada per Talaia). Verificat al
+>   render, ca i es.
+> - **[fet] GLOSSARI + METODOLOGIA: repassar que estiguin al dia.** → **P-DOC:** auditar `/glossari` i
 >   `/metodologia` contra el contracte d'AVUI (index_turisme deprecat, IETR/IETR_rank marcats derived,
 >   `tipus_territorial` afegit, caveats de nacionalitat/bretxa corregits, regla d'evidència). Risc
 >   conegut: `/metodologia` es trencava en render en treure una mètrica del JSON (acoblament) — mirar-ho.
