@@ -435,7 +435,7 @@
         "proces_refresc": "cap",
         "font_frescor": "idescat_emex"
       },
-      "formula": "EMEX f69 (darrer any)",
+      "formula": "directe",
       "definicio": {
         "ca": "Població nascuda a Catalunya (lloc de naixement, no nacionalitat). Part de la composició d'origen del municipi.",
         "es": "Población nacida en Cataluña (lugar de nacimiento, no nacionalidad). Parte de la composición de origen del municipio."
@@ -462,7 +462,7 @@
         "proces_refresc": "cap",
         "font_frescor": "idescat_emex"
       },
-      "formula": "EMEX f72 (darrer any)",
+      "formula": "directe",
       "definicio": {
         "ca": "Població nascuda a la resta de l'Estat espanyol (fora de Catalunya). Lloc de naixement, no nacionalitat.",
         "es": "Población nacida en el resto del Estado español (fuera de Cataluña). Lugar de nacimiento, no nacionalidad."
@@ -489,7 +489,7 @@
         "proces_refresc": "cap",
         "font_frescor": "idescat_emex"
       },
-      "formula": "EMEX f73 (darrer any)",
+      "formula": "directe",
       "definicio": {
         "ca": "Població nascuda fora d'Espanya (lloc de naixement). INCLOU qui ja té nacionalitat espanyola: és la biografia, no el passaport.",
         "es": "Población nacida fuera de España (lugar de nacimiento). INCLUYE a quien ya tiene nacionalidad española: es la biografía, no el pasaporte."

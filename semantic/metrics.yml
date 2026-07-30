@@ -41,6 +41,19 @@
 #   segueixen sent vàlides com a recerca; el que no poden és sostenir una frase pública sobre
 #   un municipi com si fossin una mesura.
 #
+# MICROMUNICIPI (E13, decisió de Bea 2026-07-20: CAVEAT, NO emmascarar; execució v3 2026-07-29).
+# Als municipis amb padró < 250 (el llindar del flag `micromunicipi` de tipus_territorial), els
+# «per càpita» físics i les ràtios de recomptes petits es mostren SEMPRE — el número incòmode és
+# el senyal — però amb una nota visible: el denominador és minúscul i una sola persona o casa el
+# mou. Targetes afectades al tauler: kg_hab_any, kwh_hab, vidre_hab, rtc_per_1000hab,
+# index_envelliment. Cas fundacional investigat: Sant Jaume de Frontanyà (08216, 25 hab):
+# residus 1.132 kg/hab reals (no artefacte nostre: l'ARC divideix per la seva població), que a
+# 450 kg/persona implicarien ~65 persones; el model per residus deia 69 i el d'electricitat 28
+# (divergencia_senyals=83) — dos senyals de població en direccions OPOSADES 2016-2024, o sigui
+# que NO s'hi pot triangular població. On `divergencia_senyals` >= 75 (llindar PROVISIONAL,
+# pendent de calibrar per Sondeig amb la distribució real), la nota ho diu també.
+# La nota la pinta el front (copy i18n); aquest bloc és la doctrina i el llindar.
+#
 # FRESCOR (E5 de les esmenes de Bea, docs/ajuntaments/tauler-v2-esmenes-bea.md §3 —
 # vinculant). Fins ara el contracte deia QUAN és la dada (`date`) però no CADA QUAN es
 # refresca ni QUI la refresca. Una dada anual sense procés és honesta si es diu; una que
@@ -430,7 +443,10 @@ metrics:
       es: "Población nacida en Cataluña (lugar de nacimiento, no nacionalidad). Parte de la composición de origen del municipio."
     dimension: origen
     unit: {ca: habitants, es: habitantes}
-    formula: "EMEX f69 (darrer any)"
+    formula: directe
+    # Camp f69 de l'API d'EMEX (darrer any servit). Era a `formula:` i el web el
+    # pintava amb el simbol de derivada (f) com si fos un calcul: es una dada MESURADA
+    # amb localitzador intern. Redisseny v3 (vot de Bea 2026-07-29).
     source: idescat_emex
     date: "2025"
     table: mart_demografia
@@ -445,7 +461,10 @@ metrics:
       es: "Población nacida en el resto del Estado español (fuera de Cataluña). Lugar de nacimiento, no nacionalidad."
     dimension: origen
     unit: {ca: habitants, es: habitantes}
-    formula: "EMEX f72 (darrer any)"
+    formula: directe
+    # Camp f72 de l'API d'EMEX (darrer any servit). Era a `formula:` i el web el
+    # pintava amb el simbol de derivada (f) com si fos un calcul: es una dada MESURADA
+    # amb localitzador intern. Redisseny v3 (vot de Bea 2026-07-29).
     source: idescat_emex
     date: "2025"
     table: mart_demografia
@@ -459,7 +478,10 @@ metrics:
       es: "Población nacida fuera de España (lugar de nacimiento). INCLUYE a quien ya tiene nacionalidad española: es la biografía, no el pasaporte."
     dimension: origen
     unit: {ca: habitants, es: habitantes}
-    formula: "EMEX f73 (darrer any)"
+    formula: directe
+    # Camp f73 de l'API d'EMEX (darrer any servit). Era a `formula:` i el web el
+    # pintava amb el simbol de derivada (f) com si fos un calcul: es una dada MESURADA
+    # amb localitzador intern. Redisseny v3 (vot de Bea 2026-07-29).
     source: idescat_emex
     date: "2025"
     table: mart_demografia
