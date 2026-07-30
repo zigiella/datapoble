@@ -3,6 +3,25 @@
 *Mètode: **Cambium Charter v0.5**. Es treballa de dalt a baix; cada tasca = un PR. Cada **fase** és
 publicable per si sola.*
 
+> **✅ VOT DE BEA (2026-07-29): REDISSENY DEL TAULER v3 APROVAT SENCER — «tot ok. HUT sí».**
+> Doc vinculant: `docs/ajuntaments/redisseny-tauler-v3.md`. Vol dir: rètols nous (La gent · Les
+> cases · Feina i renda · El dia a dia) · capçalera de presència amb padró+ETCA junts a dalt ·
+> edats i origen com a BARRES APILADES (substitueixen les 8 targetes) · fora «Els números clau» i
+> la targeta gran del padró · «sense procés automàtic» es mou a metodologia · text pla d'ETCA
+> aprovat · HUT a la targeta de turisme (el cru: «31 establiments, 24 són HUT»).
+> Execució (ordre del §6 del doc):
+> - **V3-CONTRACTE (Talaia, en marxa):** f69/f72/f73 deixen de ser «fórmula» (són localitzadors;
+>   les targetes de naixement són MESURADES) + doctrina E13 (caveat micromunicipi padró<250) al
+>   contracte.
+> - **V3-WEB (Mirador):** capçalera de presència · reagrupació i rètols · barres apilades · HUT ·
+>   fora duplicats · «sense procés automàtic» fora de targeta (cap a /metodologia) · caveat E13
+>   pintat quan padró<250 · verify-govern/docs adaptats (les xifres segueixen al DOM).
+> - **V3-DADES (Sondeig):** reescriptura CIUTADANA dels `motiu` de sense_serie a mart_tendencia
+>   (el motiu honest es manté; canvia el registre: «la font oficial només publica l'any vigent»)
+>   + regenerar shards.
+> Doctrina intacta: <5 interval · cap fletxa sense període · sense_serie amb motiu · font O
+> fórmula · rang del mart · frescor per targeta (cadència + càrrega DD-MM-YYYY es queden).
+>
 > **🧭 DECISIONS DE BEA (2026-07-27) — REORIENTACIÓ DEL FOCUS.**
 > - **✅✅ P-947 COMPLET (dades #290 + web #291, fusionats i verificats en local 2026-07-27).** El
 >   dashboard renderitza per a **tots els 947 municipis** amb el rang de la SEVA comarca. Verificat
