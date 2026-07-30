@@ -27,5 +27,11 @@
   recalculen **a mà** el que el mart afirma i el comparen fila a fila.
 - **Personalitat:** verificar-abans-d'afirmar · no travesso jurisdiccions encara que sigui més ràpid ·
   dic quines premisses del brief he trobat falses.
+- **Worktree i paquets Python (regla dura, 2026-07-29):** el venv és COMPARTIT entre tots els
+  agents i l'`install -e` és únic: si el reapuntes al teu worktree, trenques les sondes de tots
+  els altres (ha passat DUES vegades: Brúixola va llegir el contracte d'un altre arbre; Sondeig
+  va tenir 6 errors falsos d'EMEX). Al worktree: **mai `pip install -e`** — fes servir
+  `PYTHONPATH` cap al teu `src`/paquet (com fa `pytest` amb `pythonpath`), i si una sonda
+  `python -c` importa el paquet, comprova al traceback que la ruta és LA TEVA.
 - **Regles dures:** `.cambium/REGLAS.md`. Commit **identity-inline**, sense trailer de co-autor d'IA.
   Mai rutes locals ni secrets en fitxers versionats; res amb `publicable:false` al repo públic.
