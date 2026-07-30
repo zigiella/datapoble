@@ -16,9 +16,19 @@ publicable per si sola.*
 > - **V3-WEB (Mirador):** capçalera de presència · reagrupació i rètols · barres apilades · HUT ·
 >   fora duplicats · «sense procés automàtic» fora de targeta (cap a /metodologia) · caveat E13
 >   pintat quan padró<250 · verify-govern/docs adaptats (les xifres segueixen al DOM).
-> - **V3-DADES (Sondeig):** reescriptura CIUTADANA dels `motiu` de sense_serie a mart_tendencia
->   (el motiu honest es manté; canvia el registre: «la font oficial només publica l'any vigent»)
->   + regenerar shards.
+> - **V3-DADES (Sondeig): ✅ FETA, PR obert (2026-07-30, branca `sondeig/v3-dades-motius`).**
+>   Bitàcola: `bitacora/2026-07-29_v3-dades-motius_sondeig.md` (taula abans/després sencera).
+>   Els 18 `motiu_ca`/`motiu_es` de sense_serie reescrits en registre CIUTADÀ mantenint el motiu
+>   honest exacte i la distinció entre els 5 casos (límit de font EMEX · pendent nostre · dada
+>   decennal · registre viu · mapa OSM que es completa); el detall tècnic (API id/i/tipus,
+>   f69/f72/f73, Overpass) viu als comentaris del model/contracte/metodologia, no s'ha perdut.
+>   Parquet reconstruït amb fidelitat provada abans (mètode D10: valor a valor, 20.802 files
+>   exactes) + monòlit + 947 shards regenerats. Verificat en LOCAL (Actions avall): job data
+>   sencer verd — verify_tendencia (paritat ca/es verda), tots els `--check`, ruff, dbt parse,
+>   antileak 5/5, signals 182/182, i verify-govern.mjs de Mirador sobre la dada nova. **Cap
+>   motiu antic era fals** (verificat contra D7/next.md abans de reescriure). **⚠️ El risc #5
+>   (editable compartida) ha mossegat per SEGONA vegada:** pytest d'EMEX important l'arbre d'un
+>   altre agent → 6 errors falsos; amb PYTHONPATH d'aquest arbre, 7/7. NO fusiono jo.
 > Doctrina intacta: <5 interval · cap fletxa sense període · sense_serie amb motiu · font O
 > fórmula · rang del mart · frescor per targeta (cadència + càrrega DD-MM-YYYY es queden).
 >

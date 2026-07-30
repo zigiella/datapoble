@@ -40,6 +40,25 @@
 -- `definicio` al contracte semàntic. Les columnes són `motiu_ca` i `motiu_es`: no hi ha
 -- cap `motiu` a seques, precisament perquè no es pugui tornar a colar un idioma implícit.
 --
+-- V3 · EL MOTIU ES DIU EN LLENGUA DE CIUTADÀ (redisseny v3 §5, vot de Bea 2026-07-29).
+-- El lector de la targeta és un alcalde o un veí, no un enginyer: «cap sèrie per API»,
+-- «pendent d'ingesta» o «filtres id/i/tipus» són argot que no l'informa. Els literals
+-- d'aquest model estan escrits en pla, PERÒ el motiu honest és EXACTAMENT el mateix i
+-- la distinció entre casos es continua veient, perquè no són el mateix cas:
+--   · LÍMIT DE FONT (EMEX: població, franges, envelliment, lloc de naixement) — la font
+--     oficial només publica la dada vigent; l'evolució no la podem ensenyar NOSALTRES
+--     ni ningú que en begui. No és culpa nostra i no és arreglable ingerint més.
+--   · PENDENT NOSTRE (renda INE, residus/vidre ARC, elèctric ICAEN) — la font SÍ que té
+--     la sèrie; som nosaltres que encara no la carreguem. Es diu, perquè és un deute
+--     nostre i no un límit del món.
+--   · DADA DECENNAL (cens d'habitatge 2021) — no hi ha cap edició anterior comparable.
+--   · REGISTRE VIU (RTC) — es llegeix com a foto del dia; no en conservem talls.
+--   · MAPA QUE ES COMPLETA (OSM) — una pujada podria ser mapatge nou, no obertures
+--     reals: ni guardant talls la diferència es podria llegir com a canvi al terreny.
+-- El DETALL TÈCNIC de cada límit (quins filtres té l'API d'EMEX, quan es va verificar
+-- en viu, quins camps f69/f72/f73) NO s'ha perdut: viu als comentaris d'aquest model,
+-- al contracte semàntic i a /metodologia — que és on el busca qui el necessita.
+--
 -- DOCTRINA DEL «<5» A LA RESTA (C1 §1.1): quan un dels dos mesos ve emmascarat, la
 -- diferència NO és un número, és un INTERVAL. Llavors delta = NULL i s'emeten
 -- delta_min = actual_min − anterior_max i delta_max = actual_max − anterior_min, amb
@@ -212,65 +231,80 @@ sense as (
     from {{ ref('mart_municipi') }} m
     cross join lateral (
         values
+            -- LÍMIT DE FONT · EMEX només publica la dada vigent: la seva API (filtres
+            -- id/i/tipus) no té cap paràmetre temporal — verificat en viu 2026-07-20; els
+            -- paràmetres temporals que es provin s'ignoren en silenci. La sèrie de població
+            -- SÍ que existeix per una altra via oficial (Idescat censph, 1975→) i la seva
+            -- ingesta està encuada: per això el motiu de `poblacio` acaba diferent del de
+            -- les franges (que no tenen aquesta altra via verificada).
             ('poblacio',
-             'EMEX serveix només el darrer període: la seva API (filtres id/i/tipus) no té cap paràmetre temporal — verificat en viu 2026-07-20. Sèrie oficial disponible per una altra via (Idescat censph), ingesta encuada.',
-             'EMEX solo sirve el último periodo: su API (filtros id/i/tipus) no tiene ningún parámetro temporal — verificado en vivo 2026-07-20. Serie oficial disponible por otra vía (Idescat censph), ingesta en cola.',
+             'La font oficial d''on llegim el padró només publica la dada vigent: no en podem ensenyar l''evolució. La sèrie històrica existeix per una altra via oficial i tenim previst carregar-la.',
+             'La fuente oficial de donde leemos el padrón solo publica el dato vigente: no podemos enseñar su evolución. La serie histórica existe por otra vía oficial y tenemos previsto cargarla.',
              cast(m.poblacio as double)),
             ('pob_0_14',
-             'Franja d''edat d''EMEX: mateix límit de font que la població (cap sèrie per API).',
-             'Franja de edad de EMEX: mismo límite de fuente que la población (ninguna serie por API).',
+             'La font oficial només publica la dada vigent de cada franja d''edat: no en podem ensenyar l''evolució.',
+             'La fuente oficial solo publica el dato vigente de cada franja de edad: no podemos enseñar su evolución.',
              cast(m.pob_0_14 as double)),
+            -- (la 15-64 no ve directa de la font: es calcula restant les altres franges)
             ('pob_15_64',
-             'Franja d''edat derivada d''EMEX: mateix límit de font que la població (cap sèrie per API).',
-             'Franja de edad derivada de EMEX: mismo límite de fuente que la población (ninguna serie por API).',
+             'Aquesta franja es calcula restant les altres de la població total, i la font oficial només publica la dada vigent: no en podem ensenyar l''evolució.',
+             'Esta franja se calcula restando las demás de la población total, y la fuente oficial solo publica el dato vigente: no podemos enseñar su evolución.',
              cast(m.pob_15_64 as double)),
             ('pob_65_84',
-             'Franja d''edat d''EMEX: mateix límit de font que la població (cap sèrie per API).',
-             'Franja de edad de EMEX: mismo límite de fuente que la población (ninguna serie por API).',
+             'La font oficial només publica la dada vigent de cada franja d''edat: no en podem ensenyar l''evolució.',
+             'La fuente oficial solo publica el dato vigente de cada franja de edad: no podemos enseñar su evolución.',
              cast(m.pob_65_84 as double)),
             ('pob_85_mes',
-             'Franja d''edat d''EMEX: mateix límit de font que la població (cap sèrie per API).',
-             'Franja de edad de EMEX: mismo límite de fuente que la población (ninguna serie por API).',
+             'La font oficial només publica la dada vigent de cada franja d''edat: no en podem ensenyar l''evolució.',
+             'La fuente oficial solo publica el dato vigente de cada franja de edad: no podemos enseñar su evolución.',
              cast(m.pob_85_mes as double)),
             ('index_envelliment',
-             'Es deriva de franges d''EMEX, que no tenen sèrie per API.',
-             'Se deriva de franjas de EMEX, que no tienen serie por API.',
+             'Aquest índex es calcula a partir de les franges d''edat, i d''aquestes la font oficial només publica la dada vigent: no en podem ensenyar l''evolució.',
+             'Este índice se calcula a partir de las franjas de edad, y de estas la fuente oficial solo publica el dato vigente: no podemos enseñar su evolución.',
              cast(m.index_envelliment as double)),
+            -- PENDENT NOSTRE · aquestes tres fonts SÍ que tenen sèrie històrica; el
+            -- pipeline n'ingereix una sola foto. El motiu ho diu com el que és: un deute
+            -- nostre, no un límit del món (ingesta de sèries encuada, vegeu next.md).
             ('renda_neta_persona',
-             'INE ADRH: s''ingereix una sola foto (2023). Sèrie disponible a la font però encara no ingerida.',
-             'INE ADRH: se ingiere una sola foto (2023). Serie disponible en la fuente pero aún no ingerida.',
+             'La font oficial sí que en té la sèrie històrica; nosaltres encara no la carreguem. De moment n''ensenyem la darrera dada disponible (2023).',
+             'La fuente oficial sí tiene la serie histórica; nosotros aún no la cargamos. De momento enseñamos el último dato disponible (2023).',
              cast(m.renda_neta_persona as double)),
+            -- DADA DECENNAL · Cens d'habitatge 2021.
             ('pct_noprincipal',
-             'Cens d''habitatge 2021: dada decennal, no hi ha període anterior comparable ingerit.',
-             'Censo de vivienda 2021: dato decenal, no hay periodo anterior comparable ingerido.',
+             'És una dada del Cens d''habitatge del 2021, que es fa un cop cada deu anys: no tenim cap edició anterior comparable per ensenyar-ne l''evolució.',
+             'Es un dato del Censo de vivienda de 2021, que se hace una vez cada diez años: no tenemos ninguna edición anterior comparable para enseñar su evolución.',
              cast(m.pct_noprincipal as double)),
             ('kg_hab_any',
-             'Residus (ARC): s''ingereix el darrer any tancat. Sèrie disponible a la font però encara no ingerida.',
-             'Residuos (ARC): se ingiere el último año cerrado. Serie disponible en la fuente pero aún no ingerida.',
+             'La font oficial (l''Agència de Residus) sí que en té la sèrie històrica; nosaltres encara no la carreguem. De moment n''ensenyem el darrer any tancat.',
+             'La fuente oficial (la Agencia de Residuos) sí tiene la serie histórica; nosotros aún no la cargamos. De momento enseñamos el último año cerrado.',
              cast(m.kg_hab_any as double)),
             ('kwh_hab',
-             'Consum elèctric domèstic (ICAEN): s''ingereix el darrer any de cobertura plena. Sèrie disponible a la font però encara no ingerida.',
-             'Consumo eléctrico doméstico (ICAEN): se ingiere el último año de cobertura plena. Serie disponible en la fuente pero aún no ingerida.',
+             'La font oficial (l''ICAEN) sí que en té la sèrie històrica; nosaltres encara no la carreguem. De moment n''ensenyem el darrer any amb dades completes.',
+             'La fuente oficial (el ICAEN) sí tiene la serie histórica; nosotros aún no la cargamos. De momento enseñamos el último año con datos completos.',
              cast(m.kwh_hab as double)),
             ('vidre_hab',
-             'Fracció vidre (ARC): s''ingereix el darrer any tancat. Sèrie disponible a la font però encara no ingerida.',
-             'Fracción vidrio (ARC): se ingiere el último año cerrado. Serie disponible en la fuente pero aún no ingerida.',
+             'La font oficial (l''Agència de Residus) sí que té la sèrie històrica del vidre; nosaltres encara no la carreguem. De moment n''ensenyem el darrer any tancat.',
+             'La fuente oficial (la Agencia de Residuos) sí tiene la serie histórica del vidrio; nosotros aún no la cargamos. De momento enseñamos el último año cerrado.',
              cast(m.vidre_hab as double)),
+            -- REGISTRE VIU · el RTC no publica edicions: es llegeix com a foto del dia.
             ('rtc_per_1000hab',
-             'Registre de Turisme de Catalunya: és un registre viu, es llegeix com a foto del dia de la càrrega; no se''n conserva cap tall anterior.',
-             'Registro de Turismo de Cataluña: es un registro vivo, se lee como foto del día de la carga; no se conserva ningún corte anterior.',
+             'El Registre de Turisme de Catalunya és un registre viu que llegim com una foto del dia de la càrrega: no en conservem cap tall anterior amb què comparar.',
+             'El Registro de Turismo de Cataluña es un registro vivo que leemos como una foto del día de la carga: no conservamos ningún corte anterior con el que comparar.',
              cast(m.rtc_per_1000hab as double)),
             -- D10 · les DUES que faltaven. El tauler les pinta (targeta «comerç i serveis»
             -- del bloc C) i no tenien fila: la targeta callava en comptes de declarar-se.
             -- El motiu NO és «encara no ingerida»: aquí ni tan sols guardant dos talls hi
             -- hauria tendència llegible, i això s'ha de dir sencer.
+            -- (tècnicament: OSM via Overpass, ingerit com una sola consulta el dia de la
+            --  càrrega, sense talls conservats; OSM infra-mapeja el rural i la completesa
+            --  creix amb el temps, així que mapejat nou i obertura real són inseparables)
             ('serveis_estab',
-             'OpenStreetMap (Overpass): cartografia col·laborativa que canvia contínuament i sense calendari, ingerida com una sola consulta —la del dia de la càrrega— sense conservar cap tall anterior. I encara que se''n guardessin dos, la diferència NO seria llegible com un canvi al terreny: OSM infra-mapeja el rural i la seva completesa creix amb el temps, així que el mapejat nou i l''obertura real d''un establiment no es poden separar.',
-             'OpenStreetMap (Overpass): cartografía colaborativa que cambia continuamente y sin calendario, ingerida como una sola consulta —la del día de la carga— sin conservar ningún corte anterior. Y aunque se guardaran dos, la diferencia NO sería legible como un cambio sobre el terreno: OSM infra-mapea lo rural y su completitud crece con el tiempo, de modo que el mapeo nuevo y la apertura real de un establecimiento no se pueden separar.',
+             'El recompte surt d''un mapa obert (OpenStreetMap) que es va completant amb el temps: una pujada podria ser que algú ha dibuixat al mapa una botiga que ja existia, no una obertura real. Per això no n''ensenyem l''evolució: ni guardant fotos successives es podria llegir com un canvi real al poble.',
+             'El recuento sale de un mapa abierto (OpenStreetMap) que se va completando con el tiempo: una subida podría ser que alguien ha dibujado en el mapa una tienda que ya existía, no una apertura real. Por eso no enseñamos su evolución: ni guardando fotos sucesivas podría leerse como un cambio real en el pueblo.',
              cast(m.serveis_estab as double)),
             ('restauracio_estab',
-             'OpenStreetMap (Overpass): cartografia col·laborativa sense calendari de publicació, ingerida com una sola consulta —la del dia de la càrrega— sense cap tall anterior conservat. I encara que n''hi hagués dos, el Δ no diria obertures i tancaments: OSM infra-mapeja el rural i la seva completesa creix amb el temps, de manera que el mapejat nou i el canvi real es confondrien.',
-             'OpenStreetMap (Overpass): cartografía colaborativa sin calendario de publicación, ingerida como una sola consulta —la del día de la carga— sin ningún corte anterior conservado. Y aunque hubiera dos, el Δ no diría aperturas y cierres: OSM infra-mapea lo rural y su completitud crece con el tiempo, de modo que el mapeo nuevo y el cambio real se confundirían.',
+             'El recompte surt d''un mapa obert (OpenStreetMap) que es va completant amb el temps: una pujada podria ser que algú ha dibuixat al mapa un bar que ja existia, no una obertura real. Per això no n''ensenyem l''evolució: ni guardant fotos successives es podria llegir com un canvi real al poble.',
+             'El recuento sale de un mapa abierto (OpenStreetMap) que se va completando con el tiempo: una subida podría ser que alguien ha dibujado en el mapa un bar que ya existía, no una apertura real. Por eso no enseñamos su evolución: ni guardando fotos sucesivas podría leerse como un cambio real en el pueblo.',
              cast(m.restauracio_estab as double))
     ) as s(metric, motiu_ca, motiu_es, valor)
 ),
@@ -290,21 +324,23 @@ sense_origen as (
     join {{ ref('mart_municipi') }} m on d.ine5 = m.ine5
     cross join lateral (
         values
+            -- (tècnicament: EMEX f69/f72/f73, mateix límit d'API que la població; els
+            --  localitzadors de camp viuen al contracte com a origin_source des de V3)
             ('poblacio_nascuda_catalunya',
-             'Lloc de naixement d''EMEX (f69): mateix límit de font que la població — cap sèrie per API. I la sèrie que hi ha a la vora, la de NACIONALITAT (2021→2025), NO serveix per a aquesta: són conjunts diferents (qui es nacionalitza surt del de nacionalitat estrangera i es queda al de lloc de naixement). D''aquesta xifra en tenim la foto, no l''evolució.',
-             'Lugar de nacimiento de EMEX (f69): mismo límite de fuente que la población — ninguna serie por API. Y la serie que hay al lado, la de NACIONALIDAD (2021→2025), NO sirve para esta: son conjuntos distintos (quien se nacionaliza sale del de nacionalidad extranjera y se queda en el de lugar de nacimiento). De esta cifra tenemos la foto, no la evolución.',
+             'La font oficial només publica la dada vigent del lloc de naixement: en tenim la foto d''avui, no l''evolució. I l''evolució que es veu a la targeta de nacionalitat (2021→2025) no serveix aquí: parla d''un altre grup de gent (qui obté la nacionalitat espanyola canvia de grup allà, però no aquí).',
+             'La fuente oficial solo publica el dato vigente del lugar de nacimiento: tenemos la foto de hoy, no la evolución. Y la evolución que se ve en la tarjeta de nacionalidad (2021→2025) no sirve aquí: habla de otro grupo de gente (quien obtiene la nacionalidad española cambia de grupo allí, pero no aquí).',
              cast(d.poblacio_nascuda_catalunya as double)),
             ('poblacio_nascuda_resta_espanya',
-             'Lloc de naixement d''EMEX (f72): mateix límit de font que la població — cap sèrie per API. La sèrie de NACIONALITAT (2021→2025) no la substitueix: mesura un altre conjunt de gent. Foto, no evolució.',
-             'Lugar de nacimiento de EMEX (f72): mismo límite de fuente que la población — ninguna serie por API. La serie de NACIONALIDAD (2021→2025) no la sustituye: mide otro conjunto de gente. Foto, no evolución.',
+             'La font oficial només publica la dada vigent del lloc de naixement: en tenim la foto d''avui, no l''evolució. L''evolució de la targeta de nacionalitat (2021→2025) no la substitueix: compta un altre grup de gent.',
+             'La fuente oficial solo publica el dato vigente del lugar de nacimiento: tenemos la foto de hoy, no la evolución. La evolución de la tarjeta de nacionalidad (2021→2025) no la sustituye: cuenta a otro grupo de gente.',
              cast(d.poblacio_nascuda_resta_espanya as double)),
             ('poblacio_nascuda_estranger',
-             'Lloc de naixement d''EMEX (f73): mateix límit de font que la població — cap sèrie per API. Compte amb la sèrie del costat: la de NACIONALITAT estrangera (2021→2025) NO és l''evolució d''aquesta xifra, perquè qui es nacionalitza en surt i aquí es queda. Foto, no evolució.',
-             'Lugar de nacimiento de EMEX (f73): mismo límite de fuente que la población — ninguna serie por API. Cuidado con la serie de al lado: la de NACIONALIDAD extranjera (2021→2025) NO es la evolución de esta cifra, porque quien se nacionaliza sale de aquella y aquí se queda. Foto, no evolución.',
+             'La font oficial només publica la dada vigent del lloc de naixement: en tenim la foto d''avui, no l''evolució. I compte: l''evolució de la nacionalitat estrangera (2021→2025) no és la d''aquesta xifra — qui obté la nacionalitat espanyola surt d''aquell grup però continua havent nascut a l''estranger.',
+             'La fuente oficial solo publica el dato vigente del lugar de nacimiento: tenemos la foto de hoy, no la evolución. Y ojo: la evolución de la nacionalidad extranjera (2021→2025) no es la de esta cifra — quien obtiene la nacionalidad española sale de aquel grupo pero sigue habiendo nacido en el extranjero.',
              cast(d.poblacio_nascuda_estranger as double)),
             ('pct_nascuda_estranger',
-             'Es deriva del lloc de naixement d''EMEX, que no té sèrie per API. La variació que sí que existeix és la del % de NACIONALITAT estrangera (2021→2025), i no és la mateixa cosa: presentar-la aquí seria dir que un percentatge ha evolucionat quan el que ha evolucionat és un altre.',
-             'Se deriva del lugar de nacimiento de EMEX, que no tiene serie por API. La variación que sí existe es la del % de NACIONALIDAD extranjera (2021→2025), y no es lo mismo: presentarla aquí sería decir que un porcentaje ha evolucionado cuando lo que ha evolucionado es otro.',
+             'Aquest percentatge es calcula sobre el lloc de naixement, del qual la font oficial només publica la dada vigent: en tenim la foto, no l''evolució. L''evolució que sí que es veu al costat és la del % de nacionalitat estrangera, i no és la mateixa: mesura un altre grup de gent.',
+             'Este porcentaje se calcula sobre el lugar de nacimiento, del cual la fuente oficial solo publica el dato vigente: tenemos la foto, no la evolución. La evolución que sí se ve al lado es la del % de nacionalidad extranjera, y no es la misma: mide a otro grupo de gente.',
              cast(d.pct_nascuda_estranger as double))
     ) as s(metric, motiu_ca, motiu_es, valor)
 ),
