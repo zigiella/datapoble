@@ -36,7 +36,15 @@
 	import { m } from '$lib/paraglide/messages';
 	import type { Frescor, MetricDef, MetricKey, MetricValue, MunicipiRow } from '$lib/contract/types';
 	import type { LectTo } from '$lib/contract/lectures';
-	import { GOVERN_KPIS, provenanceLine } from '$lib/govern/kpis';
+	import {
+		GOVERN_KPIS,
+		PRESENCIA_KEY,
+		EDATS_BANDS,
+		NAIX_BAR_KEYS,
+		E13_KEYS,
+		E13_LLINDAR,
+		provenanceLine
+	} from '$lib/govern/kpis';
 	import type { GovernEntry } from '$lib/contract/govern';
 	import type { AturPunt, TaulerEntry, TaulerMeta, TendenciaEntry } from '$lib/contract/tauler';
 	import type { PageData } from './$types';
@@ -278,8 +286,9 @@
 	}
 
 	// ── Ajudes del tauler de dades ────────────────────────────────────────────────────────────
-	// Els 4 blocs de la gorra §3 (ordre FIX, C6 §7 — cap KPI es reordena per enterrar-lo). El bloc
-	// D és, des de l'E2 de Bea, el grup de «vida»: residus + elèctric domèstic + vidre junts.
+	// Els 4 grups del tauler v3 (ordre FIX, C6 §7 — cap KPI es reordena per enterrar-lo), amb els
+	// rètols del redisseny aprovat: «La gent» · «Les cases» · «Feina i renda» · «El dia a dia»
+	// (el D inclou ara comerç/serveis: és vida diària, no macroeconomia).
 	const GOV_GROUPS = [
 		{ g: 'A', label: () => m.gov_grp_a() },
 		{ g: 'B', label: () => m.gov_grp_b() },
@@ -323,6 +332,53 @@
 	function signed(s: string): string {
 		return s.startsWith('-') || s.startsWith('−') ? s : `+${s}`;
 	}
+
+	// ── V3 · BARRES APILADES (edats i «d'on venim») ──────────────────────────────────────────
+	// Cada barra és una PARTICIÓ del padró (suma exacta, verificada als 947 i re-verificada per
+	// verify-govern sobre el dataset servit). El % de cada segment és la mateixa operació que
+	// l'amplada del segment: la PRESENTACIÓ dels recomptes servits contra el padró servit — cap
+	// dada nova es fabrica al front (les xifres citables són els recomptes, que segueixen al DOM).
+	// La barra només es pinta si TOTS els components i el padró són números: cap segment inventat.
+	type BarSeg = { key: MetricKey; band: string; v: number; pct: number };
+	function barSegments(defs: { key: string; band: string }[]): BarSeg[] | null {
+		if (!row || typeof row.values.poblacio !== 'number' || row.values.poblacio <= 0) return null;
+		const total = row.values.poblacio;
+		const segs: BarSeg[] = [];
+		for (const d of defs) {
+			const v = row.values[d.key as MetricKey];
+			if (typeof v !== 'number') return null;
+			segs.push({ key: d.key as MetricKey, band: d.band, v, pct: (v / total) * 100 });
+		}
+		return segs;
+	}
+	const edatsSegs = $derived(barSegments(EDATS_BANDS));
+	const naixBands = $derived([
+		{ key: NAIX_BAR_KEYS[0], band: m.gov_naix_cat() },
+		{ key: NAIX_BAR_KEYS[1], band: m.gov_naix_resta() },
+		{ key: NAIX_BAR_KEYS[2], band: m.gov_naix_estranger() }
+	]);
+	const naixSegs = $derived(barSegments(naixBands));
+
+	// ── V3 · E13 — caveat de micromunicipi (doctrina al capçal de metrics.yml) ───────────────
+	// Padró < 250 → les targetes per càpita físiques i les ràtios de recomptes petits porten la
+	// nota visible (caveat, MAI emmascarar: el número incòmode és el senyal). El text exacte està
+	// PENDENT DEL VOT de Bea (el concepte està votat; la frase, no).
+	const isMicro = $derived(
+		typeof row?.values.poblacio === 'number' && row.values.poblacio < E13_LLINDAR
+	);
+	const e13Keys = new Set<string>(E13_KEYS);
+	const showE13 = (key: string | undefined): boolean => !!key && isMicro && e13Keys.has(key);
+
+	// V3 §10 · frase plana de l'índex d'envelliment: «X persones de 65 o més per cada 100 menors
+	// de 15» (X = el valor arrodonit a enter; la fórmula del contracte segueix a la procedència).
+	function envellFrase(): string | null {
+		const v = row?.values.index_envelliment;
+		return typeof v === 'number' ? m.gov_envell_frase({ x: formatInteger(Math.round(v), locale) }) : null;
+	}
+
+	// V3 · capçalera de presència: la def del padró (contracte) i la seva cel·la de rang (mart).
+	const presDef = $derived(gDef(PRESENCIA_KEY));
+	const presCell = $derived(govern?.metrics?.[PRESENCIA_KEY] ?? null);
 
 	// ── D9 · TENDÈNCIA (E6/E11) ───────────────────────────────────────────────────────────────
 	// Quatre regles de pintura, i totes surten de la dada, no del copy:
@@ -395,12 +451,14 @@
 		return '';
 	}
 
-	// ── D9 · FRESCOR PER TARGETA (E5) ─────────────────────────────────────────────────────────
+	// ── D9 · FRESCOR PER TARGETA (E5, esmenada per V3) ────────────────────────────────────────
 	// Regla vinculant: la frescor va A CADA TARGETA, mai a un peu de pàgina global. Els vintages
 	// NO són iguals (població 2025, habitatges 2021) i una sola data els aplanaria en una mentida.
-	// Es diu la veritat sencera: cadència, darrera càrrega i SI hi ha procés que la refresqui
-	// (avui, 1 font de 10). `actualitzacio: null` (derivades sense `origin_source` al contracte)
-	// tampoc s'arrodoneix a un «anual» de consol: es diu que no està declarada.
+	// V3 (vot de Bea, 2026-07-29): la línia de targeta és «cadència · darrera càrrega DD-MM-YYYY»
+	// — el PROCÉS de refresc («sense procés automàtic» / la ruta del workflow) és cuina interna i
+	// es MOU a /metodologia (la fitxa de cada mètrica el segueix dient; la informació no s'esborra
+	// del sistema, canvia de planta). `actualitzacio: null` (derivades sense `origin_source` al
+	// contracte) tampoc s'arrodoneix a un «anual» de consol: es diu que no està declarada.
 	function cadenciaLabel(c: string | null): string {
 		if (c === 'mensual') return m.gov_frescor_mensual();
 		if (c === 'anual') return m.gov_frescor_anual();
@@ -415,13 +473,12 @@
 		const m2 = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
 		return m2 ? `${m2[3]}-${m2[2]}-${m2[1]}` : iso;
 	}
-	/** Línia de frescor d'una targeta: cadència · darrera càrrega · procés (o la seva absència). */
+	/** Línia de frescor d'una targeta: cadència · darrera càrrega DD-MM-YYYY (V3: el procés de
+	 *  refresc ja NO s'hi diu — viu a la fitxa de /metodologia). */
 	function frescorLine(f: Frescor | null | undefined): string {
 		if (!f) return '';
 		const parts = [cadenciaLabel(f.actualitzacio)];
 		if (f.darrera_carrega) parts.push(m.gov_frescor_carrega({ data: dataCarrega(f.darrera_carrega) }));
-		if (f.proces_refresc === 'cap') parts.push(m.gov_frescor_sense_proces());
-		else if (f.proces_refresc) parts.push(m.gov_frescor_amb_proces());
 		return parts.join(' · ');
 	}
 
@@ -649,6 +706,59 @@
 				<section class="ds-sec gov-board" aria-labelledby="gov-board-h">
 					<div class="ds-sec__hd"><span class="ref">◆</span><h2 id="gov-board-h">{m.gov_board_title()}</h2></div>
 					<p class="muni-sec__sub">{m.gov_board_sub()}</p>
+
+					<!-- V3 · CAPÇALERA DE PRESÈNCIA: padró + ETCA JUNTS, a dalt de tot. Són la mateixa
+					     pregunta —«quanta gent hi ha?»— amb dues respostes oficials: els empadronats i
+					     la presència equivalent. Si divergeixen, el lector ho veu SOL — no ho
+					     interpretem (P1/P2 ho reprendran quan E7b aterri). Absorbeix la targeta gran
+					     del padró i la targeta ETCA del grup A (fora duplicats). La capçalera juga amb
+					     les mateixes regles que qualsevol targeta (C6 §8.1): font, rang LLEGIT del
+					     mart, motiu honest de no tenir sèrie i frescor. -->
+					<div class="gov-pres tnum">
+						<div class="gov-pres__col">
+							<p class="gov-kpi__lab">
+								<span class="pd dot--measured"></span>{m.muni_num_padro()}{#if presDef?.date}
+									· {presDef.date}{/if}
+							</p>
+							{#if typeof row.values.poblacio === 'number'}
+								<p class="gov-pres__v">
+									{formatInteger(row.values.poblacio, locale)}<span class="u">{m.gov_pres_padro_u()}</span>
+								</p>
+							{:else}
+								<p class="gov-pres__v gov-kpi__v--absent">{m.value_not_available()}</p>
+							{/if}
+							{#if presCell && presCell.rang != null}
+								<p class="gov-kpi__rank">
+									<span class="gov-kpi__rankk">{m.gov_rang_val({ k: String(presCell.rang), n: String(presCell.n_amb_dada) })}</span>
+									<span class="gov-kpi__rankl">{m.gov_rang_label()}{#if presCell.empat} · {m.gov_rang_empat()}{/if}{m.gov_rang_cap({ comarca: govern?.comarca ?? '' })}</span>
+								</p>
+							{/if}
+							{@render tendencia(trendsOf(PRESENCIA_KEY))}
+							<p class="gov-kpi__src">{provenanceLine(presDef).src}</p>
+							{@render frescor(presDef?.frescor)}
+						</div>
+						<div class="gov-pres__col">
+							<p class="gov-kpi__lab"><span class="pd dot--measured"></span>{m.muni_num_etca()}</p>
+							{#if etca !== null}
+								<p class="gov-pres__v">{formatInteger(etca, locale)}<span class="u">hab.</span></p>
+							{:else}
+								<p class="gov-pres__v gov-kpi__v--absent">{m.muni_sense_dada_oficial()}</p>
+							{/if}
+							<!-- Text pla d'ETCA APROVAT per Bea (2026-07-29); on no n'hi ha, el motiu real. -->
+							<p class="gov-pres__txt">{m.gov_pres_etca_txt()}</p>
+							{#if etca === null}
+								<p class="gov-pres__txt gov-pres__txt--absent">{m.gov_pres_etca_absent()}</p>
+							{/if}
+							<p class="gov-kpi__src">
+								{m.gov_pres_etca_src()} · <a class="gov-pres__met" href={localizeHref('/metodologia')}>{m.gov_pres_etca_met()}</a>
+							</p>
+						</div>
+						<p class="gov-pres__meta">
+							<span>INE {ine5}</span>
+							{#if row.idescat6}<span>Idescat {row.idescat6}</span>{/if}
+						</p>
+					</div>
+
 					{#each GOV_GROUPS as grp (grp.g)}
 						<h3 class="gov-grp">{grp.label()}</h3>
 						<div class="gov-grid tnum">
@@ -664,6 +774,22 @@
 										<p class="gov-kpi__v">
 											{fmt(row, kpi.key as MetricKey)}{#if gUnit(kpi.key)}<span class="u">{gUnit(kpi.key)}</span>{/if}
 										</p>
+										<!-- V3 §10 · la traducció humana de l'índex d'envelliment (la fórmula ja hi és;
+										     la frase plana, no hi era). -->
+										{#if kpi.key === 'index_envelliment' && envellFrase()}
+											<p class="gov-kpi__frase">{envellFrase()}</p>
+										{/if}
+										<!-- V3 §6 (vot de Bea: HUT sí) · el cru al costat del rati: el rati sol amaga
+										     que a molts pobles «turisme reglat» vol dir pisos turístics. Les dues
+										     xifres ja arriben servides; la seva font (única, C6 §8.1) es diu avall. -->
+										{#if kpi.hut && typeof row.values.rtc_total === 'number' && typeof row.values.rtc_hut === 'number'}
+											<p class="gov-kpi__cru">
+												{m.gov_hut_cru({
+													n: formatInteger(row.values.rtc_total, locale),
+													hut: formatInteger(row.values.rtc_hut, locale)
+												})}
+											</p>
+										{/if}
 										<!-- E6/E11 · la tendència, amb el seu període SEMPRE (o el motiu de no tenir-ne). -->
 										{@render tendencia(trendsOf(kpi.trendKey ?? kpi.key))}
 										<!-- D11 · el límit que la dada NO diu de si mateixa: va DARRERE la tendència
@@ -672,6 +798,12 @@
 										     bloc és de nacionalitat, i la seva targeta ho declara. -->
 										{#if kpi.note}
 											<p class="gov-kpi__note">{govNote(kpi.note)}</p>
+										{/if}
+										<!-- V3 §9 · E13: caveat de micromunicipi (padró < 250) als per càpita físics
+										     i a les ràtios de recomptes petits. Caveat, MAI emmascarar: el número
+										     incòmode és el senyal. Text PENDENT DEL VOT de Bea. -->
+										{#if showE13(kpi.key)}
+											<p class="gov-kpi__note gov-kpi__note--e13">{m.gov_e13_micro()}</p>
 										{/if}
 										{#if cell && cell.rang != null}
 											<p class="gov-kpi__rank">
@@ -690,17 +822,108 @@
 										{:else}
 											<p class="gov-kpi__src">{prv.src}</p>
 										{/if}
+										<!-- V3 §6 · la font del CRU («N establiments, M són HUT»): la font única del
+										     registre (C6 §8.1) — el rati de dalt ja porta la seva fórmula. -->
+										{#if kpi.hut}
+											<p class="gov-kpi__src">{srcLine(gDef('rtc_total'))}</p>
+										{/if}
 										{@render frescor(def.frescor)}
 									</article>
-								{:else if kpi.kind === 'etca'}
-									<article class="gov-kpi">
-										<p class="gov-kpi__lab"><span class="pd dot--measured"></span>{m.muni_num_etca()}</p>
-										{#if etca !== null}
-											<p class="gov-kpi__v">{formatInteger(etca, locale)}<span class="u">hab.</span></p>
+								{:else if kpi.kind === 'edats'}
+									<!-- V3 §3 · ESTRUCTURA D'EDATS: UNA targeta amb barra apilada horitzontal
+									     (0-14 · 15-64 · 65-84 · 85+). La barra diu la FORMA; les 8 xifres
+									     (recompte i % per franja) segueixen al DOM i són citables. Procedència:
+									     les 3 franges mesurades amb la seva font; la 15-64 amb la seva fórmula
+									     de resta (C6 §8.1 no s'estova) i el seu caveat del contracte accessible. -->
+									{@const d1564 = gDef('pob_15_64')}
+									{@const p1564 = provenanceLine(d1564)}
+									<article class="gov-kpi gov-kpi--bar">
+										<p class="gov-kpi__lab"><span class="pd dot--measured"></span>{m.gov_kpi_edats()}</p>
+										{#if edatsSegs}
+											<div class="gov-bar" aria-hidden="true">
+												{#each edatsSegs as s, i (s.key)}
+													<span class="gov-bar__seg gov-bar__c{i}" style="flex-grow:{Math.max(s.v, 0.0001)}"></span>
+												{/each}
+											</div>
+											<ul class="gov-bar__legend tnum">
+												{#each edatsSegs as s, i (s.key)}
+													<li>
+														<span class="gov-bar__dot gov-bar__c{i}"></span>
+														<span class="gov-bar__band">{s.band}</span>
+														<span class="gov-bar__n">{formatInteger(s.v, locale)}</span>
+														<span class="gov-bar__pct">{formatDecimal(s.pct, locale, 1)} %</span>
+													</li>
+												{/each}
+											</ul>
 										{:else}
-											<p class="gov-kpi__v gov-kpi__v--absent">{m.muni_sense_dada_oficial()}</p>
+											<p class="gov-kpi__v gov-kpi__v--absent">{m.value_not_available()}</p>
 										{/if}
-										<p class="gov-kpi__src">{m.muni_etca_srcline()}</p>
+										<!-- El motiu de no tenir sèrie (límit de la FONT), UNA vegada per a la
+										     partició sencera: les quatre franges comparteixen font i motiu. -->
+										{@render tendencia(trendsOf('pob_0_14'))}
+										<p class="gov-kpi__prov"><span class="gov-kpi__provk">ƒ</span> 15-64: {p1564.formula}</p>
+										<p class="gov-kpi__src">{srcLine(gDef('pob_0_14'))}</p>
+										{#if d1564.note}
+											<!-- El caveat del contracte de la franja derivada, accessible sense
+											     ocupar la targeta sencera. -->
+											<details class="gov-kpi__caveat">
+												<summary>{m.gov_edats_caveat_sum()}</summary>
+												<p>{pick(d1564.note, locale)}</p>
+											</details>
+										{/if}
+										{@render frescor(gDef('pob_0_14').frescor)}
+									</article>
+								{:else if kpi.kind === 'naixement'}
+									<!-- V3 §3 · «D'ON VENIM»: UNA targeta amb barra apilada (Catalunya · resta
+									     d'Espanya · estranger) + el % nascuts a l'estranger SERVIT (amb el seu
+									     pendingRank). La nota «foto, no sèrie» hi va UNA vegada. V3-CONTRACTE:
+									     els tres recomptes són MESURATS (formula: directe) → font sense ƒ. -->
+									{@const pctDef = gDef('pct_nascuda_estranger')}
+									{@const pctPrv = provenanceLine(pctDef)}
+									{@const pctCell = govern?.metrics?.['pct_nascuda_estranger'] ?? null}
+									<article class="gov-kpi gov-kpi--bar">
+										<p class="gov-kpi__lab"><span class="pd dot--measured"></span>{m.gov_kpi_naixement()}</p>
+										{#if naixSegs}
+											<div class="gov-bar" aria-hidden="true">
+												{#each naixSegs as s, i (s.key)}
+													<span class="gov-bar__seg gov-bar__c{i}" style="flex-grow:{Math.max(s.v, 0.0001)}"></span>
+												{/each}
+											</div>
+											<ul class="gov-bar__legend tnum">
+												{#each naixSegs as s, i (s.key)}
+													<li>
+														<span class="gov-bar__dot gov-bar__c{i}"></span>
+														<span class="gov-bar__band">{s.band}</span>
+														<span class="gov-bar__n">{formatInteger(s.v, locale)}<span class="u">hab.</span></span>
+													</li>
+												{/each}
+											</ul>
+										{:else}
+											<p class="gov-kpi__v gov-kpi__v--absent">{m.value_not_available()}</p>
+										{/if}
+										<!-- El % nascuts a l'estranger: xifra SERVIDA (no la recalculem aquí). -->
+										{#if typeof row.values.pct_nascuda_estranger === 'number'}
+											<p class="gov-naix__pct">
+												<span class="k">{pick(pctDef.label, locale)}</span>
+												<span class="v">{fmt(row, 'pct_nascuda_estranger')}<span class="u">%</span></span>
+											</p>
+										{/if}
+										<!-- El motiu de no tenir sèrie (dada del mart), UNA vegada per la partició. -->
+										{@render tendencia(trendsOf(NAIX_BAR_KEYS[0]))}
+										{#if kpi.note}
+											<p class="gov-kpi__note">{govNote(kpi.note)}</p>
+										{/if}
+										{#if pctCell && pctCell.rang != null}
+											<p class="gov-kpi__rank">
+												<span class="gov-kpi__rankk">{m.gov_rang_val({ k: String(pctCell.rang), n: String(pctCell.n_amb_dada) })}</span>
+												<span class="gov-kpi__rankl">{m.gov_rang_label()}{#if pctCell.empat} · {m.gov_rang_empat()}{/if}{m.gov_rang_cap({ comarca: govern?.comarca ?? '' })}</span>
+											</p>
+										{:else if kpi.pendingRank}
+											<p class="gov-kpi__norank">{m.gov_nova_norank()}</p>
+										{/if}
+										<p class="gov-kpi__prov"><span class="gov-kpi__provk">ƒ</span> {pctPrv.formula}</p>
+										<p class="gov-kpi__src">{srcLine(gDef(NAIX_BAR_KEYS[0]))}</p>
+										{@render frescor(gDef(NAIX_BAR_KEYS[0]).frescor)}
 									</article>
 								{:else if kpi.kind === 'atur'}
 									<!-- E4 · L'ATUR, servit de veritat (D7): darrer mes + 25 mesos de sèrie + les
@@ -779,6 +1002,13 @@
 								{/if}
 							{/each}
 						</div>
+						{#if grp.g === 'A'}
+							<!-- V3 §11 · la nota ÚNICA del grup: les dues particions (edats i lloc de
+							     naixement) sumen exactament el padró — verificat als 947 (i re-verificat
+							     per verify-govern sobre el dataset servit). UNA línia al peu del grup,
+							     no quatre repeticions per targeta. -->
+							<p class="gov-grp__nota">{m.gov_grp_a_nota()}</p>
+						{/if}
 					{/each}
 					<p class="gov-board__foot">{m.muni_srcline()}</p>
 				</section>
@@ -799,25 +1029,9 @@
 				</section>
 			{/if}
 
-			<!-- Capçalera de dades: la dada OFICIAL gran (padró) + identificadors. Les dades oficials
-			     porten font i data, no bandera de confiança (el model i la seva confiança, aparcats). -->
-			<section class="ds-sec">
-				<div class="muni-card">
-					<div class="muni-card__top">
-						{#if typeof row.values.poblacio === 'number'}
-							<div class="muni-card__ietr">
-								<span class="v tnum">{formatInteger(row.values.poblacio, locale)}</span><span class="u"
-									>{m.muni_hab_padro()}</span
-								>
-							</div>
-						{/if}
-					</div>
-					<p class="muni-card__meta">
-						<span>INE {ine5}</span>
-						{#if row.idescat6}<span>Idescat {row.idescat6}</span>{/if}
-					</p>
-				</div>
-			</section>
+			<!-- V3 §7 · FORA DUPLICATS: la targeta gran del padró que vivia aquí està ABSORBIDA per la
+			     capçalera de presència del tauler (padró + ETCA junts, a dalt de tot), inclosos els
+			     identificadors INE/Idescat. -->
 
 			<!-- P2 · LA LECTURA: la narració de la IA (verificada), per perfil. Cada afirmació porta la
 			     seva naturalesa (mesura/inferència/interpretació) i la seva evidència (mètriques).
@@ -870,34 +1084,9 @@
 				</section>
 			{/if}
 
-			<!-- P2 · L'EVIDÈNCIA: els números que manen (del dataset). La presència, NOMÉS com a dada
-			     oficial: ETCA (Idescat) on n'hi ha; «sense dada oficial» on Idescat no la publica. -->
-			<section class="ds-sec">
-				<div class="ds-sec__hd"><span class="ref">№</span><h2>{m.muni_nums_title()}</h2></div>
-				<div class="muni-5num tnum">
-					<div class="n5">
-						<span class="n5__lab"><span class="pd dot--measured"></span>{m.muni_num_padro()}</span>
-						<span class="n5__v">{typeof row.values.poblacio === 'number' ? formatInteger(row.values.poblacio, locale) : '—'}</span>
-					</div>
-					<div class="n5">
-						<span class="n5__lab"><span class="pd dot--measured"></span>{m.muni_num_etca()}</span>
-						{#if etca !== null}
-							<span class="n5__v">{formatInteger(etca, locale)}<span class="n5__u">hab.</span></span>
-						{:else}
-							<span class="n5__v n5__v--absent">{m.muni_sense_dada_oficial()}</span>
-						{/if}
-					</div>
-					<div class="n5">
-						<span class="n5__lab"><span class="pd dot--measured"></span>{m.muni_num_nop()}</span>
-						<span class="n5__v">{typeof row.values.pct_noprincipal === 'number' ? formatDecimal(row.values.pct_noprincipal, locale, 0) : '—'}<span class="n5__u">%</span></span>
-					</div>
-					<div class="n5">
-						<span class="n5__lab"><span class="pd dot--measured"></span>{m.muni_num_renda()}</span>
-						<span class="n5__v">{typeof row.values.renda_neta_persona === 'number' ? formatInteger(row.values.renda_neta_persona, locale) : '—'}<span class="n5__u">€</span></span>
-					</div>
-				</div>
-				<p class="muni-sec__src">{m.muni_etca_srcline()}</p>
-			</section>
+			<!-- V3 §7 · «ELS NÚMEROS CLAU» ELIMINADA SENCERA: les seves 4 xifres (padró, ETCA,
+			     % no principal, renda) ja són al tauler — dues d'elles a la capçalera de presència.
+			     Era duplicació estructural, no informació. -->
 
 			<!-- P3 · LA MAQUINÀRIA: la fitxa completa, plegada en acordions (oberts amb «mode dades»).
 			     «No traiem res, ho baixem de planta»: cada mètrica del municipi amb la seva procedència. -->
@@ -1042,46 +1231,8 @@
 		color: var(--dp-text);
 	}
 
-	/* Capçalera de dades del municipi (idèntica lectura a la .ex__hd dels extrems del Resum). */
-	.muni-card {
-		position: relative;
-	}
-	.muni-card__top {
-		display: flex;
-		align-items: baseline;
-		justify-content: space-between;
-		gap: 14px;
-		flex-wrap: wrap;
-	}
-	.muni-card__ietr {
-		display: flex;
-		align-items: baseline;
-		gap: 5px;
-	}
-	.muni-card__ietr .v {
-		font-family: 'Archivo', var(--dp-font-display);
-		font-weight: 800;
-		font-size: 2rem;
-		line-height: 1;
-		color: var(--dp-text);
-		font-feature-settings: 'tnum' 1;
-	}
-	.muni-card__ietr .u {
-		font-family: var(--dp-font-mono);
-		font-size: 0.64rem;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		color: var(--dp-text-subtle);
-	}
-	.muni-card__meta {
-		margin: 8px 0 0;
-		display: flex;
-		gap: 14px;
-		flex-wrap: wrap;
-		font-family: var(--dp-font-mono);
-		font-size: 0.68rem;
-		color: var(--dp-text-muted);
-	}
+	/* (La capçalera de dades del municipi —.muni-card— va desaparèixer amb V3 §7: absorbida per
+	   la capçalera de presència del tauler, .gov-pres.) */
 
 	/* Subtítol de bloc (distingeix mesura d'inferència, com els subgrups del Resum). */
 	.muni-sec__sub {
@@ -1101,55 +1252,8 @@
 		line-height: 1.45;
 	}
 
-	/* P2 · els números que manen. */
-	.muni-5num {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-		gap: 10px;
-	}
-	.n5 {
-		background: var(--dp-surface);
-		border: 1px solid var(--dp-border);
-		border-radius: var(--dp-radius-md);
-		padding: 11px 13px;
-		display: flex;
-		flex-direction: column;
-		gap: 6px;
-	}
-	.n5__lab {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-		font-size: 0.74rem;
-		color: var(--dp-text-muted);
-	}
-	.n5__lab .pd {
-		width: 8px;
-		height: 8px;
-		border-radius: 50%;
-		flex: none;
-	}
-	.n5__v {
-		font-family: 'Archivo', var(--dp-font-display);
-		font-weight: 700;
-		font-size: 1.4rem;
-		line-height: 1;
-		color: var(--dp-text);
-	}
-	/* «Sense dada oficial»: honest i apagat, mai un zero fingit ni un guió mut. */
-	.n5__v--absent {
-		font-family: var(--dp-font-sans);
-		font-weight: 600;
-		font-size: 0.88rem;
-		line-height: 1.3;
-		color: var(--dp-text-muted);
-	}
-	.n5__u {
-		font-family: var(--dp-font-mono);
-		font-size: 0.6rem;
-		color: var(--dp-text-subtle);
-		margin-left: 3px;
-	}
+	/* (La secció «Els números clau» i els seus estils s'han eliminat amb V3 §7: duplicava
+	   4 xifres que ja són al tauler i a la capçalera de presència.) */
 
 	/* P1 · veredicte (frase-mare de la IA). Lead destacat, sobri. */
 	.muni-vd__cap {
@@ -1693,5 +1797,215 @@
 		font-family: var(--dp-font-mono);
 		font-size: 0.62rem;
 		color: var(--dp-text-subtle);
+	}
+
+	/* ── V3 · Capçalera de presència (padró + ETCA junts, a dalt del tauler) ─────────────── */
+	.gov-pres {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+		gap: 12px 24px;
+		padding: 15px 16px;
+		margin: 4px 0 14px;
+		background: var(--dp-surface);
+		border: 1px solid var(--dp-border-strong);
+		border-radius: var(--dp-radius-lg);
+	}
+	.gov-pres__col {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		min-width: 0;
+	}
+	.gov-pres__v {
+		margin: 0;
+		font-family: 'Archivo', var(--dp-font-display);
+		font-weight: 800;
+		font-size: 1.9rem;
+		line-height: 1;
+		color: var(--dp-text);
+	}
+	.gov-pres__v .u {
+		font-family: var(--dp-font-mono);
+		font-size: 0.62rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: var(--dp-text-subtle);
+		margin-left: 5px;
+	}
+	/* La frase plana d'ETCA (text aprovat per Bea) i el motiu on Idescat no la publica. */
+	.gov-pres__txt {
+		margin: 0;
+		font-size: 0.78rem;
+		line-height: 1.5;
+		color: var(--dp-text-muted);
+		max-width: 48ch;
+		text-wrap: pretty;
+	}
+	.gov-pres__txt--absent {
+		color: var(--dp-text-subtle);
+	}
+	.gov-pres__met {
+		color: inherit;
+	}
+	.gov-pres__meta {
+		grid-column: 1 / -1;
+		margin: 2px 0 0;
+		display: flex;
+		gap: 14px;
+		flex-wrap: wrap;
+		font-family: var(--dp-font-mono);
+		font-size: 0.62rem;
+		color: var(--dp-text-subtle);
+	}
+
+	/* ── V3 · Barres apilades (edats i «d'on venim») ─────────────────────────────────────── */
+	/* La targeta de barra ocupa una mica més d'espai que una targeta estàndard. */
+	.gov-kpi--bar {
+		grid-column: span 2;
+	}
+	@media (max-width: 560px) {
+		.gov-kpi--bar {
+			grid-column: auto;
+		}
+	}
+	.gov-bar {
+		display: flex;
+		height: 16px;
+		border-radius: var(--dp-radius-sm);
+		overflow: hidden;
+		margin: 2px 0 0;
+	}
+	.gov-bar__seg {
+		flex-basis: 0;
+		min-width: 2px;
+	}
+	/* Escala de 4 tons sobre el verd de marca: la forma es llegeix sense semàfor de judici. */
+	.gov-bar__c0 {
+		background: color-mix(in srgb, var(--dp-forest, #2f6b4f) 88%, var(--dp-bg));
+	}
+	.gov-bar__c1 {
+		background: color-mix(in srgb, var(--dp-forest, #2f6b4f) 55%, var(--dp-bg));
+	}
+	.gov-bar__c2 {
+		background: color-mix(in srgb, var(--dp-forest, #2f6b4f) 32%, var(--dp-bg));
+	}
+	.gov-bar__c3 {
+		background: color-mix(in srgb, var(--dp-forest, #2f6b4f) 16%, var(--dp-bg));
+	}
+	.gov-bar__legend {
+		list-style: none;
+		margin: 4px 0 0;
+		padding: 0;
+		display: grid;
+		gap: 3px;
+	}
+	.gov-bar__legend li {
+		display: flex;
+		align-items: baseline;
+		gap: 8px;
+		font-size: 0.8rem;
+		line-height: 1.4;
+		color: var(--dp-text-muted);
+	}
+	.gov-bar__dot {
+		width: 9px;
+		height: 9px;
+		border-radius: 2px;
+		flex: none;
+		align-self: center;
+	}
+	.gov-bar__band {
+		font-family: var(--dp-font-mono);
+		font-size: 0.68rem;
+		color: var(--dp-text-muted);
+		min-width: 5ch;
+	}
+	.gov-bar__n {
+		font-family: 'Archivo', var(--dp-font-display);
+		font-weight: 700;
+		font-size: 0.95rem;
+		color: var(--dp-text);
+	}
+	.gov-bar__n .u {
+		font-family: var(--dp-font-mono);
+		font-size: 0.58rem;
+		color: var(--dp-text-subtle);
+		margin-left: 3px;
+	}
+	.gov-bar__pct {
+		font-family: var(--dp-font-mono);
+		font-size: 0.7rem;
+		color: var(--dp-text-subtle);
+	}
+	/* El % nascuts a l'estranger (xifra servida) dins la targeta «d'on venim». */
+	.gov-naix__pct {
+		margin: 4px 0 0;
+		display: flex;
+		align-items: baseline;
+		gap: 8px;
+		flex-wrap: wrap;
+	}
+	.gov-naix__pct .k {
+		font-size: 0.78rem;
+		color: var(--dp-text-muted);
+	}
+	.gov-naix__pct .v {
+		font-family: 'Archivo', var(--dp-font-display);
+		font-weight: 700;
+		font-size: 1.15rem;
+		color: var(--dp-text);
+	}
+	.gov-naix__pct .u {
+		font-family: var(--dp-font-mono);
+		font-size: 0.6rem;
+		color: var(--dp-text-subtle);
+		margin-left: 2px;
+	}
+	/* El caveat del contracte de la 15-64, accessible sense ocupar la targeta. */
+	.gov-kpi__caveat {
+		margin: 2px 0 0;
+	}
+	.gov-kpi__caveat summary {
+		cursor: pointer;
+		font-family: var(--dp-font-mono);
+		font-size: 0.6rem;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: var(--dp-text-subtle);
+	}
+	.gov-kpi__caveat p {
+		margin: 4px 0 0;
+		font-size: 0.72rem;
+		line-height: 1.5;
+		color: var(--dp-text-muted);
+		text-wrap: pretty;
+	}
+
+	/* V3 §10 · la frase plana de l'índex d'envelliment (la traducció humana de la ràtio). */
+	.gov-kpi__frase {
+		margin: 0;
+		font-size: 0.78rem;
+		line-height: 1.45;
+		color: var(--dp-text-muted);
+		text-wrap: pretty;
+	}
+	/* V3 §6 · el cru de turisme («N establiments, M són HUT»). */
+	.gov-kpi__cru {
+		margin: 0;
+		font-size: 0.78rem;
+		line-height: 1.45;
+		color: var(--dp-text-muted);
+	}
+	/* V3 §9 · E13: el caveat de micromunicipi, amb filet d'avís (no d'error). */
+	.gov-kpi__note--e13 {
+		border-left-color: var(--dp-warning, #b5612a);
+	}
+	/* V3 §11 · la nota única del grup «La gent» (les particions sumen el padró). */
+	.gov-grp__nota {
+		margin: 8px 0 0;
+		font-family: var(--dp-font-mono);
+		font-size: 0.62rem;
+		color: var(--dp-text-subtle);
+		line-height: 1.45;
 	}
 </style>

@@ -157,6 +157,35 @@
 		return dataset.metrics[key]?.status === 'planned';
 	}
 
+	// ── V3 (vot de Bea 2026-07-29) · ACTUALITZACIÓ I PROCÉS DE REFRESC ─────────────────────────
+	// La línia de frescor de les targetes del tauler queda «cadència · darrera càrrega»; el COM
+	// la refresquem nosaltres (el procés, o la seva absència declarada) és cuina interna i viu
+	// AQUÍ, a la fitxa metodològica de cada mètrica. La informació no s'esborra del sistema:
+	// canvia de planta. Tot surt del bloc `frescor` del contracte; res s'escriu a mà.
+	function cadenciaLabel(c: string | null): string {
+		if (c === 'mensual') return m.gov_frescor_mensual();
+		if (c === 'anual') return m.gov_frescor_anual();
+		if (c === 'puntual') return m.gov_frescor_puntual();
+		if (c === 'irregular') return m.gov_frescor_irregular();
+		if (!c) return m.gov_frescor_nd();
+		return c;
+	}
+	/** Data de càrrega ISO → DD-MM-YYYY (decisió de Bea, 2026-07-29; el contracte no es toca). */
+	function dataCarrega(iso: string): string {
+		const m2 = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+		return m2 ? `${m2[3]}-${m2[2]}-${m2[1]}` : iso;
+	}
+	/** Línia sencera: cadència · darrera càrrega · procés de refresc (o la seva absència). */
+	function frescLine(key: MetricKey): string {
+		const f = dataset.metrics[key]?.frescor;
+		if (!f) return '';
+		const parts = [cadenciaLabel(f.actualitzacio)];
+		if (f.darrera_carrega) parts.push(m.gov_frescor_carrega({ data: dataCarrega(f.darrera_carrega) }));
+		if (f.proces_refresc === 'cap') parts.push(m.met_fresc_sense_proces());
+		else if (f.proces_refresc) parts.push(m.met_fresc_proces({ ruta: f.proces_refresc }));
+		return parts.join(' · ');
+	}
+
 	const heroSummits = [
 		{ cx: 880, cy: 145, r0: 16, step: 23, rings: 10, sq: 0.96, seed: 0.8, lt: 0.03 },
 		{ cx: 1080, cy: 300, r0: 14, step: 21, rings: 9, sq: 1.05, seed: 2.6, lt: 0.1 }
@@ -227,6 +256,12 @@
 								<dd class="met-card__how">{howLine(key, def)}</dd>
 								<dt>{m.met_lbl_src()}</dt>
 								<dd class="met-card__src">{srcLine(key)}</dd>
+								{#if frescLine(key)}
+									<!-- V3: el procés de refresc (o la seva absència declarada) viu aquí, no a
+									     la targeta del tauler. -->
+									<dt>{m.met_lbl_fresc()}</dt>
+									<dd class="met-card__src">{frescLine(key)}</dd>
+								{/if}
 								{#if def.note}
 									<!-- P-DOC: l'ADVERTIMENT del contracte (`note` = el caveat renombrat) a la
 									     fitxa — aquí viuen la doctrina del «<5» de l'atur, la barreja de

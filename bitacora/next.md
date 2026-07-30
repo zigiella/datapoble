@@ -29,6 +29,29 @@ publicable per si sola.*
 >   motiu antic era fals** (verificat contra D7/next.md abans de reescriure). **⚠️ El risc #5
 >   (editable compartida) ha mossegat per SEGONA vegada:** pytest d'EMEX important l'arbre d'un
 >   altre agent → 6 errors falsos; amb PYTHONPATH d'aquest arbre, 7/7. NO fusiono jo.
+> - **✅ V3-WEB (Mirador) — FETA, PR obert (2026-07-29, branca `mirador/v3-web`).** Bitàcola:
+>   `bitacora/2026-07-29_v3-web_mirador.md`. Capçalera de presència (padró+ETCA junts, amb el
+>   rang/motiu/frescor del padró conservats — cap xifra perduda) · rètols nous i serveis→«El dia
+>   a dia» · edats i «d'on venim» com a barres apilades (les 8 xifres al DOM; 15-64 amb la ƒ de
+>   resta i el caveat accessible; naixement pintat MESURAT per V3-CONTRACTE) · HUT al turisme amb
+>   font del registre · frase plana a l'envelliment · nota única del grup La gent (i guarda que
+>   re-verifica que les particions sumen el padró) · «Els números clau» i targeta gran del padró
+>   ELIMINADES (i18n orfe retirat amb guarda) · «sense procés automàtic» fora de les targetes i
+>   la fila d'actualització (cadència·càrrega·procés) A /metodologia amb guarda perquè no
+>   desaparegui del sistema · E13 pintada quan padró<250 (llista+llindar = doctrina, guardat) —
+>   **⚠️ copy E13 PENDENT DEL VOT de Bea** (ca+mirall es a la bitàcola). 20 targetes+2 seccions
+>   → 12 targetes+1 capçalera. verify-govern/docs adaptats SENSE afluixar (+9 guardes noves).
+>   ⛔ Premissa del brief falsa: /metodologia NO pintava cap frescor de contracte (s'hi ha afegit
+>   la fila sencera, no només «la línia del procés»). Verificat en LOCAL: check 0/0 · build verd ·
+>   verify:govern+verify:docs OK · DOM prerenderitzat de la Pobla/Barcelona/Sant Jaume (E13
+>   visible) en ca i es. **NO fusiono jo.**
+> - **[HISTÒRIC — enunciat] V3-WEB (Mirador):** capçalera de presència · reagrupació i rètols ·
+>   barres apilades · HUT · fora duplicats · «sense procés automàtic» fora de targeta (cap a
+>   /metodologia) · caveat E13 pintat quan padró<250 · verify-govern/docs adaptats (les xifres
+>   segueixen al DOM).
+> - **V3-DADES (Sondeig):** reescriptura CIUTADANA dels `motiu` de sense_serie a mart_tendencia
+>   (el motiu honest es manté; canvia el registre: «la font oficial només publica l'any vigent»)
+>   + regenerar shards.
 > Doctrina intacta: <5 interval · cap fletxa sense període · sense_serie amb motiu · font O
 > fórmula · rang del mart · frescor per targeta (cadència + càrrega DD-MM-YYYY es queden).
 >

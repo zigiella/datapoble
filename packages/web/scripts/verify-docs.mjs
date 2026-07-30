@@ -31,7 +31,12 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { GLOSSARI_DIMS, GLOSSARI_HIDDEN } from '../src/lib/glossari/dims.js';
-import { GOVERN_KPIS } from '../src/lib/govern/kpis.js';
+import {
+	GOVERN_KPIS,
+	PRESENCIA_KEY,
+	EDATS_BANDS,
+	NAIX_BAR_KEYS
+} from '../src/lib/govern/kpis.js';
 import { METODOLOGIA_BLOCS } from '../src/lib/metodologia/blocs.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -123,14 +128,23 @@ for (const bloc of METODOLOGIA_BLOCS) {
 //      forma del forat que P-DOC tanca: 10 targetes vives sense fitxa).
 const fitxaViva = new Set(METODOLOGIA_BLOCS.filter((b) => !b.annex).flatMap((b) => b.keys));
 const taulerKeys = new Set();
+// V3: el padró viu a la capçalera de presència (ja no és una targeta del grid), i les barres
+// apilades pinten 8 mètriques dins 2 targetes — TOTES segueixen necessitant fitxa metodològica:
+// el reagrupament mou l'emmarcament, no la responsabilitat de documentar cada xifra.
+taulerKeys.add(PRESENCIA_KEY);
 for (const kpi of GOVERN_KPIS) {
 	if (kpi.kind === 'metric') taulerKeys.add(kpi.key);
-	else if (kpi.kind === 'atur') taulerKeys.add('atur_registrat');
+	else if (kpi.kind === 'edats') for (const b of EDATS_BANDS) taulerKeys.add(b.key);
+	else if (kpi.kind === 'naixement') {
+		for (const k of NAIX_BAR_KEYS) taulerKeys.add(k);
+		taulerKeys.add('pct_nascuda_estranger');
+	} else if (kpi.kind === 'atur') taulerKeys.add('atur_registrat');
 	else if (kpi.kind === 'serveis') {
 		taulerKeys.add('serveis_estab');
 		taulerKeys.add('restauracio_estab');
 	}
-	// kind 'etca': artefacte extern (no és mètrica del catàleg), documentat a la seva secció pròpia.
+	// L'ETCA de la capçalera: artefacte extern (no és mètrica del catàleg), documentat a la
+	// seva secció pròpia de la metodologia.
 }
 for (const key of taulerKeys) {
 	ok(
@@ -164,6 +178,27 @@ for (const k of I18N_GONE) {
 // I les noves han d'existir (ca+es).
 for (const k of ['met_how_directe', 'met_block_treball', 'met_block_serveis', 'met_block_vida']) {
 	ok(!!ca[k] && !!es[k], `i18n '${k}' absent (ca/es)`);
+}
+
+// ── 4 · V3: EL PROCÉS DE REFRESC VIU A /metodologia ─────────────────────────────────────────
+// El vot de Bea (2026-07-29) treu «sense procés automàtic» de les targetes del tauler, però la
+// informació NO s'esborra del sistema: la fitxa metodològica de cada mètrica ha de dir la
+// cadència, la darrera càrrega i el procés (o la seva absència declarada). Aquesta guarda cau
+// si algú retira la línia d'aquí sense tornar-la a posar enlloc — llavors sí que s'hauria
+// esborrat del sistema, que és exactament el que el vot NO deia.
+{
+	const metSrc = readFileSync(resolve(WEB, 'src/routes/metodologia/+page.svelte'), 'utf8');
+	ok(
+		metSrc.includes('proces_refresc'),
+		`metodologia: la fitxa no llegeix 'proces_refresc' — el procés de refresc ha desaparegut del sistema (V3)`
+	);
+	ok(
+		metSrc.includes('met_lbl_fresc'),
+		`metodologia: la fila d'actualització (met_lbl_fresc) no està cablejada a la fitxa`
+	);
+	for (const k of ['met_lbl_fresc', 'met_fresc_sense_proces', 'met_fresc_proces']) {
+		ok(!!ca[k] && !!es[k], `i18n '${k}' absent (ca/es)`);
+	}
 }
 
 if (fails.length) {
