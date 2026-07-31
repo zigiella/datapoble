@@ -7,9 +7,22 @@ grep); per tant NOMÉS pot LLEGIR-lo. Aquest exportador tradueix el parquet a un
 servit com la resta de ``data/web/*.json`` (copiat a ``static/data/`` pel prebuild de
 Mirador i llegit pel ``load`` de la fitxa).
 
-Frontera honesta: aquí NO es calcula cap rang ni percentil — només es re-serialitza la
-sortida del mart (valor, rang, n_amb_dada, data + un indicador d'empat derivat del propi
-rang). El mart és la font; això només el fa servible al web estàtic.
+Frontera honesta: aquí NO es calcula cap rang, percentil ni mediana — només es
+re-serialitza la sortida del mart (valor, rang, n_amb_dada, data, les dues medianes de
+referència + un indicador d'empat derivat del propi rang). El mart és la font; això
+només el fa servible al web estàtic.
+
+W4 (2026-07-31) · VALOR DE REFERÈNCIA. Cada cel·la porta les DUES medianes que el mart
+mesura de les nostres pròpies dades: ``mediana_comarca`` (calculada sobre els
+``n_amb_dada`` municipis de la comarca amb dada — el MATEIX denominador del rang) i
+``mediana_catalunya`` (sobre ``n_mediana_catalunya``). Van DINS la cel·la, i no en un
+bloc global, perquè el prebuild de Mirador parteix aquest fitxer per municipi
+(``static/data/govern/<ine5>.json``) i el front només llegeix el seu tros: una
+referència fora de l'entrada del municipi no li arribaria. La redundància (la catalana
+és constant per mètrica) és el preu del shard, ja pagat amb ``comarca`` i ``data``.
+⚠️ Aquestes medianes NO són les bases del model de pernocta aparcat (410/1224/26,5):
+són mesura de les 947 dades nostres, i verify_govern.py té una guarda que peta si
+alguna hi coincideix.
 
 ABAST (P-947, 2026-07-27): s'emeten DOS artefactes, cadascun amb el seu ``--check``:
   · ``govern.bergueda.json`` — els 31 del Berguedà (RETROCOMPATIBILITAT: el
@@ -22,9 +35,17 @@ ABAST (P-947, 2026-07-27): s'emeten DOS artefactes, cadascun amb el seu ``--chec
 El rang mai es recalcula aquí: es re-serialitza el que el mart afirma.
 
 GUARDA ANTI-FUITA (P-947): cap mètrica ``dimension: politica`` / ``source: electoral``
-(res de ``mart_electoral``) pot entrar en aquest export. mart_govern només porta les 7
+(res de ``mart_electoral``) pot entrar en aquest export. mart_govern només porta les 9
 mètriques segures de govern; la guarda ho ASSERTA a cada execució (write i ``--check``)
 llegint el contracte, perquè obrir l'export a 947 no destapi mai vot.
+
+GUARDA DEL PONT FRONT↔DADES (W3): el conjunt de mètriques amb rang viu escrit dues
+vegades —``RANK_METRICS`` aquí i ``GOVERN_RANK_KEYS`` a ``kpis.js``— i divergir en
+silenci ja ha mossegat abans (el 2026-07-30, uns ``kind`` nous del tauler sense
+registrar). Aquí es comprova la direcció perillosa: **cap clau que el front declari
+rankejable pot faltar al mart** (si en falta, la targeta prometria un rang que ningú
+serveix). La inversa —el mart rankeja i el front encara no ho pinta— és un estat de
+trànsit legítim entre dues jurisdiccions que no fusionen el mateix dia.
 
 Ús:
     python tools/export_govern_web.py            # (re)genera els DOS JSON (31 + 947)
@@ -42,6 +63,9 @@ from pathlib import Path
 import pandas as pd
 import yaml
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from tauler_kpis import claus_rankejades_del_front  # noqa: E402
+
 REPO = Path(__file__).resolve().parents[1]
 MART = REPO / "data" / "marts" / "mart_govern.parquet"
 METRICS_YML = REPO / "semantic" / "metrics.yml"
@@ -55,13 +79,19 @@ SCOPES: list[tuple[str | None, Path]] = [
     (None, OUT_CATALUNYA),
 ]
 
-# Els 7 KPIs mesurats i oficials que el mart rankeja (gorra §3 / D4). L'ordre no importa
-# aquí (el front el fixa); és el conjunt que esperem trobar al mart. TOTES són segures (cap
-# de vot): la guarda anti-fuita (assert_no_electoral) ho verifica contra el contracte.
+# Els 9 KPIs mesurats i oficials que el mart rankeja (gorra §3 / D4 + W3). L'ordre no
+# importa aquí (el front el fixa); és el conjunt que esperem trobar al mart. TOTES són
+# segures (cap de vot): la guarda anti-fuita (assert_no_electoral) ho verifica contra el
+# contracte. W3 (2026-07-31) hi afegeix `vidre_hab` (esmena de Bea) i
+# `pct_nacionalitat_estrangera` (esmena E9, vot narratiu ja emès el 2026-07-19).
 RANK_METRICS = {
     "index_envelliment", "poblacio", "pct_noprincipal", "rtc_per_1000hab",
     "kwh_hab", "renda_neta_persona", "kg_hab_any",
+    "vidre_hab", "pct_nacionalitat_estrangera",
 }
+
+# W4 · columnes de referència que el mart mesura i aquí NOMÉS es re-serialitzen.
+MEDIANA_COLS = ("mediana_comarca", "mediana_catalunya", "n_mediana_catalunya")
 
 
 def forbidden_metric_keys(contract: dict) -> set[str]:
@@ -98,6 +128,8 @@ def build(df: pd.DataFrame, scope: str | None) -> dict:
         rang = getattr(r, "rang")
         valor = getattr(r, "valor")
         entry = out.setdefault(r.ine5, {"comarca": r.comarca, "metrics": {}})
+        med_com = getattr(r, "mediana_comarca")
+        med_cat = getattr(r, "mediana_catalunya")
         entry["metrics"][r.metric] = {
             "valor": None if pd.isna(valor) else float(valor),
             "rang": None if pd.isna(rang) else int(rang),
@@ -105,6 +137,12 @@ def build(df: pd.DataFrame, scope: str | None) -> dict:
             "data": str(getattr(r, "data")),
             # Empat honest (C6 §3.2): rang compartit explícit. Només té sentit amb rang.
             "empat": bool(getattr(r, "empat_flag")) if not pd.isna(rang) else False,
+            # W4 · valor de referència MESURAT (mai una constant del model aparcat). La
+            # comarcal es calcula sobre els `n_amb_dada` municipis d'aquesta mateixa
+            # cel·la; la catalana sobre `n_mediana_catalunya`. NULL = cap dada al grup.
+            "mediana_comarca": None if pd.isna(med_com) else float(med_com),
+            "mediana_catalunya": None if pd.isna(med_cat) else float(med_cat),
+            "n_mediana_catalunya": int(getattr(r, "n_mediana_catalunya")),
         }
     # Ordre estable (per ine5) perquè la sortida sigui determinista i el diff net.
     return {k: out[k] for k in sorted(out)}
@@ -144,6 +182,23 @@ def main() -> int:
     missing = RANK_METRICS - got
     if missing:
         print(f"FALLA: el mart no porta els KPIs esperats: falten {sorted(missing)}",
+              file=sys.stderr)
+        return 1
+
+    # W4 · sense les columnes de la mediana no es pot emetre la referència; val més un
+    # vermell explícit que un JSON servit amb la meitat del contracte.
+    if falten_cols := [c for c in MEDIANA_COLS if c not in df.columns]:
+        print(f"FALLA: el mart no porta les columnes de la mediana (W4): {falten_cols} "
+              f"— reconstrueix mart_govern", file=sys.stderr)
+        return 1
+
+    # W3 · guarda del pont front↔dades: cap clau que el front declari rankejable pot
+    # faltar al mart (vegeu el capçal). Es llegeix de kpis.js, mai s'hi escriu.
+    front = claus_rankejades_del_front(REPO)
+    if orfes := sorted(front - RANK_METRICS):
+        print(f"FALLA: el front declara rankejables {orfes}, que el mart NO rankeja "
+              f"(GOVERN_RANK_KEYS de packages/web/src/lib/govern/kpis.js vs RANK_METRICS "
+              f"d'aquest fitxer). La targeta prometria un rang que ningú serveix.",
               file=sys.stderr)
         return 1
 

@@ -395,10 +395,17 @@ models:
       rankeja contra els 19 del Ripollès, no els 31 del Berguedà), n_amb_dada (el
       denominador honest = munis de la comarca amb la dada) i data (vintage del
       contracte). El rang es calcula AQUÍ (transform), mai al front (C6 §4); rank()
-      descendent, empats comparteixen posició. 7 KPIs: index_envelliment, poblacio,
-      pct_noprincipal, rtc_per_1000hab, kwh_hab, renda_neta_persona, kg_hab_any (els
-      que són mesura oficial i comparables per comarca; origen/ETCA/atur/OSM en queden
-      fora amb motiu, vegeu el capçal del model).
+      descendent, empats comparteixen posició. 9 KPIs: index_envelliment, poblacio,
+      pct_noprincipal, rtc_per_1000hab, kwh_hab, renda_neta_persona, kg_hab_any,
+      vidre_hab i pct_nacionalitat_estrangera (els que són mesura oficial i comparables
+      per comarca; ETCA/atur/OSM en queden fora amb motiu, vegeu el capçal del model).
+      W3 (2026-07-31): vidre_hab entra per esmena de Bea i pct_nacionalitat_estrangera
+      per l'esmena E9 de docs/ajuntaments/tauler-v2-esmenes-bea.md (el vot narratiu que
+      la retenia ja havia arribat el 2026-07-19; el que faltava era el rang).
+      W4 (2026-07-31): cada fila porta a més el VALOR DE REFERÈNCIA mesurat de la nostra
+      pròpia dada — mediana_comarca (sobre n_amb_dada municipis) i mediana_catalunya
+      (sobre n_mediana_catalunya). Mai les bases del model de pernocta aparcat
+      (base_residencial 410 / base_electric 1224 / base_vidre 26,5).
     columns:
       - name: ine5
         description: Codi INE de 5 dígits.
@@ -430,6 +437,8 @@ models:
                   - kwh_hab
                   - renda_neta_persona
                   - kg_hab_any
+                  - vidre_hab
+                  - pct_nacionalitat_estrangera
       - name: valor
         description: Valor mesurat de la mètrica (NULL = sense dada oficial per aquest municipi).
       - name: rang
@@ -450,6 +459,25 @@ models:
         description: Vintage de la dada (any del contracte semantic/metrics.yml).
         data_tests:
           - not_null
+      - name: mediana_comarca
+        description: >
+          W4 · valor de REFERÈNCIA mesurat de la nostra pròpia dada: mediana d'aquesta
+          mètrica entre els municipis de la comarca amb dada. Denominador = n_amb_dada
+          (el mateix del rang: surt del mateix partition by). NULL si cap municipi de la
+          comarca no en té. No s'arrodoneix: la precisió de pintura és de la targeta.
+      - name: mediana_catalunya
+        description: >
+          W4 · la mateixa mediana sobre TOTS els municipis de Catalunya amb dada
+          (denominador = n_mediana_catalunya). S'emeten les dues perquè quina es pinta
+          és decisió editorial i servint-les totes dues no es bloqueja.
+      - name: n_mediana_catalunya
+        description: >
+          Municipis de Catalunya amb dada per aquesta mètrica (denominador honest de
+          mediana_catalunya). Constant per mètrica.
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 1, max_value: 947 }
 
   - name: mart_tendencia
     description: >

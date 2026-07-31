@@ -54,6 +54,11 @@ publicable per si sola.*
 >   **⚠️ Risc de mètode nou:** obrir el preview amb la config `web` de `.claude/launch.json` em va
 >   servir el `build/` **d'un altre arbre** (porta vella, `/comarca` en 404) estant jo al worktree —
 >   és el risc #5 (recursos compartits) amb cara de servidor de preview, no de venv.
+>   **📥 Handoff de Sondeig REBUT i NO fet en aquest PR** (`GOVERN_RANK_KEYS` += `vidre_hab` i
+>   `pct_nacionalitat_estrangera` + fora el seu `pendingRank`): W3/W4 es va fusionar mentre jo
+>   treballava, i tocar `kpis.js` obliga a córrer TAMBÉ `verify_tendencia.py` (la lliçó del dia).
+>   Barrejar-ho aquí hauria convertit un PR de navegació en un PR de tauler. **Queda encuat per a
+>   la propera passada de Mirador**, que és la mateixa on toca el vot del rètol del rang (Bea).
 > - **[HISTÒRIC — enunciat] W1 · El selector de municipi es queda al Berguedà.** Causa trobada:
 >   `$lib/data/dataset.ts` carrega `/data/municipis.bergueda.json` (31) i el selector + l'índex de
 >   slugs es construeixen d'allà; el CATÀLEG dels 947 (`municipis-cataleg.json`) ja es carrega al
@@ -63,19 +68,53 @@ publicable per si sola.*
 > - **W2 · Clicar un rang → pàgina de la mètrica amb el rang comarcal i navegació entre municipis.**
 >   Funcionalitat nova (ruta nova). DEPÈN de W3/W4 (com més mètriques rankejades, més útil).
 >   → **Mirador**, DESPRÉS de la capa de dades.
-> - **W3 · El vidre no té rang.** Confirmat: `RANK_METRICS` de `export_govern_web.py` en té 7 i
->   `vidre_hab` no hi és (ni `pct_nacionalitat_estrangera`, que arrossega el `pendingRank` d'E9 des
->   de fa dies). → **Sondeig**: afegir-les al mart i a RANK_METRICS; llavors cau el `pendingRank`.
-> - **W4 · Valor de referència a residus i elèctric.** ⚠️ **TRAMPA EVITADA:** les constants que hi ha
->   al codi (residus 410 · elèctric 1.224 · vidre 26,5) són **les bases del model de pernocta
->   APARCAT** — fer-les servir en una targeta viva seria reintroduir el model per la porta del
->   darrere. **Via honesta, calculada de les NOSTRES dades (947):** mediana de Catalunya = residus
->   **472,1** · elèctric **1.529,3** · vidre **29,0**; i mediana del **Berguedà** = **759,9** ·
->   1.648,8 · 49,8. **Recomanació de Talaia: la mediana de la COMARCA** (casa amb el rang comarcal
->   que la targeta ja mostra; comparar un poble de muntanya amb la mediana catalana enganya).
->   Implementació neta: `mart_govern` ja agrupa per comarca per calcular el rang → la mediana surt
->   del MATEIX GROUP BY. → **Sondeig** (dada) + **Mirador** (pintura). **PENDENT DE VOT de Bea:
->   comarcal (recomanada) o catalana?**
+> - **W3 + W4 · CAPA DE DADES ✅ FETA, PR obert (Sondeig 2026-07-31, branca
+>   `sondeig/w3-w4-rangs-mediana`).** Bitàcola: `bitacora/2026-07-31_w3-w4-rangs-mediana_sondeig.md`.
+>   `mart_govern` passa de **7 a 9 KPIs** (8.523 files): **`vidre_hab`** (947/947, la Pobla 17 de 31)
+>   i **`pct_nacionalitat_estrangera`** (938/947; al Berguedà **«6 de 27», no de 31** — 4 munis
+>   cauen pel llindar mínim N, i el denominador honest ho diu). Presa de `mart_demografia` amb
+>   NOMÉS `ine5` + valor: la partició comarcal segueix sent només `municipis-territori.json`.
+>   **W4:** cada cel·la porta `mediana_comarca` (denominador = `n_amb_dada`, el mateix del rang) i
+>   `mediana_catalunya` (+ `n_mediana_catalunya`), **per a les NOU mètriques** — surten del mateix
+>   `partition by`, no costen res, i triar-ne tres hauria estat fer el tall editorial dins la dada.
+>   **Les sis medianes de Talaia, CONFIRMADES** (472,1 i 759,9 eren 472,06 i 759,88 arrodonits).
+>   **No s'arrodoneix al mart:** DuckDB i pandas trenquen els empats del `.005` diferent (18-19 dels
+>   387 grups) → sense arrodonir coincideixen BIT A BIT i el verificador les compara amb igualtat
+>   exacta. Constants 410/1.224/26,5 **no tocades**, i hi ha guarda amb nom que peta si una mediana
+>   hi coincideix. Guarda nova del **pont front↔dades** (`GOVERN_RANK_KEYS` de `kpis.js` ⊆ mart).
+>   7 guardes noves provades EN NEGATIU. `govern.catalunya.json`: 689 kB → **1.595 kB** (el shard que
+>   el navegador carrega, 0,3 → 1,7 kB). Verificat en LOCAL: job `data` sencer verd + `verify_tendencia`
+>   + `verify-govern.mjs` de Mirador sobre la dada nova. **NO fusiono jo.**
+>   **⛔ DUES PREMISSES FALSES, totes dues del REPO:** (a) el capçal de `mart_govern.sql` deia que el
+>   KPI d'origen esperava el vot de Bea — **el vot era E9 de `tauler-v2-esmenes-bea.md`, del
+>   2026-07-19** (doc que mana sobre la gorra §3); esmenat al model. (b) la mateixa fila d'E9 afirma
+>   «✅ el rang existeix» i **no existia**: per això el `pendingRank` ha durat dotze dies i per això
+>   l'esmena, assignada només a Mirador, era de tots dos. **➡️ Handoff a: Talaia** — actualitzar
+>   aquella cel·la d'E9 (o marcar el doc com a històric).
+>   **➡️ Handoff a: Mirador** (dues línies, quan li vagi bé): `GOVERN_RANK_KEYS` += `vidre_hab` i
+>   `pct_nacionalitat_estrangera`, i fora el `pendingRank` d'aquesta segona. **El `pendingRank` NO
+>   cau en el meu PR: `kpis.js` és jurisdicció seva.** La targeta `kind: 'naixement'` manté el seu
+>   (`pct_nascuda_estranger` és lloc de naixement, no nacionalitat; confondre-les és el marc que el
+>   contracte prohibeix).
+>   **➡️ Handoff a: Bea + Mirador (copy):** el rang és descendent com els altres vuit, o sigui que
+>   «1 de 27» és el municipi amb el percentatge MÉS ALT. La nota narrativa de la gorra §3 segueix
+>   viva per a l'etiqueta i el text: **com s'anomena aquest rang és vot de Bea.**
+>   **➡️ Handoff a: Talaia (contracte):** la mediana és xifra nova a la targeta i hauria de constar
+>   a `semantic/metrics.yml` — proposta de **bloc de doctrina al capçal** (no claus noves), amb el
+>   **diff exacte** a la bitàcola. No l'he tocat.
+>   **PENDENT DE VOT de Bea (no bloqueja):** quina mediana es pinta, la comarcal (recomanada per
+>   Talaia) o la catalana. La dada serveix les dues.
+> - **[HISTÒRIC — enunciat] W3 · El vidre no té rang.** `RANK_METRICS` en tenia 7 i `vidre_hab` no
+>   hi era (ni `pct_nacionalitat_estrangera`, amb el `pendingRank` d'E9 penjat des de feia dies).
+> - **[HISTÒRIC — enunciat] W4 · Valor de referència a residus i elèctric.** ⚠️ **TRAMPA EVITADA:**
+>   les constants que hi ha al codi (residus 410 · elèctric 1.224 · vidre 26,5) són **les bases del
+>   model de pernocta APARCAT** — fer-les servir en una targeta viva seria reintroduir el model per
+>   la porta del darrere. **Via honesta, calculada de les NOSTRES dades (947):** mediana de Catalunya
+>   = residus **472,1** · elèctric **1.529,3** · vidre **29,0**; i mediana del **Berguedà** =
+>   **759,9** · 1.648,8 · 49,8. **Recomanació de Talaia: la mediana de la COMARCA** (casa amb el
+>   rang comarcal que la targeta ja mostra; comparar un poble de muntanya amb la mediana catalana
+>   enganya). Implementació neta: `mart_govern` ja agrupa per comarca per calcular el rang → la
+>   mediana surt del MATEIX GROUP BY. → **Sondeig** (dada) + **Mirador** (pintura).
 > - **[HISTÒRIC — enunciat] W5 · La home, desactualitzada.** Confirmat: la secció «Llegeix la
 >   comarca» presenta «Resta de Catalunya» com a **`porta--soon`, no clicable** («947 municipis ·
 >   cada poble té fitxa»), quan des de P-947 ja hi és tot. A més el «947» hi està mal etiquetat com a

@@ -17,10 +17,16 @@ discrepin. Estat del terreny verificat per Talaia abans d'especificar (què teni
 | E6 | **Indicadors de tendència** (puja/baixa vs període anterior; quins períodes?) | Sondeig + Mirador | ⚠️ **PARCIAL** — vegeu §2 |
 | E7 | **Repassar P1/P2**; que no citin mètriques antigues (aparcades) | gen_fitxa | ⚠️ pendent (era B1) |
 | E8 | **«Confiança mitjana»** a P1: un usuari normal no sap què vol dir | gen_fitxa/Mirador | — (copy) |
-| E9 | **Rang comarcal al % nacionalitat estrangera** | Mirador | ✅ el rang existeix; estava retingut esperant el vot — **ara s'hi posa** |
+| E9 | **Rang comarcal al % nacionalitat estrangera** | ~~Mirador~~ **Sondeig + Mirador** | ✅ **FET el 2026-07-31** (#294). ⚠️ **AQUESTA FILA VA SER FALSA 12 DIES:** deia «el rang existeix» i **no existia** — `mart_govern` no rankejava aquesta mètrica. Per això el front va arrossegar la marca `pendingRank` des del 19/07: es va donar per resolta del costat de la DADA quan del costat de la dada no s'havia fet res, i l'esmena es va assignar només a Mirador quan era de tots dos. Error de Talaia (redacció d'aquest doc). Ara el rang és real; al Berguedà és «de 27», no de 31, perquè 4 municipis no tenen valor. |
 | E10 | **Fora la frase** «Renovació demogràfica: l'entrada de gent nova…» | Mirador | — (copy) |
 | E11 | «Qui hi ha (i qui hi haurà)»: **evolució de població, de nascuts fora de Catalunya i de nascuts a l'estranger** | Sondeig + Mirador | 🟡 origen ✅ (finestra 2021→2025); població: **verificar sèrie a EMEX** |
 | E12 | **Franges d'edat** (quanta gent a cada franja) **i la seva evolució** | Sondeig + Mirador | ✅ **ja ingerides** (`pob_0_14`, `pob_65_84`, `pob_85_mes`) — el mart les usa i les llença |
+
+> ⚠️ **Lliçó d'aquest full (escrita el 2026-07-31):** una casella d'estat que diu ✅ sense que ningú
+> ho hagi verificat és pitjor que una casella buida — la buida es mira, la ✅ es creu. E9 va estar
+> 12 dies marcada com a feta i no ho estava, i la marca honesta que el front pintava mentrestant
+> (`pendingRank`, «aquesta mètrica no la rankeja el mart») era l'única cosa que deia la veritat.
+> Regla: en aquest doc, ✅ només després de córrer la comprovació, i amb qui l'ha corregut.
 
 ## 2. La veritat sobre la TENDÈNCIA (E6) — regla d'honestedat
 

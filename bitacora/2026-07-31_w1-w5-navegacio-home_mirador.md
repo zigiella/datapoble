@@ -65,6 +65,12 @@ la reaprofita en hidratar. La factura del catàleg ja estava pagada; el que falt
 Marge de Cloudflare Pages intacte: 5.933 fitxers (límit 20.000), fitxer més gros sense canvi
 (1,8 MB, `municipis.catalunya.json`).
 
+*Els dos builds de la taula són **abans i després del meu diff sobre la mateixa base** (commit
+`938e780`), perquè el delta sigui atribuïble només a aquest canvi. Després, en fusionar el `main` nou
+—W3+W4 de Sondeig, que engreixa `govern.catalunya.json` de 689 a 1.595 kB— he tornat a construir:
+5.933 fitxers · 2.399 MB · Barcelona 769.655 B. El +3 MB i el +1,2 kB de la fitxa són **seus**, no
+d'aquest PR.*
+
 ### Col·lisió de slugs — **premissa del brief a mitges**
 
 El brief diu que «el codi actual té una guarda de col·lisió **per al pilot**». Només és mig cert:
