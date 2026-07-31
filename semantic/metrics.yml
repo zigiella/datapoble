@@ -758,10 +758,10 @@ metrics:
       es: "Cobertura 939 de 947: en 8 municipios la fuente suprime la cifra por secreto estadistico y aqui sale vacia, nunca cero (no publicado no significa no consume). NO es un indicador de turismo: medido sobre los 947, su correlacion con las senales turisticas es debil (Spearman +0,22 con el vidrio) y con la poblacion es cero. Una sola instalacion grande -un poligono, una cementera, una depuradora- puede dispararla en un municipio pequeno, y por eso se publica como cifra cruda y SIN referencia comparativa: ninguna estratificacion territorial que tengamos la explica (franja de poblacion y tipo territorial explican el 0,4% de su varianza, indistinguible del azar)."
 
   vidre_hab:
-    label: {ca: Vidre kg/hab/any, es: Vidrio kg/hab/año}
+    label: {ca: Vidre recollit selectivament kg/hab/any, es: Vidrio recogido selectivamente kg/hab/año}
     definicio:
-      ca: "Generació de vidre per habitant empadronat (fracció de recollida selectiva, dada oficial ARC). Senyal físic d'hostaleria: el vidre el generen sobretot els bars i restaurants (ampolles)."
-      es: "Generación de vidrio por habitante empadronado (fracción de recogida selectiva, dato oficial ARC). Señal física de hostelería: el vidrio lo generan sobre todo los bares y restaurantes (botellas)."
+      ca: "Vidre RECOLLIT SELECTIVAMENT per habitant empadronat (dada oficial ARC): el que entra als circuits de recollida —contenidors, deixalleries i recollida comercial—, no el que es genera. El vidre llençat a la fracció resta no hi compta. Senyal físic d'hostaleria: les ampolles les generen sobretot bars, restaurants i allotjaments."
+      es: "Vidrio RECOGIDO SELECTIVAMENTE por habitante empadronado (dato oficial ARC): lo que entra en los circuitos de recogida —contenedores, puntos limpios y recogida comercial—, no lo que se genera. El vidrio tirado a la fracción resto no cuenta. Señal física de hostelería: las botellas las generan sobre todo bares, restaurantes y alojamientos."
     dimension: pressio
     unit: {ca: kg/hab/any, es: kg/hab/año}
     formula: "vidre_tones * 1000 / poblacio"
@@ -770,6 +770,9 @@ metrics:
     table: mart_municipi
     column: vidre_hab
     visibility: public
+    caveat:
+      ca: "Referencia de Catalunya 2024: 22,89 kg/hab/any, calculada dels MATEIXOS 947 municipis que es publiquen aqui (183.418,9 t / padro a 1 de gener). L'Idescat en publica ~24 perque hi suma la fila `No territorialitzable` de l'ARC (9.772,5 t que no s'atribueixen a cap municipi): 183.418,9 + 9.772,5 = 193.191,4 t, la xifra oficial exacta. Comparar un municipi amb el 24 el faria semblar un 5% pitjor del que es. ES el senyal turistic mes net que tenim (correlacio +0,53 amb la intensitat turistica, mes alta que la dels residus totals), pero una xifra alta TAMBE pot venir de recollida comercial ben organitzada, de contenidors que fan servir pobles veins, de diferencies en com declara cada municipi o d'esdeveniments estacionals. Llegeix-la amb els residus totals i el consum electric de serveis al costat, mai sola."
+      es: "Referencia de Cataluna 2024: 22,89 kg/hab/ano, calculada de los MISMOS 947 municipios que se publican aqui (183.418,9 t / padron a 1 de enero). El Idescat publica ~24 porque suma la fila `No territorialitzable` de la ARC (9.772,5 t que no se atribuyen a ningun municipio): 183.418,9 + 9.772,5 = 193.191,4 t, la cifra oficial exacta. Comparar un municipio con el 24 lo haria parecer un 5% peor de lo que es. ES la senal turistica mas limpia que tenemos (correlacion +0,53 con la intensidad turistica, mas alta que la de los residuos totales), pero una cifra alta TAMBIEN puede venir de recogida comercial bien organizada, de contenedores que usan pueblos vecinos, de diferencias en como declara cada municipio o de eventos estacionales. Leela con los residuos totales y el consumo electrico de servicios al lado, nunca sola."
     synonyms: {ca: [vidre, ampolles, hostaleria], es: [vidrio, botellas, hostelería]}
 
   # --- BASE-RATIOS: pressió ABSOLUTA vs base residencial (complement dels z-scores comarcals) ---
