@@ -3,6 +3,52 @@
 *Mètode: **Cambium Charter v0.5**. Es treballa de dalt a baix; cada tasca = un PR. Cada **fase** és
 publicable per si sola.*
 
+> **📐 R-REFERENCIA (recerca de Bea 2026-07-31 + verificació de Talaia). LA SEVA RECERCA HA CAÇAT UN
+> BUG NOSTRE.** Bea porta fonts oficials (ICAEN municipal per sectors, Idescat residus 2024) i
+> proposa referències estratificades. Contrastat número a número:
+>
+> **1 · 🔴 BUG CONFIRMAT — `kwh_hab` BARREJA VINTAGES.** `consum_domestic_kwh (2024) / poblacio
+> (2025)`. El padró 2025 (8.124.126) és un **1,40% més gran** que el de 2024 (8.012.231), així que
+> **el consum elèctric per habitant de TOTS els 947 surt un 1,40% per sota del que toca**. Prova:
+> el nostre ponderat 1.234,9 × 1,0140 = **1.252,1** = exactament el **1.252** que Bea calcula amb
+> el padró correcte. → **Sondeig: dividir el consum de l'any N pel padró de l'any N.** (Auditades
+> les altres per càpita: `kg_hab_any` i `vidre_hab` divideixen per la població del MATEIX dataset
+> de l'ARC → correctes; `rtc_per_100hab_viv` ja porta el seu caveat de barreja; `rtc_per_1000hab`
+> **no declara `date`** → petit forat a tapar.)
+>
+> **2 · ⚠️ EL «500» D'IDESCAT NO ÉS EL NOSTRE 476,8, I LA DIFERÈNCIA IMPORTA.** Mateixa població
+> (8.012.231 les dues!), o sigui que la diferència és de NUMERADOR: Idescat compta 3.996.000 t i la
+> taula municipal de l'ARC n'atribueix 3.820.232 → **175.768 t (4,4%) que no es reparteixen per
+> municipi**. **Si publiquem «500» com a referència al costat de xifres municipals que sumen 477,
+> TOTS els municipis semblaran un 5% millors del que són.** Recomanació de Talaia: la referència es
+> calcula de **la mateixa font que el numerador** (476,8) i s'escriu al costat que el titular
+> d'Idescat per a Catalunya és ~500 perquè inclou residus no atribuïts a cap municipi.
+>
+> **3 · ✅ L'ESTRATIFICACIÓ DE BEA, CONFIRMADA A L'ELÈCTRIC — I DESMENTIDA AL RESIDU.** Mediana per
+> franja de població (947 munis):
+> | franja | n | kWh/hab | kg residus/hab |
+> |---|---|---|---|
+> | < 250 hab | 180 | **1.818** | 554 |
+> | 250-499 | 148 | 1.734 | 479 |
+> | 500-999 | 148 | 1.551 | 428 |
+> | 1.000-4.999 | 252 | 1.491 | 438 |
+> | 5.000-19.999 | 149 | 1.347 | 502 |
+> | ≥ 20.000 | 70 | **1.156** | 447 |
+> **Elèctric: gradient net i monòton** (1.818 → 1.156, un 57% de diferència). La xifra de Bea per a
+> <500 hab (~1.800) es confirma: el nostre càlcul dona **1.765** (<500) i **1.818** (<250).
+> **Residus: NO és monòton** (554 → 479 → 428 → 438 → **502** → 447): la mida NO explica el residu;
+> la intensitat turística sí que sembla explicar-lo. **Conseqüència de disseny: la referència
+> estratificada per mida és defensable a l'elèctric però NO al residu** — allà cal estratificar per
+> una altra cosa (tipus territorial / turisme), i tenim `tipus_territorial` per fer-ho.
+>
+> **4 · Sector SERVEIS: no l'ingerim.** L'ICAEN el publica al mateix dataset municipal. Bea vol
+> domèstic i serveis per separat (1.500 / 1.100 / 2.700 kWh de referència) i deixar el total com a
+> secundari, perquè un polígon o una cimentera converteixen un municipi en «fals paradís turístic
+> estadístic». → **Sondeig: ingesta nova.**
+>
+> **PENDENT DEL VOT DE BEA:** quina referència es pinta i com s'estratifica (vegeu §3: la resposta
+> pot ser diferent per a elèctric i per a residu).
+>
 > **🔎 TRES PREGUNTES DE BEA (2026-07-31), investigades a la FONT abans de respondre:**
 >
 > **B1 · «Hi havia unes dades oficials de consum, no?»** — Sí, i la mediana NO és el número que
