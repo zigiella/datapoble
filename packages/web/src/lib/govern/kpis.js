@@ -128,7 +128,8 @@ export const GOVERN_KPIS = [
 	// D11 · E11 · el lloc de naixement és l'altra PARTICIÓ del padró. «Nascuts fora de
 	// Catalunya» (suma) segueix sense pintar-se: no és una mètrica servida i sumar-la aquí
 	// seria fabricar una xifra sense procedència (C6 §8.1).
-	// El % és l'única del bloc que demana rang (E9): pendingRank fins que el mart la rankegi.
+	// El % de la targeta de naixement (`pct_nascuda_estranger`) SEGUEIX sense rang al mart: el seu
+	// pendingRank es queda. El que E9 demanava (`pct_nacionalitat_estrangera`) ja el té des de #294.
 	{ kind: 'naixement', group: 'A', pendingRank: true, note: 'gov_naix_foto' },
 	// D11: aquesta targeta és l'ÚNICA del bloc amb evolució, i la seva `note` diu de què és la
 	// sèrie (nacionalitat = passaport, no biografia). Sense això, el +5,61 es llegiria com si
@@ -137,7 +138,6 @@ export const GOVERN_KPIS = [
 		kind: 'metric',
 		key: 'pct_nacionalitat_estrangera',
 		group: 'A',
-		pendingRank: true,
 		note: 'gov_nac_serie_es_nacionalitat'
 	},
 	// B · Les cases
@@ -167,7 +167,10 @@ export const GOVERN_KPIS = [
  */
 export const GOVERN_RANK_KEYS = [
 	'index_envelliment', 'poblacio', 'pct_noprincipal',
-	'rtc_per_1000hab', 'kwh_hab', 'renda_neta_persona', 'kg_hab_any'
+	'rtc_per_1000hab', 'kwh_hab', 'renda_neta_persona', 'kg_hab_any',
+	// W3 (esmena de Bea 2026-07-31, #294): el mart ja les rankeja. `pct_nascuda_estranger`
+	// NO hi és a propòsit — aquella segueix sense rang i la seva targeta ho continua dient.
+	'vidre_hab', 'pct_nacionalitat_estrangera'
 ];
 
 /**
