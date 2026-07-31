@@ -62,6 +62,18 @@ KIND_METRICS: dict[str, tuple[str, ...]] = {
     "atur": (),          # la clau és a l'entrada (`trendKey`)
     "serveis": ("serveis_estab", "restauracio_estab"),
     "etca": (),          # buit declarat (vegeu el comentari)
+    # V3 (2026-07-29): les 4 franges d'edat i les 4 d'origen es fonen en DUES targetes amb barra
+    # apilada. La targeta és una, però les 8 mètriques SEGUEIXEN PINTADES (recompte i % dins la
+    # barra i la seva llegenda) — per tant segueixen necessitant fila al mart, que és el que
+    # aquesta guarda protegeix. Registrar-les aquí no és burocràcia: sense això, fondre targetes
+    # hauria tret 8 mètriques de tota guarda sense que ningú ho veiés.
+    "edats": ("pob_0_14", "pob_15_64", "pob_65_84", "pob_85_mes"),
+    "naixement": (
+        "poblacio_nascuda_catalunya",
+        "poblacio_nascuda_resta_espanya",
+        "poblacio_nascuda_estranger",
+        "pct_nascuda_estranger",
+    ),
 }
 
 _BLOC = re.compile(r"export\s+const\s+GOVERN_KPIS\s*=\s*\[(.*?)\n\];", re.S)
