@@ -79,6 +79,8 @@ KIND_METRICS: dict[str, tuple[str, ...]] = {
 _BLOC = re.compile(r"export\s+const\s+GOVERN_KPIS\s*=\s*\[(.*?)\n\];", re.S)
 _ENTRADA = re.compile(r"\{[^{}]*\}", re.S)
 _CAMP = re.compile(r"(\w+)\s*:\s*'([^']*)'")
+_BLOC_RANK = re.compile(r"export\s+const\s+GOVERN_RANK_KEYS\s*=\s*\[(.*?)\];", re.S)
+_CLAU = re.compile(r"'([^']+)'")
 
 
 def entrades_del_tauler(repo: Path) -> list[dict[str, str]]:
@@ -130,9 +132,48 @@ def metriques_del_tauler(repo: Path) -> set[str]:
     return out
 
 
+def claus_rankejades_del_front(repo: Path) -> set[str]:
+    """Claus que el front declara com a RANKEJABLES (`GOVERN_RANK_KEYS` de `kpis.js`).
+
+    Per què cal llegir-la (W3, 2026-07-31): el conjunt de mètriques amb rang viu escrit
+    DUES vegades —`RANK_METRICS` a l'exportador i `GOVERN_RANK_KEYS` al front— i les dues
+    llistes poden divergir en silenci. La direcció perillosa és una sola: si el FRONT
+    reclama rang d'una clau que el mart no rankeja, la targeta es queda muda o pinta un
+    forat; a l'inrevés (el mart rankeja i el front encara no ho pinta) és un estat de
+    trànsit legítim mentre les dues jurisdiccions no han fusionat el mateix dia. Per això
+    la guarda comprova la inclusió, no la igualtat.
+
+    Mateixa frontera que la resta del mòdul: `packages/web/` NOMÉS es llegeix.
+    """
+    js = repo / KPIS_JS
+    if not js.exists():
+        raise SystemExit(
+            f"FALLA: no existeix {KPIS_JS.as_posix()} — és l'autoritat de què el front "
+            f"declara rankejable i sense ella la guarda no comprova res."
+        )
+    bloc = _BLOC_RANK.search(js.read_text(encoding="utf-8"))
+    if not bloc:
+        raise SystemExit(
+            f"FALLA: no s'ha trobat `export const GOVERN_RANK_KEYS = [ … ];` a "
+            f"{KPIS_JS.as_posix()} — ha canviat de forma? El parser ha de canviar amb "
+            f"ella, mai passar per alt."
+        )
+    claus = set(_CLAU.findall(bloc.group(1)))
+    if not claus:
+        raise SystemExit(
+            f"FALLA: `GOVERN_RANK_KEYS` s'ha llegit BUIT a {KPIS_JS.as_posix()}. Un "
+            f"conjunt buit faria passar la guarda sense comprovar res."
+        )
+    return claus
+
+
 if __name__ == "__main__":  # inspecció manual
     repo = Path(__file__).resolve().parents[1]
     claus = sorted(metriques_del_tauler(repo))
     print(f"{len(claus)} mètriques pintades pel tauler ({KPIS_JS.as_posix()}):")
     for c in claus:
+        print(f"  · {c}")
+    rank = sorted(claus_rankejades_del_front(repo))
+    print(f"{len(rank)} claus que el front declara rankejables:")
+    for c in rank:
         print(f"  · {c}")
