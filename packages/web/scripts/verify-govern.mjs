@@ -39,6 +39,9 @@ import {
 	GOVERN_DENOM_REASON,
 	GOVERN_DENOM_REASON_DEFAULT,
 	GOVERN_DENOM_MIN_N,
+	GOVERN_PES_DENOM,
+	GOVERN_REF_DENOM_MUNIS,
+	governReferences,
 	provenanceLine
 } from '../src/lib/govern/kpis.js';
 // W1 · la regla d'article (slug, forma corrent, clau d'ordenació) també és font ÚNICA i
@@ -962,6 +965,266 @@ let nDenomExplicat = 0;
 	);
 }
 
+// ── R-PINTA · LES DUES REFERÈNCIES, AMB EL SEU DENOMINADOR I SENSE INTERCANVIAR-LOS ─────────
+// Vot de Bea (2026-07-31): «farem B+D» → cada targeta amb rang pinta la PONDERADA DE CATALUNYA
+// (ancoratge oficial) i la MEDIANA DE LA COMARCA (els iguals, mateix perímetre que el rang).
+// Doctrina vinculant al capçal de `semantic/metrics.yml`, bloc «QUINES ES PINTEN».
+//
+// Aquesta secció no vigila estil: vigila que no es publiqui una PROCEDÈNCIA FALSA. Una mediana
+// i una ponderada tenen denominadors de naturalesa diferent («N municipis» vs «N unitats del
+// seu pes»), i el brief donava per fet que tota ponderada es diu «sobre N habitants». És fals a
+// dues de les nou mètriques amb rang: `pct_noprincipal` es pondera per HABITATGES (`hab_total`)
+// i `index_envelliment` per MENORS DE 15 (`pob_0_14`). Escriure «habitants» allà seria mentir
+// amb la mateixa cara amb què el 500 d'Idescat faria semblar tots els municipis un 4,4 % millors.
+//
+// La mecànica viu a `governReferences` (kpis.js), funció pura IMPORTADA aquí: la guarda
+// l'exerceix sobre els 947 × 9 en comptes de deduir-ho del marcatge.
+let nRefsPintades = 0;
+let nRefsPonderadaNoHab = 0;
+{
+	// (a) CABLATGE: les referències es pinten des del snippet compartit del rang (un sol lloc
+	//     per als tres punts que en pinten) i el component no en fabrica cap.
+	ok(
+		/import\s*\{[\s\S]*?\bgovernReferences\b[\s\S]*?\}\s*from\s*'\$lib\/govern\/kpis'/.test(pageSrc),
+		`la fitxa no importa 'governReferences': pintaria referències fora de la font única`
+	);
+	ok(
+		/\{@const refs = refsPintades\(cell, key\)\}/.test(pageSrc),
+		`les referències no es resolen dins el snippet compartit del rang: tornarien a divergir`
+	);
+	ok(
+		(pageSrc.match(/refsPintades\(/g) ?? []).length === 2,
+		`'refsPintades' es crida des de més d'un lloc: el marcatge de les referències es duplicaria`
+	);
+	ok(
+		(pageSrc.match(/class="gov-kpi__refv"/g) ?? []).length === 1,
+		`hi ha marcatge de referència duplicat fora del snippet (tornaria a divergir)`
+	);
+	// El denominador es pinta en un element PROPI i VISIBLE. Amagar-lo amb CSS (o fondre'l amb
+	// el rètol) tornaria a deixar una xifra sense procedència a la pantalla amb el codi verd:
+	// un `opacity: 0` no és una decisió d'estil, és retirar la procedència.
+	ok(
+		pageSrc.includes('class="gov-kpi__refd"'),
+		`el denominador de la referència no té element propi: no es podria vigilar que es vegi`
+	);
+	{
+		const refdCss = (pageSrc.match(/\.gov-kpi__refd\s*\{[^}]*\}/g) ?? []).join(' ');
+		ok(refdCss.length > 0, `.gov-kpi__refd sense estil: podria heretar-ne un que l'amagui`);
+		ok(
+			!/display\s*:\s*none|visibility\s*:\s*hidden|opacity\s*:\s*(?:0|0?\.0+)\s*[;}]|font-size\s*:\s*0\s*[;}]/.test(
+				refdCss
+			),
+			`el denominador de la referència s'amaga amb CSS: seria una xifra sense procedència`
+		);
+	}
+
+	// (b) i18n: cada rètol i cada denominador declarats existeixen a ca+es I es pinten.
+	const DENOM_KEYS = [...new Set([GOVERN_REF_DENOM_MUNIS, ...Object.values(GOVERN_PES_DENOM)])];
+	for (const k of ['gov_ref_comarca', 'gov_ref_catalunya', ...DENOM_KEYS]) {
+		ok(!!ca[k] && !!es[k], `i18n '${k}' absent (ca/es)`);
+		ok(pageSrc.includes(k), `la clau '${k}' es declara a kpis.js però no es pinta enlloc`);
+	}
+	// …i cada denominador porta el seu PARÀMETRE: una xifra sense el seu {n} no és procedència.
+	for (const k of DENOM_KEYS) {
+		ok(
+			/\{n\}/.test(String(ca[k])) && /\{n\}/.test(String(es[k])),
+			`el denominador '${k}' no porta la seva xifra {n}: seria una referència sense procedència`
+		);
+	}
+
+	// (c) ELS DOS NOMS NO S'INTERCANVIEN. La guarda és sobre el TEXT, perquè el risc real és una
+	//     passada de copy que digui «habitants» sota una mediana (o «municipis» sota la
+	//     ponderada) i deixi el codi verd.
+	const diu = (k, re) => re.test(`${ca[k]} ${es[k]}`);
+	ok(
+		diu(GOVERN_REF_DENOM_MUNIS, /municipis|municipios/i),
+		`el denominador de la MEDIANA no diu municipis`
+	);
+	ok(
+		!diu(GOVERN_REF_DENOM_MUNIS, /habitants|habitantes/i),
+		`el denominador de la MEDIANA parla d'habitants: una mediana es diu sobre MUNICIPIS`
+	);
+	for (const [pes, k] of Object.entries(GOVERN_PES_DENOM)) {
+		ok(
+			!diu(k, /municipis|municipios/i),
+			`el denominador de la PONDERADA per '${pes}' parla de municipis: una ponderada mai es ` +
+				`diu sobre municipis`
+		);
+	}
+	ok(
+		diu(GOVERN_PES_DENOM.poblacio, /habitants|habitantes/i),
+		`la ponderada per població no diu habitants`
+	);
+	// Els dos pesos que NO són gent han de dir una altra cosa que «habitants»: és tota la raó
+	// per la qual el denominador es deriva de `pes_ponderada` i no s'escriu una vegada per a totes.
+	ok(
+		!diu(GOVERN_PES_DENOM.hab_total, /habitants|habitantes/i) &&
+			diu(GOVERN_PES_DENOM.hab_total, /habitatges|viviendas/i),
+		`la ponderada per 'hab_total' (habitatges) es diu en habitants: seria FALSA a pct_noprincipal`
+	);
+	ok(
+		!diu(GOVERN_PES_DENOM.pob_0_14, /habitants|habitantes/i) &&
+			diu(GOVERN_PES_DENOM.pob_0_14, /menors|menores/i),
+		`la ponderada per 'pob_0_14' (menors de 15) es diu en habitants: seria FALSA a l'envelliment`
+	);
+
+	// (d) L'ESTRATIFICADA PER FRANJA NO ARRIBA A LA PANTALLA (doctrina: se serveix, no es pinta).
+	//     Es mira el CODI sense comentaris — el comentari que explica per què no es pinta ha de
+	//     poder anomenar-la sense fer caure la guarda.
+	const codeOnly = pageSrc
+		.replace(/<!--[\s\S]*?-->/g, ' ')
+		.replace(/\/\*[\s\S]*?\*\//g, ' ')
+		.replace(/(^|[^:])\/\/[^\n]*/g, '$1 ');
+	for (const camp of ['mediana_franja', 'n_franja', 'franja_poblacio']) {
+		ok(
+			!codeOnly.includes(camp),
+			`'${camp}' es llegeix al codi de la fitxa: l'estratificada per mida NO es pinta ` +
+				`(la comarca explica millor que la franja a 8 de les 9 mètriques amb rang)`
+		);
+	}
+	ok(
+		!ca.gov_ref_comarca.match(/franja/i) && !es.gov_ref_comarca.match(/franja/i),
+		`el rètol de la referència comarcal parla de franja: no és el que es pinta`
+	);
+
+	// (e) TOT PES SERVIT TÉ NOM. Un pes nou de Sondeig sense entrada a GOVERN_PES_DENOM faria
+	//     DESAPARÈIXER la ponderada d'aquella mètrica en silenci. Ha de fer caure el CI.
+	const pesosServits = new Set();
+	for (const g of Object.values(govern)) {
+		for (const cell of Object.values(g.metrics ?? {})) {
+			if (cell.ponderada_catalunya != null) pesosServits.add(cell.pes_ponderada);
+		}
+	}
+	for (const p of pesosServits) {
+		ok(
+			!!GOVERN_PES_DENOM[p],
+			`el mart pondera per '${p}' i GOVERN_PES_DENOM no el sap nomenar: aquesta referència ` +
+				`desapareixeria de la targeta sense dir-ho`
+		);
+	}
+
+	// (f) LES 947 × 9 CEL·LES, EXERCIDES. Cap referència sense denominador; la mediana sempre en
+	//     municipis i sobre el MATEIX conjunt que ordena el rang; la ponderada mai en municipis i
+	//     sempre sobre el denominador que serveix el mart. I cap xifra recalculada al front.
+	for (const [i, g] of Object.entries(govern)) {
+		for (const [k, cell] of Object.entries(g.metrics ?? {})) {
+			if (cell.rang == null) continue;
+			const refs = governReferences(cell);
+			for (const r of refs) {
+				nRefsPintades++;
+				ok(
+					Number.isFinite(r.value),
+					`${i}/${k}: referència '${r.id}' sense xifra`
+				);
+				ok(
+					!!r.denomKey && Number.isFinite(r.denom) && r.denom > 0,
+					`${i}/${k}: referència '${r.id}' PINTADA SENSE DENOMINADOR — viola C6 §8.1`
+				);
+				if (r.tipus === 'mediana') {
+					ok(
+						r.denomKey === GOVERN_REF_DENOM_MUNIS && r.denom === cell.n_amb_dada,
+						`${i}/${k}: la mediana no es diu sobre els ${cell.n_amb_dada} municipis del rang`
+					);
+					ok(
+						r.value === cell.mediana_comarca,
+						`${i}/${k}: la mediana pintada no és la del mart (s'estaria calculant al front)`
+					);
+				} else {
+					ok(
+						r.denomKey !== GOVERN_REF_DENOM_MUNIS &&
+							r.denom === cell.hab_ponderada_catalunya,
+						`${i}/${k}: la ponderada no es diu sobre el seu propi denominador`
+					);
+					ok(
+						r.value === cell.ponderada_catalunya,
+						`${i}/${k}: la ponderada pintada no és la del mart (s'estaria calculant al front)`
+					);
+					if (GOVERN_PES_DENOM[cell.pes_ponderada] !== GOVERN_PES_DENOM.poblacio)
+						nRefsPonderadaNoHab++;
+				}
+			}
+			// La targeta amb rang no es pot quedar MUDA de referències: la mediana comarcal hi és
+			// sempre (mateix GROUP BY que el rang). Si un dia no hi fos, es veuria aquí.
+			ok(refs.length >= 1, `${i}/${k}: targeta amb rang i CAP referència pintable`);
+			ok(
+				refs.length === (k === PRESENCIA_KEY ? 1 : 2),
+				`${i}/${k}: ${refs.length} referències (s'esperen ${k === PRESENCIA_KEY ? 1 : 2})`
+			);
+			// El plural del copy («sobre N municipis») ha de ser cert: amb 1 sol municipi la
+			// frase seria gramaticalment falsa i, pitjor, un rang «1 de 1» sense sentit.
+			ok(
+				cell.n_amb_dada >= 2,
+				`${i}/${k}: n_amb_dada = ${cell.n_amb_dada} — «sobre 1 municipis» seria fals`
+			);
+		}
+	}
+	ok(nRefsPintades > 0, `cap referència pintable als 947: la secció no s'exerciria`);
+	ok(
+		nRefsPonderadaNoHab > 0,
+		`cap ponderada amb un pes que no siguin habitants: la distinció que fa honesta la línia ` +
+			`(habitatges, menors de 15) no s'estaria exercint`
+	);
+
+	// (g) `poblacio` NO TÉ PONDERADA i això NO és un forat: la seva targeta es queda amb la
+	//     mediana comarcal i prou. Als 947, sempre exactament una referència i mai un buit.
+	for (const [i, g] of Object.entries(govern)) {
+		const cell = g.metrics?.[PRESENCIA_KEY];
+		if (!cell || cell.rang == null) continue;
+		ok(
+			cell.ponderada_catalunya === null,
+			`${i}: 'poblacio' amb ponderada (${cell.ponderada_catalunya}): la pregunta no existeix ` +
+				`(seria la seva pròpia mida) i el contracte diu que és NULL`
+		);
+		const refs = governReferences(cell);
+		ok(
+			refs.length === 1 && refs[0].id === 'comarca',
+			`${i}: la capçalera de presència hauria de pintar NOMÉS la mediana comarcal`
+		);
+	}
+
+	// (h) L'ÀNCORA DE BEA — la Pobla de Lillet, vidre: 48,6 amb el Berguedà a 49,8 i Catalunya a
+	//     22,9. És el cas que justifica pintar-ne DUES («normal aquí, el doble que a Catalunya»):
+	//     si un dia les dues xifres convergissin, la targeta deixaria de dir això i s'hauria de
+	//     mirar el disseny un altre cop.
+	{
+		const vidre = govern[POBLA]?.metrics?.vidre_hab;
+		ok(!!vidre, `la Pobla sense cel·la de vidre: l'àncora de la decisió B+D no s'exerciria`);
+		if (vidre) {
+			const [comarcal, catalana] = governReferences(vidre);
+			ok(
+				comarcal?.id === 'comarca' && catalana?.id === 'catalunya',
+				`l'ordre de les referències ha canviat: la comarcal va PRIMERA (comparteix perímetre ` +
+					`amb el «k de n» que té just a sobre)`
+			);
+			ok(
+				Math.abs(comarcal.value - 49.8) < 0.05 && Math.abs(catalana.value - 22.9) < 0.05,
+				`el vidre de la Pobla ja no compara 49,8 (Berguedà) amb 22,9 (Catalunya): ` +
+					`${comarcal?.value} / ${catalana?.value}`
+			);
+			ok(
+				catalana.denomKey === GOVERN_PES_DENOM.poblacio_residus,
+				`el vidre es pondera per la població del dataset de l'ARC i el denominador no ho diu`
+			);
+			ok(
+				Math.abs(vidre.valor - 48.6) < 0.05 && vidre.valor > catalana.value * 1.9,
+				`el cas fundacional («el doble que a Catalunya») ja no es dona amb la dada servida`
+			);
+		}
+		// I el cas que desmenteix el brief: el % d'habitatges no principals es pondera per
+		// HABITATGES. Si algun dia el mart canviés el pes, el text hauria de canviar amb ell.
+		const nop = govern[POBLA]?.metrics?.pct_noprincipal;
+		ok(
+			nop?.pes_ponderada === 'hab_total',
+			`pct_noprincipal ja no es pondera per habitatges: el denominador pintat s'ha de revisar`
+		);
+		ok(
+			governReferences(nop).find((r) => r.tipus === 'ponderada')?.denomKey ===
+				GOVERN_PES_DENOM.hab_total,
+			`la ponderada de pct_noprincipal no es diu en habitatges`
+		);
+	}
+}
+
 if (fails.length) {
 	console.error('VERIFICACIÓ tauler de dades: FALLA');
 	for (const f of fails) console.error(`  [x] ${f}`);
@@ -997,5 +1260,12 @@ console.log(
 		`els 947 (llindar minim N = ${GOVERN_DENOM_MIN_N}, el mateix del transform; cap muni sense ` +
 		`% d'origen hi arriba i cap que hi arribi se'l queda; sense index d'envelliment nomes on ` +
 		`pob_0_14 = 0; la renda la calla la FONT, no el nostre llindar). La Pobla: nacionalitat ` +
-		`«de 27» amb explicacio, vidre «de 31» sense.`
+		`«de 27» amb explicacio, vidre «de 31» sense. ` +
+		`R-PINTA (B+D): ${nRefsPintades} referencies pintables als 947, TOTES amb el seu ` +
+		`denominador — la mediana sobre els MUNICIPIS del rang, la ponderada sobre el seu propi ` +
+		`pes i mai sobre municipis; ${nRefsPonderadaNoHab} ponderades amb un pes que NO son ` +
+		`habitants (habitatges a pct_noprincipal, menors de 15 a l'envelliment) amb el nom ` +
+		`correcte; 'poblacio' sense ponderada pinta nomes la comarcal als 947, sense cap buit; ` +
+		`l'estratificada per franja no arriba al codi de la fitxa; ancora de la Pobla intacta ` +
+		`(vidre 48,6 · Berguedà 49,8 · Catalunya 22,9).`
 );

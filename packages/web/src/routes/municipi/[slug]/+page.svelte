@@ -46,6 +46,7 @@
 		GOVERN_DENOM_REASON,
 		GOVERN_DENOM_REASON_DEFAULT,
 		GOVERN_DENOM_MIN_N,
+		governReferences,
 		provenanceLine
 	} from '$lib/govern/kpis';
 	import type { GovernCell, GovernEntry } from '$lib/contract/govern';
@@ -359,6 +360,41 @@
 	/** La comarca té més municipis que els que tenen la xifra → cal explicar el denominador. */
 	const denomIncomplet = (n: number | undefined): boolean =>
 		comarcaMunis > 0 && typeof n === 'number' && n > 0 && n < comarcaMunis;
+
+	// ── R-PINTA · LES DUES REFERÈNCIES DE LA TARGETA (vot de Bea: «farem B+D») ────────────────
+	// Doctrina al capçal de `semantic/metrics.yml` («QUINES ES PINTEN»), mecànica a `kpis.js`
+	// (`governReferences`, funció pura que el verificador exerceix sobre els 947). Aquí NOMÉS
+	// es resolen els textos i es formaten les xifres: cap càlcul (C6 §4), cap denominador
+	// escrit a mà (C6 §8.1). La xifra es formata amb la MATEIXA def del contracte que el valor
+	// gran de la targeta, perquè les tres siguin comparables dígit a dígit.
+	const REF_LABEL: Record<string, () => string> = {
+		gov_ref_comarca: () => m.gov_ref_comarca(),
+		gov_ref_catalunya: () => m.gov_ref_catalunya()
+	};
+	// El denominador d'una MEDIANA es diu en municipis; el d'una PONDERADA, en unitats del seu
+	// pes — i el pes NO sempre són habitants (`pct_noprincipal` es pondera per habitatges;
+	// `index_envelliment`, per menors de 15). Cada pes porta el seu nom o no es pinta.
+	const REF_DENOM: Record<string, (n: string) => string> = {
+		gov_ref_denom_munis: (n) => m.gov_ref_denom_munis({ n }),
+		gov_ref_denom_hab: (n) => m.gov_ref_denom_hab({ n }),
+		gov_ref_denom_habitatges: (n) => m.gov_ref_denom_habitatges({ n }),
+		gov_ref_denom_menors15: (n) => m.gov_ref_denom_menors15({ n })
+	};
+	type RefPintada = { id: string; label: string; value: string; unit: string; denom: string };
+	/** Les referències d'una cel·la, ja formatades. Buida = no n'hi ha cap de pintable. */
+	function refsPintades(cell: GovernCell | null, key: string | undefined): RefPintada[] {
+		const def = key ? gDef(key) : undefined;
+		if (!def) return [];
+		const out: RefPintada[] = [];
+		for (const r of governReferences(cell)) {
+			const label = REF_LABEL[r.labelKey]?.();
+			const denom = REF_DENOM[r.denomKey]?.(formatInteger(r.denom, locale));
+			// Sense rètol o sense denominador NO es pinta: mai una xifra òrfena de procedència.
+			if (!label || !denom) continue;
+			out.push({ id: r.id, label, value: fmtValue(r.value, def), unit: gUnit(key as string), denom });
+		}
+		return out;
+	}
 	// Prefixa el signe a una variació ja formatada (la negativa ja porta el «−» d'Intl).
 	function signed(s: string): string {
 		return s.startsWith('-') || s.startsWith('−') ? s : `+${s}`;
@@ -708,6 +744,34 @@
 				{m.gov_denom_line({ n: String(cell.n_amb_dada), total: String(comarcaMunis) })}
 				{denomReason(key)}
 			</p>
+		{/if}
+		<!-- R-PINTA · LES DUES REFERÈNCIES (vot de Bea: «farem B+D»). Van DINS el bloc del rang,
+		     no en un lloc propi: la comparació és la mateixa pregunta que el «k de n» —«contra
+		     qui»— i separar-les tornaria a obrir la porta a tres còpies divergents. Així hereten
+		     la posició del rang a cada punt de crida i, sobretot, la seva ADJACÈNCIA: la línia de
+		     dalt ja ha dit de quina comarca parlem («per valor a Barcelonès»), i per això el
+		     rètol pot ser «mediana comarcal» sense repetir-ne el nom ni patir amb l'article.
+		     Ordre: la COMARCAL primer (mateix perímetre que el rang: el lector acaba de llegir
+		     «de 31» i la mediana d'aquests mateixos 31 és la lectura següent), la CATALANA a
+		     sota com a ancoratge igual a totes les targetes.
+		     Cada xifra amb el seu denominador NOMENAT (C6 §8.1): la mediana en municipis, la
+		     ponderada en unitats del seu pes. A `poblacio` només hi ha la comarcal (no té
+		     ponderada) i la llista simplement en té una: cap buit, cap «n. d.» decoratiu. -->
+		{@const refs = refsPintades(cell, key)}
+		{#if refs.length}
+			<div class="gov-kpi__refs">
+				{#each refs as r (r.id)}
+					<p class="gov-kpi__ref">
+						<span class="gov-kpi__refv"
+							>{r.value}{#if r.unit}<span class="u">{r.unit}</span>{/if}</span
+						>
+						<span class="gov-kpi__refx">
+							<span class="gov-kpi__refl">{r.label}</span>
+							<span class="gov-kpi__refd">{r.denom}</span>
+						</span>
+					</p>
+				{/each}
+			</div>
 		{/if}
 	{/if}
 {/snippet}
@@ -1711,6 +1775,60 @@
 		font-size: 0.62rem;
 		color: var(--dp-text-subtle);
 		line-height: 1.4;
+	}
+	/* R-PINTA · les dues referències. UNA sola graella per a les dues files (cada `<p>` és
+	   `display: contents`), i no una graella per fila: així les dues xifres cauen a la MATEIXA
+	   columna, alineades a la dreta, i el contrast es llegeix d'una passada vertical amb el
+	   valor gran de la targeta i el «k de n» (la Pobla, vidre: 48,6 · 49,8 · 22,9).
+	   El rètol i el denominador van a DUES línies pròpies i no en una de sola que s'embolica:
+	   mesurat a la targeta real (269 px), la versió d'una línia trencava de manera irregular i
+	   ocupava 95 px; aquesta n'ocupa 61 amb el mateix text i sense cap salt lleig. Sense filet
+	   ni caixa: la targeta ja porta prou capes i el brief avisa de no fer-ne un mur. */
+	.gov-kpi__refs {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		column-gap: 7px;
+		row-gap: 2px;
+		align-items: baseline;
+		margin: 4px 0 0;
+	}
+	.gov-kpi__ref {
+		display: contents;
+	}
+	/* Un punt menys de pes que el «k de n»: la posició del municipi mana, la referència
+	   acompanya. Mateixa família de display perquè les xifres s'alineïn òpticament. */
+	.gov-kpi__refv {
+		font-family: 'Archivo', var(--dp-font-display);
+		font-weight: 600;
+		font-size: 0.82rem;
+		color: var(--dp-text-muted);
+		text-align: right;
+	}
+	.gov-kpi__refv .u {
+		font-family: var(--dp-font-mono);
+		font-size: 0.55rem;
+		color: var(--dp-text-subtle);
+		margin-left: 2px;
+	}
+	.gov-kpi__refx {
+		min-width: 0;
+	}
+	.gov-kpi__refl {
+		display: block;
+		font-family: var(--dp-font-mono);
+		font-size: 0.6rem;
+		color: var(--dp-text-subtle);
+		line-height: 1.35;
+	}
+	/* El denominador (C6 §8.1) va un pèl més tènue que el rètol, però mai amagat: és el que fa
+	   que la xifra es pugui citar. Qui llegeix ràpid en salta; qui comprova, el troba. */
+	.gov-kpi__refd {
+		display: block;
+		font-family: var(--dp-font-mono);
+		font-size: 0.56rem;
+		color: var(--dp-text-subtle);
+		opacity: 0.85;
+		line-height: 1.35;
 	}
 	/* B3 · el denominador del rang, explicat. Va enganxat al «k de n» (no és una nota de lectura
 	   com `.gov-kpi__note`: és la lletra petita del número que hi ha just a sobre), en prosa i no
