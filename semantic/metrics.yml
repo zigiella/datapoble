@@ -54,6 +54,48 @@
 #   de tendència ha d'existir igualment però com a `sense_serie`/suprimida AMB MOTIU — mai absent
 #   (una fila que falta és invisible) i mai amb el delta pintat.
 #
+# REFERENCIES, LES TRES (R-REFERENCIA, 2026-07-31; recerca de Bea, dada de Sondeig). Una targeta
+# de rang pot mostrar TRES referencies i NO diuen el mateix:
+#   - MEDIANA (comarcal o catalana) - "com es un municipi tipic". Cada municipi hi pesa igual:
+#     Sant Jaume de Frontanya (25 hab) tant com Barcelona (1,7 M).
+#   - PONDERADA - "quant li toca a cada habitant". Es TOTAL / HABITANTS, l'equivalent exacte de com
+#     publiquen la xifra l'ARC, l'ICAEN i l'Idescat, i per tant el numero que un lector enten per
+#     "la mitjana de Catalunya". REGLA: cada metrica es pondera pel SEU PROPI DENOMINADOR (residus
+#     i vidre per la poblacio del dataset de l'ARC, kwh pel padro del seu any, pct_noprincipal per
+#     habitatges...). Ponderar-ho tot per `poblacio` dona un numero que s'assembla al bo i no ho es
+#     (Berguedà, residus: 452,90 correcte vs 452,41).
+#   - ESTRATIFICADA per franja de poblacio - "com son els municipis de la meva mida".
+#
+# REGLA VINCULANT - LA REFERENCIA SURT DE LA MATEIXA FONT I DEL MATEIX PERIMETRE QUE EL NUMERADOR.
+#   Cas fundacional: el titular d'Idescat de residus per a Catalunya es ~500 kg/hab i la taula
+#   municipal de l'ARC en suma 476,85. No es contradiuen: el dataset de l'ARC porta una fila
+#   `No territorialitzable` amb 175.115,55 t el 2024 (4,4%), residus reals que no s'atribueixen a
+#   cap municipi; amb ella el total fa 498,70. Posar el 500 al costat de xifres municipals que
+#   sumen 476,85 faria semblar TOTS els municipis un 4,4% millors del que son.
+#
+# ARBITRATGE (Talaia, 2026-07-31; handoff de Sondeig). `mart_demografia` i `mart_govern` publiquen
+#   dues referencies de pct_nacionalitat_estrangera que difereixen 0,013 pp (947/31 municipis vs
+#   938/27 amb dada publicable). Cap es falsa; responen preguntes diferents. DECISIO:
+#     (a) La referencia que ACOMPANYA UN RANG es calcula sobre EXACTAMENT el mateix conjunt que el
+#         rang ordena (938/27). Si el rang diu "6 de 27", comparar-lo amb una mediana que inclou 4
+#         municipis que el rang no ordena es la mateixa incoherencia que el 500 vs 476,85.
+#     (b) La xifra de Catalunya/comarca com a FET (quin % de catalans te nacionalitat estrangera)
+#         es la de `mart_demografia`, sobre tots els municipis.
+#     (c) Les dues NO es poden pintar a la mateixa targeta sense dir quina es quina.
+#   PRECISIO: l'agregat d'un percentatge es sum(numeradors)/sum(denominadors), no la mitjana
+#   ponderada de percentatges ja arrodonits (aixo hi afegia +0,0003). Qui la recalculi, aixi.
+#
+# L'ESTRATIFICADA PER MIDA NO SERVEIX PER A TOT, i el contracte ho ha de dir perque la dada se
+#   serveix per a totes les metriques. Variancia explicada ajustada sobre els 947: la franja de
+#   poblacio explica el 16,5% del vidre i el 9,5% del consum electric -gradients monotons i
+#   defensables- pero NOMES EL 4,0% dels residus, on el gradient ni tan sols es monoton
+#   (554, 479, 428, 438, 502, 447). Als residus el que explica mes es la COMARCA (33,1%), que ja es
+#   la particio del rang; i el millor predictor no es cap estrat sino una continua, la intensitat
+#   turistica (Spearman +0,53). Al sector serveis no funciona CAP estratificacio (0,4%).
+#
+# PROCEDENCIA OBLIGATORIA (C6 8.1): una mediana es diu "sobre n MUNICIPIS"; una ponderada, "sobre
+#   n HABITANTS". Cap de les tres es pot pintar sense el seu denominador.
+#
 # MICROMUNICIPI (E13, decisió de Bea 2026-07-20: CAVEAT, NO emmascarar; execució v3 2026-07-29).
 # Als municipis amb padró < 250 (el llindar del flag `micromunicipi` de tipus_territorial), els
 # «per càpita» físics i les ràtios de recomptes petits es mostren SEMPRE — el número incòmode és
@@ -623,9 +665,14 @@ metrics:
     unit: {ca: per mil, es: por mil}
     formula: "rtc_total / poblacio * 1000"
     source: datapoble
+    origin_source: rtc
+    date: "2026/2025"
     table: mart_municipi
     column: rtc_per_1000hab
     visibility: public
+    caveat:
+      ca: "Barreja de vintages declarada: el numerador (RTC) és un registre VIU llegit com a foto del dia de la càrrega (2026) i el denominador és el padró de 2025. On el padró hagi crescut des del 2025, la intensitat surt lleugerament sobreestimada. Fins al 2026-07-31 aquesta mètrica no declarava cap data — era l'única per càpita pública que no ho feia."
+      es: "Mezcla de vintages declarada: el numerador (RTC) es un registro VIVO leído como foto del día de la carga (2026) y el denominador es el padrón de 2025. Donde el padrón haya crecido desde 2025, la intensidad sale ligeramente sobreestimada. Hasta el 2026-07-31 esta métrica no declaraba ninguna fecha — era la única per cápita pública que no lo hacía."
     synonyms: {ca: [intensitat turística], es: [intensidad turística]}
 
   rtc_per_100hab_viv:
@@ -680,13 +727,35 @@ metrics:
       es: "Consumo eléctrico doméstico por habitante empadronado, último año de cobertura plena (2024, dato oficial ICAEN). Medida física del consumo residencial."
     dimension: pressio
     unit: {ca: kWh/hab/any, es: kWh/hab/año}
-    formula: "consum_domestic_kwh / poblacio"
+    formula: "consum_domestic_kwh / poblacio_del_mateix_any"
     source: icaen_consum
     date: "2024"
     table: mart_municipi
     column: kwh_hab
     visibility: public
+    caveat:
+      ca: "Fins al 2026-07-31 aquesta mètrica dividia el consum de 2024 pel padró de 2025 i declarava `date: 2024` sense dir-ho: el consum per habitant de tots els municipis sortia esbiaixat (el ponderat de Catalunya, 1.234,9 en comptes de 1.252,1) i, com que el padró no havia variat igual a tot arreu, l'error per municipi anava de -11,9% a +12,2% i movia el rang comarcal a 438 dels 947. Ara el denominador és el padró del MATEIX any del consum, i per això NO és el mateix número que el padró que es mostra a la fitxa (2025)."
+      es: "Hasta el 2026-07-31 esta métrica dividía el consumo de 2024 por el padrón de 2025 y declaraba `date: 2024` sin decirlo: el consumo por habitante de todos los municipios salía sesgado (el ponderado de Cataluña, 1.234,9 en vez de 1.252,1) y, como el padrón no había variado igual en todas partes, el error por municipio iba de -11,9% a +12,2% y movía el rango comarcal en 438 de los 947. Ahora el denominador es el padrón del MISMO año del consumo, y por eso NO es el mismo número que el padrón que se muestra en la ficha (2025)."
     synonyms: {ca: [electricitat, consum elèctric, llum], es: [electricidad, consumo eléctrico, luz]}
+
+  kwh_serveis_hab:
+    label: {ca: Elèctric de serveis kWh/hab, es: Eléctrico de servicios kWh/hab}
+    definicio:
+      ca: "Consum elèctric del sector SERVEIS per habitant empadronat, mateix any i mateix denominador que l'elèctric domèstic (dada oficial ICAEN). Es publica SEPARAT del domèstic perquè mesura una altra cosa: l'activitat econòmica de serveis del municipi, no la presència residencial."
+      es: "Consumo eléctrico del sector SERVICIOS por habitante empadronado, mismo año y mismo denominador que el eléctrico doméstico (dato oficial ICAEN). Se publica SEPARADO del doméstico porque mide otra cosa: la actividad económica de servicios del municipio, no la presencia residencial."
+    dimension: pressio
+    unit: {ca: kWh/hab/any, es: kWh/hab/año}
+    formula: "consum_serveis_kwh / poblacio_del_mateix_any"
+    source: icaen_consum
+    date: "2024"
+    table: mart_municipi
+    column: kwh_serveis_hab
+    visibility: public
+    visibilitat: verd
+    synonyms: {ca: [serveis, activitat economica, poligon], es: [servicios, actividad economica, poligono]}
+    caveat:
+      ca: "Cobertura 939 de 947: a 8 municipis la font suprimeix la xifra per secret estadistic i aqui surt buida, mai zero (no publicat no vol dir no consumeix). NO es un indicador de turisme: mesurat sobre els 947, la seva correlacio amb els senyals turistics es feble (Spearman +0,22 amb el vidre) i amb la poblacio es zero. Una sola instal.lacio gran -un poligon, una cimentera, una depuradora- pot fer-la disparar en un municipi petit, i per aixo es publica com a xifra crua i SENSE referencia comparativa: cap estratificacio territorial que tinguem l'explica (franja de poblacio i tipus territorial expliquen el 0,4% de la seva variancia, indistingible de l'atzar)."
+      es: "Cobertura 939 de 947: en 8 municipios la fuente suprime la cifra por secreto estadistico y aqui sale vacia, nunca cero (no publicado no significa no consume). NO es un indicador de turismo: medido sobre los 947, su correlacion con las senales turisticas es debil (Spearman +0,22 con el vidrio) y con la poblacion es cero. Una sola instalacion grande -un poligono, una cementera, una depuradora- puede dispararla en un municipio pequeno, y por eso se publica como cifra cruda y SIN referencia comparativa: ninguna estratificacion territorial que tengamos la explica (franja de poblacion y tipo territorial explican el 0,4% de su varianza, indistinguible del azar)."
 
   vidre_hab:
     label: {ca: Vidre kg/hab/any, es: Vidrio kg/hab/año}

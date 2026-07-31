@@ -74,7 +74,7 @@ METRIC_KEYS = [
     "rtc_total", "rtc_hut", "rtc_per_1000hab", "rtc_per_100hab_viv",
     "kg_hab_any",
     # Senyals físics per càpita (inputs de les 3 capes).
-    "kwh_hab", "vidre_hab",
+    "kwh_hab", "kwh_serveis_hab", "vidre_hab",
     # Base-ratios: pressió ABSOLUTA vs base residencial (complement dels z-scores comarcals).
     "residu_base_ratio", "kwh_base_ratio", "vidre_base_ratio",
     # 2n proxy d'hostaleria de la capa L3 (restauració OSM, complement del vidre).
@@ -116,7 +116,7 @@ FORMAT_BY_KEY = {
     "rtc_total": "integer", "rtc_hut": "integer", "rtc_per_1000hab": "decimal",
     "rtc_per_100hab_viv": "decimal", "kg_hab_any": "decimal",
     # Senyals per càpita.
-    "kwh_hab": "decimal", "vidre_hab": "decimal",
+    "kwh_hab": "decimal", "kwh_serveis_hab": "decimal", "vidre_hab": "decimal",
     "residu_base_ratio": "decimal", "kwh_base_ratio": "decimal", "vidre_base_ratio": "decimal",
     # Restauració (2n proxy hostaleria L3): compte enter + densitat decimal.
     "restauracio_estab": "integer", "restauracio_per_1000hab": "decimal",
@@ -151,7 +151,7 @@ COL_MUNI = {
     "rtc_hut": "rtc_hut", "rtc_per_1000hab": "rtc_per_1000hab",
     "rtc_per_100hab_viv": "rtc_per_100hab_viv", "kg_hab_any": "kg_hab_any",
     # Senyals per càpita.
-    "kwh_hab": "kwh_hab", "vidre_hab": "vidre_hab",
+    "kwh_hab": "kwh_hab", "kwh_serveis_hab": "kwh_serveis_hab", "vidre_hab": "vidre_hab",
     "residu_base_ratio": "residu_base_ratio", "kwh_base_ratio": "kwh_base_ratio", "vidre_base_ratio": "vidre_base_ratio",
     # Restauració (2n proxy hostaleria L3).
     "restauracio_estab": "restauracio_estab",
@@ -271,7 +271,7 @@ def resolve_frescor(spec: dict, sources: dict) -> dict[str, Any]:
 #     aquesta llista s'ha de buidar sola: si una clau d'aquí deixa d'estar trencada, la guarda
 #     també cau (una excepció que sobreviu al seu motiu és una mentida amb bona intenció).
 FRESCOR_NULL_HONEST = {"IETR", "IETR_rank"}
-FRESCOR_NULL_PENDENT_CONTRACTE = {"rtc_per_1000hab", "hab_per_hab"}
+FRESCOR_NULL_PENDENT_CONTRACTE = {"hab_per_hab"}
 
 # Claus del catàleg que NO porten valor a `values` (no són columnes de cap mart d'aquí).
 # Han de ser DECLARADES: un catàleg que promet una mètrica i no la serveix enlloc és una
