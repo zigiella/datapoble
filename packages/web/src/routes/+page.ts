@@ -2,11 +2,13 @@
  * Arrel `/` — la HOME «La Llera» (cercador primer): buscador de municipis + mapa + portes.
  *
  * Carrega el dataset (buscador), la geometria de Catalunya (mapa coroplètic), el catàleg de
- * municipis i els indicadors oficials a escala Catalunya. Tot són actius estàtics → `fetch`
- * prerender-safe.
+ * municipis, els indicadors oficials a escala Catalunya i l'agrupació territorial (les xifres
+ * de les portes, W5). Tot són actius estàtics → `fetch` prerender-safe.
  */
 import { loadMunicipisDataset } from '$lib/data/dataset';
+import { toSlug } from '$lib/contract/slug';
 import type { CatalegData } from '$lib/contract/cataleg';
+import type { ComarquesData } from '$lib/contract/comarques';
 import type { IndicadorsCatData } from '$lib/contract/indicadors';
 import type { FeatureCollection } from 'geojson';
 import type { PageLoad } from './$types';
@@ -35,5 +37,34 @@ export const load: PageLoad = async ({ fetch }) => {
 		catValues = {};
 	}
 
-	return { dataset, geojson, comarques, cataleg, catValues };
+	// W5 · les xifres de les PORTES es COMPTEN de l'agrupació territorial (`comarques.json`, la
+	// mateixa font de /comarca i /vegueria), mai s'escriuen al copy: un número escrit al text es
+	// queda estale en silenci —és el que li va passar al «947 municipis» de la porta morta— i a
+	// més el 947 hi estava etiquetat com a «resta de Catalunya» quan és el TOTAL. No-fatal: sense
+	// l'artefacte els comptadors queden a 0 i les portes s'ensenyen sense subtítol.
+	let totalComarques = 0;
+	let totalMunis = 0;
+	let berguedaMunis = 0;
+	try {
+		const res = await fetch('/data/comarques.json');
+		if (res.ok) {
+			const agrup = (await res.json()) as ComarquesData;
+			totalComarques = agrup.comarques.length;
+			totalMunis = agrup.comarques.reduce((s, c) => s + c.ine5s.length, 0);
+			berguedaMunis = agrup.comarques.find((c) => toSlug(c.nom) === 'bergueda')?.ine5s.length ?? 0;
+		}
+	} catch {
+		totalComarques = 0;
+	}
+
+	return {
+		dataset,
+		geojson,
+		comarques,
+		cataleg,
+		catValues,
+		totalComarques,
+		totalMunis,
+		berguedaMunis
+	};
 };

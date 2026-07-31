@@ -28,6 +28,13 @@
 	const comarques = $derived(data.comarques);
 	// Catàleg de tots els munis de Catalunya (cerca a tot el país + navegació del mapa).
 	const cataleg = $derived(data.cataleg);
+	// Xifres de les PORTES (W5): COMPTADES de l'agrupació territorial, mai escrites al copy — una
+	// xifra escrita al text es queda estale EN SILENCI, que és exactament el que li va passar al
+	// «947 municipis» de la porta morta. Si l'artefacte no arriba, el loader retorna 0 i la porta
+	// s'ensenya SENSE subtítol: preferim quedar-nos curts a pintar un número que no hem comptat.
+	const totalComarques = $derived(data.totalComarques);
+	const totalMunis = $derived(data.totalMunis);
+	const berguedaMunis = $derived(data.berguedaMunis);
 	// Indicadors OFICIALS a escala Catalunya (pinten TOTS els municipis).
 	const catValues = $derived(data.catValues);
 
@@ -108,19 +115,37 @@
 			<p class="home-map__more"><a href={localizeHref('/mapa')}>{m.home_map_more()} →</a></p>
 		</section>
 
-		<!-- PORTES DE COMARCA · el Berguedà aterra a /comarca/bergueda (la vitrina passa a les fitxes) -->
+		<!-- PORTES DE COMARCA · el Berguedà aterra a /comarca/bergueda (la vitrina passa a les fitxes)
+		     i la segona porta, a l'índex de TOTES les comarques.
+
+		     W5 (esmena de Bea, 2026-07-31): la segona porta era un `porta--soon` amb
+		     `aria-disabled="true"` («Resta de Catalunya · 947 municipis»). Deia dues coses falses:
+		     que allò era «properament», quan des de P-947 les 43 comarques tenen pàgina i els 947
+		     municipis tenen fitxa; i que 947 era la «resta», quan 947 és el TOTAL de Catalunya (la
+		     resta serien 916). Ara la porta és clicable i porta a /comarca, i les xifres es COMPTEN
+		     de `comarques.json` en comptes d'anar escrites al copy. -->
 		<section class="ds-sec">
 			<div class="ds-sec__hd"><span class="ref">▦</span><h2>{m.home_portes_title()}</h2></div>
 			<div class="home-portes">
 				<a class="porta porta--on" href={localizeHref('/comarca/bergueda')}>
 					<span class="porta__nom">Berguedà</span>
-					<span class="porta__sub">{m.home_porta_bergueda_sub()}</span>
+					{#if berguedaMunis}
+						<span class="porta__sub">{m.home_porta_bergueda_sub({ munis: String(berguedaMunis) })}</span>
+					{/if}
 					<span class="porta__cta">{m.home_porta_bergueda_cta()} →</span>
 				</a>
-				<div class="porta porta--soon" aria-disabled="true">
-					<span class="porta__nom">{m.home_porta_proxim()}</span>
-					<span class="porta__sub">{m.home_porta_proxim_sub()}</span>
-				</div>
+				<a class="porta porta--on" href={localizeHref('/comarca')}>
+					<span class="porta__nom">{m.home_porta_cat()}</span>
+					{#if totalComarques && totalMunis}
+						<span class="porta__sub"
+							>{m.home_porta_cat_sub({
+								comarques: String(totalComarques),
+								munis: String(totalMunis)
+							})}</span
+						>
+					{/if}
+					<span class="porta__cta">{m.home_porta_cat_cta()} →</span>
+				</a>
 			</div>
 		</section>
 	</div>

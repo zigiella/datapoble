@@ -1,61 +1,23 @@
 /**
- * Slug de municipi a partir del nom oficial (spec consultora 2 §8.1).
+ * Slug de municipi i formes del nom — façana TIPADA.
  *
- * Regla: minúscules, sense accents ni apòstrofs, espais→guions, i l'article final
- * reordenat al davant:
+ * La REGLA (article, accents, apòstrofs, ela geminada) viu a `./slug-core.js`, en JS pur, perquè
+ * el verificador offline (`scripts/verify-govern.mjs`) la pugui importar i EXERCIR sobre els 947
+ * noms reals sense duplicar-la — mateix patró que `$lib/govern/kpis.js`. Aquí només s'hi posen
+ * els tipus i els dos ajudants que necessiten el `MunicipisDataset`.
+ *
  *   "Quar, la"            → "la-quar"
  *   "Pobla de Lillet, la" → "la-pobla-de-lillet"
  *   "Castellar de n'Hug"  → "castellar-de-nhug"
  *
  * L'`ine5` segueix sent la CLAU INTERNA (dades, contracte, API); el slug és només la
  * cara pública de la URL. La conversió és determinista (funció pura del nom oficial),
- * així que no cal cap fitxer a mantenir a mà: la font és el mateix dataset.
+ * així que no cal cap fitxer a mantenir a mà: la font és el mateix nom oficial.
  */
 import type { MunicipisDataset } from './types';
 
-// "Nom, la|el|els|les|l'" al final → article al davant. Apòstrof recte o tipogràfic.
-const ARTICLE = /^(.*),\s*(l['’]|la|el|els|les)$/i;
-
-export function toSlug(nom: string): string {
-	let s = nom.trim();
-	const m = s.match(ARTICLE);
-	if (m) s = `${m[2]} ${m[1]}`; // "Nom, la" → "la Nom"
-	// Article INICIAL amb apòstrof sense espai ("l'Hospitalet", forma inline del geojson oficial):
-	// hi inserim un separador perquè doni el MATEIX slug que la forma "Nom, l'" ("l-hospitalet",
-	// no "lhospitalet"). Només l'article inicial; un apòstrof intern ("Castellar de n'Hug") es
-	// manté i cau a "nhug" com fins ara. La forma "l' Nom" (ja amb espai) hi passa idempotent.
-	s = s.replace(/^(l)['’]\s*/i, '$1 ');
-	return s
-		.replace(/l·l/gi, 'll') // ela geminada (l·l) → ll, no l-l
-		.normalize('NFD')
-		.replace(/\p{M}/gu, '') // treu marques combinades (accents)
-		.replace(/['’·]/g, '') // apòstrofs i punt volat fora (n'Hug → nhug)
-		.toLowerCase()
-		.replace(/[^a-z0-9]+/g, '-') // no-alfanumèric → guió
-		.replace(/^-+|-+$/g, ''); // trim guions
-}
-
-/**
- * Nom del municipi en la seva forma CORRENT (article al davant), sigui quina sigui la forma
- * amb què arribi la fila.
- *
- * Per què cal: el mateix municipi ens arriba en DUES formes segons l'artefacte —
- * `municipis.*.json` (marts) el serveix en forma d'índex, «Pobla de Lillet, la», i la geometria
- * oficial (d'on surt el catàleg dels 947) i el tauler el serveixen com «la Pobla de Lillet».
- * La clau del join és sempre l'`ine5`, així que la divergència NO afecta cap xifra; però pintada
- * a un `<h1>` la forma d'índex es llegeix com un error. Aquí es normalitza NOMÉS per mostrar.
- *
- * Reutilitza la mateixa regla d'article que `toSlug` (una sola font de veritat), i per això els
- * dos noms ja donaven —i segueixen donant— el MATEIX slug: la URL no es toca.
- */
-export function nomCanonic(nom: string): string {
-	const s = nom.trim();
-	const m = s.match(ARTICLE);
-	if (!m) return s;
-	// "Nom, l'" → "l'Nom" (sense espai); "Nom, la" → "la Nom".
-	const art = m[2].toLowerCase();
-	return /['’]$/.test(art) ? `${art}${m[1]}` : `${art} ${m[1]}`;
-}
+export { toSlug, nomCanonic, nomIndex } from './slug-core.js';
+import { toSlug } from './slug-core.js';
 
 /** Slug d'un municipi pel seu `ine5` (via el nom oficial del dataset). */
 export function slugForIne5(ine5: string, dataset: MunicipisDataset): string {
@@ -63,10 +25,16 @@ export function slugForIne5(ine5: string, dataset: MunicipisDataset): string {
 }
 
 /**
- * Índex bidireccional slug↔ine5 a partir dels municipis del dataset. Llança si dos
- * municipis cauen al mateix slug (guarda de COL·LISIÓ: corre a `entries()`, en build,
- * així que un xoc trenca el build = test de col·lisió a CI). A escala Catalunya, un
- * xoc real es resoldria amb sufix de comarca (spec §8.1); avui, al Berguedà, no n'hi ha.
+ * Índex bidireccional slug↔ine5 a partir d'una col·lecció de municipis. Llança si dos
+ * municipis cauen al mateix slug (guarda de COL·LISIÓ).
+ *
+ * On corre, avui: (a) al `load` de la fitxa sobre el dataset del pilot (31) — camí ràpid de
+ * resolució; (b) la MATEIXA guarda, a escala Catalunya, viu a `entries()` de
+ * `municipi/[slug]/+page.ts`, que la passa sobre els **947** del catàleg en BUILD, així que un
+ * xoc real trenca el build (= test de col·lisió a CI). Comprovat el 2026-07-31 sobre la
+ * geometria oficial: 947 noms → 947 slugs, cap col·lisió; `verify-govern.mjs` ho torna a
+ * comprovar offline a cada CI. Si algun dia n'apareix una, es resol amb sufix de comarca
+ * (spec §8.1) — mai desactivant la guarda.
  */
 export function buildSlugIndex(municipis: Record<string, { ine5: string; nom: string }>): {
 	slugToIne5: Record<string, string>;

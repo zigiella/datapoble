@@ -30,7 +30,7 @@
 	import { currentLocale, pick, localizeHref } from '$lib/i18n';
 	import { formatMetric, formatDecimal, formatInteger } from '$lib/format';
 	import { provenanceOf } from '$lib/map/provenance';
-	import { toSlug, slugForIne5, nomCanonic } from '$lib/contract/slug';
+	import { toSlug, slugForIne5, nomCanonic, nomIndex } from '$lib/contract/slug';
 	import Espina from '$lib/components/Espina.svelte';
 	import MirallConstel from '$lib/components/MirallConstel.svelte';
 	import { m } from '$lib/paraglide/messages';
@@ -550,23 +550,41 @@
 	// cap xifra en depèn; però el títol es pinta en la forma corrent, no en la d'índex.
 	const muniNom = $derived(nomCanonic(row?.nom ?? data.nom ?? ine5 ?? ''));
 
-	// ── Selector de municipi: salta a un altre dels 31 (ordenat per nom, localitzat) ──────────
-	// Es deriva del dataset (no llista codificada). El canvi navega a la fitxa corresponent.
-	// Es MOSTRA la forma corrent («la Pobla de Lillet») però s'ORDENA per la forma d'índex del
-	// dataset («Pobla de Lillet, la»), que és justament per a què serveix: l'article final no ha
-	// d'apilar mig Berguedà sota la lletra «L».
+	// ── Selector de municipi: salta a QUALSEVOL dels 947 (ordenat per nom, localitzat) ────────
+	// W1 (esmena de Bea, 2026-07-31): «un cop seleccionat un municipi, des de dins només es poden
+	// seleccionar municipis del Berguedà». Era cert i pitjor del que semblava: la llista es derivava
+	// de `dataset.municipis` (els 31 del pilot), així que a la fitxa de Barcelona o de Girona el
+	// municipi que s'està mirant NI TAN SOLS sortia a la seva pròpia llista. Ara la font és el
+	// CATÀLEG dels 947 (cens de noms+codis de la geometria oficial), que és la mateixa columna
+	// vertebral que ja resolia els slugs, els veïns i els miralls.
+	// Degradació honesta: si el catàleg no arriba (artefacte absent), la llista cau als municipis
+	// del dataset en comptes de quedar-se buida — mai una llista muda.
+	// Es MOSTRA la forma corrent («la Pobla de Lillet») i s'ORDENA per la forma d'ÍNDEX
+	// («Pobla de Lillet, la»): és justament per a què serveix, perquè l'article no apili els 131
+	// municipis amb article sota les lletres «L» i «E». Cap de les dues formes canvia la URL
+	// (`toSlug` les fa convergir; `verify-govern.mjs` ho exerceix sobre els 947).
+	const cataleg = $derived(data.cataleg ?? []);
 	const muniOptions = $derived.by(() => {
-		const items = Object.values(dataset.municipis).map((mr) => ({
-			ine5: mr.ine5,
-			nom: nomCanonic(mr.nom),
-			ordre: mr.nom
+		const font: { ine5: string; nom: string }[] = cataleg.length
+			? cataleg
+			: Object.values(dataset.municipis).map((mr) => ({ ine5: mr.ine5, nom: mr.nom }));
+		const items = font.map((mn) => ({
+			ine5: mn.ine5,
+			nom: nomCanonic(mn.nom),
+			ordre: nomIndex(mn.nom),
+			slug: toSlug(mn.nom)
 		}));
 		const coll = new Intl.Collator(locale === 'es' ? 'es-ES' : 'ca-ES');
 		return items.sort((a, b) => coll.compare(a.ordre, b.ordre));
 	});
+	// L'`ine5` segueix sent la clau interna del selector (el `value` de cada opció); el slug només
+	// és la cara pública de la URL, i es resol amb el mateix índex que ha construït la llista.
+	const slugPerIne5 = $derived(new Map(muniOptions.map((o) => [o.ine5, o.slug])));
 	function onPickMuni(e: Event) {
 		const v = (e.currentTarget as HTMLSelectElement).value; // value = ine5 (clau interna)
-		if (v) goto(localizeHref(`/municipi/${slugForIne5(v, dataset)}`));
+		if (!v) return;
+		const slug = slugPerIne5.get(v) ?? slugForIne5(v, dataset);
+		goto(localizeHref(`/municipi/${slug}`));
 	}
 
 	// Corbes del hero (rètols editorials del full topogràfic; no xifres de cap municipi concret).
@@ -680,7 +698,7 @@
 		<!-- Espina territorial NAVEGABLE: Catalunya › vegueria › comarca › municipi (el muni és l'actual). -->
 		<Espina trail={espinaTrail} />
 
-		<!-- Selector per saltar a un altre municipi del Berguedà (sempre disponible). -->
+		<!-- Selector per saltar a QUALSEVOL municipi de Catalunya (W1; sempre disponible). -->
 		<section class="ds-sec" style="border-top:none">
 			<div class="muni-pick">
 				<label for="muni-select">{m.muni_pick_label()}</label>
