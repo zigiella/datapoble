@@ -19,10 +19,51 @@ publicable per si sola.*
 >    de `kpis.js` cal córrer TAMBÉ `verify_tendencia.py`.**
 >
 > **📋 CINC ESMENES DE BEA (2026-07-31) — escanejades per Talaia, amb la causa de cadascuna:**
-> - **W1 · El selector de municipi es queda al Berguedà.** Causa trobada: `$lib/data/dataset.ts`
->   carrega `/data/municipis.bergueda.json` (31) i el selector + l'índex de slugs es construeixen
->   d'allà; el CATÀLEG dels 947 (`municipis-cataleg.json`) ja es carrega al costat i només s'usa de
->   pla B. Des de P-947 tots els 947 tenen fitxa, així que la navegació interna és el ròssec.
+> - **✅ W1 + W5 (Mirador) — FETES, PR obert (2026-07-31, branca `mirador/w1-w5-navegacio-home`).**
+>   Bitàcola: `bitacora/2026-07-31_w1-w5-navegacio-home_mirador.md`.
+>   **W1:** causa confirmada al DOM prerenderitzat i **pitjor del que deia el brief** — les fitxes de
+>   la Pobla, Barcelona i Girona servien LES MATEIXES 31 opcions, així que a Barcelona el municipi
+>   que miraves **no era a la seva pròpia llista** i el `<select>` pintava «Avià» com a seleccionat.
+>   Ara el selector es construeix del CATÀLEG (947 opcions, l'`ine5` segueix sent la clau interna) i
+>   s'ordena per la forma d'ÍNDEX amb `nomIndex` nova (131 noms amb article no s'apilen sota «L»).
+>   **Cost mesurat amb dos builds sencers:** +39.895 B per fitxa (Barcelona 728.551 → 768.446) =
+>   EXACTAMENT les 947 `<option>`; retornar el catàleg al `data` ha costat **0 bytes** perquè
+>   SvelteKit ja n'incrustava la resposta (43.776 B) a cada fitxa des d'abans. Build 2.287 → 2.396 MB
+>   (+4,8 %), 5.926 → 5.933 fitxers (marge de Pages intacte).
+>   **⛔ Dues premisses del brief, tocades:** (a) **els veïns ja estaven bé** —beuen del catàleg des
+>   de P-947: Barcelona → 4 del Barcelonès, Girona → 26 del Gironès—; (b) la guarda de col·lisió
+>   **no era «del pilot»**: n'hi havia DUES, i la d'`entries()` ja passava sobre els 947 en build.
+>   S'hi ha afegit una TERCERA, offline, amb el `toSlug` **importat** (regla d'article extreta a
+>   `contract/slug-core.js`, patró `kpis.js`; `slug.ts` queda com a façana, cap punt de crida canvia):
+>   **947 slugs distints, cap col·lisió**, i la clau d'ordenació nova **no mou cap URL** als 131.
+>   **W5:** confirmades les dues meitats (porta morta + el 947 etiquetat com a «resta»). La porta
+>   s'obre cap a **`/comarca`, un índex NOU de les 43 comarques per vegueria** (i no cap a /mapa: la
+>   secció es diu «Llegeix la comarca», i /mapa ja s'ofereix dues línies més amunt; l'índex no promet
+>   feina nova, només fa trobables 43 pàgines que ja existien). Agrupació per la vegueria de CADA
+>   comarca, no per llista paral·lela → cap comarca es perd en silenci; suma pintada = **947**.
+>   Les xifres de les portes es **COMPTEN** de `comarques.json`: cap dígit al copy, i guarda que fa
+>   caure el CI si algú n'hi torna a posar. `home_porta_soon` era una clau i18n **òrfena** d'abans
+>   (declarada, pintada enlloc) → retirada. **⚠️ COPY NOU PENDENT DEL VOT NARRATIU DE BEA**
+>   (ca + mirall es a la bitàcola). Guardes noves a `verify-govern.mjs`, **provades en negatiu 9/9**.
+>   Verificat en LOCAL: check 0/0 · build verd (3m24s) · verify:govern + verify:docs OK · DOM ca+es
+>   (947 opcions i l'opció correcta `selected` a la Pobla/Barcelona/Girona/Sant Jaume; **els 947
+>   slugs tenen pàgina en ca i es, 0 absents**) · al navegador, salt Pobla→Barcelona→Girona→Sant
+>   Jaume i porta de la home, **cap error de consola**. `noindex` intacte ×3. **NO fusiono jo.**
+>   **➡️ A Bea (editorial, no tocat):** el hero de la home encara diu **«31 municipis»**
+>   (`heroLabels`) en una portada que ara promet 43 comarques i 947 municipis.
+>   **⚠️ Risc de mètode nou:** obrir el preview amb la config `web` de `.claude/launch.json` em va
+>   servir el `build/` **d'un altre arbre** (porta vella, `/comarca` en 404) estant jo al worktree —
+>   és el risc #5 (recursos compartits) amb cara de servidor de preview, no de venv.
+>   **📥 Handoff de Sondeig REBUT i NO fet en aquest PR** (`GOVERN_RANK_KEYS` += `vidre_hab` i
+>   `pct_nacionalitat_estrangera` + fora el seu `pendingRank`): W3/W4 es va fusionar mentre jo
+>   treballava, i tocar `kpis.js` obliga a córrer TAMBÉ `verify_tendencia.py` (la lliçó del dia).
+>   Barrejar-ho aquí hauria convertit un PR de navegació en un PR de tauler. **Queda encuat per a
+>   la propera passada de Mirador**, que és la mateixa on toca el vot del rètol del rang (Bea).
+> - **[HISTÒRIC — enunciat] W1 · El selector de municipi es queda al Berguedà.** Causa trobada:
+>   `$lib/data/dataset.ts` carrega `/data/municipis.bergueda.json` (31) i el selector + l'índex de
+>   slugs es construeixen d'allà; el CATÀLEG dels 947 (`municipis-cataleg.json`) ja es carrega al
+>   costat i només s'usa de pla B. Des de P-947 tots els 947 tenen fitxa, així que la navegació
+>   interna és el ròssec.
 >   → **Mirador**: el selector (i els veïns) es construeixen del CATÀLEG, no del dataset del pilot.
 > - **W2 · Clicar un rang → pàgina de la mètrica amb el rang comarcal i navegació entre municipis.**
 >   Funcionalitat nova (ruta nova). DEPÈN de W3/W4 (com més mètriques rankejades, més útil).
@@ -74,10 +115,11 @@ publicable per si sola.*
 >   rang comarcal que la targeta ja mostra; comparar un poble de muntanya amb la mediana catalana
 >   enganya). Implementació neta: `mart_govern` ja agrupa per comarca per calcular el rang → la
 >   mediana surt del MATEIX GROUP BY. → **Sondeig** (dada) + **Mirador** (pintura).
-> - **W5 · La home, desactualitzada.** Confirmat: la secció «Llegeix la comarca» presenta «Resta de
->   Catalunya» com a **`porta--soon`, no clicable** («947 municipis · cada poble té fitxa»), quan des
->   de P-947 ja hi és tot. A més el «947» hi està mal etiquetat com a *resta* (947 és el total).
->   → **Mirador**: obrir la porta i corregir la xifra.
+> - **[HISTÒRIC — enunciat] W5 · La home, desactualitzada.** Confirmat: la secció «Llegeix la
+>   comarca» presenta «Resta de Catalunya» com a **`porta--soon`, no clicable** («947 municipis ·
+>   cada poble té fitxa»), quan des de P-947 ja hi és tot. A més el «947» hi està mal etiquetat com a
+>   *resta* (947 és el total). → **Mirador**: obrir la porta i corregir la xifra.
+>   **✅ FETA amb W1** (mateix PR; vegeu el bloc de dalt).
 >
 > **✅ VOT DE BEA (2026-07-29): REDISSENY DEL TAULER v3 APROVAT SENCER — «tot ok. HUT sí».**
 > Doc vinculant: `docs/ajuntaments/redisseny-tauler-v3.md`. Vol dir: rètols nous (La gent · Les

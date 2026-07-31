@@ -19,7 +19,15 @@
  *
  * La join key és l'`ine5`; el slug públic es resol del nom oficial (`toSlug`). La columna vertebral
  * de «tota Catalunya» és el CATÀLEG (`data/municipis-cataleg.json`, cens de noms+codis dels 947,
- * generat pel prebuild des de la geometria oficial), que resol QUALSEVOL slug → ine5 + nom.
+ * generat pel prebuild des de la geometria oficial), que resol QUALSEVOL slug → ine5 + nom, dona
+ * els noms dels veïns i dels miralls i —des de W1— alimenta el SELECTOR de municipi de la fitxa.
+ *
+ * W1 (esmena de Bea, 2026-07-31): el catàleg es RETORNA. Fins avui es carregava aquí i només
+ * s'usava com a pla B per resoldre slugs, mentre el selector es construïa del dataset del pilot
+ * (31) — o sigui que des de dins d'una fitxa només es podia saltar al Berguedà, i a Barcelona o
+ * Girona el propi municipi ni tan sols sortia a la seva llista. El cost de servir-lo a la pàgina
+ * ja estava pagat: SvelteKit ja incrustava la RESPOSTA d'aquest `fetch` a cada pàgina
+ * prerenderitzada (`data-sveltekit-fetched`, 36 kB) per a la hidratació.
  *
  * PRERENDER (adapter-static · Cloudflare Pages): `entries()` declara TOTS els municipis de Catalunya
  * (slugs derivats del catàleg) perquè cadascun tingui el seu `index.html` estàtic — URL real per a
@@ -248,7 +256,7 @@ export const load: PageLoad = async ({ fetch, params }) => {
 	}
 
 	return {
-		dataset, ine5, nom, row, isBergueda, lectura, etca, govern, tauler, taulerMeta,
+		dataset, cataleg, ine5, nom, row, isBergueda, lectura, etca, govern, tauler, taulerMeta,
 		territori, veins, veinsTotal, miralls
 	};
 };

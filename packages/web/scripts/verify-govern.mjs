@@ -15,7 +15,12 @@
  * coincideixen amb les del dataset (paritat, C6 §10.1).
  *
  * Font única de l'ordre/composició del tauler: `src/lib/govern/kpis.js`, IMPORTADA aquí
- * (no es duplica → no deriva). Offline, sense xarxa. Apte per a CI (data-job).
+ * (no es duplica → no deriva). Igual amb la regla d'article i de slug (`contract/slug-core.js`),
+ * que aquí s'exerceix sobre els 947 noms reals. Offline, sense xarxa. Apte per a CI (data-job).
+ *
+ * W1/W5 (esmenes de Bea, 2026-07-31): dues seccions noves al final guarden que la NAVEGACIÓ
+ * arribi als 947 (selector construït del catàleg, cap col·lisió de slug, la clau d'ordenació no
+ * mou cap URL) i que la porta de la home ni torni a morir ni torni a portar xifres escrites a mà.
  *
  *   node scripts/verify-govern.mjs
  */
@@ -33,6 +38,9 @@ import {
 	E13_LLINDAR,
 	provenanceLine
 } from '../src/lib/govern/kpis.js';
+// W1 · la regla d'article (slug, forma corrent, clau d'ordenació) també és font ÚNICA i
+// importada: la guarda de col·lisió dels 947 ha d'exercir el `toSlug` REAL, no una còpia.
+import { toSlug, nomCanonic, nomIndex } from '../src/lib/contract/slug-core.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO = resolve(__dirname, '../../..');
@@ -222,7 +230,11 @@ const I18N_GONE = [
 	'gov_switch_aria', 'gov_view_veinal', 'gov_view_govern', 'gov_kpi_nova_frame', 'gov_bea_pending',
 	'gov_kpi_atur_pending', 'gov_nova_delta_label',
 	'muni_hab_padro', 'muni_nums_title', 'muni_num_nop', 'muni_num_renda', 'muni_etca_srcline',
-	'gov_frescor_sense_proces', 'gov_frescor_amb_proces'
+	'gov_frescor_sense_proces', 'gov_frescor_amb_proces',
+	// W5 · la porta morta de la home i el seu copy («Resta de Catalunya · 947 municipis», que
+	// etiquetava el TOTAL com si fos la resta). `home_porta_soon` ja era òrfena abans d'avui:
+	// no la pintava ningú des de feia temps i ningú se n'havia adonat.
+	'home_porta_proxim', 'home_porta_proxim_sub', 'home_porta_soon'
 ];
 for (const k of I18N_GONE) {
 	ok(!(k in ca), `i18n '${k}' retirada però encara a ca.json (clau òrfena)`);
@@ -558,6 +570,152 @@ if (gb) {
 	);
 }
 
+// ── W1 · LA NAVEGACIÓ INTERNA ARRIBA ALS 947, NO ES QUEDA AL PILOT ──────────────────────────
+// Esmena de Bea (2026-07-31): «un cop seleccionat un municipi, des de dins només es poden
+// seleccionar municipis del Berguedà». La causa era una llista derivada del dataset del PILOT
+// (31) dins d'una fitxa que se serveix per als 947 — la mateixa forma de bug que el glossari
+// (`DIM_ORDER`) i el conjunt escrit a mà del mart: una llista curta que descarta en silenci.
+// Es guarda pels DOS costats: la dada (el catàleg cobreix els 947 i cap slug xoca) i el
+// cablatge (el selector es construeix del catàleg, no del dataset).
+let nMunisCataleg = 0;
+let nAmbArticle = 0;
+let nComarques = 0;
+{
+	// (a) LA DADA. El catàleg el genera el prebuild des de la geometria oficial, que SÍ que és al
+	//     repo: es reconstrueix aquí igual que a `copy-data.mjs` per no dependre de `static/`
+	//     (gitignored) i que la guarda corri en un checkout net.
+	const geo = read(resolve(WEB, 'static/geo/catalunya-municipis.geojson'));
+	const cataleg = (geo.features ?? [])
+		.map((f) => ({ ine5: String(f.properties?.ine5 ?? ''), nom: String(f.properties?.nom ?? '') }))
+		.filter((mn) => mn.ine5 && mn.nom);
+	ok(
+		cataleg.length > 900,
+		`el catàleg de municipis només cobreix ${cataleg.length} munis: el selector no arribaria als ~947`
+	);
+
+	// (b) COL·LISIÓ DE SLUGS a escala Catalunya. La guarda dura viu a `entries()` (trenca el BUILD);
+	//     aquí es repeteix OFFLINE i abans, amb el toSlug REAL —importat, no reescrit—. A 947 el risc
+	//     és més gran que al pilot: dos municipis amb el mateix slug es menjarien la fitxa l'un a
+	//     l'altre. Si algun dia n'apareix una, es resol amb sufix de comarca (spec §8.1).
+	const perSlug = new Map();
+	for (const mn of cataleg) {
+		const s = toSlug(mn.nom);
+		if (perSlug.has(s) && perSlug.get(s).ine5 !== mn.ine5) {
+			const prev = perSlug.get(s);
+			ok(false, `col·lisió de slug "${s}": ${prev.ine5} (${prev.nom}) vs ${mn.ine5} (${mn.nom})`);
+		}
+		perSlug.set(s, mn);
+	}
+	ok(
+		perSlug.size === cataleg.length,
+		`${cataleg.length} municipis però només ${perSlug.size} slugs distints`
+	);
+
+	// (c) LA CLAU D'ORDENACIÓ NO POT MOURE LA URL. La llista es mostra en forma corrent i s'ordena
+	//     per la forma d'índex; si `nomIndex` canviés el slug d'algun municipi, el selector portaria
+	//     a una pàgina que no existeix. S'exerceix sobre els 947, i sobre els que tenen article
+	//     (els únics on la funció fa res) es comprova que la volta sencera torna al nom original.
+	let ambArticle = 0;
+	for (const mn of cataleg) {
+		const idx = nomIndex(mn.nom);
+		ok(toSlug(idx) === toSlug(mn.nom), `nomIndex('${mn.nom}') mou el slug: '${toSlug(idx)}'`);
+		if (idx === mn.nom) continue;
+		ambArticle++;
+		ok(
+			nomCanonic(idx) === mn.nom,
+			`la volta nomIndex→nomCanonic no torna a '${mn.nom}' (torna '${nomCanonic(idx)}')`
+		);
+	}
+	ok(ambArticle > 100, `només ${ambArticle} municipis amb article: nomIndex no estaria fent res`);
+	nMunisCataleg = cataleg.length;
+	nAmbArticle = ambArticle;
+
+	// (d) EL CABLATGE. La fitxa ha de rebre el catàleg i construir-hi el selector. Sense això, la
+	//     dada seria correcta i la pantalla seguiria oferint 31 opcions.
+	const loaderSrc = readFileSync(resolve(WEB, 'src/routes/municipi/[slug]/+page.ts'), 'utf8');
+	ok(
+		/return\s*\{[\s\S]*?\bcataleg\b[\s\S]*?\};/.test(loaderSrc),
+		`el loader de la fitxa NO retorna el catàleg: el selector no podria arribar als 947`
+	);
+	ok(
+		loaderSrc.includes('Col·lisió de slug'),
+		`la guarda de col·lisió d'\`entries()\` ha desaparegut del loader de la fitxa`
+	);
+	ok(
+		/const muniOptions[\s\S]{0,600}cataleg/.test(pageSrc),
+		`el selector de la fitxa no es construeix del CATÀLEG (tornaria a quedar-se al pilot, W1)`
+	);
+	ok(
+		!/const muniOptions[\s\S]{0,200}Object\.values\(dataset\.municipis\)\.map\(\(mr\)\s*=>\s*\(\{\s*\n?\s*ine5: mr\.ine5,\s*\n?\s*nom: nomCanonic/.test(
+			pageSrc
+		),
+		`el selector torna a derivar-se del dataset del pilot (31) — és exactament el bug W1`
+	);
+}
+
+// ── W5 · LA PORTA DE LA HOME ESTÀ OBERTA I LES SEVES XIFRES ES COMPTEN ──────────────────────
+// Esmena de Bea (2026-07-31): «l'apartat de la home llegeix la comarca està desactualitzat».
+// Deia «properament» d'una cosa que ja existeix i etiquetava el 947 com a «resta de Catalunya»
+// quan és el TOTAL del país (la resta serien 916). La guarda vigila que no torni: cap porta
+// morta a la home, i cap xifra de portes escrita al copy (les xifres es compten de l'artefacte).
+{
+	const homeSrc = readFileSync(resolve(WEB, 'src/routes/+page.svelte'), 'utf8');
+	// Es miren els elements que es PINTEN, no els comentaris: el bloc que explica per què la porta
+	// morta va caure hi anomena les classes, i una guarda que caigués per la seva pròpia
+	// documentació seria un fals positiu (i acabaria empenyent a esborrar l'explicació).
+	const homeMarkup = homeSrc.replace(/<!--[\s\S]*?-->/g, '');
+	ok(
+		!homeMarkup.includes('porta--soon') && !homeMarkup.includes('aria-disabled'),
+		`la home torna a tenir una porta morta ('porta--soon'/'aria-disabled') a «Llegeix la comarca»`
+	);
+	ok(
+		homeSrc.includes("localizeHref('/comarca')"),
+		`la porta de tota Catalunya no porta a l'índex de comarques (/comarca)`
+	);
+	for (const k of ['home_porta_cat', 'home_porta_cat_sub', 'home_porta_cat_cta']) {
+		ok(!!ca[k] && !!es[k], `i18n '${k}' absent (ca/es)`);
+	}
+	// Les xifres van per paràmetre, mai escrites: un número al copy es queda estale en silenci.
+	for (const k of ['home_porta_cat_sub', 'home_porta_bergueda_sub']) {
+		for (const [loc, cat] of [['ca', ca], ['es', es]]) {
+			ok(
+				!/\d/.test(cat[k] ?? ''),
+				`i18n '${k}' (${loc}) porta una xifra escrita al copy: «${cat[k]}» — s'ha de comptar de la dada`
+			);
+		}
+	}
+	// L'índex de comarques ha d'existir de debò (la porta no pot apuntar al no-res).
+	const idxSrc = readFileSync(resolve(WEB, 'src/routes/comarca/+page.ts'), 'utf8');
+	ok(
+		idxSrc.includes("fetch('/data/comarques.json')"),
+		`l'índex de comarques no llegeix l'agrupació territorial (/data/comarques.json)`
+	);
+	for (const k of ['comarques_title', 'comarques_sub', 'comarques_meta', 'comarques_eyebrow',
+		'comarques_sense_vegueria']) {
+		ok(!!ca[k] && !!es[k], `i18n '${k}' absent (ca/es)`);
+	}
+	// L'agrupació ha de cobrir el país sencer. Es llegeix de la seva FONT versionada
+	// (`municipis-territori.json`, d'on el prebuild deriva `comarques.json`) per no dependre de
+	// `static/`, que és gitignored. Si un dia no sumés, la porta prometria «totes les comarques»
+	// i n'ensenyaria una part.
+	const munisPerComarca = {};
+	let senseComarca = 0;
+	for (const t of Object.values(territori)) {
+		if (t?.comarca) munisPerComarca[t.comarca] = (munisPerComarca[t.comarca] ?? 0) + 1;
+		else senseComarca++;
+	}
+	ok(
+		Object.keys(territori).length > 900,
+		`l'agrupació territorial només cobreix ${Object.keys(territori).length} municipis`
+	);
+	ok(senseComarca === 0, `${senseComarca} municipis sense comarca: no sortirien a cap porta`);
+	ok(
+		Object.keys(munisPerComarca).length > 40,
+		`només ${Object.keys(munisPerComarca).length} comarques a l'agrupació`
+	);
+	nComarques = Object.keys(munisPerComarca).length;
+}
+
 if (fails.length) {
 	console.error('VERIFICACIÓ tauler de dades: FALLA');
 	for (const f of fails) console.error(`  [x] ${f}`);
@@ -579,5 +737,11 @@ console.log(
 		`fora de les targetes (viu a /metodologia); duplicats morts (números clau, padró gran); ` +
 		`i18n ca/es complet i sense claus òrfenes, index_turisme fora. ` +
 		`P-947: ${Object.keys(govern).length} munis amb rang, i a Barcelona (fora del pilot) el ` +
-		`rang es de la SEVA comarca (Barcelones) i el shard hi serveix l'atur.`
+		`rang es de la SEVA comarca (Barcelones) i el shard hi serveix l'atur. ` +
+		`W1: el selector de la fitxa es construeix del CATALEG (${nMunisCataleg} munis, ` +
+		`${nMunisCataleg} slugs distints, cap col·lisió; ${nAmbArticle} noms amb article on la clau ` +
+		`d'ordenació NO mou la URL) i la guarda de col·lisió del build segueix al loader. ` +
+		`W5: la porta de «Llegeix la comarca» és clicable i porta a /comarca; cap xifra de porta ` +
+		`escrita al copy (es compten de l'agrupació: ${nComarques} comarques, ` +
+		`${Object.keys(territori).length} municipis, cap sense comarca).`
 );

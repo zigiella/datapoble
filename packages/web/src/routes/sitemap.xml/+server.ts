@@ -16,6 +16,7 @@ const SITE = 'https://riusdegent.cat';
 const LOCALES = ['ca', 'es'] as const;
 const STATIC_ROUTES = [
 	'/',
+	'/comarca/', // índex de comarques (W5): el destí de la porta «Llegeix la comarca»
 	'/mapa/',
 	'/licitacions/',
 	'/metodologia/',
