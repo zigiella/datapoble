@@ -28,6 +28,25 @@ territorial ``data/web/municipis-territori.json`` (cap xarxa). Guarda el contrac
      mediana catalana d'aquestes tres mètriques hi coincideix exactament, el CI s'atura
      i que algú ho miri: seria el model tornant per la porta del darrere.
   9. Àncores A MÀ de les sis medianes (Catalunya i Berguedà) dels tres rastres físics.
+ 10. R-REFERENCIA · LA PONDERADA (total ÷ habitants), recalculada a mà amb el pes PROPI de
+     cada mètrica i comparada. ⚠️ Aquí NO es pot exigir igualtat EXACTA i el motiu és
+     aritmètic, no laxitud: la mediana és una SELECCIÓ (DuckDB i pandas trien el mateix
+     element, bit a bit), però la ponderada és una SUMA, i la suma en coma flotant no és
+     associativa — la finestra de DuckDB i el groupby de pandas sumen en ordres diferents.
+     Divergència MESURADA sobre les 7.576 files comparables: màxim 1,5e-15 relatiu (~7 ulp).
+     La tolerància és 1e-12 relatiu, ~700× la divergència observada i encara 1e-9 kWh sobre
+     una xifra de 1.252 kWh/hab: prou fina per caçar qualsevol error de dada i prou ampla
+     per no caçar l'ordre de la suma. El DENOMINADOR (hab_ponderada_*) sí que es compara
+     amb igualtat exacta: són sumes de sencers.
+ 11. R-REFERENCIA · L'ESTRATIFICADA PER FRANJA: franja recalculada dels talls declarats,
+     mediana i n de la franja recalculats amb pandas i comparats amb igualtat exacta.
+ 12. La guarda del model APARCAT, AMPLIADA: abans només mirava `mediana_catalunya`; ara
+     mira TOTES les referències (mediana comarcal/catalana/de franja i ponderada
+     comarcal/catalana) i també la quarta constant aparcada, `base_comarcal` (452), que
+     abans no hi era. Motiu concret: la ponderada comarcal de residus del Berguedà mesura
+     452,90 — a mig punt de la constant. No hi coincideix (i és una MESURA nova, no la
+     constant), però l'endemà d'una recàrrega podria coincidir-hi per atzar i llavors
+     l'hem de mirar, no publicar.
 
     python packages/transform/verify_govern.py
 """
@@ -37,10 +56,12 @@ import json
 import sys
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
 MART = REPO / "data" / "marts" / "mart_govern.parquet"
+MART_MUNI = REPO / "data" / "marts" / "mart_municipi.parquet"
 TERRITORI = REPO / "data" / "web" / "municipis-territori.json"
 
 N_MUNICIPIS = 947
@@ -72,24 +93,74 @@ POBLA_ANCHORS: dict[str, tuple[int, int]] = {
 # contra les xifres que Talaia va portar a next.md el 2026-07-31: 472,1 · 1.529,3 · 29,0
 # de Catalunya i 759,9 · 1.648,8 · 49,8 del Berguedà — les dues primeres estaven
 # arrodonides a 1 decimal, el valor exacte és 472,06 i 759,88).
+#
+# ⚠️ LES DUES DE `kwh_hab` VAN CANVIAR el 2026-07-31 (R-REFERENCIA) i NO és una deriva:
+# fins llavors la mètrica dividia el consum de 2024 pel padró de 2025 i els seus dos valors
+# eren 1.529,3 (CAT) i 1.648,8 (Berguedà). Amb el denominador de l'any correcte són 1.538,2
+# i 1.694,6. Les vuit mètriques restants NO es mouen ni un dígit (comprovat parquet contra
+# parquet), i per això aquestes dues àncores es reescriuen amb el motiu escrit al costat en
+# comptes d'afluixar-se: una àncora que es canvia sense dir per què deixa de ser una àncora.
 MEDIANES_CAT: dict[str, float] = {
     "kg_hab_any": 472.06,
-    "kwh_hab": 1529.3,
+    "kwh_hab": 1538.2,
     "vidre_hab": 29.0,
 }
 MEDIANES_BERGUEDA: dict[str, float] = {
     "kg_hab_any": 759.88,
-    "kwh_hab": 1648.8,
+    "kwh_hab": 1694.6,
     "vidre_hab": 49.8,
 }
 
+# R-REFERENCIA · àncores A MÀ de la PONDERADA de Catalunya (total ÷ habitants), les tres
+# xifres que Bea va portar de les fonts oficials i que aquest PR ha de reproduir:
+#   · residus 476,85 kg/hab/any — i el titular d'Idescat (~500) NO hi ha de coincidir:
+#     la diferència és la fila «No territorialitzable» del propi dataset de l'ARC
+#     (175.115,55 t el 2024), residus reals que no s'atribueixen a cap municipi.
+#   · elèctric 1.252,1 kWh/hab — EL NÚMERO DE BEA. Abans del fix del vintage sortia
+#     1.234,86 (un 1,40% per sota): aquesta àncora és la prova que el bug està tancat.
+#   · vidre 22,89 kg/hab/any.
+# Tolerància relativa: la mateixa 1e-12 del recàlcul (vegeu el docstring, punt 10).
+PONDERADES_CAT: dict[str, float] = {
+    "kg_hab_any": 476.8462845666835,
+    "kwh_hab": 1252.1089886200245,
+    "vidre_hab": 22.88903666157405,
+}
+
+# Recàlcul de la ponderada: el PES de cada mètrica és el SEU PROPI DENOMINADOR (columna de
+# mart_municipi). Escrit aquí a mà, no llegit del mart: si el model canviés de pes sense
+# dir-ho, el verificador ho ha de veure. `poblacio` no en té (vegeu el capçal del model).
+PES_DE_LA_METRICA: dict[str, str | None] = {
+    "index_envelliment": "pob_0_14",
+    "poblacio": None,
+    "pct_noprincipal": "hab_total",
+    "rtc_per_1000hab": "poblacio",
+    "kwh_hab": "poblacio_kwh",
+    "renda_neta_persona": "poblacio",
+    "kg_hab_any": "poblacio_residus",
+    "vidre_hab": "poblacio_residus",
+    "pct_nacionalitat_estrangera": "poblacio",
+}
+
+# Talls de franja de població (esmena de Bea, R-REFERENCIA 2026-07-31). Escrits aquí a mà
+# per la mateixa raó: el verificador ha de tenir la seva pròpia còpia de la regla.
+FRANGES: list[tuple[float, str]] = [
+    (250, "<250"), (500, "250-499"), (1000, "500-999"),
+    (5000, "1.000-4.999"), (20000, "5.000-19.999"), (float("inf"), ">=20.000"),
+]
+
+# Tolerància relativa del recàlcul de la ponderada (vegeu el punt 10 del docstring).
+RTOL_PONDERADA = 1e-12
+
 # Les BASES del model de pernocta APARCAT (dbt_project.yml). No són una referència
-# publicable: si una mediana hi coincideix exactament, algú ha cablat la constant.
+# publicable: si una referència hi coincideix exactament, algú ha cablat la constant.
+# `base_comarcal` (452) hi entra el 2026-07-31: és la quarta constant aparcada i la
+# ponderada comarcal de residus del Berguedà mesura 452,90, a mig punt d'ella.
 BASES_APARCADES: dict[str, float] = {
     "kg_hab_any": 410.0,
     "kwh_hab": 1224.0,
     "vidre_hab": 26.5,
 }
+BASE_COMARCAL_APARCADA = 452.0
 
 
 def main() -> int:
@@ -220,18 +291,34 @@ def main() -> int:
         check(df.loc[df["n_amb_dada"] > 0, "mediana_comarca"].notna().all(),
               "hi ha mediana_comarca NULL havent-hi dada a la comarca")
 
-        # --- 8. La trampa del model APARCAT ---
+        # --- 8. La trampa del model APARCAT (AMPLIADA a TOTES les referències) ---
+        cols_referencia = [c for c in ("mediana_comarca", "mediana_catalunya", "mediana_franja",
+                                       "ponderada_comarca", "ponderada_catalunya")
+                           if c in df.columns]
         for metric, base in BASES_APARCADES.items():
             fila = df[df["metric"] == metric]
             if fila.empty:
                 continue
-            med = float(fila["mediana_catalunya"].iloc[0])
-            if med == base:
-                fails.append(
-                    f"mediana_catalunya de {metric} = {base} = la BASE del model de "
-                    f"pernocta APARCAT (dbt_project.yml). La referència s'ha de MESURAR "
-                    f"de les nostres dades, no cablar-hi la constant del model aparcat."
-                )
+            for col in cols_referencia:
+                n_hit = int((fila[col] == base).sum())
+                if n_hit:
+                    fails.append(
+                        f"{col} de {metric} = {base} a {n_hit} files = la BASE del model de "
+                        f"pernocta APARCAT (dbt_project.yml). La referència s'ha de MESURAR "
+                        f"de les nostres dades, no cablar-hi la constant del model aparcat."
+                    )
+            # La quarta constant aparcada: base_comarcal (452), la «mitjana comarcal
+            # pop-ponderada» del model. La ponderada comarcal de residus del Berguedà hi frega.
+            if metric == "kg_hab_any":
+                for col in cols_referencia:
+                    n_hit = int((fila[col] == BASE_COMARCAL_APARCADA).sum())
+                    if n_hit:
+                        fails.append(
+                            f"{col} de {metric} = {BASE_COMARCAL_APARCADA} a {n_hit} files = "
+                            f"base_comarcal, la constant APARCADA del tall relatiu "
+                            f"(dbt_project.yml). Que hi coincideixi exactament vol dir que "
+                            f"algú l'ha cablada o que cal mirar-s'ho abans de publicar-ho."
+                        )
 
         # --- 9. Àncores A MÀ de les medianes (Catalunya i Berguedà) ---
         for metric, esperat in MEDIANES_CAT.items():
@@ -252,6 +339,93 @@ def main() -> int:
             if got != esperat:
                 fails.append(f"àncora mediana Berguedà {metric}: esperava {esperat}, tinc {got}")
 
+    # --- 10-11. R-REFERENCIA · ponderada i estratificada ---
+    COLS_REF = ("pes_ponderada", "ponderada_comarca", "hab_ponderada_comarca",
+                "ponderada_catalunya", "hab_ponderada_catalunya",
+                "franja_poblacio", "mediana_franja", "n_franja")
+    manquen_ref = [c for c in COLS_REF if c not in df.columns]
+    check(not manquen_ref, f"columnes de referència (R-REFERENCIA) absents del mart: {manquen_ref}")
+    n_franges = 0
+    if not manquen_ref and MART_MUNI.exists():
+        muni = pd.read_parquet(MART_MUNI)
+        pesos = muni.set_index("ine5")[
+            ["poblacio", "hab_total", "pob_0_14", "poblacio_residus", "poblacio_kwh"]
+        ]
+
+        # El nom del pes declarat al mart ha de ser el que aquest fitxer diu, mètrica a mètrica.
+        for metric, nom in PES_DE_LA_METRICA.items():
+            fila = df[df["metric"] == metric]
+            if fila.empty:
+                continue
+            vals = set(fila["pes_ponderada"].dropna().unique())
+            esperat_set = set() if nom is None else {nom}
+            if vals != esperat_set:
+                fails.append(f"pes_ponderada de {metric}: esperava {esperat_set or '∅'}, tinc {vals or '∅'}")
+
+        # Recàlcul a mà de la ponderada i del seu denominador.
+        pes = pd.Series(
+            [np.nan if PES_DE_LA_METRICA.get(m) is None
+             else pesos.at[i, PES_DE_LA_METRICA[m]]
+             for i, m in zip(df["ine5"], df["metric"])],
+            index=df.index, dtype="float64",
+        )
+        num = (df["valor"] * pes)
+        den = pes.where(df["valor"].notna())
+        for scope, keys in (("comarca", ["comarca", "metric"]), ("catalunya", ["metric"])):
+            g_num = num.groupby([df[k] for k in keys]).transform("sum", min_count=1)
+            g_den = den.groupby([df[k] for k in keys]).transform("sum", min_count=1)
+            esperat_pond = g_num / g_den.replace(0, np.nan)
+            got_pond = df[f"ponderada_{scope}"]
+            # El patró de NULL ha de coincidir EXACTAMENT (un forat declarat no es pot omplir).
+            check((esperat_pond.isna() == got_pond.isna()).all(),
+                  f"ponderada_{scope}: el patró de NULL no coincideix amb el recalculat "
+                  f"(p. ex. `poblacio` ha de sortir NULL: no té denominador propi)")
+            tots = esperat_pond.notna() & got_pond.notna()
+            prop = np.isclose(esperat_pond[tots], got_pond[tots], rtol=RTOL_PONDERADA, atol=0.0)
+            check(bool(prop.all()),
+                  f"ponderada_{scope} ≠ ponderada recalculada a {int((~prop).sum())} files "
+                  f"(tolerància relativa {RTOL_PONDERADA:g}; vegeu el punt 10 del docstring)")
+            # El denominador és una suma de sencers: igualtat EXACTA, sense excuses.
+            got_hab = df[f"hab_ponderada_{scope}"]
+            check(((got_hab == g_den) | (got_hab.isna() & g_den.isna())).all(),
+                  f"hab_ponderada_{scope} ≠ suma recalculada dels habitants amb dada")
+
+        for metric, esperat in PONDERADES_CAT.items():
+            fila = df[df["metric"] == metric]
+            if fila.empty:
+                fails.append(f"àncora ponderada CAT {metric}: mètrica absent")
+                continue
+            got = float(fila["ponderada_catalunya"].iloc[0])
+            if not np.isclose(got, esperat, rtol=RTOL_PONDERADA, atol=0.0):
+                fails.append(f"àncora ponderada CAT {metric}: esperava {esperat}, tinc {got}")
+
+        # Franja recalculada dels talls declarats aquí.
+        def franja_de(p: float) -> str | None:
+            if pd.isna(p):
+                return None
+            for tall, nom in FRANGES:
+                if p < tall:
+                    return nom
+            return None
+
+        pob = df["ine5"].map(pesos["poblacio"])
+        esperat_franja = pob.map(franja_de)
+        check((df["franja_poblacio"] == esperat_franja).all(),
+              "franja_poblacio ≠ franja recalculada dels talls declarats")
+        esperat_medf = df.groupby(["metric", "franja_poblacio"])["valor"].transform("median")
+        diff_medf = df[~(
+            (df["mediana_franja"].isna() & esperat_medf.isna())
+            | (df["mediana_franja"] == esperat_medf)
+        )]
+        check(diff_medf.empty,
+              f"mediana_franja ≠ mediana recalculada a {len(diff_medf)} files")
+        esperat_nf = df.groupby(["metric", "franja_poblacio"])["valor"].transform("count")
+        check((df["n_franja"] == esperat_nf).all(),
+              "n_franja ≠ recompte real de valors no nuls per (mètrica, franja)")
+        n_franges = int(df["franja_poblacio"].nunique())
+        check(n_franges == len(FRANGES),
+              f"franges observades = {n_franges} ≠ {len(FRANGES)} declarades")
+
     if fails:
         print("VERIFICACIÓ mart_govern: FALLA", file=sys.stderr)
         for f in fails:
@@ -266,7 +440,10 @@ def main() -> int:
           f"Gombrèn rankeja contra {n_ripolles} del Ripollès, "
           f"medianes W4 recalculades amb igualtat exacta "
           f"({df.groupby(['comarca', 'metric']).ngroups} grups comarcals + {len(METRICS)} "
-          f"catalans, {n_med} àncores a mà) i cap coincidint amb les bases aparcades.")
+          f"catalans, {n_med} àncores a mà) i cap coincidint amb les bases aparcades; "
+          f"ponderades (total ÷ habitants) recalculades amb el pes propi de cada mètrica "
+          f"(rtol {RTOL_PONDERADA:g}, {len(PONDERADES_CAT)} àncores a mà) i estratificada "
+          f"per {n_franges} franges de població recalculada amb igualtat exacta.")
     return 0
 
 

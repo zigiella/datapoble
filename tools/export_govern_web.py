@@ -93,6 +93,15 @@ RANK_METRICS = {
 # W4 · columnes de referència que el mart mesura i aquí NOMÉS es re-serialitzen.
 MEDIANA_COLS = ("mediana_comarca", "mediana_catalunya", "n_mediana_catalunya")
 
+# R-REFERENCIA (2026-07-31) · les DUES referències noves, també mesurades pel mart i aquí
+# només re-serialitzades: la PONDERADA (total ÷ habitants = l'equivalent del titular
+# oficial, amb el nom del pes i els habitants del denominador) i l'ESTRATIFICADA per franja
+# de població. Mateixa raó que W4 per anar dins la cel·la: el prebuild de Mirador parteix
+# aquest fitxer per municipi i el front només llegeix el seu tros.
+REFERENCIA_COLS = ("pes_ponderada", "ponderada_comarca", "hab_ponderada_comarca",
+                   "ponderada_catalunya", "hab_ponderada_catalunya",
+                   "franja_poblacio", "mediana_franja", "n_franja")
+
 
 def forbidden_metric_keys(contract: dict) -> set[str]:
     """Claus de mètrica que NO poden sortir mai al web públic de govern: qualsevol de
@@ -127,9 +136,22 @@ def build(df: pd.DataFrame, scope: str | None) -> dict:
     for r in df.itertuples(index=False):
         rang = getattr(r, "rang")
         valor = getattr(r, "valor")
-        entry = out.setdefault(r.ine5, {"comarca": r.comarca, "metrics": {}})
+        # `franja_poblacio` va al NIVELL DEL MUNICIPI, no dins cada mètrica: és un atribut
+        # del municipi (la seva franja de padró) i repetir-lo a les 9 cel·les eren 8 còpies
+        # de la mateixa cadena per municipi. `comarca` ja viu aquí pel mateix motiu.
+        entry = out.setdefault(r.ine5, {
+            "comarca": r.comarca,
+            "franja_poblacio": None if pd.isna(getattr(r, "franja_poblacio")) else str(getattr(r, "franja_poblacio")),
+            "metrics": {},
+        })
         med_com = getattr(r, "mediana_comarca")
         med_cat = getattr(r, "mediana_catalunya")
+        pes_p = getattr(r, "pes_ponderada")
+        pond_com = getattr(r, "ponderada_comarca")
+        hab_com = getattr(r, "hab_ponderada_comarca")
+        pond_cat = getattr(r, "ponderada_catalunya")
+        hab_cat = getattr(r, "hab_ponderada_catalunya")
+        med_fr = getattr(r, "mediana_franja")
         entry["metrics"][r.metric] = {
             "valor": None if pd.isna(valor) else float(valor),
             "rang": None if pd.isna(rang) else int(rang),
@@ -143,6 +165,24 @@ def build(df: pd.DataFrame, scope: str | None) -> dict:
             "mediana_comarca": None if pd.isna(med_com) else float(med_com),
             "mediana_catalunya": None if pd.isna(med_cat) else float(med_cat),
             "n_mediana_catalunya": int(getattr(r, "n_mediana_catalunya")),
+            # R-REFERENCIA · la PONDERADA = total ÷ habitants (l'equivalent exacte del
+            # titular oficial). `pes_ponderada` diu QUIN denominador s'ha fet servir i
+            # `hab_ponderada_*` SOBRE QUANTS HABITANTS — la procedència que C6 §8.1 exigeix
+            # (una mediana es diu «sobre n municipis»; una ponderada, «sobre n habitants»).
+            # NULL a `poblacio`: una població ponderada per la població no és una referència.
+            "pes_ponderada": None if pd.isna(pes_p) else str(pes_p),
+            "ponderada_comarca": None if pd.isna(pond_com) else float(pond_com),
+            "hab_ponderada_comarca": None if pd.isna(hab_com) else int(hab_com),
+            "ponderada_catalunya": None if pd.isna(pond_cat) else float(pond_cat),
+            "hab_ponderada_catalunya": None if pd.isna(hab_cat) else int(hab_cat),
+            # R-REFERENCIA · l'ESTRATIFICADA per mida (mediana de la franja a tot Catalunya).
+            # ⚠️ Serveix per a les nou, però NO explica igual de bé les nou: mesurat sobre
+            # els 947, la franja explica el 9,5% del consum elèctric i el 16,5% del vidre,
+            # i només el 4,0% dels residus (on el gradient ni tan sols és monòton). Qui la
+            # pinti als residus ho ha de saber; la dada no ho pot dir sola.
+            # (La franja del municipi viu al nivell del municipi, no aquí.)
+            "mediana_franja": None if pd.isna(med_fr) else float(med_fr),
+            "n_franja": int(getattr(r, "n_franja")),
         }
     # Ordre estable (per ine5) perquè la sortida sigui determinista i el diff net.
     return {k: out[k] for k in sorted(out)}
@@ -190,6 +230,13 @@ def main() -> int:
     if falten_cols := [c for c in MEDIANA_COLS if c not in df.columns]:
         print(f"FALLA: el mart no porta les columnes de la mediana (W4): {falten_cols} "
               f"— reconstrueix mart_govern", file=sys.stderr)
+        return 1
+
+    # R-REFERENCIA · mateixa regla per a les referències noves: millor un vermell explícit
+    # que un JSON servit amb la meitat del contracte.
+    if falten_ref := [c for c in REFERENCIA_COLS if c not in df.columns]:
+        print(f"FALLA: el mart no porta les columnes de referència (R-REFERENCIA): "
+              f"{falten_ref} — reconstrueix mart_govern", file=sys.stderr)
         return 1
 
     # W3 · guarda del pont front↔dades: cap clau que el front declari rankejable pot

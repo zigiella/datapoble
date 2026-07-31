@@ -57,6 +57,44 @@
 -- Procedència (C6 §8.1): la mediana comarcal es calcula sobre `n_amb_dada` municipis
 -- (el MATEIX denominador honest del rang) i la catalana sobre `n_mediana_catalunya`.
 --
+-- R-REFERENCIA (2026-07-31) · DUES REFERÈNCIES NOVES AL COSTAT DE LES MEDIANES DE W4.
+-- Bea va portar les xifres oficials i la comparació va destapar que la mediana respon una
+-- pregunta («com és un municipi típic») i el titular oficial una altra («quant li toca a
+-- cada habitant»). S'emeten les dues perquè decidir quina es pinta és editorial:
+--
+--   1) PONDERADA (`ponderada_comarca` / `ponderada_catalunya`) = TOTAL ÷ HABITANTS, que és
+--      l'equivalent exacte de com publiquen la xifra l'ARC, l'ICAEN i l'Idescat. NO és una
+--      mitjana de mitjanes: cada mètrica es pondera pel SEU PROPI DENOMINADOR (`pes_ponderada`),
+--      i així la ponderada és aritmèticament idèntica al quocient dels totals —
+--      pct_noprincipal es pondera per hab_total, index_envelliment per pob_0_14, kg_hab_any i
+--      vidre_hab per poblacio_residus (el padró que fa servir l'ARC), kwh_hab per poblacio_kwh
+--      (el padró de l'any del consum). Ponderar-ho tot per `poblacio` hauria estat un número
+--      que s'assembla al bo però no és el bo.
+--      ⚠️ `poblacio` NO en té: la ponderada d'una població per la població no és una
+--      referència, és una altra pregunta (la mida del municipi on viu el català mitjà).
+--      Surt NULL amb `pes_ponderada` NULL — forat declarat, no oblidat.
+--      `hab_ponderada_*` porta el denominador (habitants), que és la procedència que
+--      C6 §8.1 exigeix: una mediana es diu «sobre n municipis»; una ponderada, «sobre n habitants».
+--
+--      ⚠️ LA REFERÈNCIA HA DE SORTIR DE LA MATEIXA FONT QUE EL NUMERADOR, i aquí es veu per què:
+--      per als residus, la nostra ponderada de 2024 dona 476,85 kg/hab i el titular d'Idescat
+--      per a Catalunya ~500. La diferència NO és un error de ningú: el propi dataset de l'ARC
+--      porta una fila «No territorialitzable» amb 175.115,55 t (residus que no s'atribueixen a
+--      cap municipi); amb ella el total fa 3.995.724 t = 498,70 kg/hab, que és el titular. Si
+--      poséssim el 500 al costat de xifres municipals que sumen 476,85, TOTS els municipis
+--      semblarien un 4,4% millors del que són.
+--
+--   2) ESTRATIFICADA PER FRANJA DE POBLACIÓ (`mediana_franja`, sobre `n_franja` municipis de
+--      TOT Catalunya de la mateixa franja). Talls de Bea: <250 · 250-499 · 500-999 ·
+--      1.000-4.999 · 5.000-19.999 · ≥20.000, sobre el padró vigent (el que es pinta a la fitxa).
+--      ⚠️ ES SERVEIX PER A LES NOU, PERÒ NO EXPLICA IGUAL DE BÉ TOTES NOU — i això no ho pot
+--      dir el SQL, ho ha de saber qui pinta. Mesurat sobre els 947 (variància explicada
+--      ajustada pels graus de llibertat, bitàcola 2026-07-31): la franja explica el 9,5% del
+--      consum elèctric i el 16,5% del vidre (gradients monòtons, defensables) però NOMÉS EL
+--      4,0% dels residus, on el gradient ni tan sols és monòton (554 → 479 → 428 → 438 → 502
+--      → 447). Als residus la mida NO explica res: qui més hi explica és la COMARCA (33,1%),
+--      que és justament la partició que el rang i la mediana comarcal ja fan servir.
+
 -- CONVENCIÓ DEL RANG: rank() DESCENDENT pel valor (1 = el valor més alt de la comarca),
 -- els EMPATS comparteixen posició i el següent salta (com IETR_rank, #263) — mai ordre
 -- fabricat dins l'empat. Reprodueix byte a byte els rangs de la gorra (Pobla: envelliment
@@ -105,7 +143,13 @@ base as (
         cast(m.renda_neta_persona as double) as renda_neta_persona,
         cast(m.kg_hab_any         as double) as kg_hab_any,
         cast(m.vidre_hab          as double) as vidre_hab,
-        d.pct_nacionalitat_estrangera        as pct_nacionalitat_estrangera
+        d.pct_nacionalitat_estrangera        as pct_nacionalitat_estrangera,
+        -- DENOMINADORS de cada mètrica (pesos de la ponderada). No són mètriques noves:
+        -- són el denominador que la mètrica ja fa servir, exposat per poder auditar.
+        cast(m.hab_total          as double) as pes_hab_total,
+        cast(m.pob_0_14           as double) as pes_pob_0_14,
+        cast(m.poblacio_residus   as double) as pes_poblacio_residus,
+        cast(m.poblacio_kwh       as double) as pes_poblacio_kwh
     from {{ ref('mart_municipi') }} m
     join terr t on m.ine5 = t.ine5
     left join dem d on m.ine5 = d.ine5
@@ -114,25 +158,54 @@ base as (
 -- Format llarg per UNION ALL (explícit: control total del NULL — a diferència d'UNPIVOT,
 -- que descarta els nuls per defecte i ens faria perdre les files «sense dada»). La `data`
 -- (vintage) de cada KPI és la del contracte semantic/metrics.yml, citada al costat.
+-- `pes` = el DENOMINADOR PROPI de cada mètrica i `pes_ponderada` el seu nom (procedència
+-- llegible). `franja` = franja de població del municipi (talls de Bea), sobre el padró vigent.
 long as (
-    select ine5, codi6, municipi, comarca, 'index_envelliment'  as metric, index_envelliment  as valor, '2025' as data from base
+    select ine5, codi6, municipi, comarca, 'index_envelliment'  as metric, index_envelliment  as valor, '2025' as data,
+           pes_pob_0_14 as pes, 'pob_0_14' as pes_ponderada, poblacio from base
     union all
-    select ine5, codi6, municipi, comarca, 'poblacio'           as metric, poblacio           as valor, '2025' as data from base  -- Idescat EMEX
+    select ine5, codi6, municipi, comarca, 'poblacio'           as metric, poblacio           as valor, '2025' as data,  -- Idescat EMEX
+           cast(null as double) as pes, cast(null as varchar) as pes_ponderada, poblacio from base
     union all
-    select ine5, codi6, municipi, comarca, 'pct_noprincipal'    as metric, pct_noprincipal    as valor, '2021' as data from base  -- Cens INE
+    select ine5, codi6, municipi, comarca, 'pct_noprincipal'    as metric, pct_noprincipal    as valor, '2021' as data,  -- Cens INE
+           pes_hab_total as pes, 'hab_total' as pes_ponderada, poblacio from base
     union all
-    select ine5, codi6, municipi, comarca, 'rtc_per_1000hab'    as metric, rtc_per_1000hab    as valor, '2026' as data from base  -- RTC (Generalitat)
+    select ine5, codi6, municipi, comarca, 'rtc_per_1000hab'    as metric, rtc_per_1000hab    as valor, '2026' as data,  -- RTC (Generalitat)
+           poblacio as pes, 'poblacio' as pes_ponderada, poblacio from base
     union all
-    select ine5, codi6, municipi, comarca, 'kwh_hab'            as metric, kwh_hab            as valor, '2024' as data from base  -- ICAEN
+    select ine5, codi6, municipi, comarca, 'kwh_hab'            as metric, kwh_hab            as valor, '2024' as data,  -- ICAEN
+           pes_poblacio_kwh as pes, 'poblacio_kwh' as pes_ponderada, poblacio from base
     union all
-    select ine5, codi6, municipi, comarca, 'renda_neta_persona' as metric, renda_neta_persona as valor, '2023' as data from base  -- INE ADRH
+    select ine5, codi6, municipi, comarca, 'renda_neta_persona' as metric, renda_neta_persona as valor, '2023' as data,  -- INE ADRH
+           poblacio as pes, 'poblacio' as pes_ponderada, poblacio from base
     union all
-    select ine5, codi6, municipi, comarca, 'kg_hab_any'         as metric, kg_hab_any         as valor, '2024' as data from base  -- ARC residus
+    select ine5, codi6, municipi, comarca, 'kg_hab_any'         as metric, kg_hab_any         as valor, '2024' as data,  -- ARC residus
+           pes_poblacio_residus as pes, 'poblacio_residus' as pes_ponderada, poblacio from base
     union all
-    select ine5, codi6, municipi, comarca, 'vidre_hab'          as metric, vidre_hab          as valor, '2024' as data from base  -- ARC residus (fracció vidre)
+    select ine5, codi6, municipi, comarca, 'vidre_hab'          as metric, vidre_hab          as valor, '2024' as data,  -- ARC residus (fracció vidre)
+           pes_poblacio_residus as pes, 'poblacio_residus' as pes_ponderada, poblacio from base
     union all
     select ine5, codi6, municipi, comarca, 'pct_nacionalitat_estrangera' as metric,
-           pct_nacionalitat_estrangera as valor, '2025' as data from base  -- Idescat (Cens anual)
+           pct_nacionalitat_estrangera as valor, '2025' as data,  -- Idescat (Cens anual)
+           poblacio as pes, 'poblacio' as pes_ponderada, poblacio from base
+),
+
+-- FRANJA DE POBLACIÓ (talls de Bea, R-REFERENCIA 2026-07-31). Sobre `poblacio` (padró
+-- vigent), que és el número que la fitxa pinta: si la franja es calculés amb un padró
+-- diferent del que es llegeix a la targeta, el lector no podria refer el càlcul.
+franjat as (
+    select
+        long.*,
+        case
+            when poblacio is null      then null
+            when poblacio <    250     then '<250'
+            when poblacio <    500     then '250-499'
+            when poblacio <   1000     then '500-999'
+            when poblacio <   5000     then '1.000-4.999'
+            when poblacio <  20000     then '5.000-19.999'
+            else '>=20.000'
+        end as franja_poblacio
+    from long
 ),
 
 -- Rang «k de n» DINS la comarca del municipi. nulls last → les files amb valor rankegen
@@ -149,9 +222,16 @@ long as (
 -- mediana de DuckDB i la de pandas coincideixen BIT A BIT als 387 grups comarcals i als
 -- 9 catalans, i verify_govern.py les compara amb igualtat exacta. Arrodonir per pintar
 -- és feina de la targeta, no del mart.
+--
+-- R-REFERENCIA · les PONDERADES surten del mateix partition by. `sum(valor*pes)` ignora els
+-- NULL, i el denominador ha d'ignorar EXACTAMENT les mateixes files: per això és
+-- `sum(case when valor is not null then pes end)` i no `sum(pes)` — si no, un municipi sense
+-- dada hi posaria habitants sense posar-hi numerador i la referència sortiria baixa.
+-- No s'arrodoneix (mateixa raó que W4: DuckDB i pandas trenquen els empats del .005 diferent
+-- i el verificador ha de poder comparar amb igualtat EXACTA). Arrodonir per pintar és de la targeta.
 ranked as (
     select
-        ine5, codi6, municipi, comarca, metric, valor, data,
+        ine5, codi6, municipi, comarca, metric, valor, data, pes_ponderada, franja_poblacio,
         case
             when valor is null then null
             else rank() over (partition by comarca, metric order by valor desc nulls last)
@@ -159,8 +239,22 @@ ranked as (
         count(valor) over (partition by comarca, metric)       as n_amb_dada,
         median(valor) over (partition by comarca, metric)      as mediana_comarca,
         median(valor) over (partition by metric)               as mediana_catalunya,
-        count(valor) over (partition by metric)                as n_mediana_catalunya
-    from long
+        count(valor) over (partition by metric)                as n_mediana_catalunya,
+
+        sum(valor * pes) over (partition by comarca, metric)
+          / nullif(sum(case when valor is not null then pes end)
+                   over (partition by comarca, metric), 0)     as ponderada_comarca,
+        sum(case when valor is not null then pes end)
+          over (partition by comarca, metric)                  as hab_ponderada_comarca,
+        sum(valor * pes) over (partition by metric)
+          / nullif(sum(case when valor is not null then pes end)
+                   over (partition by metric), 0)              as ponderada_catalunya,
+        sum(case when valor is not null then pes end)
+          over (partition by metric)                           as hab_ponderada_catalunya,
+
+        median(valor) over (partition by metric, franja_poblacio) as mediana_franja,
+        count(valor) over (partition by metric, franja_poblacio)  as n_franja
+    from franjat
 )
 
 select
@@ -177,6 +271,17 @@ select
     -- de pernocta aparcat). La comarcal es calcula sobre n_amb_dada municipis.
     mediana_comarca,
     mediana_catalunya,
-    cast(n_mediana_catalunya as integer) as n_mediana_catalunya
+    cast(n_mediana_catalunya as integer) as n_mediana_catalunya,
+    -- R-REFERENCIA · la ponderada (= total ÷ habitants, l'equivalent del titular oficial)
+    -- amb el nom del pes i el nombre d'habitants que hi ha al denominador (procedència).
+    pes_ponderada,
+    ponderada_comarca,
+    hab_ponderada_comarca,
+    ponderada_catalunya,
+    hab_ponderada_catalunya,
+    -- R-REFERENCIA · l'estratificada per mida (mediana de la franja a TOT Catalunya).
+    franja_poblacio,
+    mediana_franja,
+    cast(n_franja as integer) as n_franja
 from ranked
 order by ine5, metric

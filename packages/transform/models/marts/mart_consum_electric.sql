@@ -3,7 +3,9 @@
               ~ var('marts_root') ~ "/mart_consum_electric.parquet' (FORMAT PARQUET)"
 ) }}
 -- mart_consum_electric · sèrie de consum elèctric DOMÈSTIC per municipi × any.
--- Format LLARG: 1 fila per (ine5, any_consum). Berguedà, 2013–2024 → 31×12 = 372.
+-- Format LLARG: 1 fila per (ine5, any_consum). TOT CATALUNYA, 2013–2024 → 947×12 = 11.364.
+-- (El model ja escalava amb mart_municipi des de F2; el que s'havia quedat als 372 del
+--  pilot era el PARQUET VERSIONAT, regenerat el 2026-07-31.)
 --
 -- Proxy de presència humana real per a l'indicador "població real vs padró"
 -- (docs/poblacio-real-fonts.md §2-3). Font: ICAEN 8idm-becu, sector USOS
