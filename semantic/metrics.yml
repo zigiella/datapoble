@@ -41,6 +41,19 @@
 #   segueixen sent vàlides com a recerca; el que no poden és sostenir una frase pública sobre
 #   un municipi com si fossin una mesura.
 #
+# DELTA D'UN NIVELL SUPRIMIT (2026-07-31). Troballa de Mirador a B3, i és una incoherència
+# NOSTRA: a la Quar (44 hab) el `pct_nacionalitat_estrangera` surt «n. d.» —el suprimim perquè amb
+# tan poca gent el percentatge assenyalaria veïns concrets— i tot seguit li pintem el moviment
+# («↑ +1,62 punts»). Suprimir el NIVELL i publicar-ne la VARIACIÓ no se sosté: el delta es deriva
+# de dos nivells que hem declarat impublicables, i a més una variació de 1,62 punts sobre 44
+# persones diu gairebé el mateix que el nivell.
+#
+#   REGLA (vinculant): si un nivell està suprimit pel llindar mínim N, el seu DELTA també ho està.
+#   No és doctrina nova: és la «regla del join heretada» que aquest fitxer ja declara (qualsevol
+#   creuament verd × vermell dona vermell) aplicada al temps. On el nivell no es publica, la fila
+#   de tendència ha d'existir igualment però com a `sense_serie`/suprimida AMB MOTIU — mai absent
+#   (una fila que falta és invisible) i mai amb el delta pintat.
+#
 # MICROMUNICIPI (E13, decisió de Bea 2026-07-20: CAVEAT, NO emmascarar; execució v3 2026-07-29).
 # Als municipis amb padró < 250 (el llindar del flag `micromunicipi` de tipus_territorial), els
 # «per càpita» físics i les ràtios de recomptes petits es mostren SEMPRE — el número incòmode és
