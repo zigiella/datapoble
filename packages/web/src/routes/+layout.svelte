@@ -50,7 +50,14 @@
 		{ cx: 980, cy: 90, r0: 14, step: 22, rings: 8, sq: 1.05, seed: 2.3, lt: 0.04 }
 	];
 	const footDivis = { cx: 600, cy: 110, r: 150, sq: 1.0, seed: 1.4 };
-	const footLabels = ['1.245 m', '42°16′N', '31', '1°53′E', '593'];
+	// B2 (esmena de Bea, 2026-07-31, trobat mirant «la resta de la home»): aquestes cotes deien
+	// '1.245 m', '42°16′N', '31', '1°53′E', '593'. El '31' era el PILOT —un enter pelat, sense
+	// unitat, al peu de TOTES les pàgines, inclosa la portada que promet 947 municipis— i el
+	// '593' no té cap procedència que sapiguem reconstruir. No es canvien per 947 i 43: escriure
+	// aquí una xifra nova seria repetir el defecte (el layout no compta res, i el número tornaria
+	// a quedar estale en silenci el dia que canviï). Es retiren, i queden les cotes que sí que
+	// diuen de què són —altitud i coordenades—, que és el motiu de marca del full topogràfic.
+	const footLabels = ['1.245 m', '42°16′N', '1°53′E'];
 </script>
 
 <svelte:head>

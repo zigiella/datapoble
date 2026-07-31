@@ -43,9 +43,12 @@
 		NAIX_BAR_KEYS,
 		E13_KEYS,
 		E13_LLINDAR,
+		GOVERN_DENOM_REASON,
+		GOVERN_DENOM_REASON_DEFAULT,
+		GOVERN_DENOM_MIN_N,
 		provenanceLine
 	} from '$lib/govern/kpis';
-	import type { GovernEntry } from '$lib/contract/govern';
+	import type { GovernCell, GovernEntry } from '$lib/contract/govern';
 	import type { AturPunt, TaulerEntry, TaulerMeta, TendenciaEntry } from '$lib/contract/tauler';
 	import type { PageData } from './$types';
 
@@ -82,6 +85,9 @@
 	const territori = $derived(data.territori);
 	const veins = $derived(data.veins ?? []);
 	const veinsTotal = $derived(data.veinsTotal ?? 0);
+	// B3 · quants municipis té la comarca (amb dada o sense): el denominador de referència que fa
+	// llegible el «k de n». 0 = no s'ha pogut comptar → la targeta no diu res (mai un total fals).
+	const comarcaMunis = $derived(data.comarcaMunis ?? 0);
 	const locale = $derived(currentLocale());
 	// Breadcrumb navegable: Catalunya › vegueria › comarca › municipi (l'últim és l'actual, sense href).
 	const espinaTrail = $derived.by(() => {
@@ -328,6 +334,31 @@
 		gov_nac_serie_es_nacionalitat: () => m.gov_nac_serie_es_nacionalitat()
 	};
 	const govNote = (k: string | undefined): string => (k ? (GOV_NOTE[k]?.() ?? '') : '');
+
+	// ── B3 · EL DENOMINADOR DEL RANG, LLEGIBLE (esmena de Bea, 2026-07-31) ────────────────────
+	// «El rang de nacionalitat estrangera al Berguedà no pot ser sobre 27.» El denominador SÍ que
+	// ha de ser 27 —tractar com a zero els 4 municipis sense percentatge pintaria la Quar (7
+	// estrangers de 44 hab = 15,9 %, la 2a de la comarca) com l'ÚLTIMA, o sigui el contrari de la
+	// veritat sobre un poble concret—, però la incomoditat de fons és bona: «6 de 27» al costat de
+	// «8 de 31» sembla arbitrari si no s'explica. Per això, quan el denominador del rang és més
+	// petit que la comarca sencera, la targeta ho diu i en dona el MOTIU (`kpis.js` el declara per
+	// mètrica; els motius són diferents i confondre'ls seria mentir amb bona intenció).
+	// Res d'això calcula cap rang: es compara `n_amb_dada` —LLEGIT del mart— amb el nombre de
+	// municipis de la comarca, i es tria un text. (C6 §4 intacte.)
+	const GOV_DENOM: Record<string, () => string> = {
+		gov_denom_minn: () => m.gov_denom_minn({ n: String(GOVERN_DENOM_MIN_N) }),
+		gov_denom_font: () => m.gov_denom_font(),
+		gov_denom_ratio: () => m.gov_denom_ratio(),
+		gov_denom_nd: () => m.gov_denom_nd()
+	};
+	/** Motiu de l'absència d'una mètrica; el neutre si no en sabem la causa (mai una d'inventada). */
+	const denomReason = (key: string | undefined): string =>
+		GOV_DENOM[
+			(key && GOVERN_DENOM_REASON[key]) || GOVERN_DENOM_REASON_DEFAULT
+		]?.() ?? '';
+	/** La comarca té més municipis que els que tenen la xifra → cal explicar el denominador. */
+	const denomIncomplet = (n: number | undefined): boolean =>
+		comarcaMunis > 0 && typeof n === 'number' && n > 0 && n < comarcaMunis;
 	// Prefixa el signe a una variació ja formatada (la negativa ja porta el «−» d'Intl).
 	function signed(s: string): string {
 		return s.startsWith('-') || s.startsWith('−') ? s : `+${s}`;
@@ -655,6 +686,32 @@
 	{/if}
 {/snippet}
 
+<!-- RANG COMARCAL «k de n» (C6 §4: LLEGIT del mart, mai calculat aquí) + —B3, esmena de Bea—
+     la línia que fa LLEGIBLE el denominador quan no és tota la comarca. Els tres llocs que
+     pinten rang (capçalera de presència, targeta de mètrica, % de la barra de naixement)
+     comparteixen aquest snippet perquè no puguin divergir: fins avui era el mateix marcatge
+     copiat tres vegades. `key` només serveix per triar el MOTIU de l'absència. -->
+{#snippet rangComarcal(cell: GovernCell | null, key: string | undefined)}
+	{#if cell && cell.rang != null}
+		<p class="gov-kpi__rank">
+			<span class="gov-kpi__rankk"
+				>{m.gov_rang_val({ k: String(cell.rang), n: String(cell.n_amb_dada) })}</span
+			>
+			<span class="gov-kpi__rankl"
+				>{m.gov_rang_label()}{#if cell.empat} · {m.gov_rang_empat()}{/if}{m.gov_rang_cap({
+					comarca: govern?.comarca ?? ''
+				})}</span
+			>
+		</p>
+		{#if denomIncomplet(cell.n_amb_dada)}
+			<p class="gov-kpi__denom">
+				{m.gov_denom_line({ n: String(cell.n_amb_dada), total: String(comarcaMunis) })}
+				{denomReason(key)}
+			</p>
+		{/if}
+	{/if}
+{/snippet}
+
 <!-- FRESCOR d'una targeta (D9 · E5): cadència · darrera càrrega · procés que la refresca (o la
      seva absència declarada). Per targeta i mai global: els vintages no són iguals. -->
 {#snippet frescor(f: Frescor | null | undefined)}
@@ -745,12 +802,7 @@
 							{:else}
 								<p class="gov-pres__v gov-kpi__v--absent">{m.value_not_available()}</p>
 							{/if}
-							{#if presCell && presCell.rang != null}
-								<p class="gov-kpi__rank">
-									<span class="gov-kpi__rankk">{m.gov_rang_val({ k: String(presCell.rang), n: String(presCell.n_amb_dada) })}</span>
-									<span class="gov-kpi__rankl">{m.gov_rang_label()}{#if presCell.empat} · {m.gov_rang_empat()}{/if}{m.gov_rang_cap({ comarca: govern?.comarca ?? '' })}</span>
-								</p>
-							{/if}
+							{@render rangComarcal(presCell, PRESENCIA_KEY)}
 							{@render tendencia(trendsOf(PRESENCIA_KEY))}
 							<p class="gov-kpi__src">{provenanceLine(presDef).src}</p>
 							{@render frescor(presDef?.frescor)}
@@ -824,10 +876,7 @@
 											<p class="gov-kpi__note gov-kpi__note--e13">{m.gov_e13_micro()}</p>
 										{/if}
 										{#if cell && cell.rang != null}
-											<p class="gov-kpi__rank">
-												<span class="gov-kpi__rankk">{m.gov_rang_val({ k: String(cell.rang), n: String(cell.n_amb_dada) })}</span>
-												<span class="gov-kpi__rankl">{m.gov_rang_label()}{#if cell.empat} · {m.gov_rang_empat()}{/if}{m.gov_rang_cap({ comarca: govern?.comarca ?? '' })}</span>
-											</p>
+											{@render rangComarcal(cell, kpi.key)}
 										{:else if kpi.pendingRank}
 											<!-- E9: el vot de Bea ja hi és, però el rang encara no el serveix el mart
 											     (`mart_govern` no rankeja aquesta mètrica). Es diu el motiu REAL en
@@ -932,10 +981,7 @@
 											<p class="gov-kpi__note">{govNote(kpi.note)}</p>
 										{/if}
 										{#if pctCell && pctCell.rang != null}
-											<p class="gov-kpi__rank">
-												<span class="gov-kpi__rankk">{m.gov_rang_val({ k: String(pctCell.rang), n: String(pctCell.n_amb_dada) })}</span>
-												<span class="gov-kpi__rankl">{m.gov_rang_label()}{#if pctCell.empat} · {m.gov_rang_empat()}{/if}{m.gov_rang_cap({ comarca: govern?.comarca ?? '' })}</span>
-											</p>
+											{@render rangComarcal(pctCell, 'pct_nascuda_estranger')}
 										{:else if kpi.pendingRank}
 											<p class="gov-kpi__norank">{m.gov_nova_norank()}</p>
 										{/if}
@@ -1665,6 +1711,17 @@
 		font-size: 0.62rem;
 		color: var(--dp-text-subtle);
 		line-height: 1.4;
+	}
+	/* B3 · el denominador del rang, explicat. Va enganxat al «k de n» (no és una nota de lectura
+	   com `.gov-kpi__note`: és la lletra petita del número que hi ha just a sobre), en prosa i no
+	   en versaleta de mono, perquè és una frase per llegir, no una etiqueta. */
+	.gov-kpi__denom {
+		margin: 3px 0 0;
+		font-family: var(--dp-font-sans);
+		font-size: 0.66rem;
+		color: var(--dp-text-muted);
+		line-height: 1.45;
+		text-wrap: pretty;
 	}
 	/* D11 · nota de LÍMIT de lectura (E11): el que la xifra no diu de si mateixa. Filet a
 	   l'esquerra perquè es llegeixi com una advertència de la targeta i no com més procedència. */
