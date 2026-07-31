@@ -155,6 +155,23 @@ export const load: PageLoad = async ({ fetch, params }) => {
 	let territori: MuniTerritori | null = null;
 	let veins: { nom: string; slug: string }[] = [];
 	let veinsTotal = 0;
+	// B3 · MIDA DE LA COMARCA (quants municipis té, amb dada o sense). És el denominador de
+	// referència que fa LLEGIBLE el «k de n» del rang: quan `n_amb_dada` < aquest total, la
+	// targeta pot dir quants municipis en queden fora i per què (esmena de Bea, 2026-07-31:
+	// «6 de 27» al costat de «8 de 31» semblava arbitrari).
+	//
+	// ⚠️ Per què es COMPTA aquí i no trenca la frontera dura de C6 §4: §4 prohibeix calcular
+	// PERCENTILS I RANGS al front («el front només formata»), i preveu explícitament el
+	// recompte al client sobre dades que ja viatgen (el cas de `distinguish.ts`). Això és un
+	// recompte de files de la PARTICIÓ TERRITORIAL, no un ordre: no compara municipis, no
+	// n'ordena cap i no toca `rang` ni `n_amb_dada`. I ve del MATEIX artefacte que fa la
+	// partició al mart —`municipis-territori.json` és l'autoritat declarada al capçal de
+	// `mart_govern.sql`—, que aquest loader ja carregava per a l'espina i els veïns: per
+	// construcció no pot divergir del denominador del rang (`verify-govern.mjs` ho exerceix
+	// sobre les 43 comarques). El lloc DURADOR, això no obstant, és el mart: vegeu el handoff
+	// a Sondeig a `bitacora/2026-07-31_b2-b3-copy-denominador_mirador.md` (`n_comarca` a la
+	// cel·la de govern); el dia que hi arribi, aquest recompte se substitueix per la lectura.
+	let comarcaMunis = 0;
 	if (ine5) {
 		try {
 			const res = await fetch('/data/municipis-territori.json');
@@ -168,6 +185,9 @@ export const load: PageLoad = async ({ fetch, params }) => {
 						.sort((a, b) => a.nom.localeCompare(b.nom, 'ca'));
 					veinsTotal = sibs.length;
 					veins = sibs.slice(0, 30); // límit raonable; el títol mostra el total
+					comarcaMunis = Object.values(all).filter(
+						(t) => t?.comarca === territori!.comarca
+					).length;
 				}
 			}
 		} catch {
@@ -257,6 +277,6 @@ export const load: PageLoad = async ({ fetch, params }) => {
 
 	return {
 		dataset, cataleg, ine5, nom, row, isBergueda, lectura, etca, govern, tauler, taulerMeta,
-		territori, veins, veinsTotal, miralls
+		territori, veins, veinsTotal, comarcaMunis, miralls
 	};
 };

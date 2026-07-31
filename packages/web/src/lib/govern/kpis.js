@@ -174,6 +174,52 @@ export const GOVERN_RANK_KEYS = [
 ];
 
 /**
+ * B3 · PER QUÈ EL DENOMINADOR DEL RANG NO ÉS TOTA LA COMARCA (esmena de Bea, 2026-07-31).
+ *
+ * El rang es publica sobre `n_amb_dada` —els municipis de la comarca que TENEN la xifra— i
+ * això, sense explicar, sembla arbitrari: «6 de 27» al costat de «8 de 31» a la mateixa
+ * pantalla. La targeta ho ha de dir sense que calgui saber res del nostre pipeline.
+ *
+ * Aquest mapa declara, per mètrica, el MOTIU de l'absència. No és estil: cada entrada és una
+ * afirmació verificable sobre la dada, i `verify-govern.mjs` la contrasta amb els 947 abans de
+ * deixar-la publicar. Per això n'hi ha TRES i no una de sola: els motius són diferents i
+ * atribuir-los malament seria mentir amb bona intenció.
+ *
+ *  · 'gov_denom_minn'   → LLINDAR NOSTRE (`demografia_min_n` = 50, `mart_demografia.sql`):
+ *    per sota de 50 habitants no publiquem el percentatge d'origen perquè cada persona el mou
+ *    2-4 punts i frega la identificació d'individus. Els RECOMPTES sí que es publiquen. És una
+ *    decisió nostra, no un forat: als 9 municipis afectats de Catalunya, cap té 50 hab o més,
+ *    i cap municipi de 50 hab o més es queda sense la xifra.
+ *  · 'gov_denom_font'   → LÍMIT DE LA FONT: l'INE no publica renda per a certs municipis
+ *    (ADRH). No és el nostre llindar —hi ha municipis de 38 hab amb renda i de 110 sense— i
+ *    dir-ho com si ho fos ens atribuiria una prudència que no és nostra.
+ *  · 'gov_denom_ratio'  → LA DIVISIÓ NO ES POT FER: l'índex d'envelliment és 65+/0-14, i a la
+ *    Febró (Baix Camp) no hi viu ningú de 0 a 14 anys. No és secret ni absència de dada: és
+ *    que el quocient no existeix.
+ *
+ * Una mètrica que NO és en aquest mapa i tingui forats pinta el motiu NEUTRE («no en tenim la
+ * xifra»): quedar-nos curts abans que inventar-ne la causa.
+ * (Els textos exactes són PENDENTS DEL VOT de Bea; el mecanisme, no.)
+ * @type {Record<string, string>}
+ */
+export const GOVERN_DENOM_REASON = {
+	pct_nacionalitat_estrangera: 'gov_denom_minn',
+	pct_nascuda_estranger: 'gov_denom_minn',
+	renda_neta_persona: 'gov_denom_font',
+	index_envelliment: 'gov_denom_ratio'
+};
+
+/** Motiu per defecte quan no en sabem la causa (mai una explicació inventada). */
+export const GOVERN_DENOM_REASON_DEFAULT = 'gov_denom_nd';
+
+/**
+ * El llindar del motiu 'gov_denom_minn', DECLARAT aquí i no escrit al copy: és la var
+ * `demografia_min_n` de `packages/transform/dbt_project.yml`, i si algú la mou allà,
+ * `verify-govern.mjs` cau abans que la pantalla expliqui un llindar que ja no és el nostre.
+ */
+export const GOVERN_DENOM_MIN_N = 50;
+
+/**
  * Línia de procedència d'una mètrica (REGLA DE FERRO de Bea, C6 §8.1). Res es codifica a la
  * UI: font, data i fórmula surten del contracte (`metrics[key]`).
  *  · fórmula ≠ 'directe'  → INFERIDA: es mostra la FÓRMULA + la font de les entrades (muted).

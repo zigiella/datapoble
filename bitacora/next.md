@@ -24,6 +24,8 @@ publicable per si sola.*
 >
 > **B2 · «Els 31 municipis: cal arreglar-ho»** — el hero de la home encara diu «31 municipis»
 > (`heroLabels`) en una portada que ara promet 43 comarques i 947 pobles. → **Mirador** (copy).
+> **✅ FETA amb B3 en un sol PR** (2026-07-31, branca `mirador/b2-b3-copy-denominador`). Vegeu el
+> bloc de baix.
 >
 > **B3 · «El rang de nacionalitat no pot ser sobre 27; qui no té dada és zero, no?»** — ⚠️ **La
 > premissa és FALSA a 2 dels 4, i el cas és greu.** Els 4 municipis del Berguedà sense percentatge:
@@ -42,6 +44,12 @@ publicable per si sola.*
 > **Però la preocupació de Bea és legítima:** «6 de 27» al costat de «8 de 31» sembla arbitrari.
 > **Fix correcte: fer el denominador LLEGIBLE, no falsejar-lo** → la targeta ha de dir per què són
 > 27 (p. ex. «4 municipis massa petits per publicar-ne el percentatge»). → **Mirador**.
+> **✅ FETA amb B2 en un sol PR** (2026-07-31, branca `mirador/b2-b3-copy-denominador`).
+> ⚠️ **Una premissa d'aquest enunciat, FALSA al WEB:** «els RECOMPTES sí que es publiquen» és cert
+> al **mart**, no a la nostra web — `poblacio_nacionalitat_estrangera` no és al contracte servit ni
+> a cap dataset del web, així que a la fitxa de la Quar **no hi ha cap xifra de nacionalitat**. El
+> copy diu «No vol dir zero» en comptes de prometre un recompte que no servim, i hi ha guarda que
+> cau el dia que sí que el servim (per obligar a reescriure la frase). **➡️ Handoff a: Sondeig.**
 >
 > **🌐 EL WEB JA ÉS ONLINE (2026-07-30).** Les Actions tornen i `deploy-web` va desplegar sol el
 > commit `822ed83` a Cloudflare Pages (pas «Deploy a Cloudflare Pages» = success; els secrets ja hi
@@ -59,6 +67,52 @@ publicable per si sola.*
 >    de `kpis.js` cal córrer TAMBÉ `verify_tendencia.py`.**
 >
 > **📋 CINC ESMENES DE BEA (2026-07-31) — escanejades per Talaia, amb la causa de cadascuna:**
+> - **✅ B2 + B3 (Mirador) — FETES, PR obert (2026-07-31, branca `mirador/b2-b3-copy-denominador`).**
+>   Bitàcola: `bitacora/2026-07-31_b2-b3-copy-denominador_mirador.md`.
+>   **B2:** el hero de la home ja no escriu cap xifra — `heroLabels` es deriva dels comptadors que
+>   el loader ja servia (`947 municipis` · `43 comarques`, comptats de `comarques.json` com les
+>   portes de W5) i el rètol és i18n ca+es (abans «31 municipis» es llegia igual a `/es`). Es
+>   retira «1.245 m» (altitud sense font ni municipi). **⛔ El brief es quedava curt:** mirant «la
+>   resta de la home» va sortir que el **peu de TOTES les pàgines** portava un **«31» pelat** i un
+>   «593» sense procedència entre les cotes. Retirats — **no** substituïts per 947/43: el layout no
+>   compta res i escriure-hi una xifra nova hauria repetit el defecte exacte de B2.
+>   **B3:** premissa re-verificada sobre els artefactes SERVITS (no la font) i **confirmada falsa**:
+>   els 9 munis de Catalunya sense % de nacionalitat tenen tots <50 hab i cap de ≥50 se'l queda. No
+>   s'ha implementat com Bea demanava literalment; s'ha fet el fix de fons — **el denominador
+>   s'explica** a qualsevol mètrica amb `n_amb_dada` < els munis de la comarca (483 cel·les).
+>   **El motiu es declara per mètrica i n'hi ha TRES, no un**: llindar NOSTRE (nacionalitat, 9
+>   munis) · **la FONT** (renda, 20 munis en 14 comarques: l'INE la calla, i hi ha munis de 38 hab
+>   amb renda i de 110 sense) · **divisió impossible** (índex d'envelliment, la Febró: `pob_0_14=0`).
+>   Un sol text per a totes tres hauria estat mentir amb bona intenció. Els tres es **contrasten
+>   amb els 947** al verificador, i el llindar es llegeix del **transform** (`demografia_min_n`).
+>   El total de la comarca es **compta** de `municipis-territori.json` —que el loader ja carregava i
+>   que és l'autoritat de partició declarada a `mart_govern.sql`—: cap rang ni percentil al front
+>   (C6 §4 intacte; precedent de W5). El rang, a més, passa a pintar-se des d'**UN** snippet
+>   compartit (n'hi havia tres còpies del mateix marcatge).
+>   **⚠️ COPY NOU PENDENT DEL VOT NARRATIU DE BEA** (ca + mirall es a la bitàcola, §5).
+>   Verificat en LOCAL: check 0/0 · build verd · verify:govern + verify:docs OK · **verify_tendencia.py
+>   OK** (obligatori en tocar `kpis.js`) · DOM ca+es de la Pobla (nacionalitat «6 de 27» **amb**
+>   explicació, vidre «17 de 31» **sense**, que és el que toca) · **guardes noves provades en
+>   negatiu 12/12** · cap error de consola · `noindex` intacte. **NO fusiono jo.**
+>   **➡️ Handoff a: Sondeig** (dos, cap bloquejant): `n_comarca` a la cel·la de `mart_govern` (surt
+>   del mateix `partition by` que `n_amb_dada`; el front passaria de comptar a llegir) i
+>   `poblacio_nacionalitat_estrangera` cap al contracte i l'export web.
+>   **⚠️ La promesa del pilot MÉS VISIBLE de la home, trobada i NO tocada:** el `<title>` de la
+>   portada diu **«riusdegent · Observatori territorial del Berguedà»** (`app_tagline`), que és
+>   també l'**`og:title` de TOT el web** — el que es veu en compartir qualsevol enllaç. No és un
+>   número estale: és el rètol de la MARCA, o sigui **vot narratiu de Bea**. Tres opcions al §5 de
+>   la bitàcola; si es canvia, el mateix vot arrossega `map_title` («Mapa coroplètic del Berguedà»
+>   en un mapa dels 947), `muni_srcline` (peu de les 947 fitxes) i `muni_lede`.
+>   **➡️ Handoff a: Talaia (doctrina) + Sondeig (dada)** — incoherència vista verificant la Quar: el
+>   seu % de nacionalitat surt `n. d.` (suprimit pel llindar) i **al costat s'hi pinta el delta**
+>   («↑ +1,62 punts, 2021→2025»). No filtra el nivell, però diem que no publiquem el percentatge
+>   perquè cada persona el mou 2-4 punts i tot seguit en publiquem un moviment de 1,62. O el delta
+>   cau sota el llindar, o el motiu s'ha de matisar. No ho toco: ni el llindar ni la doctrina són
+>   jurisdicció meva.
+>   **➡️ Deixat dit per a la propera passada meva:** el hero de la FITXA porta `'947'` escrit a mà i
+>   rètols només en català (igual a /glossari, /pregunta-li, /metodologia) — avui cert, però la
+>   mateixa mina que el «31»; i hi ha claus i18n **òrfenes** amb «31 municipis» (`footer_data_note`,
+>   `map_data_caveat`, `constel_aria`, `resum_*`) que no pinta ningú.
 > - **✅ W1 + W5 (Mirador) — FETES, PR obert (2026-07-31, branca `mirador/w1-w5-navegacio-home`).**
 >   Bitàcola: `bitacora/2026-07-31_w1-w5-navegacio-home_mirador.md`.
 >   **W1:** causa confirmada al DOM prerenderitzat i **pitjor del que deia el brief** — les fitxes de

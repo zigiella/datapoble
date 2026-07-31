@@ -73,7 +73,25 @@
 		{ cx: 900, cy: 130, r0: 16, step: 23, rings: 9, sq: 0.96, seed: 1.1, lt: 0.03 },
 		{ cx: 1080, cy: 290, r0: 14, step: 21, rings: 8, sq: 1.05, seed: 2.7, lt: 0.08 }
 	];
-	const heroLabels = ['31 municipis', '42°17′N', '1.245 m', '2°01′E'];
+	// B2 (esmena de Bea, 2026-07-31): les cotes del hero deien «31 municipis» —el pilot— en una
+	// portada que promet 43 comarques i 947 municipis a dues seccions més avall. Era, a més,
+	// una xifra ESCRITA i en català dur (no es traduïa a /es). Ara:
+	//  · les dues xifres es COMPTEN de l'agrupació territorial (la mateixa font de les portes,
+	//    W5): mai escrites al copy, així no poden tornar a quedar estale en silenci;
+	//  · el rètol és i18n (ca+es), com la resta de la portada;
+	//  · si el comptador no arriba (loader degradat) la cota simplement no es pinta — abans que
+	//    ensenyar un número que no hem comptat.
+	// Es retira «1.245 m»: una altitud sense font ni municipi darrere, que a escala Catalunya no
+	// vol dir res. El parell de coordenades es queda com a motiu de marca (el full topogràfic) i
+	// és el MATEIX que el peu de pàgina; si Bea vota retirar-lo, cau als dos llocs alhora.
+	const heroLabels = $derived(
+		[
+			totalMunis ? m.home_hero_munis({ n: String(totalMunis) }) : null,
+			totalComarques ? m.home_hero_comarques({ n: String(totalComarques) }) : null,
+			'42°17′N',
+			'2°01′E'
+		].filter((l): l is string => l !== null)
+	);
 </script>
 
 <svelte:head>
