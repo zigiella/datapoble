@@ -3,6 +3,24 @@
 *Mètode: **Cambium Charter v0.5**. Es treballa de dalt a baix; cada tasca = un PR. Cada **fase** és
 publicable per si sola.*
 
+> **🔴 D-DELTA (doctrina escrita, EXECUCIÓ PENDENT) — suprimim el nivell i publiquem el moviment.**
+> Troballa de Mirador (B3), verificada per Talaia al shard servit de la Quar (08177):
+> `valor_actual: null` (nivell suprimit pel llindar de 50 hab) **i alhora** `delta: 1.62` pintat
+> («↑ +1,62 punts · 2021→2025»). Diem que no publiquem el percentatge perquè amb 44 habitants
+> assenyalaria veïns concrets, i tot seguit en publiquem la variació. **No se sosté.**
+> Doctrina ja escrita al contracte (no és nova: és la «regla del join heretada» aplicada al temps):
+> **si el nivell està suprimit, el delta també**; la fila de tendència existeix igualment però com a
+> suprimida AMB MOTIU — mai absent, mai amb el delta pintat.
+> → **Sondeig (mart_tendencia), DARRERE de R-REFERENCIA** per no xocar amb el seu PR obert. Guarda
+> nova obligatòria: cap fila amb `valor_actual IS NULL` pot portar `delta` no nul.
+>
+> **⚠️ ESMENA A UNA AFIRMACIÓ MEVA (Talaia, 2026-07-31).** Vaig dir a Bea i al brief de Mirador que
+> «els recomptes sí que es publiquen (5, 0, 7, 0)». **És cert al mart i FALS al web:**
+> `poblacio_nacionalitat_estrangera` NO és al catàleg servit, així que a la fitxa de la Quar no hi
+> ha CAP xifra de nacionalitat — ni el nivell ni el recompte. La guarda de Mirador va tombar el seu
+> primer copy, que repetia la meva premissa. → **Handoff a Sondeig:** servir el recompte (és la peça
+> que fa honesta la supressió del percentatge: «no és zero, són 7 persones»).
+>
 > **📐 R-REFERENCIA (recerca de Bea 2026-07-31 + verificació de Talaia). LA SEVA RECERCA HA CAÇAT UN
 > BUG NOSTRE.** Bea porta fonts oficials (ICAEN municipal per sectors, Idescat residus 2024) i
 > proposa referències estratificades. Contrastat número a número:
