@@ -3,6 +3,48 @@
 *Mètode: **Cambium Charter v0.5**. Es treballa de dalt a baix; cada tasca = un PR. Cada **fase** és
 publicable per si sola.*
 
+> **🌐 EL WEB JA ÉS ONLINE (2026-07-30).** Les Actions tornen i `deploy-web` va desplegar sol el
+> commit `822ed83` a Cloudflare Pages (pas «Deploy a Cloudflare Pages» = success; els secrets ja hi
+> eren). Ja no cal Trazo per desplegar (decisió de Bea 2026-07-31). **`noindex` segueix posat.**
+>
+> **🩹 DOS VERMELLS DE MAIN, tancats el 2026-07-31 (tots dos meus de mètode, no de codi):**
+> 1. **`ruff` sense versió al CI** → va sortir el 0.16.0 amb regles noves i va marcar 38 errors en
+>    codi que ningú havia tocat: el mateix commit passava de verd a vermell pel calendari d'un
+>    tercer. **Fixat a 0.15.18** (bde3857). Pujar-lo és tasca deliberada, mai efecte lateral.
+> 2. **Els `kind` nous del v3 ('edats', 'naixement') no registrats** a `tools/tauler_kpis.py`
+>    (70ae30b). **Fallada de la meva verificació:** en fusionar V3-WEB vaig córrer les guardes del
+>    FRONT però no la guarda creuada del costat Python — *una verificació per jurisdiccions es deixa
+>    els ponts entre jurisdiccions*. La guarda va fer la seva feina: va veure un kind desconegut i es
+>    va aturar en comptes de deixar 8 mètriques fora de control. **Lliçó operativa: en fusionar canvis
+>    de `kpis.js` cal córrer TAMBÉ `verify_tendencia.py`.**
+>
+> **📋 CINC ESMENES DE BEA (2026-07-31) — escanejades per Talaia, amb la causa de cadascuna:**
+> - **W1 · El selector de municipi es queda al Berguedà.** Causa trobada: `$lib/data/dataset.ts`
+>   carrega `/data/municipis.bergueda.json` (31) i el selector + l'índex de slugs es construeixen
+>   d'allà; el CATÀLEG dels 947 (`municipis-cataleg.json`) ja es carrega al costat i només s'usa de
+>   pla B. Des de P-947 tots els 947 tenen fitxa, així que la navegació interna és el ròssec.
+>   → **Mirador**: el selector (i els veïns) es construeixen del CATÀLEG, no del dataset del pilot.
+> - **W2 · Clicar un rang → pàgina de la mètrica amb el rang comarcal i navegació entre municipis.**
+>   Funcionalitat nova (ruta nova). DEPÈN de W3/W4 (com més mètriques rankejades, més útil).
+>   → **Mirador**, DESPRÉS de la capa de dades.
+> - **W3 · El vidre no té rang.** Confirmat: `RANK_METRICS` de `export_govern_web.py` en té 7 i
+>   `vidre_hab` no hi és (ni `pct_nacionalitat_estrangera`, que arrossega el `pendingRank` d'E9 des
+>   de fa dies). → **Sondeig**: afegir-les al mart i a RANK_METRICS; llavors cau el `pendingRank`.
+> - **W4 · Valor de referència a residus i elèctric.** ⚠️ **TRAMPA EVITADA:** les constants que hi ha
+>   al codi (residus 410 · elèctric 1.224 · vidre 26,5) són **les bases del model de pernocta
+>   APARCAT** — fer-les servir en una targeta viva seria reintroduir el model per la porta del
+>   darrere. **Via honesta, calculada de les NOSTRES dades (947):** mediana de Catalunya = residus
+>   **472,1** · elèctric **1.529,3** · vidre **29,0**; i mediana del **Berguedà** = **759,9** ·
+>   1.648,8 · 49,8. **Recomanació de Talaia: la mediana de la COMARCA** (casa amb el rang comarcal
+>   que la targeta ja mostra; comparar un poble de muntanya amb la mediana catalana enganya).
+>   Implementació neta: `mart_govern` ja agrupa per comarca per calcular el rang → la mediana surt
+>   del MATEIX GROUP BY. → **Sondeig** (dada) + **Mirador** (pintura). **PENDENT DE VOT de Bea:
+>   comarcal (recomanada) o catalana?**
+> - **W5 · La home, desactualitzada.** Confirmat: la secció «Llegeix la comarca» presenta «Resta de
+>   Catalunya» com a **`porta--soon`, no clicable** («947 municipis · cada poble té fitxa»), quan des
+>   de P-947 ja hi és tot. A més el «947» hi està mal etiquetat com a *resta* (947 és el total).
+>   → **Mirador**: obrir la porta i corregir la xifra.
+>
 > **✅ VOT DE BEA (2026-07-29): REDISSENY DEL TAULER v3 APROVAT SENCER — «tot ok. HUT sí».**
 > Doc vinculant: `docs/ajuntaments/redisseny-tauler-v3.md`. Vol dir: rètols nous (La gent · Les
 > cases · Feina i renda · El dia a dia) · capçalera de presència amb padró+ETCA junts a dalt ·
