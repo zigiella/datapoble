@@ -120,11 +120,26 @@ models:
       - name: kwh_hab
         description: >
           Consum elèctric domèstic kWh/hab del darrer any ple (2024, sector USOS
-          DOMÈSTICS). Senyal de la capa L1 (pernocta).
+          DOMÈSTICS). Senyal de la capa L1 (pernocta). ⚠️ R-REFERENCIA (2026-07-31):
+          el denominador és el padró de l'ANY DEL CONSUM (poblacio_kwh), no el vigent.
+          Fins llavors dividia per la població de 2025 i el ponderat de Catalunya sortia
+          1.234,86 en comptes de 1.252,10 (−1,40%), amb l'error per municipi entre
+          −11,9% i +12,2% i 438 dels 947 rangs comarcals moguts.
         data_tests:
           - not_null
           - between:
               arguments: { min_value: 0, max_value: 100000 }
+      - name: kwh_serveis_hab
+        description: >
+          R-REFERENCIA · consum elèctric del sector SERVEIS kWh/hab del mateix any i amb
+          el MATEIX denominador que kwh_hab (ICAEN 8idm-becu, sector 6). Separat del
+          domèstic per encàrrec de Bea: un polígon o una gran instal·lació no s'ha de
+          poder disfressar de presència residencial. NULL als 8 municipis on la font el
+          suprimeix per secret estadístic — «no publicat» ≠ «no consumeix» (per això NO
+          porta `not_null`, a diferència del domèstic).
+        data_tests:
+          - between:
+              arguments: { min_value: 0, max_value: 1000000 }
       - name: vidre_hab
         description: >
           Vidre kg/hab/any del darrer any (fracció ARC 69zu-w48s). Senyal de la
@@ -302,15 +317,42 @@ models:
         description: Any del tall de residus (traçabilitat temporal).
       - name: vidre_any
         description: Any del tall de la fracció vidre (traçabilitat temporal).
+      # R-REFERENCIA · ELS DENOMINADORS, exposats. Els per càpita físics NO es divideixen
+      # tots pel mateix padró: cadascun fa servir el de l'any de la SEVA dada. Sense
+      # aquestes columnes la referència ponderada (total ÷ habitants) no es pot ni
+      # recalcular ni auditar (C6 §8.1) — i la barreja de vintages torna a ser invisible.
+      - name: poblacio_residus
+        description: >
+          Població que l'ARC fa servir per calcular kg_hab_any i vidre_hab (padró de
+          l'any de la dada, 2024). Verificat 2026-07-31: idèntica municipi a municipi
+          (947/947) al padró d'Idescat del mateix any; suma 8.012.231.
+        data_tests:
+          - not_null
+      - name: kwh_any
+        description: Any del consum elèctric domèstic (traçabilitat temporal).
+        data_tests:
+          - not_null
+      - name: poblacio_kwh
+        description: >
+          Padró de l'any del consum elèctric (Idescat, Cens anual INE), denominador de
+          kwh_hab i de kwh_serveis_hab. Suma 8.012.231 (2024), no 8.124.126 (2025).
+        data_tests:
+          - not_null
+      - name: kwh_serveis_any
+        description: Any del consum elèctric de serveis (NULL on la font el suprimeix).
 
   - name: mart_consum_electric
     description: >
       Sèrie de consum elèctric DOMÈSTIC per municipi × any (format llarg, clau
-      ine5+any_consum), Berguedà 2013–2024 (31×12 = 372 files). Font ICAEN
+      ine5+any_consum), TOT CATALUNYA 2013–2024 (947×12 = 11.364 files). Font ICAEN
       8idm-becu, sector USOS DOMÈSTICS (l'únic que sobreviu al secret estadístic
       a micromunicipis). Proxy de presència per a "població real vs padró"
       (docs/poblacio-real-fonts.md). NO normalitzat: consum brut anual, fidel a
       la font; la normalització i el *gap* són síntesi de Talaia (fora d'aquest PR).
+      ⚠️ El parquet versionat s'havia quedat als 31 del Berguedà (372 files) des de
+      l'escalat a Catalunya (F2): el model ja n'emetia 11.364 i el fitxer no s'havia
+      regenerat. Corregit el 2026-07-31 (R-REFERENCIA). Ningú ho veia perquè el CI no
+      corre `dbt build` (no té `data/raw/`) i aquest mart no té exportador amb `--check`.
     columns:
       - name: ine5
         description: Codi INE de 5 dígits (clau de join amb mart_municipi).
@@ -334,8 +376,15 @@ models:
         description: Consum elèctric del sector USOS DOMÈSTICS (kWh/any).
         data_tests:
           - not_null
+          # ⚠️ VERMELL PREEXISTENT TROBAT EL 2026-07-31 (R-REFERENCIA) i tancat aquí.
+          # El topall era 1e9, escrit quan aquest mart només tenia els 31 del Berguedà;
+          # des que va escalar a Catalunya, Barcelona el supera cada any (màxim observat
+          # 2.067.646.878 kWh el 2013) i el test fallava a 12 files. No es veia perquè el
+          # CI no corre `dbt build` (no té data/raw): només qui construeix en local el veu.
+          # Nou topall 5e9 = ~2,4× el màxim observat: segueix sent una guarda de sanitat
+          # (un error de magnitud el faria caure), no una que s'ajusta a la dada.
           - between:
-              arguments: { min_value: 0, max_value: 1000000000 }
+              arguments: { min_value: 0, max_value: 5000000000 }
 
   - name: mart_pols_mensual
     description: >
@@ -406,6 +455,9 @@ models:
       pròpia dada — mediana_comarca (sobre n_amb_dada municipis) i mediana_catalunya
       (sobre n_mediana_catalunya). Mai les bases del model de pernocta aparcat
       (base_residencial 410 / base_electric 1224 / base_vidre 26,5).
+      R-REFERENCIA (2026-07-31): dues referències MÉS, també mesurades de la nostra dada
+      — la PONDERADA (total ÷ habitants, l'equivalent del titular oficial, amb el nom del
+      pes i els habitants del denominador) i l'ESTRATIFICADA per franja de població.
     columns:
       - name: ine5
         description: Codi INE de 5 dígits.
@@ -474,6 +526,53 @@ models:
         description: >
           Municipis de Catalunya amb dada per aquesta mètrica (denominador honest de
           mediana_catalunya). Constant per mètrica.
+        data_tests:
+          - not_null
+          - between:
+              arguments: { min_value: 1, max_value: 947 }
+      # --- R-REFERENCIA (2026-07-31) · la PONDERADA i l'ESTRATIFICADA ---
+      - name: pes_ponderada
+        description: >
+          Nom del DENOMINADOR amb què es pondera aquesta mètrica (poblacio · hab_total ·
+          pob_0_14 · poblacio_residus · poblacio_kwh). Procedència llegible: diu per què
+          la ponderada és exactament el quocient dels totals i no una mitjana de mitjanes.
+          NULL a `poblacio`, que no té denominador propi.
+      - name: ponderada_comarca
+        description: >
+          Referència PONDERADA de la comarca = Σ(valor×pes) / Σ(pes) sobre els municipis
+          amb dada, aritmèticament idèntica a «total ÷ habitants» (l'equivalent de com
+          publiquen la xifra l'ARC, l'ICAEN i l'Idescat). NULL a `poblacio`.
+      - name: hab_ponderada_comarca
+        description: >
+          Habitants del denominador de ponderada_comarca. Una mediana es diu «sobre n
+          municipis»; una ponderada, «sobre n habitants» (C6 §8.1).
+      - name: ponderada_catalunya
+        description: >
+          La mateixa ponderada sobre tot Catalunya. Àncores 2024: residus 476,85 kg/hab ·
+          elèctric 1.252,11 kWh/hab · vidre 22,89 kg/hab. ⚠️ El titular d'Idescat de
+          residus (~500) NO hi ha de coincidir: la diferència és la fila «No
+          territorialitzable» del propi dataset de l'ARC (175.115,55 t el 2024), residus
+          reals que no s'atribueixen a cap municipi. La referència ha de sortir de la
+          MATEIXA font que el numerador o tots els municipis semblarien un 4,4% millors.
+      - name: hab_ponderada_catalunya
+        description: Habitants del denominador de ponderada_catalunya.
+      - name: franja_poblacio
+        description: >
+          Franja de població del municipi sobre el padró vigent (talls de Bea: <250 ·
+          250-499 · 500-999 · 1.000-4.999 · 5.000-19.999 · ≥20.000).
+        data_tests:
+          - not_null
+      - name: mediana_franja
+        description: >
+          Referència ESTRATIFICADA: mediana d'aquesta mètrica entre els municipis de TOT
+          Catalunya de la mateixa franja. ⚠️ Se serveix per a les nou, però no explica
+          igual de bé les nou: mesurat sobre els 947 (variància explicada ajustada), la
+          franja explica el 9,5% del consum elèctric i el 16,5% del vidre — gradients
+          monòtons i defensables — però només el 4,0% dels residus, on el gradient ni
+          tan sols és monòton. Als residus qui més explica és la COMARCA (33,1%), que és
+          la partició que el rang i mediana_comarca ja fan servir.
+      - name: n_franja
+        description: Municipis de la franja amb dada (denominador honest de mediana_franja).
         data_tests:
           - not_null
           - between:

@@ -46,8 +46,79 @@ publicable per si sola.*
 > secundari, perquè un polígon o una cimentera converteixen un municipi en «fals paradís turístic
 > estadístic». → **Sondeig: ingesta nova.**
 >
+> **✅ R-REFERENCIA (DADES) — FETA, PR obert (Sondeig 2026-07-31, branca `sondeig/r-referencia`).**
+> Bitàcola: `bitacora/2026-07-31_r-referencia_sondeig.md` (proves, taules i diffs sencers).
+> **1 · Bug del vintage CONFIRMAT amb prova pròpia i PITJOR del que deia el brief.** 1.234,86 →
+> **1.252,10** (el número de Bea, exacte). Però el «−1,40 %» només val per a l'AGREGAT: municipi a
+> municipi l'error va de **−11,88 % a +12,24 %** i **301 dels 947 anaven en direcció CONTRÀRIA**
+> (el seu padró havia BAIXAT). Conseqüència que ningú havia previst: **438 dels 947 municipis
+> canvien de rang comarcal** a `kwh_hab` (salt màxim 11 posicions) i **5 comarques canvien de
+> número 1**. No publicàvem un número un 1,4 % baix: publicàvem un ORDRE equivocat per a gairebé
+> mitja Catalunya. Les altres 8 mètriques surten idèntiques valor a valor.
+> **Sí que es podia aparellar:** `stg_demografia_estrangera_serie.poblacio_total` (Idescat, Cens
+> anual INE, sèrie 2021→, 947/947 el 2024) — MATEIXA família que el padró que publiquem (la seva
+> xifra de 2025 coincideix 947/947 amb l'EMEX). Contrast independent: la població que l'ARC porta
+> al seu dataset de residus és IDÈNTICA (947/947, diferència 0) per a 2023 i 2024. **No ha calgut
+> `censph` ni cap crida de xarxa nova.** Guarda nova `assert_consum_electric_vintage` (provada en
+> negatiu). **⚠️ Efecte lateral caçat:** amb el fix, `poblacio(2025) × kwh_hab` hauria inflat la
+> capa L1 un 1,40 % i hauria separat les dues implementacions de la MATEIXA xifra (fins ara el
+> padró s'hi cancel·lava per accident: 828/927 idèntiques al camí validat amb ETCA). Corregit amb
+> `poblacio_kwh` → L1 igual que abans i l'ETCA torna al seu **8,2 % honest** (el 7,8 % que sortia
+> era l'artefacte). El model aparcat NO s'ha mogut.
+> **2 · Sector SERVEIS servit** (`kwh_serveis_hab`, 939/947; els 8 NULL són secret estadístic, mai
+> zero — un és la Pobla de Mafumet, al costat del petroquímic). **⛔ Premissa del brief falsa: JA
+> s'ingeria** (la raw porta tots els sectors des del primer dia; el filtre era a transform).
+> **⛔ El TOTAL no surt gratis i NO s'emet:** només **46 dels 947** tenen els 6 sectors amb valor;
+> als altres 901 en falta almenys un, sovint l'INDUSTRIAL, que és el que pot dominar el total.
+> **Les xifres de Bea (1.500/1.100/2.700) són MEDIANES i quadren** (nostres: 1.538 / 1.145 / 2.683);
+> les PONDERADES són 1.252 / 1.696. **La seva hipòtesi es confirma:** Gurb, Abrera, Granyanella,
+> Vila-sana i Argelaguer tenen serveis per càpita altíssims amb vidre baix — instal·lació gran, no
+> turisme; Spearman serveis↔vidre només +0,22 i ↔població **0,00**; 297 de 939 consumeixen més en
+> serveis que en domèstic.
+> **3 · Referències servides a `mart_govern`** (12 → 20 columnes, les 8.523 files intactes):
+> ponderada comarcal i catalana **amb el pes PROPI de cada mètrica** (no `poblacio` per a tot: al
+> Berguedà, residus 452,90 correcte vs **452,41** amb `poblacio` — **el 452,4 de next.md duia la
+> mateixa barreja de vintages, en petit**), `hab_ponderada_*` com a procedència, `pes_ponderada`,
+> i l'estratificada `franja_poblacio`/`mediana_franja`/`n_franja`. `poblacio` surt NULL a la
+> ponderada, amb el motiu escrit. **El «500» d'Idescat té nom:** el dataset de l'ARC porta una fila
+> `No territorialitzable` amb **175.115,55 t** el 2024 (les 175.768 venien d'arrodonir); 947 munis
+> = 476,85 · amb la fila = **498,70** = el titular. Ja no és una diferència inexplicada.
+> **4 · La pregunta del residu, resposta amb variància explicada AJUSTADA + baseline de permutació:**
+> franja **0,040** · tipus_territorial **0,133** · **comarca 0,331**. Talaia té raó que
+> `tipus_territorial` explica el residu 3× millor que la mida — **però la comarca l'explica 2,5×
+> millor que `tipus_territorial` i 8× millor que la mida, i és la partició que el rang i la mediana
+> comarcal JA fan servir.** I el que de debò l'explica no és cap estrat sinó una contínua: la
+> intensitat turística (Spearman +0,53 amb vidre, index_turisme i RTC/1.000 hab; **−0,10** amb la
+> població). **Recomanació: als residus, cap referència per mida — la mediana comarcal que ja hi ha
+> és la millor que tenim.** I una que ningú preguntava: **al sector SERVEIS no funciona CAP
+> estratificació** (0,004, p≈0,10 — indistingible de l'atzar), per això `kwh_serveis_hab` es publica
+> sense referència comparativa i **no entra a `mart_govern`**.
+> **Serrells trobats i tancats:** `mart_consum_electric.parquet` versionat estava ESTALE als 372
+> del Berguedà des de F2 (el model n'emet 11.364; el CI no corre `dbt build` i aquest mart no té
+> `--check`) → regenerat; i el topall `between 0..1e9` de `consum_kwh_domestic` era del Berguedà i
+> Barcelona el supera cada any (12 files vermelles a la primera construcció neta) → pujat a 5e9.
+> **Cost mesurat:** `govern.catalunya.json` 1.595 → **3.434 kB** (+115 %); el shard que el navegador
+> carrega, 1,7 → **3,7 kB**. `franja_poblacio` s'ha mogut al nivell del municipi (eren 8 còpies).
+> 12 guardes noves provades EN NEGATIU. Verificat en LOCAL: dbt build **115/115**, tots els
+> verificadors i tots els `--check` verds, ruff net, i les guardes de Mirador (`verify-govern.mjs`
+> + `verify-docs.mjs`) sobre la dada nova. `packages/web/` no tocat. **NO fusiono jo.**
+> **➡️ Handoff a: Talaia (contracte)** — 4 esmenes amb diff EXACTE a la bitàcola: `kwh_hab`
+> (fórmula + caveat del vintage), **`rtc_per_1000hab` (el `date` que faltava → "2026/2025" + caveat)**,
+> `kwh_serveis_hab` (entrada nova) i el bloc de doctrina de LES TRES REFERÈNCIES (mediana ≠
+> ponderada ≠ estratificada; la regla «mateixa font i mateix perímetre que el numerador»; i la
+> prohibició ampliada a la QUARTA constant aparcada, `base_comarcal` 452).
+> **➡️ Handoff a: Talaia (arbitratge)** — `mart_demografia` i `mart_govern` publiquen dues
+> referències de `pct_nacionalitat_estrangera` que difereixen 0,013 pp al Berguedà: la primera suma
+> els 31 municipis, la meva només els 27 amb dada (el mateix denominador honest del rang). Cap és
+> falsa; responen preguntes diferents. Quina mana?
+> **➡️ Handoff a: Mirador (quan li vagi bé)** — la dada de les tres referències ja hi és, amb el
+> seu denominador. I si el pes de `govern.catalunya.json` molesta, l'alternativa que W4 ja va
+> deixar escrita (un germà `govern-referencies.json` de pocs kB + segona petició) segueix damunt
+> la taula.
+>
 > **PENDENT DEL VOT DE BEA:** quina referència es pinta i com s'estratifica (vegeu §3: la resposta
-> pot ser diferent per a elèctric i per a residu).
+> pot ser diferent per a elèctric i per a residu). **La dada ja serveix les TRES** (mediana,
+> ponderada, estratificada) per a les nou mètriques, així que el vot no està bloquejat per res.
 >
 > **🔎 TRES PREGUNTES DE BEA (2026-07-31), investigades a la FONT abans de respondre:**
 >

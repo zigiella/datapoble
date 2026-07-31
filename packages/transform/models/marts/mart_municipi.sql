@@ -32,8 +32,16 @@ residus as (
 ),
 
 -- Corroborador de presència L1: consum elèctric domèstic per càpita (int_consum_electric_pc).
+-- R-REFERENCIA (2026-07-31): el denominador ja NO és el padró vigent sinó el de l'ANY DEL
+-- CONSUM (vegeu el capçal de l'intermediate: la barreja de vintages movia els 947).
 elec_pc as (
     select * from {{ ref('int_consum_electric_pc') }}
+),
+
+-- Sector SERVEIS del MATEIX dataset ICAEN, separat del domèstic (encàrrec de Bea): un
+-- polígon o una gran instal·lació no ha de poder disfressar-se de presència residencial.
+serv_pc as (
+    select * from {{ ref('int_consum_serveis_pc') }}
 ),
 
 -- Senyal L3 (turisme): vidre kg/hab/any (fracció ARC).
@@ -100,7 +108,12 @@ ind as (
         round(coalesce(rtc.rtc_total, 0) / nullif(emex.hab_total, 0) * 100, 2) as rtc_per_100hab_viv,
         residus.kg_hab_any                                          as kg_hab_any,
         residus.residus_any                                         as kg_hab_any_year,
+        residus.poblacio_residus                                    as poblacio_residus,
         elec_pc.kwh_domestic_pc                                     as kwh_hab,
+        elec_pc.kwh_any                                             as kwh_any,
+        elec_pc.poblacio_kwh                                        as poblacio_kwh,
+        serv_pc.kwh_serveis_pc                                      as kwh_serveis_hab,
+        serv_pc.kwh_serveis_any                                     as kwh_serveis_any,
         vidre.vidre_hab                                             as vidre_hab,
         vidre.vidre_any                                             as vidre_any,
         -- OSM: NULL fora del Berguedà ("sense dada"), valor real (0 inclòs) dins (la staging té els 31).
@@ -110,6 +123,7 @@ ind as (
     left join rtc         on emex.ine5 = rtc.ine5
     left join residus     on emex.ine5 = residus.ine5
     left join elec_pc     on emex.ine5 = elec_pc.ine5
+    left join serv_pc     on emex.ine5 = serv_pc.ine5
     left join vidre       on emex.ine5 = vidre.ine5
     left join restauracio on emex.ine5 = restauracio.ine5
     left join serveis     on emex.ine5 = serveis.ine5
@@ -121,17 +135,36 @@ ind as (
 -- pres: derivats de presència per muni. Es calculen AQUÍ (no a la SELECT final) perquè els stats
 -- (sstats, etc.) hi puguin accedir — i això arregla el build break del model previ. base_pred (L1)
 -- per muni; base_residencial (L2 residus) i base_vidre (L3) encara fixes (afinables per tipus, futur).
+--
+-- ⚠️ L1 ES MULTIPLICA PER `poblacio_kwh`, NO PER `poblacio` (R-REFERENCIA, 2026-07-31).
+-- La forma del macro és «padró × senyal_per_hab / base», i el padró que hi ha d'anar és el
+-- MATEIX que hi ha al denominador del senyal: així el producte torna a ser exactament
+-- `consum_total / base`, que és com calcula l'estimació el camí VALIDAT CONTRA L'ETCA
+-- (tools/export_pernocta_catalunya.py fa `kwh_dom / base_pred`, sense cap padró).
+-- Fins avui els dos camins coincidien PER ACCIDENT: kwh_hab duia el padró de 2025 al
+-- denominador i es cancel·lava amb el `poblacio` de fora (mesurat: 828 dels 927 idèntics i
+-- els 99 restants a 1 persona d'arrodoniment, màxim 0,26%). En arreglar el vintage de
+-- kwh_hab, deixar-hi `poblacio` hauria inflat aquesta capa un 1,40% i hauria separat les
+-- dues implementacions de la MATEIXA xifra. Amb `poblacio_kwh` la capa L1 queda idèntica a
+-- abans del fix i els dos camins tornen a coincidir — el fix arregla `kwh_hab` sense moure
+-- el model aparcat, que és el que tocava.
+-- El GAP sí que es mesura contra el padró VIGENT (`poblacio`): la pregunta és «quanta gent
+-- hi ha de més respecte del padró que publiquem», i el contracte ja declara aquesta barreja
+-- (`gap_pernocta`, date "2024/2025").
+-- L2 (residus) NO es toca: `poblacio × kg_hab_any` manté la barreja que el contracte ja
+-- declara. Arreglar-la seria moure el model aparcat, i això no és aquesta tasca — queda
+-- mesurat i escrit a la bitàcola.
 pres as (
     select
         ind.ine5,
-        cast(round(ind.poblacio * ind.kwh_hab / nullif(ind.base_pred, 0)) as integer) as poblacio_pernocta_est,
-        cast(round(ind.poblacio * ind.kwh_hab / nullif(ind.base_pred, 0)) - ind.poblacio as integer) as gap_pernocta,
-        round((round(ind.poblacio * ind.kwh_hab / nullif(ind.base_pred, 0)) - ind.poblacio)
+        cast(round(ind.poblacio_kwh * ind.kwh_hab / nullif(ind.base_pred, 0)) as integer) as poblacio_pernocta_est,
+        cast(round(ind.poblacio_kwh * ind.kwh_hab / nullif(ind.base_pred, 0)) - ind.poblacio as integer) as gap_pernocta,
+        round((round(ind.poblacio_kwh * ind.kwh_hab / nullif(ind.base_pred, 0)) - ind.poblacio)
               / nullif(ind.poblacio, 0) * 100, 1)                  as gap_pernocta_pct,
         cast({{ estimacio_presencia('ind.poblacio', 'ind.kg_hab_any', var('base_residencial')) }} as integer) as carrega_total_est,
         cast(greatest(
             ind.poblacio,
-            coalesce(round(ind.poblacio * ind.kwh_hab / nullif(ind.base_pred, 0)), 0),
+            coalesce(round(ind.poblacio_kwh * ind.kwh_hab / nullif(ind.base_pred, 0)), 0),
             coalesce({{ estimacio_presencia('ind.poblacio', 'ind.kg_hab_any', var('base_residencial')) }}, 0)
         ) as integer)                                              as carrega_funcional_est,
         round(ind.restauracio_estab / nullif(ind.poblacio, 0) * 1000, 2) as restauracio_per_1000hab,
@@ -366,6 +399,9 @@ select
 
     -- Senyals físics per càpita
     ind.kwh_hab,
+    -- SERVEIS (R-REFERENCIA): el mateix dataset ICAEN, sector 6. NULL als 8 municipis on
+    -- la font el suprimeix per secret estadístic — «no publicat» ≠ «no consumeix».
+    ind.kwh_serveis_hab,
     ind.vidre_hab,
 
     -- OSM (2a onada): NULL fora del Berguedà
@@ -441,8 +477,15 @@ select
     -- base de presència emprada (traçabilitat de la unificació)
     round(ind.base_pred, 0)                                     as base_pred,
 
-    -- Traçabilitat temporal
+    -- Traçabilitat temporal + DENOMINADORS (R-REFERENCIA). Els per càpita físics no es
+    -- divideixen tots pel mateix padró: cadascun fa servir el de l'any de la SEVA dada.
+    -- S'emeten l'any i el denominador perquè la referència ponderada (total ÷ habitants)
+    -- es pugui recalcular i auditar sense sortir del mart (C6 §8.1).
     ind.kg_hab_any_year,
+    ind.poblacio_residus,
+    ind.kwh_any,
+    ind.poblacio_kwh,
+    ind.kwh_serveis_any,
     ind.vidre_any
 
 from ind
