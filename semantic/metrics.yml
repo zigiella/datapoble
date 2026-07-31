@@ -93,6 +93,29 @@
 #   la particio del rang; i el millor predictor no es cap estrat sino una continua, la intensitat
 #   turistica (Spearman +0,53). Al sector serveis no funciona CAP estratificacio (0,4%).
 #
+# QUINES ES PINTEN (vot de Bea 2026-07-31: "farem B+D") — DUES per targeta:
+#   1. PONDERADA DE CATALUNYA - l'ancoratge oficial, igual a totes les targetes. Es el numero que
+#      un lector enten per "la mitjana" i l'equivalent exacte de com el publiquen ARC/ICAEN/Idescat.
+#   2. MEDIANA DE LA COMARCA - la comparacio entre iguals, i el mateix perimetre que el rang.
+#
+#   CORRECCIO DE TALAIA (mesurada, 2026-07-31): la proposta original de "D" era estratificar per
+#   MIDA a l'electric i al vidre i per comarca als residus. La mesura completa de les 9 metriques
+#   amb rang la desmenteix: amb la variancia AJUSTADA pel nombre de grups, la COMARCA guanya a 8
+#   de 9 (residus 0,330 vs franja 0,040 · electric 0,351 vs 0,095 · vidre 0,329 vs 0,165 · renda
+#   0,315 vs 0,012 · pct_noprincipal 0,498 vs 0,352 · nacionalitat 0,218 vs 0,133 · rtc 0,281 vs
+#   0,073 · poblacio 0,322 vs 0,125). L'unica excepcio es `index_envelliment` (franja 0,181 vs
+#   comarca 0,168), i per tan poc que no justifica trencar la uniformitat.
+#   Jo havia llegit "la franja explica el 16,5% del vidre" com si vol dir que la franja hi GUANYA;
+#   volia dir que hi es significativa (i als residus no). La comarca hi guanya igualment.
+#
+#   Per aixo B+D convergeix en una regla SIMPLE i defensable: ponderada catalana + mediana
+#   comarcal a totes les targetes amb rang. La `mediana_franja` se serveix igualment i queda
+#   disponible, pero NO es pinta per defecte.
+#   EXCEPCIO: `poblacio` no te ponderada (seria la seva propia mida) - nomes mediana comarcal.
+#   El CONTRAST entre les dues es INFORMACIO, no soroll: a la Pobla el vidre fa 48,6 amb Catalunya
+#   a 22,9 i el Bergueda a 49,8 - "normal aqui, el doble que a Catalunya" es exactament la lectura
+#   que un alcalde necessita, i cap de les dues xifres sola la dona.
+#
 # PROCEDENCIA OBLIGATORIA (C6 8.1): una mediana es diu "sobre n MUNICIPIS"; una ponderada, "sobre
 #   n HABITANTS". Cap de les tres es pot pintar sense el seu denominador.
 #
