@@ -3,6 +3,46 @@
 *Mètode: **Cambium Charter v0.5**. Es treballa de dalt a baix; cada tasca = un PR. Cada **fase** és
 publicable per si sola.*
 
+> **🔎 TRES PREGUNTES DE BEA (2026-07-31), investigades a la FONT abans de respondre:**
+>
+> **B1 · «Hi havia unes dades oficials de consum, no?»** — Sí, i la mediana NO és el número que
+> busca. Verificat:
+> - Les constants 410 / 1.224 / 26,5 **NO són oficials**: són NOSTRES, calculades com a bases del
+>   model de pernocta aparcat (`dbt_project.yml`: «base_electric … pop-pond IETR<5: 1224,1»), és a
+>   dir ponderades sobre viles poc turístiques. Per això s'assemblen a una mitjana real.
+> - **L'equivalent oficial SÍ que es pot calcular de la font oficial**, i és la **mitjana ponderada
+>   per població** (= total consumit / total habitants, que és com ho publica l'ARC/ICAEN):
+>   **residus 476,8 kg/hab/any** (ARC 2024, 947 municipis, 8.012.231 hab) · **elèctric 1.234,9
+>   kWh/hab** · **vidre 22,9 kg/hab/any**.
+> - La **mediana de municipis** (472,1 / 1.529,3 / 29,0) respon una pregunta DIFERENT: «com és un
+>   municipi típic», sense ponderar — Sant Jaume (25 hab) hi pesa igual que Barcelona (1,7 M).
+> - **La diferència és gran i importa:** elèctric mediana 1.529 vs ponderada 1.235 (24%); i al
+>   **Berguedà**, residus mediana **759,9** vs ponderada **452,4** — els micromunicipis inflen la
+>   mediana. **Recomanació de Talaia: la ponderada com a «mitjana de Catalunya»** (és l'equivalent
+>   oficial i el que un lector entén per «la mitjana»); el context local ja el dona el rang comarcal.
+>   **PENDENT DEL VOT DE BEA.**
+>
+> **B2 · «Els 31 municipis: cal arreglar-ho»** — el hero de la home encara diu «31 municipis»
+> (`heroLabels`) en una portada que ara promet 43 comarques i 947 pobles. → **Mirador** (copy).
+>
+> **B3 · «El rang de nacionalitat no pot ser sobre 27; qui no té dada és zero, no?»** — ⚠️ **La
+> premissa és FALSA a 2 dels 4, i el cas és greu.** Els 4 municipis del Berguedà sense percentatge:
+> | municipi | estrangers | població | % real |
+> |---|---|---|---|
+> | Fígols | **5** | 41 | 12,2% |
+> | Gisclareny | 0 | 28 | 0% |
+> | **la Quar** | **7** | 44 | **15,9%** |
+> | Sant Jaume de Frontanyà | 0 | 25 | 0% |
+> **La Quar seria el número 2 de la comarca** (màxim actual 18,16%). Posant-la a zero per «no tenir
+> dada» la pintaríem **última**: publicaríem el contrari de la veritat sobre un poble concret.
+> **Per què són NULL:** llindar NOSTRE i deliberat (`demografia_min_n = 50`, `mart_demografia.sql`):
+> per sota de 50 habitants un percentatge d'origen és soroll i frega la identificació d'individus
+> (cada persona mou 2-4 punts). **Els RECOMPTES sí que es publiquen** (5, 0, 7, 0); només se
+> suprimeix el percentatge fi. És la mateixa doctrina que protegeix Sant Jaume.
+> **Però la preocupació de Bea és legítima:** «6 de 27» al costat de «8 de 31» sembla arbitrari.
+> **Fix correcte: fer el denominador LLEGIBLE, no falsejar-lo** → la targeta ha de dir per què són
+> 27 (p. ex. «4 municipis massa petits per publicar-ne el percentatge»). → **Mirador**.
+>
 > **🌐 EL WEB JA ÉS ONLINE (2026-07-30).** Les Actions tornen i `deploy-web` va desplegar sol el
 > commit `822ed83` a Cloudflare Pages (pas «Deploy a Cloudflare Pages» = success; els secrets ja hi
 > eren). Ja no cal Trazo per desplegar (decisió de Bea 2026-07-31). **`noindex` segueix posat.**
