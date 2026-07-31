@@ -21,6 +21,23 @@ publicable per si sola.*
 > primer copy, que repetia la meva premissa. → **Handoff a Sondeig:** servir el recompte (és la peça
 > que fa honesta la supressió del percentatge: «no és zero, són 7 persones»).
 >
+> **✅ B+D PINTAT (#298, 2026-07-31) — i el meu brief hi portava una premissa falsa.**
+> Cada targeta amb rang mostra la **mediana comarcal** (mateix perímetre que el «k de n») i la
+> **mitjana ponderada de Catalunya** (ancoratge oficial), amb el seu denominador cadascuna.
+> ⚠️ **Error meu, caçat per Mirador:** vaig escriure al brief que «una ponderada es diu *sobre N
+> habitants*». **Fals a 2 de les 9**: `pct_noprincipal` es pondera per **HABITATGES** (3.915.127) i
+> `index_envelliment` per **MENORS DE 15 ANYS** (1.079.859). Seguir-me al peu de la lletra hauria
+> escrit «sobre 3.915.127 habitants» sota el % d'habitatge no principal — **una procedència falsa
+> ben maquetada**, que és exactament el que C6 §8.1 existeix per impedir. Resolt derivant el nom del
+> pes, amb guarda que cau si apareix un pes que el front no sap nomenar.
+> **Tercera vegada aquesta sessió que un brief meu porta una premissa falsa i la caça qui l'executa**
+> (D9: «l'ingestor ja porta l'any» · B3: «els recomptes es publiquen» · R-PINTA: «sobre N habitants»).
+> El patró: afirmo del MART el que no he comprovat al SERVIT, o generalitzo d'una mètrica a totes.
+> **Correctiu propi: quan un brief afirmi una propietat de TOTES les mètriques, comprovar-la a totes
+> abans d'enviar-lo, no a l'exemple que tinc al cap.**
+> **Nota de mètode (segona vegada):** R-PINTA no era a `next.md` — va arribar només pel latido
+> (antipatró del Charter). Mirador la va treballar perquè la decisió B+D sí que era al repo.
+>
 > **📐 R-REFERENCIA (recerca de Bea 2026-07-31 + verificació de Talaia). LA SEVA RECERCA HA CAÇAT UN
 > BUG NOSTRE.** Bea porta fonts oficials (ICAEN municipal per sectors, Idescat residus 2024) i
 > proposa referències estratificades. Contrastat número a número:
