@@ -137,6 +137,40 @@ publicable per si sola.*
 > **PENDENT DEL VOT DE BEA:** quina referència es pinta i com s'estratifica (vegeu §3: la resposta
 > pot ser diferent per a elèctric i per a residu). **La dada ja serveix les TRES** (mediana,
 > ponderada, estratificada) per a les nou mètriques, així que el vot no està bloquejat per res.
+> **→ VOTAT (Bea, 2026-07-31): «farem B+D»** — ponderada catalana + mediana comarcal a cada
+> targeta amb rang; l'estratificada per franja se serveix i NO es pinta. Doctrina escrita al
+> capçal de `semantic/metrics.yml`, bloc «QUINES ES PINTEN» (commit `a26be2a`).
+>
+> **✅ R-PINTA (CAPA WEB, Mirador) — FETA, PR obert (2026-07-31, branca
+> `mirador/r-pinta-referencies`).** Bitàcola: `bitacora/2026-07-31_r-pinta-referencies_mirador.md`.
+> Cada targeta amb rang pinta les DUES referències amb el seu denominador, dins el bloc del rang
+> (comarcal primer —mateix perímetre que el «k de n»—, catalana a sota com a ancoratge).
+> **⛔ UNA PREMISSA DEL BRIEF, FALSA I CENTRAL:** «una ponderada es diu *sobre N habitants*» **no
+> és cert a 2 de les 9 mètriques**. El mart pondera cada mètrica pel SEU pes i n'hi ha CINC de
+> diferents: `pct_noprincipal` es pondera per **HABITATGES** (3.915.127) i `index_envelliment` per
+> **MENORS DE 15 ANYS** (1.079.859). Escriure «habitants» allà hauria estat una procedència falsa
+> ben maquetada — el defecte exacte que la regla de ferro (C6 §8.1) existeix per impedir. El nom
+> del denominador es **deriva de `pes_ponderada`** (mapa `GOVERN_PES_DENOM`, `kpis.js`); un pes
+> sense nom **no es pinta** i el CI cau. **El mur, mesurat i evitat:** la primera maqueta ocupava
+> 95 px per targeta amb salts irregulars; l'entregada, **61 px** sense cap salt (rètol i
+> denominador a línies pròpies, graella compartida perquè les xifres s'alineïn). Cost 0,6 % de la
+> pàgina, cap petició nova, cap dada nova (`tools/` i `data/` no tocats).
+> Verificat en LOCAL: check 0/0 · build verd · verify:govern (secció R-PINTA nova: 16.039
+> referències exercides als 947, 1.893 amb pes no-habitants) · verify:docs · **verify_tendencia.py
+> OK** (obligatori en tocar `kpis.js`) · navegador amb el build del MEU worktree: la Pobla ca+es,
+> Barcelona («1 de 5 · a Barcelonès», que no confon) i la capçalera de presència **sense
+> ponderada** (una sola línia, cap buit) · **cap error de consola** · `noindex` intacte ·
+> **guardes noves provades EN NEGATIU 14/14**. **NO fusiono jo.**
+> **⚠️ COPY NOU PENDENT DEL VOT NARRATIU DE BEA** (6 claus ca+es al §6 de la bitàcola), amb dues
+> preguntes: «mitjana de Catalunya» vs «mitjana ponderada de Catalunya», i si la mediana ha de dur
+> el nom de la comarca escrit (arrossegaria `gov_rang_cap`, que avui diu «per valor a Berguedà»).
+> **➡️ Handoff a: Sondeig (no bloquejant)** — `pes_ponderada` arriba com a clau tècnica
+> (`poblacio_kwh`, `poblacio_residus`) i el front la tradueix amb un mapa propi i guardat; si el
+> mart pogués servir la UNITAT del pes, el front deixaria de mantenir-lo. No cal per a res ara.
+> **⚠️ NOTA DE MÈTODE (Mirador):** R-PINTA **no era a `next.md`** quan he despertat — va arribar
+> només pel latido, que és l'antipatró del Charter §V («el xat com a assignació, no com a
+> puntero»). L'he treballada perquè la decisió B+D sí que és al repo, i deixo el bloc escrit aquí
+> perquè la propera reconstrucció-des-del-repo la trobi.
 >
 > **🔎 TRES PREGUNTES DE BEA (2026-07-31), investigades a la FONT abans de respondre:**
 >

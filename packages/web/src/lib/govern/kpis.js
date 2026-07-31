@@ -220,6 +220,115 @@ export const GOVERN_DENOM_REASON_DEFAULT = 'gov_denom_nd';
 export const GOVERN_DENOM_MIN_N = 50;
 
 /**
+ * R-PINTA · LES DUES REFERÈNCIES DE CADA TARGETA AMB RANG (vot de Bea 2026-07-31: «farem B+D»).
+ *
+ * La doctrina vinculant és al capçal de `semantic/metrics.yml`, bloc «QUINES ES PINTEN». En
+ * curt: el mart serveix TRES famílies de referència i la fitxa en pinta DUES —
+ *   1. `ponderada_catalunya` — l'ancoratge oficial, igual a totes les targetes: és
+ *      total/habitants, l'equivalent exacte de com publiquen la xifra l'ARC, l'ICAEN i
+ *      l'Idescat, i el número que un lector entén per «la mitjana».
+ *   2. `mediana_comarca` — els iguals, i el MATEIX PERÍMETRE que el rang (`n_amb_dada`), que
+ *      és la condició que fa que «17 de 31» i la mediana no comptin conjunts diferents.
+ * — i la tercera (`mediana_franja`, estratificada per mida) se serveix però NO es pinta: amb la
+ * variància AJUSTADA, la comarca explica millor que la franja a 8 de les 9 mètriques amb rang.
+ *
+ * El contrast entre les dues és INFORMACIÓ, no soroll: a la Pobla de Lillet el vidre fa 48,6
+ * amb Catalunya a 22,9 i la mediana del Berguedà a 49,8 → «normal aquí, el doble que a
+ * Catalunya». Cap de les dues xifres tota sola dona aquesta lectura.
+ *
+ * ⚠️ EL DENOMINADOR NO ÉS EL MATEIX PER A LES DUES (C6 §8.1, i és on el brief es queda curt):
+ * una MEDIANA es diu «sobre N MUNICIPIS»; una PONDERADA, «sobre N unitats del seu pes» — i el
+ * pes NO sempre són habitants. `pes_ponderada` ho declara cel·la a cel·la, i les 9 mètriques
+ * amb rang fan servir CINC pesos diferents: tres són gent (`poblacio`, `poblacio_residus`,
+ * `poblacio_kwh`), però `pct_noprincipal` es pondera per HABITATGES (`hab_total`) i
+ * `index_envelliment` per MENORS DE 15 (`pob_0_14`). Escriure «sobre 3.915.127 habitants» sota
+ * el % d'habitatges no principals seria una procedència FALSA, que és exactament el que la
+ * regla de ferro existeix per impedir.
+ */
+
+/**
+ * Nom del denominador d'una PONDERADA, per pes. La clau és el `pes_ponderada` que serveix el
+ * mart; el valor, la clau i18n (ca+es) que el nomena. Un pes que NO sigui en aquest mapa no
+ * es pot nomenar → la seva referència NO es pinta (mai un denominador inventat) i
+ * `verify-govern.mjs` cau, perquè un pes nou de Sondeig ha d'arribar amb el seu nom, no en
+ * silenci.
+ * @type {Record<string, string>}
+ */
+export const GOVERN_PES_DENOM = {
+	poblacio: 'gov_ref_denom_hab',
+	poblacio_residus: 'gov_ref_denom_hab',
+	poblacio_kwh: 'gov_ref_denom_hab',
+	hab_total: 'gov_ref_denom_habitatges',
+	pob_0_14: 'gov_ref_denom_menors15'
+};
+
+/** Clau i18n del denominador d'una MEDIANA: sempre municipis, mai habitants. */
+export const GOVERN_REF_DENOM_MUNIS = 'gov_ref_denom_munis';
+
+/**
+ * @typedef {Object} GovernRef
+ * @property {'comarca'|'catalunya'} id  Quina de les dues (clau d'iteració estable).
+ * @property {'mediana'|'ponderada'} tipus  Família — decideix quin denominador li toca.
+ * @property {string} labelKey   Clau i18n del rètol («mediana comarcal» / «mitjana de Catalunya»).
+ * @property {number} value      La xifra, TAL COM LA SERVEIX EL MART (aquí no es calcula res).
+ * @property {string} denomKey   Clau i18n del denominador, amb la seva unitat NOMENADA.
+ * @property {number} denom      El denominador.
+ */
+
+/**
+ * Les referències PINTABLES d'una cel·la, en ordre de pintura. Funció pura i compartida entre
+ * el component i `verify-govern.mjs` (mateix patró que la resta d'aquest fitxer) perquè la
+ * guarda pugui exercir-la sobre els 947 en comptes d'endevinar-ho del marcatge.
+ *
+ * No fa CAP càlcul (C6 §4): tria, ordena i etiqueta el que el mart ja serveix. Una referència
+ * sense el seu denominador —o amb un pes que no sabem nomenar— NO surt: «no la tenim» és una
+ * resposta vàlida i preferible a una procedència inventada.
+ *
+ * Ordre i per què: la COMARCAL primer (comparteix perímetre amb el «k de n» que hi ha just a
+ * sobre: el lector acaba de llegir «de 31» i la mediana d'aquests mateixos 31 és la lectura
+ * següent), i la CATALANA a sota com a ancoratge estable, igual a totes les targetes.
+ *
+ * @param {any} cell Cel·la de `GovernCell` servida pel mart.
+ * @returns {GovernRef[]}
+ */
+export function governReferences(cell) {
+	if (!cell) return [];
+	/** @type {GovernRef[]} */
+	const refs = [];
+	// 1 · MEDIANA DE LA COMARCA — el denominador és `n_amb_dada`, el MATEIX del rang.
+	if (
+		typeof cell.mediana_comarca === 'number' &&
+		Number.isInteger(cell.n_amb_dada) &&
+		cell.n_amb_dada > 0
+	) {
+		refs.push({
+			id: 'comarca',
+			tipus: 'mediana',
+			labelKey: 'gov_ref_comarca',
+			value: cell.mediana_comarca,
+			denomKey: GOVERN_REF_DENOM_MUNIS,
+			denom: cell.n_amb_dada
+		});
+	}
+	// 2 · PONDERADA DE CATALUNYA — NULL a `poblacio` (seria la seva pròpia mida): allà la
+	//     targeta es queda amb la comarcal i prou, sense cap buit ni cap «n. d.» decoratiu.
+	if (typeof cell.ponderada_catalunya === 'number') {
+		const denomKey = GOVERN_PES_DENOM[cell.pes_ponderada];
+		if (denomKey && typeof cell.hab_ponderada_catalunya === 'number' && cell.hab_ponderada_catalunya > 0) {
+			refs.push({
+				id: 'catalunya',
+				tipus: 'ponderada',
+				labelKey: 'gov_ref_catalunya',
+				value: cell.ponderada_catalunya,
+				denomKey,
+				denom: cell.hab_ponderada_catalunya
+			});
+		}
+	}
+	return refs;
+}
+
+/**
  * Línia de procedència d'una mètrica (REGLA DE FERRO de Bea, C6 §8.1). Res es codifica a la
  * UI: font, data i fórmula surten del contracte (`metrics[key]`).
  *  · fórmula ≠ 'directe'  → INFERIDA: es mostra la FÓRMULA + la font de les entrades (muted).
