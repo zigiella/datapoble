@@ -207,14 +207,17 @@
 		</section>
 
 		<!-- ELS QUE NO EN TENEN (esmena de Bea): al FINAL, en un bloc a part i SENSE rang. No
-		     desapareixen i no s'ordenen com si el seu valor fos zero. -->
+		     desapareixen i no s'ordenen com si el seu valor fos zero.
+		     VOT DE BEA (2026-08-01): aquí NO s'explica el motiu — «posem sense dada i no expliquem».
+		     La doctrina es manté sencera (hi surten, no s'ordenen, diuen «sense dada» i mai un 0);
+		     el que es retira és NOMÉS la prosa del perquè, que en una llista era soroll. L'explicació
+		     segueix VIVA a la targeta de la fitxa, que és on Bea la va demanar («no vol dir zero»). -->
 		{#if ll.sense.length}
 			<section class="ds-sec">
 				<div class="ds-sec__hd">
 					<span class="ref">◌</span>
 					<h2>{m.llistat_sense_title({ n: String(ll.sense.length) })}</h2>
 				</div>
-				<p class="lst-denom">{m.llistat_sense_lead()} {denomReason}</p>
 				<ul class="lst-rows lst-rows--sense">
 					{#each ll.sense as mu (mu.ine5)}
 						<li>
