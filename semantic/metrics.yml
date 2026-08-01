@@ -41,6 +41,25 @@
 #   segueixen sent vàlides com a recerca; el que no poden és sostenir una frase pública sobre
 #   un municipi com si fossin una mesura.
 #
+# LLINDAR MINIM N DE LA CAPA ORIGEN: RETIRAT (vot de Bea, 2026-08-01 — "si tenim la dada la posem,
+# no es cap drama"). Fins avui suprimiem el percentatge d'origen als municipis de menys de 50
+# habitants (var `demografia_min_n`), amb l'argument que assenyalaria veins concrets.
+#   PER QUE ES RETIRA, verificat abans de decidir: la FONT no calla res —0 dels 947 municipis
+#   arriben sense recompte— i publica obertament tant el recompte com la poblacio. La Quar: 7
+#   persones amb nacionalitat estrangera i 44 habitants, les dues xifres publiques a Idescat.
+#   Suprimir-ne la divisio no protegia ningu: amagava un calcul que qualsevol pot fer amb dues
+#   xifres publiques. I feia dany real: la Quar (15,9%, la 2a de la seva comarca) desapareixia del
+#   rang, i la seva fitxa deixava un "n. d." al costat d'un "6 nascuts a l'estranger" que un lector
+#   llegiria com si fos la xifra d'estrangers (i son conjunts diferents: 7 amb passaport, 6 nascuts
+#   fora).
+#   ERROR DE TALAIA: vaig afegir una capa de secret NOSTRA sense comprovar si la font ja en tenia.
+#   Regla que en surt: abans de suprimir res per privacitat, mirar que la font no ho publiqui ja.
+#   LA PRECAUCIO QUE SI QUE VAL —que un percentatge sobre 44 persones es imprecis— NO es de
+#   privacitat sino de PRECISIO, i ja te el seu lloc: el caveat de micromunicipi (E13), que Bea va
+#   aprovar amb les seves paraules ("En municipis de menys de 250 persones, aquesta dada pot ser
+#   poc precisa"). El senyal honest es dir-ho, no amagar-ho.
+#   `confianca_origen: baixa` es MANTE: es la marca honesta, i marcar no es suprimir.
+#
 # DELTA D'UN NIVELL SUPRIMIT (2026-07-31). Troballa de Mirador a B3, i és una incoherència
 # NOSTRA: a la Quar (44 hab) el `pct_nacionalitat_estrangera` surt «n. d.» —el suprimim perquè amb
 # tan poca gent el percentatge assenyalaria veïns concrets— i tot seguit li pintem el moviment
