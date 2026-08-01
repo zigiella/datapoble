@@ -24,13 +24,17 @@
  *
  *   node scripts/verify-govern.mjs
  */
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import {
 	GOVERN_KPIS,
 	GOVERN_RANK_KEYS,
+	GOVERN_UNIT,
+	governUnit,
+	metricaSlug,
+	metricaFromSlug,
 	PRESENCIA_KEY,
 	EDATS_BANDS,
 	NAIX_BAR_KEYS,
@@ -47,6 +51,14 @@ import {
 // W1 · la regla d'article (slug, forma corrent, clau d'ordenació) també és font ÚNICA i
 // importada: la guarda de col·lisió dels 947 ha d'exercir el `toSlug` REAL, no una còpia.
 import { toSlug, nomCanonic, nomIndex } from '../src/lib/contract/slug-core.js';
+// W2 · la taula de gènere de les 43 comarques i la funció d'article, exercides aquí sobre els
+// noms REALS de la partició territorial (no una llista escrita al test).
+import {
+	COMARCA_GENERE,
+	COMARCA_GENERES,
+	deComarca,
+	laComarca
+} from '../src/lib/contract/comarca-nom.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO = resolve(__dirname, '../../..');
@@ -1225,6 +1237,402 @@ let nRefsPonderadaNoHab = 0;
 	}
 }
 
+// ── W2 · EL RANG, CLICABLE + EL NOM DE LA COMARCA A LA MEDIANA ──────────────────────────────
+// Dues peticions de Bea (2026-07-31) que van juntes perquè xoquen al mateix centímetre de
+// targeta: la mediana ha de dur el NOM de la comarca escrit («mediana del Berguedà») i el rang
+// ha de portar al LLISTAT d'aquella mètrica a aquella comarca.
+//
+// Aquesta secció vigila tres coses que, si es trenquen, ho fan en silenci:
+//  (1) L'ARTICLE. Una taula lèxica de 43 entrades que ningú tornarà a mirar. Si arriba una
+//      comarca nova, o el mart en canvia el nom, el rètol es quedaria sense article — o pitjor,
+//      amb el d'una altra. S'exerceix `deComarca` sobre les 43 REALS, en ca i es.
+//  (2) EL NOM, UNA SOLA VEGADA per targeta. `gov_rang_cap` deia « · per valor a {comarca}» just
+//      a sobre de la mediana; amb el vot de Bea el nom hi sortiria dues vegades seguides. La
+//      guarda simula el text de la targeta i compta.
+//  (3) EL LLISTAT. Que cada rang tingui destí i que el destí digui EL MATEIX que la targeta:
+//      mateix ordre (el `rang` llegit, no un `sort` pel valor), mateixos empats, mateixes
+//      referències, i els municipis sense dada al final AMB motiu i sense desaparèixer.
+let nLlistes = 0;
+let nLlistaFiles = 0;
+let nLlistaSense = 0;
+let nEmpatsLlista = 0;
+let nComarquesArticle = 0;
+{
+	const munisDeComarca = new Map(); // comarca → ine5[]
+	for (const [ine5, t] of Object.entries(territori)) {
+		if (!t?.comarca) continue;
+		if (!munisDeComarca.has(t.comarca)) munisDeComarca.set(t.comarca, []);
+		munisDeComarca.get(t.comarca).push(ine5);
+	}
+	const comarquesReals = [...munisDeComarca.keys()].sort();
+
+	// (a) LA TAULA D'ARTICLE COBREIX EXACTAMENT LES COMARQUES REALS. Ni una de menys (rètol sense
+	//     article) ni una de més (entrada morta que ningú notaria).
+	for (const c of comarquesReals) {
+		ok(c in COMARCA_GENERE, `la comarca '${c}' no és a COMARCA_GENERE: el rètol de la mediana ` +
+			`es quedaria sense el seu article i ningú se n'adonaria`);
+	}
+	for (const c of Object.keys(COMARCA_GENERE)) {
+		ok(
+			munisDeComarca.has(c),
+			`COMARCA_GENERE declara '${c}', que no és cap de les ${comarquesReals.length} comarques de ` +
+				`la partició territorial (entrada morta o nom canviat)`
+		);
+	}
+	for (const [c, g] of Object.entries(COMARCA_GENERE)) {
+		ok(COMARCA_GENERES.includes(g), `COMARCA_GENERE['${c}'] = ${JSON.stringify(g)}: gènere no admès`);
+	}
+
+	// (b) `deComarca` i `laComarca` EXERCIDES sobre les 43 reals, en els dos locales. Cap `null`,
+	//     cap contracció impossible («de el», «de la l'»), i el nom hi surt sencer i una vegada.
+	for (const c of comarquesReals) {
+		for (const loc of ['ca', 'es']) {
+			const de = deComarca(c, loc);
+			const la = laComarca(c, loc);
+			ok(!!de, `deComarca('${c}', '${loc}') → null: la mediana es quedaria sense nom`);
+			ok(!!la, `laComarca('${c}', '${loc}') → null`);
+			if (!de || !la) continue;
+			ok(de.endsWith(c), `deComarca('${c}', '${loc}') = «${de}»: no acaba amb el nom sencer`);
+			ok(la.endsWith(c), `laComarca('${c}', '${loc}') = «${la}»`);
+			ok(
+				!/\bde el\b|\bde els\b|\bde la l['’]|\s{2}/.test(de),
+				`deComarca('${c}', '${loc}') = «${de}»: contracció mal formada`
+			);
+			ok(
+				de.split(c).length === 2,
+				`deComarca('${c}', '${loc}') = «${de}»: el nom hi surt més d'una vegada`
+			);
+		}
+		nComarquesArticle++;
+	}
+	// Àncores de les cinc formes que existeixen a Catalunya. Si algú «simplifica» la taula a una
+	// regla d'ortografia, aquestes cinc cauen: el gènere és lèxic, no es dedueix del nom
+	// (Garrotxa és femenina i Garraf masculí; Osona no porta article i Anoia sí).
+	const ANCORES_CA = {
+		Berguedà: 'del Berguedà',
+		'Alt Empordà': "de l'Alt Empordà",
+		Anoia: "de l'Anoia",
+		Garrotxa: 'de la Garrotxa',
+		Garrigues: 'de les Garrigues',
+		Osona: "d'Osona"
+	};
+	for (const [c, esperat] of Object.entries(ANCORES_CA)) {
+		ok(
+			deComarca(c, 'ca') === esperat,
+			`deComarca('${c}', 'ca') = «${deComarca(c, 'ca')}», s'esperava «${esperat}»`
+		);
+	}
+	// I el castellà NO elideix davant de vocal: «del Alt Empordà», no «de l'Alt Empordà».
+	ok(
+		deComarca('Alt Empordà', 'es') === 'del Alt Empordà' && deComarca('Osona', 'es') === 'de Osona',
+		`la contracció castellana no segueix la seva pròpia regla (elideix com el català)`
+	);
+
+	// (c) EL COPY: el nom de la comarca, UNA SOLA VEGADA a la targeta (vot de Bea).
+	ok(
+		!/\{comarca\}/.test(String(ca.gov_rang_cap)) && !/\{comarca\}/.test(String(es.gov_rang_cap)),
+		`'gov_rang_cap' torna a portar {comarca}: amb «mediana del Berguedà» just a sota, el nom ` +
+			`sortiria DUES vegades a la mateixa targeta (vot de Bea, 2026-07-31)`
+	);
+	ok(
+		/\{comarca\}/.test(String(ca.gov_ref_comarca)) && /\{comarca\}/.test(String(es.gov_ref_comarca)),
+		`'gov_ref_comarca' ja no porta {comarca}: la mediana ha de dur el NOM de la comarca escrit`
+	);
+	for (const k of ['gov_ref_comarca_nd', 'gov_rang_llink']) {
+		ok(!!ca[k] && !!es[k], `i18n '${k}' absent (ca/es)`);
+	}
+	ok(
+		!/\{comarca\}/.test(String(ca.gov_ref_comarca_nd)),
+		`el rètol de recanvi 'gov_ref_comarca_nd' porta {comarca}: existeix precisament per al cas ` +
+			`en què no en sabem l'article`
+	);
+	ok(
+		/m\.gov_rang_cap\(\)/.test(pageSrc),
+		`la fitxa segueix passant paràmetres a 'gov_rang_cap': el nom de la comarca hi tornaria`
+	);
+	ok(
+		/m\.gov_ref_comarca\(\{\s*comarca/.test(pageSrc),
+		`la fitxa no passa la comarca al rètol de la mediana`
+	);
+	// Simulació del TEXT VISIBLE del bloc de rang, comarca a comarca: rètol + empat + cua +
+	// els rètols de les dues referències. El nom hi ha de sortir exactament una vegada.
+	for (const c of comarquesReals) {
+		for (const loc of ['ca', 'es']) {
+			const cat = loc === 'ca' ? ca : es;
+			const de = deComarca(c, loc) ?? '';
+			const text = [
+				cat.gov_rang_label,
+				cat.gov_rang_empat,
+				cat.gov_rang_cap,
+				String(cat.gov_ref_comarca).replace('{comarca}', de),
+				cat.gov_ref_catalunya
+			].join(' | ');
+			ok(
+				text.split(c).length === 2,
+				`${c} (${loc}): el nom de la comarca surt ${text.split(c).length - 1} vegades al bloc ` +
+					`de rang («${text}»)`
+			);
+		}
+	}
+
+	// (d) EL SLUG DE MÈTRICA és bijectiu sobre les 9 rankejables: dues mètriques al mateix slug
+	//     compartirien pàgina i pintarien una xifra sota el rètol d'una altra.
+	const slugs = new Set();
+	for (const k of GOVERN_RANK_KEYS) {
+		const s = metricaSlug(k);
+		ok(!slugs.has(s), `col·lisió de slug de mètrica '${s}'`);
+		slugs.add(s);
+		ok(metricaFromSlug(s) === k, `metricaFromSlug('${s}') no torna a '${k}'`);
+		ok(/^[a-z0-9-]+$/.test(s), `el slug de mètrica '${s}' porta caràcters que no són d'URL`);
+	}
+	ok(metricaFromSlug('no-existeix') === null, `un slug desconegut no retorna null: la ruta no faria 404`);
+
+	// (e) LA UNITAT CURTA és font ÚNICA (`kpis.js`): la fitxa i el llistat han de pintar la
+	//     mateixa sota la mateixa xifra. Si la fitxa se'n torna a fer una còpia, cau.
+	ok(
+		/governUnit\(/.test(pageSrc) && !/const GOV_UNIT/.test(pageSrc),
+		`la fitxa torna a tenir la seva pròpia taula d'unitats: el llistat en pintaria una altra`
+	);
+	ok(governUnit('vidre_hab', metrics.vidre_hab) === 'kg', `la unitat curta del vidre ha canviat`);
+	ok(
+		governUnit('pct_noprincipal', metrics.pct_noprincipal) === '%',
+		`el '%' hauria de sortir del format del contracte, no de la taula`
+	);
+	ok(!('pct_noprincipal' in GOVERN_UNIT), `el '%' s'ha escrit a la taula en comptes de derivar-lo`);
+
+	// (f) EL RANG ÉS UN ENLLAÇ, i des del MATEIX snippet compartit (si no, uns rangs serien
+	//     clicables i altres no, que és pitjor que cap).
+	ok(
+		/\{@const href = rangHref\(key\)\}/.test(pageSrc),
+		`el snippet del rang no resol el seu destí: el rang no seria clicable`
+	);
+	ok(
+		(pageSrc.match(/rangHref\(/g) ?? []).length === 2,
+		`'rangHref' es crida des de més d'un lloc: hi hauria rangs clicables i rangs que no`
+	);
+	ok(
+		/class="gov-kpi__ranka"/.test(pageSrc) && /\{@render rangCos\(cell\)\}/.test(pageSrc),
+		`l'enllaç del rang no embolcalla el cos compartit: el marcatge es duplicaria`
+	);
+	ok(
+		(pageSrc.match(/\{@render rangCos\(cell\)\}/g) ?? []).length === 2,
+		`el cos del rang no es reutilitza a les dues branques (amb enllaç i sense)`
+	);
+	ok(
+		/\/comarca\/\$\{toSlug\(com\)\}\/\$\{metricaSlug\(key\)\}/.test(pageSrc),
+		`el destí del rang no es construeix del nom de la comarca i de la clau: hi hauria una URL ` +
+			`escrita a mà, que pot divergir de la pàgina que obre`
+	);
+	ok(
+		/aria-label=\{m\.gov_rang_llink\(/.test(pageSrc),
+		`l'enllaç del rang no diu on va: «17 de 31» sol no és un destí per a un lector de pantalla`
+	);
+
+	// (g) ELS 387 LLISTATS, EXERCITS UN A UN contra el mart. Aquí és on es veuria que la pàgina
+	//     nova diu una cosa diferent de la targeta que hi porta.
+	const LLISTA_DIR = resolve(WEB, 'static/data/govern-llista');
+	ok(
+		existsSync(LLISTA_DIR),
+		`no hi ha ${LLISTA_DIR}: els llistats per comarca × mètrica no s'han generat ` +
+			`(executa 'npm run copy-data'). Una guarda sense l'artefacte no verifica res.`
+	);
+	if (existsSync(LLISTA_DIR)) {
+		for (const comarca of comarquesReals) {
+			const ine5s = munisDeComarca.get(comarca);
+			const cslug = toSlug(comarca);
+			for (const metrica of GOVERN_RANK_KEYS) {
+				const p = resolve(LLISTA_DIR, cslug, `${metricaSlug(metrica)}.json`);
+				if (!existsSync(p)) {
+					ok(false, `falta el llistat ${cslug}/${metricaSlug(metrica)}.json: el rang d'aquella ` +
+						`targeta portaria a un 404`);
+					continue;
+				}
+				const L = read(p);
+				nLlistes++;
+				ok(L.comarca === comarca && L.metrica === metrica, `${p}: comarca/mètrica incoherents`);
+
+				// Cap municipi es perd i cap es repeteix: la llista és la PARTICIÓ sencera.
+				const vistos = [...L.munis, ...L.sense].map((x) => x.ine5);
+				ok(
+					vistos.length === ine5s.length && new Set(vistos).size === ine5s.length,
+					`${comarca}/${metrica}: ${vistos.length} files per a ${ine5s.length} municipis ` +
+						`(algun s'ha perdut o surt dues vegades)`
+				);
+				ok(
+					L.n_comarca === ine5s.length,
+					`${comarca}/${metrica}: n_comarca=${L.n_comarca} i la partició en té ${ine5s.length}`
+				);
+				ok(
+					L.n_amb_dada === L.munis.length,
+					`${comarca}/${metrica}: el denominador publicat (${L.n_amb_dada}) no és el nombre de ` +
+						`files amb rang (${L.munis.length})`
+				);
+
+				// L'ORDRE és el `rang` LLEGIT. Si algú l'ordena pel valor, els empats desapareixen.
+				for (let i = 1; i < L.munis.length; i++) {
+					ok(
+						L.munis[i].rang >= L.munis[i - 1].rang,
+						`${comarca}/${metrica}: la llista no va en ordre de rang a la posició ${i}`
+					);
+				}
+				// Cada fila és la cel·la del mart, sense retocs; i cap valor amagat entre els «sense».
+				const perRang = new Map();
+				for (const mu of L.munis) {
+					const cell = govern[mu.ine5]?.metrics?.[metrica];
+					ok(!!cell, `${comarca}/${metrica}: ${mu.ine5} no és al mart`);
+					if (!cell) continue;
+					ok(
+						mu.valor === cell.valor && mu.rang === cell.rang && mu.empat === !!cell.empat,
+						`${comarca}/${metrica}/${mu.ine5}: la fila no és la cel·la del mart ` +
+							`(s'estaria calculant al nostre costat)`
+					);
+					ok(
+						mu.slug === toSlug(mu.nom),
+						`${comarca}/${metrica}/${mu.ine5}: el slug no surt del nom oficial`
+					);
+					perRang.set(mu.rang, (perRang.get(mu.rang) ?? 0) + 1);
+					nLlistaFiles++;
+				}
+				// EMPATS: un rang compartit ha d'anar marcat a TOTES les files que el comparteixen.
+				for (const mu of L.munis) {
+					const compartit = (perRang.get(mu.rang) ?? 0) > 1;
+					ok(
+						mu.empat === compartit,
+						`${comarca}/${metrica}/${mu.ine5}: rang ${mu.rang} compartit=${compartit} i ` +
+							`empat=${mu.empat} — un empat no pot pintar un guanyador fals`
+					);
+					if (compartit) nEmpatsLlista++;
+				}
+				// ELS QUE NO EN TENEN hi són, i no per un valor amagat: al mart no tenen ni rang ni
+				// valor. (Si un dia el mart servís valor sense rang, aquest municipi ha de sortir a
+				// la llista ordenada, no al calaix del final.)
+				for (const s of L.sense) {
+					const cell = govern[s.ine5]?.metrics?.[metrica];
+					ok(
+						cell && cell.rang == null && cell.valor == null,
+						`${comarca}/${metrica}/${s.ine5}: al calaix «sense dada» amb valor al mart ` +
+							`(${cell?.valor}) — desapareixeria una xifra que tenim`
+					);
+					nLlistaSense++;
+				}
+				// I NO estan ordenats per res que insinuï un valor: la seva clau és el nom.
+				const nomsSense = L.sense.map((s) => nomIndex(s.nom));
+				const ordenats = [...nomsSense].sort(new Intl.Collator('ca').compare);
+				ok(
+					JSON.stringify(nomsSense) === JSON.stringify(ordenats),
+					`${comarca}/${metrica}: els municipis sense dada no van per la clau d'ordenació de ` +
+						`noms — qualsevol altre ordre insinuaria un valor que no tenim`
+				);
+
+				// LES REFERÈNCIES del llistat són LES MATEIXES que les de la targeta que hi porta:
+				// la mateixa funció pura sobre la mateixa dada. Si divergissin, la mediana diria una
+				// cosa a la fitxa i una altra al llistat.
+				const refsLlista = governReferences(L);
+				const cellQualsevol = govern[ine5s[0]]?.metrics?.[metrica];
+				const refsCarta = governReferences(cellQualsevol);
+				ok(
+					JSON.stringify(refsLlista) === JSON.stringify(refsCarta),
+					`${comarca}/${metrica}: el llistat i la targeta pintarien referències diferents`
+				);
+				// La procedència viatja del CONTRACTE, verbatim (C6 §8.1: cap xifra sense font O
+				// fórmula, i el llistat n'és tot xifres).
+				const def = metrics[metrica];
+				ok(
+					!!L.def &&
+						L.def.source === def.source &&
+						L.def.date === def.date &&
+						L.def.formula === def.formula &&
+						L.def.format === def.format &&
+						L.def.label?.ca === def.label?.ca,
+					`${comarca}/${metrica}: la definició del llistat no és la del contracte servit`
+				);
+				const { formula, src } = provenanceLine(L.def);
+				ok(
+					!!(formula || src),
+					`${comarca}/${metrica}: el llistat es pintaria sense font ni fórmula (C6 §8.1)`
+				);
+				ok(
+					L.altres.length === GOVERN_RANK_KEYS.length - 1,
+					`${comarca}/${metrica}: la navegació lateral no porta les altres 8 mètriques`
+				);
+			}
+		}
+	}
+
+	// (h) LA PÀGINA DEL LLISTAT NO CALCULA (C6 §4) i no amaga cap denominador (C6 §8.1).
+	const llistaSrc = readFileSync(
+		resolve(WEB, 'src/routes/comarca/[slug]/[metrica]/+page.svelte'),
+		'utf8'
+	);
+	const llistaCode = llistaSrc
+		.replace(/<!--[\s\S]*?-->/g, ' ')
+		.replace(/\/\*[\s\S]*?\*\//g, ' ')
+		.replace(/(^|[^:])\/\/[^\n]*/g, '$1 ');
+	ok(
+		/governReferences\(/.test(llistaCode),
+		`el llistat no fa servir la funció compartida de referències: en fabricaria de pròpies`
+	);
+	ok(
+		!/\.sort\(/.test(llistaCode),
+		`el llistat ORDENA al front: l'ordre és el 'rang' que serveix el mart (C6 §4)`
+	);
+	for (const camp of ['mediana_franja', 'n_franja', 'franja_poblacio']) {
+		ok(!llistaCode.includes(camp), `'${camp}' arriba al llistat: l'estratificada per mida NO es pinta`);
+	}
+	ok(
+		llistaSrc.includes('class="lst-ref__d"'),
+		`el denominador de la referència no té element propi al llistat`
+	);
+	{
+		const refdCss = (llistaSrc.match(/\.lst-ref__d\s*\{[^}]*\}/g) ?? []).join(' ');
+		ok(refdCss.length > 0, `.lst-ref__d sense estil propi`);
+		ok(
+			!/display\s*:\s*none|visibility\s*:\s*hidden|opacity\s*:\s*(?:0|0?\.0+)\s*[;}]|font-size\s*:\s*0\s*[;}]/.test(
+				refdCss
+			),
+			`el denominador del llistat s'amaga amb CSS: seria una xifra sense procedència`
+		);
+	}
+	// El motiu de l'absència al llistat surt del MATEIX mapa que a la targeta (tres motius
+	// diferents; atribuir-los malament seria mentir amb bona intenció).
+	ok(
+		/GOVERN_DENOM_REASON/.test(llistaCode) && /GOVERN_DENOM_REASON_DEFAULT/.test(llistaCode),
+		`el llistat no llegeix els motius d'absència declarats: se n'inventaria un`
+	);
+	for (const k of [
+		'llistat_eyebrow', 'llistat_title', 'llistat_meta', 'llistat_lead_tots', 'llistat_lead_parcial',
+		'llistat_taula_title', 'llistat_sense_title', 'llistat_sense_lead', 'llistat_sense_val',
+		'llistat_tornar', 'llistat_altres', 'llistat_muni_aria'
+	]) {
+		ok(!!ca[k] && !!es[k], `i18n '${k}' absent (ca/es)`);
+		ok(llistaSrc.includes(k), `la clau '${k}' no es pinta al llistat`);
+	}
+	// El bloc dels «sense dada» ha d'existir de veritat al marcatge: si algú el treu, els
+	// municipis sense xifra tornarien a desaparèixer i ningú ho veuria al diff de la dada.
+	ok(
+		/\{#each ll\.sense as mu/.test(llistaSrc),
+		`el llistat ja no pinta el bloc dels municipis sense dada: tornarien a desaparèixer`
+	);
+	ok(
+		nLlistaSense === 30,
+		`s'esperaven 30 municipis sense dada a tot Catalunya (5 causes de renda, nacionalitat i ` +
+			`l'envelliment de la Febró) i n'hi ha ${nLlistaSense}`
+	);
+	// L'ÀNCORA DE BEA al llistat: la Pobla, 17 de 31 al vidre del Berguedà.
+	{
+		const p = resolve(LLISTA_DIR, 'bergueda', 'vidre-hab.json');
+		if (existsSync(p)) {
+			const L = read(p);
+			const pobla = L.munis.find((x) => x.ine5 === POBLA);
+			ok(
+				pobla?.rang === 17 && L.munis[16]?.ine5 === POBLA && L.munis.length === 31,
+				`la Pobla ja no surt 17a de 31 al vidre del Berguedà (rang ${pobla?.rang}, ` +
+					`posició ${L.munis.findIndex((x) => x.ine5 === POBLA) + 1} de ${L.munis.length})`
+			);
+		}
+	}
+}
+
 if (fails.length) {
 	console.error('VERIFICACIÓ tauler de dades: FALLA');
 	for (const f of fails) console.error(`  [x] ${f}`);
@@ -1267,5 +1675,14 @@ console.log(
 		`habitants (habitatges a pct_noprincipal, menors de 15 a l'envelliment) amb el nom ` +
 		`correcte; 'poblacio' sense ponderada pinta nomes la comarcal als 947, sense cap buit; ` +
 		`l'estratificada per franja no arriba al codi de la fitxa; ancora de la Pobla intacta ` +
-		`(vidre 48,6 · Berguedà 49,8 · Catalunya 22,9).`
+		`(vidre 48,6 · Berguedà 49,8 · Catalunya 22,9). ` +
+		`W2 (el rang, clicable): ${nComarquesArticle} comarques amb article exercit en ca i es ` +
+		`(cap null, cap contraccio mal formada, les cinc formes ancorades) i el nom de la comarca ` +
+		`surt UNA sola vegada per targeta; el rang es un ENLLAC des del mateix snippet, amb desti ` +
+		`derivat del nom i de la clau; ${nLlistes} llistats comarca x metrica exercits un a un ` +
+		`contra el mart — ${nLlistaFiles} files en l'ORDRE DEL RANG llegit (cap sort pel valor), ` +
+		`${nEmpatsLlista} files empatades marcades a totes dues bandes, ${nLlistaSense} municipis ` +
+		`sense dada que hi surten IGUALMENT al final amb el seu motiu (cap valor amagat al mart), ` +
+		`cap municipi perdut ni repetit, i les referencies del llistat identiques a les de la ` +
+		`targeta que hi porta. La Pobla, 17a de 31 al vidre del Bergueda.`
 );

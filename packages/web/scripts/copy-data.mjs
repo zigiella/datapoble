@@ -31,6 +31,12 @@ import {
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+// W2 · la regla de slug i la clau d'ordenació de noms són font ÚNICA (`slug-core.js`), i les
+// claus rankejables i el slug de mètrica també (`govern/kpis.js`): el prebuild les IMPORTA, no
+// en fa una còpia, perquè les URL que genera aquí i les que pinta el front no puguin divergir.
+import { toSlug, nomIndex } from '../src/lib/contract/slug-core.js';
+import { GOVERN_RANK_KEYS, metricaSlug } from '../src/lib/govern/kpis.js';
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // `packages/web/scripts` → arrel del repo són tres nivells amunt.
@@ -82,7 +88,7 @@ function buildCataleg() {
 	const geoPath = resolve(__dirname, '../static/geo/catalunya-municipis.geojson');
 	if (!existsSync(geoPath)) {
 		console.warn(`[copy-data] AVÍS: no s'ha trobat ${geoPath}; no es genera el catàleg de municipis.`);
-		return;
+		return [];
 	}
 	const geo = JSON.parse(readFileSync(geoPath, 'utf8'));
 	const cataleg = geo.features
@@ -93,9 +99,12 @@ function buildCataleg() {
 	writeFileSync(dest, JSON.stringify(cataleg));
 	const kb = (statSync(dest).size / 1024).toFixed(1);
 	console.log(`[copy-data] OK: municipis-cataleg.json → static/data/ (${cataleg.length} munis, ${kb} kB)`);
+	return cataleg;
 }
 
-buildCataleg();
+// El catàleg és la font dels NOMS (i, per tant, dels slugs) de qualsevol llista de municipis:
+// el reaprofita `buildGovernLlistes()` per no tornar a llegir la geometria.
+const CATALEG = buildCataleg();
 
 /**
  * Agrupació territorial `comarques.json` derivada de `data/web/municipis-territori.json`
@@ -193,6 +202,195 @@ function buildGovernSplit() {
 }
 
 buildGovernSplit();
+
+/**
+ * W2 · ELS LLISTATS PER COMARCA × MÈTRICA (`static/data/govern-llista/<comarca>/<metrica>.json`).
+ *
+ * Petició de Bea: cada rang que es pinti ha de portar al llistat d'aquella mètrica a aquella
+ * comarca. Aquesta funció prepara la dada d'aquell llistat, i **no en calcula cap tros**: llegeix
+ * `govern.catalunya.json` (el mart) i el reagrupa per la partició de `municipis-territori.json`,
+ * que és l'autoritat declarada de la partició (la mateixa que fa servir el mart). Mateixa
+ * frontera honesta que `buildGovernSplit()`: la font no es modifica; només es parteix.
+ *
+ * Tres decisions que són DOCTRINA, no format:
+ *  1. **L'ordre és el `rang` LLEGIT**, mai un `sort` pel valor. Ordenar pel valor tornaria a
+ *     calcular l'ordre al nostre costat (C6 §4) i, pitjor, desfaria els empats: el mart en
+ *     declara 220 a Catalunya i un empat no pot pintar un guanyador fals. Dins d'un mateix rang
+ *     els empatats s'ordenen per la clau d'ordenació de noms (`nomIndex`), que és estable i no
+ *     insinua cap ordre de valor.
+ *  2. **Els municipis SENSE dada hi surten igualment**, en un bloc a part al final (esmena de
+ *     Bea, 2026-07-31). «No vol dir zero»: si el buit de la Quar es tractés com un 0, sortiria
+ *     l'ÚLTIMA de la comarca quan pel seu recompte seria de les primeres (7 estrangers de 44 hab
+ *     ≈ 15,9 %, la 2a — xifra verificada per Talaia AL MART; el recompte encara no se serveix al
+ *     web, i per això la pàgina no el pot pintar). El motiu de
+ *     l'absència el resol el front amb el mapa de `kpis.js` (n'hi ha TRES de diferents), que ja
+ *     és la font única d'aquella frase.
+ *  3. **El denominador honest viatja amb la llista**: `n_amb_dada` (LLEGIT del mart) i
+ *     `n_comarca` (recompte de files de la partició territorial). Si divergeixen, la pàgina
+ *     ho ha de dir; per això van tots dos i no un de sol.
+ *
+ * Guardes que trenquen el PREBUILD (no un avís silenciós): si dins d'una mateixa comarca les
+ * cel·les d'una mètrica no coincideixen en vintage, denominador o referències, o si el
+ * `n_amb_dada` del mart no és el nombre de cel·les amb rang que hi hem trobat, l'artefacte
+ * seria una mitja veritat i val més no publicar-lo. (Comprovat el 2026-08-01 sobre els 947:
+ * 0 divergències, 387 parells comarca × mètrica.)
+ */
+function buildGovernLlistes() {
+	const govSrc = resolve(REPO_ROOT, 'data/web/govern.catalunya.json');
+	const terrSrc = resolve(REPO_ROOT, 'data/web/municipis-territori.json');
+	// El catàleg de mètriques (= el contracte semàntic servit) és OBLIGATORI: sense ell la pàgina
+	// pintaria xifres sense font ni fórmula, que és exactament el que C6 §8.1 prohibeix. Si no hi
+	// és, no es genera cap llistat — el «no» honest abans que una pàgina sense procedència.
+	const contracteSrc = resolve(REPO_ROOT, 'data/web/municipis.bergueda.json');
+	for (const p of [govSrc, terrSrc, contracteSrc]) {
+		if (!existsSync(p)) {
+			console.warn(`[copy-data] AVÍS: falta ${p}; no es generen els llistats per comarca × mètrica.`);
+			return;
+		}
+	}
+	if (!CATALEG.length) {
+		console.warn(`[copy-data] AVÍS: catàleg buit; no es generen els llistats per comarca × mètrica.`);
+		return;
+	}
+	const gov = JSON.parse(readFileSync(govSrc, 'utf8'));
+	const terr = JSON.parse(readFileSync(terrSrc, 'utf8'));
+	const metrics = JSON.parse(readFileSync(contracteSrc, 'utf8')).metrics ?? {};
+	const nomByIne5 = new Map(CATALEG.map((mn) => [mn.ine5, mn.nom]));
+
+	/**
+	 * La definició de la mètrica que la pàgina necessita per pintar amb procedència, copiada
+	 * VERBATIM del contracte servit (mai reescrita aquí). Són els MATEIXOS camps que fa servir la
+	 * targeta de la fitxa (`provenanceLine` + rètol + unitat + format), perquè les dues pantalles
+	 * no puguin dir coses diferents de la mateixa xifra. La `definicio` i la `note` llargues no
+	 * hi viatgen: la fitxa i el glossari són el seu lloc, i aquí multiplicarien la pàgina per 10.
+	 */
+	const defDe = (key) => {
+		const d = metrics[key];
+		if (!d) return null;
+		return {
+			key: d.key ?? key,
+			label: d.label,
+			unit: d.unit,
+			format: d.format,
+			source: d.source,
+			date: d.date,
+			formula: d.formula
+		};
+	};
+
+	// Partició territorial: comarca → ine5s + vegueria. L'autoritat, no el govern.json.
+	// La vegueria hi viatja perquè la pàgina pugui pintar l'espina sencera sense carregar
+	// `comarques.json` (12 kB que SvelteKit incrustaria a cadascuna de les 1.161 pàgines).
+	const byComarca = new Map();
+	for (const [ine5, t] of Object.entries(terr)) {
+		if (!t?.comarca) continue;
+		if (!byComarca.has(t.comarca)) byComarca.set(t.comarca, { vegueria: t.vegueria || '', ine5s: [] });
+		byComarca.get(t.comarca).ine5s.push(ine5);
+	}
+
+	const dir = resolve(DEST_DIR, 'govern-llista');
+	mkdirSync(dir, { recursive: true });
+	const coll = new Intl.Collator('ca');
+	const slugSeen = new Map();
+	let nFitxers = 0;
+	let nFiles = 0;
+	let nSense = 0;
+
+	for (const [comarca, { vegueria, ine5s }] of byComarca) {
+		const cslug = toSlug(comarca);
+		if (slugSeen.has(cslug) && slugSeen.get(cslug) !== comarca) {
+			throw new Error(`[copy-data] col·lisió de slug de comarca "${cslug}": ${slugSeen.get(cslug)} vs ${comarca}`);
+		}
+		slugSeen.set(cslug, comarca);
+		const cdir = resolve(dir, cslug);
+		mkdirSync(cdir, { recursive: true });
+
+		for (const metrica of GOVERN_RANK_KEYS) {
+			const def = defDe(metrica);
+			if (!def) {
+				throw new Error(
+					`[copy-data] ${comarca}/${metrica}: el contracte servit no declara aquesta mètrica. ` +
+						`Un llistat sense font ni fórmula no es publica (C6 §8.1).`
+				);
+			}
+			const munis = [];
+			const sense = [];
+			/** Camps que han de ser IDÈNTICS a totes les cel·les de la comarca per a la mètrica. */
+			let comu = null;
+			for (const ine5 of ine5s) {
+				const cell = gov[ine5]?.metrics?.[metrica];
+				if (!cell) {
+					throw new Error(
+						`[copy-data] ${comarca}/${metrica}: el mart no serveix la cel·la de ${ine5}. ` +
+							`El llistat no pot dir «de ${ine5s.length}» si no ha vist tots els municipis.`
+					);
+				}
+				const firma = {
+					data: cell.data,
+					n_amb_dada: cell.n_amb_dada,
+					mediana_comarca: cell.mediana_comarca ?? null,
+					ponderada_catalunya: cell.ponderada_catalunya ?? null,
+					hab_ponderada_catalunya: cell.hab_ponderada_catalunya ?? null,
+					pes_ponderada: cell.pes_ponderada ?? null
+				};
+				if (comu === null) comu = firma;
+				else if (JSON.stringify(comu) !== JSON.stringify(firma)) {
+					throw new Error(
+						`[copy-data] ${comarca}/${metrica}: les cel·les del mart no coincideixen en ` +
+							`vintage/denominador/referències (${ine5}). Un llistat amb dues veritats no es publica.`
+					);
+				}
+				const nom = nomByIne5.get(ine5) ?? ine5;
+				const base = { ine5, nom, slug: toSlug(nom) };
+				if (cell.rang == null) sense.push(base);
+				else munis.push({ ...base, valor: cell.valor, rang: cell.rang, empat: !!cell.empat });
+			}
+			if (comu === null) continue; // comarca sense municipis: impossible, però no s'inventa un fitxer
+
+			// ORDRE = el rang LLEGIT. Els empatats (mateix rang) s'ordenen per la clau d'ordenació
+			// de noms: estable, i no insinua cap ordre de valor que el mart no hagi declarat.
+			munis.sort((a, b) => a.rang - b.rang || coll.compare(nomIndex(a.nom), nomIndex(b.nom)));
+			sense.sort((a, b) => coll.compare(nomIndex(a.nom), nomIndex(b.nom)));
+
+			if (comu.n_amb_dada !== munis.length) {
+				throw new Error(
+					`[copy-data] ${comarca}/${metrica}: el mart diu n_amb_dada=${comu.n_amb_dada} i hi ha ` +
+						`${munis.length} municipis amb rang. El denominador publicat ha de ser el que es veu.`
+				);
+			}
+			// Navegació lateral: les altres mètriques amb rang de la MATEIXA comarca, amb el seu
+			// rètol del contracte. Viatja amb l'artefacte perquè la pàgina no hagi de carregar el
+			// catàleg sencer de 56 mètriques (73 kB) per pintar 8 enllaços.
+			const altres = GOVERN_RANK_KEYS.filter((k) => k !== metrica).map((k) => {
+				const d = defDe(k);
+				if (!d) throw new Error(`[copy-data] ${metrica}: '${k}' no és al contracte servit`);
+				return { metrica: k, label: d.label };
+			});
+			const out = {
+				comarca,
+				vegueria,
+				metrica,
+				def,
+				altres,
+				...comu,
+				n_comarca: ine5s.length,
+				munis,
+				sense
+			};
+			writeFileSync(resolve(cdir, `${metricaSlug(metrica)}.json`), JSON.stringify(out));
+			nFitxers++;
+			nFiles += munis.length;
+			nSense += sense.length;
+		}
+	}
+	console.log(
+		`[copy-data] OK: ${nFitxers} llistats comarca × mètrica → static/data/govern-llista/ ` +
+			`(${byComarca.size} comarques × ${GOVERN_RANK_KEYS.length} mètriques; ${nFiles} files amb ` +
+			`rang, ${nSense} municipis sense dada que hi surten igualment amb el seu motiu)`
+	);
+}
+
+buildGovernLlistes();
 
 /**
  * Parser CSV mínim però correcte (camps entre cometes amb comes, p. ex. «Prat de Llobregat, el»).

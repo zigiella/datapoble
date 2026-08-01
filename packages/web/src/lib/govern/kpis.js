@@ -174,6 +174,74 @@ export const GOVERN_RANK_KEYS = [
 ];
 
 /**
+ * Unitat CURTA editorial de cada xifra del tauler (el contracte en dona la llarga; aquí, la
+ * forma curta que cap al costat del número). Vivia dins la fitxa; W2 la puja aquí perquè el
+ * LLISTAT per comarca pinti la mateixa unitat sota la mateixa xifra. Dues còpies d'aquest mapa
+ * serien dues pantalles dient «kg» i «» del mateix vidre.
+ *
+ * Una clau que no hi sigui NO és un forat: cau a l'string buit i el número es queda sense
+ * unitat curta (el rètol del contracte ja diu de què és). El `%` no hi és perquè surt del
+ * `format` del contracte, no d'aquesta taula — vegeu `governUnit`.
+ * @type {Record<string, string>}
+ */
+export const GOVERN_UNIT = {
+	poblacio: 'hab.',
+	renda_neta_persona: '€',
+	kwh_hab: 'kWh',
+	kg_hab_any: 'kg',
+	vidre_hab: 'kg',
+	rtc_per_1000hab: '‰',
+	// D11 · les tres xifres de lloc de naixement són persones, com la població de la qual són
+	// partició (nascuts a Catalunya + resta d'Espanya + estranger = `poblacio`, exacte als 947).
+	poblacio_nascuda_catalunya: 'hab.',
+	poblacio_nascuda_resta_espanya: 'hab.',
+	poblacio_nascuda_estranger: 'hab.'
+};
+
+/**
+ * Unitat curta d'una clau, amb el `%` derivat del `format` DECLARAT al contracte (no escrit a
+ * la taula: si una mètrica deixés de ser percentatge, el símbol ha de marxar sol).
+ * @param {string} key
+ * @param {{format?: string}|undefined} def Definició del contracte per a aquesta clau.
+ * @returns {string}
+ */
+export function governUnit(key, def) {
+	if (def?.format === 'percent') return '%';
+	return GOVERN_UNIT[key] ?? '';
+}
+
+/**
+ * W2 · LA CARA PÚBLICA D'UNA MÈTRICA A LA URL (`/comarca/<comarca>/<metrica>/`).
+ *
+ * Derivada, no una taula a mà: la clau del mart amb els guions baixos convertits en guions.
+ * `pct_noprincipal` → `pct-noprincipal`. No és bonica, però és **estable i verificable**: no hi
+ * ha cap segon nom que mantenir sincronitzat amb el contracte, i per tant no hi ha cap manera
+ * que la URL i la mètrica que pinta divergeixin sense que el CI ho vegi.
+ *
+ * `verify-govern.mjs` comprova que les 9 claus rankejables donin 9 slugs DISTINTS i que la
+ * volta (`metricaFromSlug`) retorni exactament la clau de partida: una col·lisió faria que dues
+ * mètriques compartissin pàgina, que és pintar una xifra sota el rètol d'una altra.
+ * @param {string} key
+ * @returns {string}
+ */
+export function metricaSlug(key) {
+	return String(key).replace(/_/g, '-');
+}
+
+/**
+ * La volta: slug de la URL → clau de mètrica, NOMÉS entre les claus que el mart rankeja. Una
+ * mètrica sense rang no té llistat (no hi hauria ordre a publicar), i un slug desconegut
+ * retorna `null` perquè la ruta faci 404 en comptes d'inventar-se una pàgina buida.
+ * @param {string} slug
+ * @param {string[]} [keys] Claus candidates (per defecte, les rankejables).
+ * @returns {string|null}
+ */
+export function metricaFromSlug(slug, keys) {
+	const cands = keys ?? GOVERN_RANK_KEYS;
+	return cands.find((k) => metricaSlug(k) === slug) ?? null;
+}
+
+/**
  * B3 · PER QUÈ EL DENOMINADOR DEL RANG NO ÉS TOTA LA COMARCA (esmena de Bea, 2026-07-31).
  *
  * El rang es publica sobre `n_amb_dada` —els municipis de la comarca que TENEN la xifra— i
