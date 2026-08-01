@@ -21,6 +21,20 @@ publicable per si sola.*
 > primer copy, que repetia la meva premissa. → **Handoff a Sondeig:** servir el recompte (és la peça
 > que fa honesta la supressió del percentatge: «no és zero, són 7 persones»).
 >
+> **🗳️ VOTS DE BEA (2026-07-31, sobre el copy de R-PINTA) + PETICIÓ NOVA:**
+> 1. **«mitjana de Catalunya»**, no «mitjana ponderada» (decisió de Talaia amb el vist-i-plau del
+>    raonament: el DENOMINADOR ja distingeix les dues —«sobre 31 municipis» vs «sobre 8.012.231
+>    habitants»—, així que «ponderada» només hi afegeix jargó. Si algun dia una targeta hagués de
+>    mostrar les dues mitjanes catalanes alhora, caldria distingir-les pel nom; amb B+D no passa).
+> 2. **La mediana ha de dur el NOM DE LA COMARCA escrit**: «mediana del Berguedà», no «mediana
+>    comarcal». Arrossega `gov_rang_cap` (avui « · per valor a {comarca}»), que s'ha de revisar
+>    perquè el nom no surti dues vegades a la mateixa targeta.
+> 3. **🆕 W2 CONFIRMADA I AMPLIADA: «hem de poder clicar cada vegada que posi rang i accedir a cada
+>    llistat».** No és només la targeta del tauler: **cada rang que es pinti** ha de portar al
+>    llistat d'aquella mètrica per a aquella comarca, amb els municipis ordenats i navegables.
+>    Ja hi ha la dada (mart_govern: valor, rang, n_amb_dada, medianes i ponderades per als 947 × 9)
+>    i ja hi ha l'índex de comarques (#295). Falta la ruta i la pàgina. → **Mirador**.
+>
 > **✅ B+D PINTAT (#298, 2026-07-31) — i el meu brief hi portava una premissa falsa.**
 > Cada targeta amb rang mostra la **mediana comarcal** (mateix perímetre que el «k de n») i la
 > **mitjana ponderada de Catalunya** (ancoratge oficial), amb el seu denominador cadascuna.
