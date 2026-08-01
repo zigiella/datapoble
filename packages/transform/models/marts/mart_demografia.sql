@@ -15,11 +15,22 @@
 --
 -- HONESTEDAT (innegociable):
 --   · Lectura ECOLÒGICA: recomptes municipals, MAI individus.
---   · LLINDAR MÍNIM N (var demografia_min_n): per sota, els percentatges d'origen
---     són soroll / secret estadístic → es marquen confianca_origen='baixa' i NO es
---     publiquen els percentatges fins (es deixen NULL; el recompte brut sí, és públic).
+--   · LLINDAR MÍNIM N: RETIRAT (vot de Bea, 2026-08-01 — doctrina vinculant al capçal de
+--     `semantic/metrics.yml`, bloc «LLINDAR MINIM N DE LA CAPA ORIGEN: RETIRAT»). Fins avui
+--     els percentatges d'origen es deixaven NULL sota `demografia_min_n` habitants. Es
+--     retira perquè la FONT no en calla res: 0 dels 947 municipis arriben sense
+--     `nac_estrangera` i cap sense `pob_nac_total` (verificat sobre stg_demografia_origen,
+--     2026-08-01), o sigui que suprimir la DIVISIÓ de dues xifres que Idescat publica
+--     obertament no protegia ningú — només treia el municipi del rang. La var
+--     `demografia_min_n` NO desapareix: segueix marcant `confianca_origen = 'baixa'`.
+--     MARCAR NO ÉS SUPRIMIR.
+--   · La precaució que sí que val —un percentatge sobre 44 persones és imprecís— és de
+--     PRECISIÓ, no de privacitat, i té el seu lloc al caveat de micromunicipi (E13) i a
+--     `confianca_origen`, no en un NULL.
 --   · El secret estadístic de la font (estrangers '(..)' als micromunicipis) ja
---     arriba com a NULL i es propaga.
+--     arriba com a NULL i es propaga: on la font calli, seguim callant. Avui la foto
+--     d'EMEX no en calla cap; la SÈRIE anual sí (36 dels 947 el 2025), i per això hi ha
+--     municipis amb nivell publicat i sense delta — que és el que toca.
 --   · El desglossament per PAÍS/grans àrees (UE/Magreb/…) NO és viable a escala
 --     municipal per API oberta (secret estadístic sota província) → diversitat_origen
 --     i rejoveniment_migratori queden 'planned' al contracte (vegeu el doc de fonts).
@@ -60,11 +71,14 @@ calc as (
         cast(o.nascuda_catalunya as integer)                            as poblacio_nascuda_catalunya,
         cast(o.nascuda_resta_espanya as integer)                        as poblacio_nascuda_resta_espanya,
 
-        -- Llindar mínim N: per sota, els percentatges d'origen no es publiquen.
+        -- Llindar mínim N: JA NO SUPRIMEIX (vot de Bea 2026-08-01). Sobreviu com a
+        -- bandera de CONFIANÇA: sota `demografia_min_n` habitants el percentatge és
+        -- imprecís (1 persona el mou >2 pp) i es marca `confianca_origen = 'baixa'`.
         (o.pob_nac_total >= {{ var('demografia_min_n') }})              as supera_min_n,
 
         -- ===== MÈTRIQUES NUCLI (percentatges) =====
-        -- Es calculen sempre, però s'EMETEN NULL si no superen el llindar N (sota).
+        -- Es calculen i S'EMETEN SEMPRE que hi hagi numerador i denominador. Si la FONT
+        -- calla el numerador, el NULL ve d'ella i es propaga (no és una decisió nostra).
         round(o.nac_estrangera   / nullif(o.pob_nac_total, 0) * 100, 2) as pct_nac_estr_raw,
         round(o.nascuda_estranger / nullif(o.pob_lloc_naix_total, 0) * 100, 2) as pct_nasc_estr_raw,
 
@@ -101,20 +115,18 @@ select
     poblacio_nascuda_resta_espanya,
 
     -- ===== MÈTRIQUES NUCLI =====
-    -- pct_nacionalitat_estrangera: % amb passaport no espanyol. Es publica només si
-    -- supera el llindar N (si no, NULL: secret/soroll). Lectura ecològica.
-    case when supera_min_n then pct_nac_estr_raw else null end      as pct_nacionalitat_estrangera,
+    -- pct_nacionalitat_estrangera: % amb passaport no espanyol. Es publica per a TOTS els
+    -- municipis que tinguin numerador i denominador (llindar retirat). Lectura ecològica.
+    pct_nac_estr_raw                                                as pct_nacionalitat_estrangera,
 
     -- pct_nascuda_estranger: % nascuda fora d'Espanya. MILLOR proxy d'origen que la
     -- nacionalitat (no depèn de l'estatus jurídic, que la naturalització esborra).
-    case when supera_min_n then pct_nasc_estr_raw else null end     as pct_nascuda_estranger,
+    pct_nasc_estr_raw                                               as pct_nascuda_estranger,
 
     -- bretxa_naturalitzacio = pct_nascuda_estranger − pct_nacionalitat_estrangera.
     -- Mesura quanta gent nascuda fora JA TÉ passaport espanyol (arrelament jurídic):
     -- positiva = comunitat assentada que s'ha naturalitzat; ~0 = arribada recent.
-    case when supera_min_n
-         then round(pct_nasc_estr_raw - pct_nac_estr_raw, 2)
-         else null end                                              as bretxa_naturalitzacio,
+    round(pct_nasc_estr_raw - pct_nac_estr_raw, 2)                  as bretxa_naturalitzacio,
 
     -- Context (ecològic): el municipi mai sol.
     pct_nacionalitat_estrangera_comarca,
@@ -130,7 +142,10 @@ select
     delta_estrangers_finestra,
 
     -- ===== BANDERA DE CONFIANÇA (honestedat abans que precisió) =====
-    -- baixa  = micromunicipi (poblacio < min_n: percentatges suprimits) O la font
+    -- Amb el llindar retirat, aquesta bandera és l'ÚNIC senyal de precisió que queda a la
+    -- capa d'origen: abans deia «a més, t'he suprimit el percentatge»; ara diu «te'l dono,
+    -- i llegeix-lo amb aquesta precaució». Marcar no és suprimir.
+    -- baixa  = micromunicipi (poblacio < min_n: 1 persona mou el % més de 2 pp) O la font
     --          ja ha suprimit els estrangers (secret estadístic).
     -- mitjana= supera el llindar però amb pocs efectius estrangers (<25) → els
     --          percentatges ballen molt amb 1-2 persones.

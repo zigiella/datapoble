@@ -6594,9 +6594,9 @@
         "poblacio_nascuda_catalunya": 34,
         "poblacio_nascuda_resta_espanya": 1,
         "poblacio_nascuda_estranger": 6,
-        "pct_nascuda_estranger": null,
-        "pct_nacionalitat_estrangera": null,
-        "bretxa_naturalitzacio": null,
+        "pct_nascuda_estranger": 14.63,
+        "pct_nacionalitat_estrangera": 12.2,
+        "bretxa_naturalitzacio": 2.43,
         "delta_pct_estrangera_finestra": 3.11,
         "confianca_origen": "baixa"
       }
@@ -7400,9 +7400,9 @@
         "poblacio_nascuda_catalunya": 26,
         "poblacio_nascuda_resta_espanya": 2,
         "poblacio_nascuda_estranger": 0,
-        "pct_nascuda_estranger": null,
-        "pct_nacionalitat_estrangera": null,
-        "bretxa_naturalitzacio": null,
+        "pct_nascuda_estranger": 0,
+        "pct_nacionalitat_estrangera": 0,
+        "bretxa_naturalitzacio": 0,
         "delta_pct_estrangera_finestra": null,
         "confianca_origen": "baixa"
       }
@@ -12546,9 +12546,9 @@
         "poblacio_nascuda_catalunya": 36,
         "poblacio_nascuda_resta_espanya": 2,
         "poblacio_nascuda_estranger": 6,
-        "pct_nascuda_estranger": null,
-        "pct_nacionalitat_estrangera": null,
-        "bretxa_naturalitzacio": null,
+        "pct_nascuda_estranger": 13.64,
+        "pct_nacionalitat_estrangera": 15.91,
+        "bretxa_naturalitzacio": -2.27,
         "delta_pct_estrangera_finestra": 1.62,
         "confianca_origen": "baixa"
       }
@@ -14902,9 +14902,9 @@
         "poblacio_nascuda_catalunya": 21,
         "poblacio_nascuda_resta_espanya": 2,
         "poblacio_nascuda_estranger": 2,
-        "pct_nascuda_estranger": null,
-        "pct_nacionalitat_estrangera": null,
-        "bretxa_naturalitzacio": null,
+        "pct_nascuda_estranger": 8,
+        "pct_nacionalitat_estrangera": 0,
+        "bretxa_naturalitzacio": 8,
         "delta_pct_estrangera_finestra": null,
         "confianca_origen": "baixa"
       }
@@ -38648,9 +38648,9 @@
         "poblacio_nascuda_catalunya": 33,
         "poblacio_nascuda_resta_espanya": 3,
         "poblacio_nascuda_estranger": 2,
-        "pct_nascuda_estranger": null,
-        "pct_nacionalitat_estrangera": null,
-        "bretxa_naturalitzacio": null,
+        "pct_nascuda_estranger": 5.26,
+        "pct_nacionalitat_estrangera": 7.89,
+        "bretxa_naturalitzacio": -2.63,
         "delta_pct_estrangera_finestra": null,
         "confianca_origen": "baixa"
       }
@@ -52474,9 +52474,9 @@
         "poblacio_nascuda_catalunya": 29,
         "poblacio_nascuda_resta_espanya": 4,
         "poblacio_nascuda_estranger": 2,
-        "pct_nascuda_estranger": null,
-        "pct_nacionalitat_estrangera": null,
-        "bretxa_naturalitzacio": null,
+        "pct_nascuda_estranger": 5.71,
+        "pct_nacionalitat_estrangera": 5.71,
+        "bretxa_naturalitzacio": 0,
         "delta_pct_estrangera_finestra": null,
         "confianca_origen": "baixa"
       }
@@ -52722,9 +52722,9 @@
         "poblacio_nascuda_catalunya": 32,
         "poblacio_nascuda_resta_espanya": 4,
         "poblacio_nascuda_estranger": 3,
-        "pct_nascuda_estranger": null,
-        "pct_nacionalitat_estrangera": null,
-        "bretxa_naturalitzacio": null,
+        "pct_nascuda_estranger": 7.69,
+        "pct_nacionalitat_estrangera": 5.13,
+        "bretxa_naturalitzacio": 2.56,
         "delta_pct_estrangera_finestra": 0.18,
         "confianca_origen": "baixa"
       }
@@ -57744,9 +57744,9 @@
         "poblacio_nascuda_catalunya": 39,
         "poblacio_nascuda_resta_espanya": 7,
         "poblacio_nascuda_estranger": 3,
-        "pct_nascuda_estranger": null,
-        "pct_nacionalitat_estrangera": null,
-        "bretxa_naturalitzacio": null,
+        "pct_nascuda_estranger": 6.12,
+        "pct_nacionalitat_estrangera": 0,
+        "bretxa_naturalitzacio": 6.12,
         "delta_pct_estrangera_finestra": null,
         "confianca_origen": "baixa"
       }
@@ -57930,9 +57930,9 @@
         "poblacio_nascuda_catalunya": 41,
         "poblacio_nascuda_resta_espanya": 1,
         "poblacio_nascuda_estranger": 5,
-        "pct_nascuda_estranger": null,
-        "pct_nacionalitat_estrangera": null,
-        "bretxa_naturalitzacio": null,
+        "pct_nascuda_estranger": 10.64,
+        "pct_nacionalitat_estrangera": 8.51,
+        "bretxa_naturalitzacio": 2.13,
         "delta_pct_estrangera_finestra": 0,
         "confianca_origen": "baixa"
       }

@@ -81,12 +81,15 @@ POBLA_ANCHORS: dict[str, tuple[int, int]] = {
     "pct_noprincipal": (10, 31),
     "renda_neta_persona": (19, 31),
     "kg_hab_any": (24, 31),
-    # W3 · les dues noves, comptades a mà sobre el mart. La segona ensenya per què cal
-    # el denominador honest: el Berguedà té 31 municipis però NOMÉS 27 tenen aquest
-    # percentatge (els altres 4 cauen pel llindar mínim N de mart_demografia), i el
-    # rang ho ha de dir — «6 de 27», mai «6 de 31».
+    # W3 · les dues noves, comptades a mà sobre el mart.
     "vidre_hab": (17, 31),
-    "pct_nacionalitat_estrangera": (6, 27),
+    # ⚠️ VA CANVIAR el 2026-08-01 i NO és una deriva: era (6, 27) perquè el llindar mínim N
+    # deixava 4 municipis del Berguedà sense percentatge d'origen. Bea el va retirar («si
+    # tenim la dada la posem») i els 31 el tenen: la Pobla passa de «6 de 27» a «8 de 31»
+    # perquè hi entren, per damunt seu, la Quar (15,91 %) i Fígols (12,20 %) — dos municipis
+    # que el llindar pintava com si no existissin. Reescrita amb el motiu al costat, com les
+    # dues de `kwh_hab`: una àncora que es canvia sense dir per què deixa de ser una àncora.
+    "pct_nacionalitat_estrangera": (8, 31),
 }
 
 # W4 · àncores A MÀ de la MEDIANA (mesurades sobre les nostres 947 dades, verificades

@@ -19,7 +19,11 @@
 --     mateixa xifra puja o baixa segons contra què la miris). Ensenyar-ne només una
 --     seria triar la narrativa; s'emeten totes dues i que el lector les vegi.
 --   · pct_nacionalitat_estrangera / poblacio_nacionalitat_estrangera — Cens anual,
---     finestra 2021→2025 ja calculada a mart_demografia (no es recalcula aquí).
+--     finestra 2021→2025 ja calculada a mart_demografia (no es recalcula aquí). SÈRIE
+--     PARCIAL: la font reserva la sèrie a 16 dels 947 (tots els anys) i aquests surten
+--     'sense_serie' AMB MOTIU, no absents (vegeu `sense_origen_serie`). Són les úniques
+--     dues mètriques del mart amb els DOS estats alhora, i és honest que ho siguin: la
+--     cobertura de la font varia per municipi i no ho pot decidir una llista nostra.
 --   · TOTA LA RESTA (població, franges d'edat, renda, habitatge, residus, energia, RTC,
 --     comerç i restauració) — 'sense_serie'. Població i franges hi són perquè EMEX **no
 --     serveix sèrie**: la seva API només té els filtres id/i/tipus, cap de temporal
@@ -196,6 +200,8 @@ origen_out as (
         false                                                as delta_emmascarat,
         'punts_percentuals'                                  as unitat_delta
     from origen
+    -- els municipis SENSE finestra (la font els reserva la sèrie) NO desapareixen: surten
+    -- per `sense_origen_serie`, com a 'sense_serie' amb el motiu escrit.
     where serie_any_inicial is not null and serie_any_final is not null
 
     union all
@@ -220,6 +226,8 @@ origen_out as (
         false                                                as delta_emmascarat,
         'persones'                                           as unitat_delta
     from origen
+    -- els municipis SENSE finestra (la font els reserva la sèrie) NO desapareixen: surten
+    -- per `sense_origen_serie`, com a 'sense_serie' amb el motiu escrit.
     where serie_any_inicial is not null and serie_any_final is not null
 ),
 
@@ -345,6 +353,39 @@ sense_origen as (
     ) as s(metric, motiu_ca, motiu_es, valor)
 ),
 
+-- SENSE SÈRIE · els municipis on la FONT calla la SÈRIE de nacionalitat (2026-08-01).
+-- Fins avui aquestes files no existien: `origen_out` filtrava `where serie_any_inicial is
+-- not null` i 16 dels 947 es quedaven SENSE CAP FILA de `pct_nacionalitat_estrangera` ni de
+-- `poblacio_nacionalitat_estrangera` — absents, que és el que la doctrina prohibeix («una
+-- fila que falta és invisible; un motiu es pot llegir»). Es veia poc mentre el llindar mínim
+-- N també els amagava el nivell; retirat el llindar (vot de Bea 2026-08-01) el forat queda
+-- a la vista: publiquem el nivell i callem, sense dir-ho, que no en tenim l'evolució.
+--
+-- El límit és de la FONT i no nostre, i té dues cares que convé no confondre:
+--   · la FOTO (Idescat EMEX, Cens anual): la publica per als 947, sense excepcions.
+--   · la SÈRIE anual de població estrangera: en reserva 36 dels 947 el 2025 (54 el 2021), i
+--     a aquests 16 els la reserva TOTS els anys → no hi ha finestra, ni curta.
+-- Són municipis de 25 a 234 habitants. El motiu ho diu sense atribuir a la font cap raó que
+-- no hagi declarat: la reserva, i nosaltres no la substituïm per cap càlcul propi.
+sense_origen_serie as (
+    select d.ine5, m.codi6, d.municipi, s.metric, s.motiu_ca, s.motiu_es, s.valor
+    from {{ ref('mart_demografia') }} d
+    join {{ ref('mart_municipi') }} m on d.ine5 = m.ine5
+    left join {{ ref('int_demografia_deltes') }} k on k.ine5 = d.ine5
+    cross join lateral (
+        values
+            ('pct_nacionalitat_estrangera',
+             'Aquest percentatge el podem calcular avui, però la font oficial no publica la sèrie d''anys anteriors d''aquest municipi: la reserva pel secret estadístic. En tenim la foto, no el moviment — i no l''omplim amb cap càlcul nostre.',
+             'Este porcentaje lo podemos calcular hoy, pero la fuente oficial no publica la serie de años anteriores de este municipio: la reserva por secreto estadístico. Tenemos la foto, no el movimiento — y no la rellenamos con ningún cálculo nuestro.',
+             cast(d.pct_nacionalitat_estrangera as double)),
+            ('poblacio_nacionalitat_estrangera',
+             'La font oficial publica quantes persones amb nacionalitat estrangera hi viuen avui, però no la sèrie d''anys anteriors d''aquest municipi: la reserva pel secret estadístic. En tenim la foto, no el moviment.',
+             'La fuente oficial publica cuántas personas con nacionalidad extranjera viven hoy aquí, pero no la serie de años anteriores de este municipio: la reserva por secreto estadístico. Tenemos la foto, no el movimiento.',
+             cast(d.poblacio_nacionalitat_estrangera as double))
+    ) as s(metric, motiu_ca, motiu_es, valor)
+    where k.serie_any_inicial is null or k.serie_any_final is null
+),
+
 sense_out as (
     select
         ine5, codi6, municipi, metric,
@@ -361,7 +402,9 @@ sense_out as (
         cast(null as double)       as delta_max,
         false                      as delta_emmascarat,
         cast(null as varchar)      as unitat_delta
-    from (select * from sense union all select * from sense_origen)
+    from (select * from sense
+          union all select * from sense_origen
+          union all select * from sense_origen_serie)
 ),
 
 unio as (
