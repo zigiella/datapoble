@@ -348,8 +348,19 @@ web el llegeix; l'únic consumidor és `tools/export_bergueda_bundle.py`, que no
   install -e` al worktree) · signals 182/182 · antifuita electoral 5/5
 * ❌ `semantic/verify_contracte.py` — 2 errors, §6a (contracte, Talaia)
 
-**LOCAL, job `web`:** `npm run check` 0 errors · `npm run verify:docs` OK ·
-❌ `npm run verify:govern` 12 errors, §6b (Mirador)
+**LOCAL, job `web`:** `npm run check` 0 errors (1.298 fitxers) · `npm run verify:docs` OK ·
+`npm run build` **verd** (adapter-static, 2m 23s) · ❌ `npm run verify:govern` 12 errors, §6b (Mirador)
+
+**⚠️ EL CI NO ARRIBA A EXERCIR-HO TOT, i s'ha de dir.** Els dos passos que cauen són **primerencs**
+dins del seu job, així que el runner s'atura abans de la resta: al job `data`, `verify_contracte` va
+davant de `verify_pols_mensual`, `verify_govern`, `verify_tendencia`, `dbt parse`, els onze
+`--check`, `signals` i l'antifuita; al job `web`, `verify:govern` va davant de `verify:docs` i del
+`build`. **Tots aquests passos els he corregut jo en local i són verds** (llista de dalt), però
+**al CI encara no han corregut cap vegada** sobre aquest commit. Ho declaro en comptes de deixar-ho
+llegir com si el vermell fos només d'aquells dos: el dia que els dos handoffs entrin, el CI ha de
+tornar a passar-hi per confirmar-ho. Corregut a la PR #300, run 30703229844: la resta de jobs
+(`repo structure`, `ai evals`, `geo-rag`) **verds**, i els dos vermells amb **exactament** els
+missatges previstos aquí — cap sorpresa.
 
 **Guardes noves provades EN NEGATIU 3/3:** (1) D-DELTA amb una fila valor_actual-NULL+delta
 reinjectada → cau amb el missatge correcte; (2) cobertura per municipi amb una fila esborrada → cau i
