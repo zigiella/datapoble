@@ -1,23 +1,32 @@
-<!-- Adaptador d'eina (Claude Code) del mètode Cambium per a datapoble. ÚNIC fitxer del mètode
-     a l'arrel; la resta viu a .cambium/. Cos compartit amb els altres adaptadors (.cambium/adapters/).
-     Topologia datapoble: una coordinadora (Talaia) que encarna els fronts (Sondeig/Cabal/Brúixola/
-     Mirador/Llegenda) com a persones; la direcció humana (Bea) arriba pel xat i es fixa al repo. -->
+<!-- Adaptador d'eina (Claude Code) per a datapoble. Mètode: Mycelia Relay v0.5 (AGENTS.relay.md +
+     .relay.yml). Substitueix Cambium Charter des del 2026-08-01; .cambium/ queda RETIRAT, no
+     esborrat (vegeu .cambium/RETIRADO.md i l'ADR de la transició). -->
 
-Eres parte del equipo de **datapoble** (riusdegent). Método: **Cambium Charter** (vendorizado en `.cambium/`, sello en `.cambium/VERSION`).
+Eres parte del equipo de **datapoble** (riusdegent). Método: **Mycelia Relay v0.5**.
 
 Antes de actuar:
-- Lee `.cambium/CHARTER.md` y tu rol `docs/equipo/talaia_role.md`.
-- Reglas que no se rompen: `.cambium/REGLAS.md`.
+- Lee **`AGENTS.relay.md`** (el contrato del método) y tu rol en `docs/equipo/*_role.md`.
+- **`REGLAS.md`** (raíz) son las reglas que no se rompen. Relay pide el **mínimo, no el techo**:
+  **cuando digan cosas distintas, mandan las reglas del proyecto.**
+- **`.relay.yml`** declara qué material hay, dónde puede estar y qué se puede hacer con él
+  (`data_map`). Léelo antes de tocar datos: ahí vive la regla 9.
 
-Al despertar (latido manual o programado) — y SIEMPRE al empezar cualquier sesión o turno:
-- git pull → mira tu COLA en bitacora/next.md → trabaja la primera tarea pendiente → abre PR.
-- Tu asignación vive en next.md, NO en el chat: míralo aunque no haya llegado un latido (el latido solo acelera).
+Al empezar cualquier sesión o turno:
+- `git pull` → mira la **cola en GitHub Issues** (etiqueta `ready`) → reclama una → trabaja → abre PR.
+- La cola vive en **Issues**, no en el chat y ya no en `bitacora/next.md` (retirado el 2026-08-01).
 - Si no hay tarea pendiente: no-op silencioso (no escribas en el repo, no inventes trabajo).
-- Si el despertar FALLA (no puedes hacer pull, repo/CI inaccesible): deja ruido (issue/bitácora), nunca en silencio.
-- Si tu tarea es "adopta Cambium Charter vX.Y": pull → relee .cambium/CHARTER.md y tu role.md → adopta lo que toque → confirma por escrito (bitácora/commit "adoptada vX.Y"). Es una tarea de cola normal.
+- Si el arranque FALLA (no puedes hacer pull, repo/CI inaccesible): deja ruido (issue), nunca en
+  silencio.
 
 Siempre:
-- Quédate en tu jurisdicción; fuera de ella: «Handoff a: <agente>» en la bitácora, no edites.
-- El repo es la verdad · el PR es tu entrega · identity-inline en cada commit.
-- Si una fuente falla, no inventes; el "no" es una respuesta válida.
-- El repo se referencia por su URL; nunca escribas rutas locales (C:\…, /home/…) en ficheros versionados.
+- El repo es la verdad · el PR es tu entrega · **identity-inline** en cada commit (nunca el trailer
+  de IA genérico).
+- La propiedad de un frente es **de sentido común, reclamada y temporal**: puedes tocar la zona de
+  otro si mejora el trabajo, diciéndolo. Lo que cuida la calidad es **la verificación**, no la valla.
+- Si una fuente falla, no inventes; el **"no" es una respuesta válida** y preferible a un positivo
+  fabricado.
+- El repo se referencia por su URL; **nunca** escribas rutas locales (`C:\…`, `/home/…`) en ficheros
+  versionados.
+- **Integra Talaia lo rutinario.** Escalan a Bea: publicar datos o web, desplegar, gastar, el
+  go/no-go de la regla 9, cambiar reglas duras, tocar checks o permisos, y el cambio masivo.
+  **Ante la duda, pregunta.**

@@ -1,0 +1,165 @@
+version: 0.5
+
+project:
+  tracker: github-issues
+  default_branch: main
+  # Preferencia, no ley: si el arnes de la agente impone su propio espacio de
+  # nombres, usa el suyo y declara la rama real en el HANDOFF.
+  branch_pattern: "agent/{issue}-{slug}"
+
+ownership:
+  single_writer_per_task: true
+  handoff_required: true
+  claim_timeout_hours: 24
+  # Con una sola cuenta humana la propiedad es declarativa: la firma del commit
+  # es el unico rastro comprobable. Ver AGENTS.relay.md, "Propiedad y relevo".
+  claim_verifiable: false
+  agent_signature: "<nombre>@<proyecto>.local"
+
+runtimes:
+  allowed: [local, cloud]
+  local_shutdown_state: paused-local
+  # Si la propietaria no puede cubrir el entorno declarado: particiona y entrega
+  # su leg; bloquea solo si no es separable; nunca simula el otro entorno.
+  partition_before_block: true
+
+checks:
+  require_pull_request: true
+  require_declared_verification: true
+  # El par del proyecto integra lo rutinario; lo de abajo escala a la direccion.
+  merge_authority: project-par
+  escalate_to_direction:
+    - membrana          # publicar, desplegar, enviar, gastar
+    - reglas-duras      # reglas del proyecto y doctrina
+    - checks-y-permisos # CI, validadores, proteccion de ramas, secretos
+    - cambio-masivo     # barre medio repositorio
+    - duda              # ante la duda se pregunta, siempre
+  # relay-check solo mira los PR que cruzan entornos o cambian de manos; un aviso
+  # que salta siempre se deja de leer.
+  only_cross_environment: true
+  cross_environment_label: "relevo"
+  # El workflow avisa; ponlo en fallo cuando el equipo lo quiera.
+  workflow_strict: false
+
+# DOS EJES INDEPENDIENTES, y ese es el punto: los derechos viajan con el dato, no
+# con la clase. Un material puede estar legitimamente en el repo (clase repository)
+# y ser obra ajena que no se puede reproducir (derechos no-reproducir). La clase
+# sola no lo dice, y por eso las dos van juntas en cada material.
+
+# DONDE puede estar el dato.
+data_classes:
+  repository: "Puede vivir en el repo"
+  cloud-ok: "Puede procesarse en un arnés cloud aprobado"
+  local-only: "Solo ordenador autorizado"
+  synthetic-only: "Cloud recibe solo muestras sintéticas o aprobadas"
+
+# QUE se puede hacer con el, sea cual sea su clase.
+data_rights:
+  libre: "Sin restriccion de derivacion"
+  solo-agregado: "Sale agregado o anonimizado, nunca el dato individual"
+  no-reproducir: "Se puede leer y usar; no copiar ni reproducir su contenido"
+  no-sale: "Ni se copia, ni se imprime, ni se deriva"
+
+# EL MAPA. Vacio no vale: mientras lo este, nadie sabe que puede ver una agente
+# cloud, y validate_config falla a proposito. Cada material con su clase, sus
+# derechos y sus RUTAS: una etiqueta sin ficheros no le dice a nadie a que te
+# refieres. Y recuerda que lo que el proyecto publica deliberadamente no es
+# local-only: lo protegido suele ser la materia prima, no el producto.
+#
+#   sinopsis-de-terceros:
+#     clase: repository          # vive en el repo, es el producto
+#     derechos: no-reproducir    # pero es obra ajena: se lee, no se copia
+#     rutas: ["data/sinopsis.json"]
+#   cache-fuente:
+#     clase: local-only
+#     derechos: solo-agregado    # trae correos: sale el agregado, no el dato
+#     rutas: ["cache/**"]
+data_map:
+  # EL PRODUCTE. El que datapoble publica a proposit: fitxes, taulers, llistats.
+  # Es el que un agent cloud POT llegir sencer; no es materia primera protegida.
+  producte-web:
+    clase: repository
+    derechos: libre
+    rutas: ["data/web/**", "data/etca/**", "data/events/**", "data/geo/**"]
+
+  # ELS MARTS PUBLICATS. Sortida del pipeline, versionada i servida al web.
+  marts-publicats:
+    clase: repository
+    derechos: libre
+    rutas: ["data/marts/mart_municipi.parquet", "data/marts/mart_demografia.parquet",
+            "data/marts/mart_govern.parquet", "data/marts/mart_tendencia.parquet",
+            "data/marts/mart_pols_mensual.parquet", "data/marts/mart_consum_electric.parquet"]
+
+  # REGLA 9 · EL CARRIL DE DADES EN SILENCI. Aqui aterra, i amb una correccio del
+  # terreny: el document de transicio suposava `local-only` i la realitat es que
+  # SI que son al repo (14 fitxers versionats). La clase diu on POT estar; el dret
+  # diu que se'n pot fer. Aixo es materia interna del model d'escala: en surt
+  # l'index o el rang, mai la xifra de presencia absoluta, fins que el seu tipus
+  # passi el go/no-go (rho>=0,7 i error<=15%). El go/no-go NO el decideixo jo:
+  # escala a la direccio.
+  carril-silenci-nivell-c:
+    clase: repository
+    derechos: solo-agregado
+    rutas: ["data/territorial/nivellc_analisi.csv", "data/territorial/nivellc_bases_tipus.csv",
+            "data/territorial/nivellc_regressio.csv", "data/territorial/calibracio_intervals.csv",
+            "data/territorial/discrepancia_etca_pernocta.csv", "data/territorial/senyal_sub1000.csv"]
+
+  # COVARIABLES I MAPES TERRITORIALS. Dada oficial oberta (INE/Idescat/Territori)
+  # i llistes de particio. Es publiquen i es deriven sense problema.
+  covariables-territorials:
+    clase: repository
+    derechos: libre
+    rutas: ["data/territorial/renda_municipi_cat.csv", "data/territorial/comarca_vegueria.csv",
+            "data/territorial/municipis-catalunya.csv", "data/territorial/municipi_litoral.csv",
+            "data/territorial/municipis_costaners.csv", "data/territorial/inputs_bergueda.csv"]
+
+  # CAPA ELECTORAL. Vot de Bea (2026-07-31): "tot el que es vot politic va fora".
+  # Retinguda de l'agent amb test de regressio, fora de l'allow-list de SQL i fora
+  # del web. El parquet versionat es del pilot (31 files) i NO es reconstrueix:
+  # publicar la capa de vot dels 947 es decisio editorial de la direccio.
+  # (Vegeu la nota d'adopcio: aquesta entrada tensa el vocabulari de drets.)
+  capa-electoral:
+    clase: repository
+    derechos: no-sale
+    rutas: ["data/marts/mart_electoral.parquet"]
+
+  # MATERIA PRIMERA. Ingesta de fonts oficials obertes (ARC, Idescat/EMEX, SEPE,
+  # ICAEN, BDNS, RTC). Gitignorada per mida i perque es regenerable, no per
+  # sensibilitat: es dada publica i es pot processar on calgui.
+  raw-fonts-oficials:
+    clase: cloud-ok
+    derechos: libre
+    rutas: ["data/raw/**"]
+
+  # CONFIG DEL RADAR. Els perfils municipals son publics; els DESTINATARIS son
+  # claus simboliques i mai correus (C3 6bis: una "@" aqui es error de carrega,
+  # fail-fast). Els correus reals no son al repo ni hi poden ser: viuen als
+  # secrets, i els cobreix la regla 10.
+  radar-perfils:
+    clase: repository
+    derechos: libre
+    rutas: ["config/municipis/**"]
+
+  # BANC D'OR DEL RADAR. Etiquetatge HUMA de Bea (C4 2 v2: cap agent, cap model
+  # posa cap golden). Es l'instrument de mesura: es llegeix, no es "millora".
+  banc-or-radar:
+    clase: repository
+    derechos: no-reproducir
+    rutas: ["packages/signals/datapoble_signals/banc_c4_congelat.json",
+            "docs/ajuntaments/banc-c4-etiquetatge.md"]
+
+  # SUBSTRAT DEL GEO-RAG. Annex de recerca CONGELAT (31 munis del Bergueda).
+  # No es toca sense ordre explicita; el seu abast reduit es volgut, no estale.
+  geo-rag-substrat:
+    clase: repository
+    derechos: solo-agregado
+    rutas: ["packages/geo-rag/data/**"]
+
+# OPCIONAL Y VACIO POR DEFECTO. Relay funciona entero sin grafo de conocimiento:
+# las reglas duras y las clases de datos viven en el REGLAS.md de este mismo
+# repositorio. El grafo aparece cuando hay VARIOS proyectos que quieren leerse
+# entre si, no antes. Si algun dia lo hay, rellena estos tres campos.
+knowledge:
+  method_repository: null   # metodo de conocimiento, si se usa alguno
+  repository: null          # instancia de conocimiento
+  project_note: null        # nota raiz de este proyecto dentro de esa instancia
