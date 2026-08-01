@@ -42,7 +42,9 @@ import {
 	E13_LLINDAR,
 	GOVERN_DENOM_REASON,
 	GOVERN_DENOM_REASON_DEFAULT,
-	GOVERN_DENOM_MIN_N,
+	GOVERN_ORIGEN_KEYS,
+	GOVERN_RECOMPTE,
+	GOVERN_RECOMPTE_BASE,
 	GOVERN_PES_DENOM,
 	GOVERN_REF_DENOM_MUNIS,
 	governReferences,
@@ -234,7 +236,9 @@ const I18N_UI = [
 	// D9 · atur servit (E4)
 	'gov_atur_u', 'gov_atur_masked', 'gov_atur_absent', 'gov_atur_serie_cap', 'gov_atur_serie_alt',
 	// V3 · redisseny del tauler
-	'gov_grp_a_nota', 'gov_envell_frase', 'gov_e13_micro', 'gov_hut_cru'
+	'gov_grp_a_nota', 'gov_envell_frase', 'gov_e13_micro', 'gov_hut_cru',
+	// 2026-08-01 · el RECOMPTE al costat del percentatge d'origen (llindar retirat)
+	'gov_nac_recompte'
 ];
 for (const k of I18N_UI) ok(!!ca[k] && !!es[k], `i18n '${k}' absent (ca/es)`);
 
@@ -258,7 +262,12 @@ const I18N_GONE = [
 	// La doctrina NO s'afluixa: hi surten igualment, no s'ordenen com si fossin 0 i diuen «sense
 	// dada», mai un buit. El que es retira és l'explicació, que en una llista era soroll; a la
 	// TARGETA de la fitxa segueix viva, que és on Bea la va demanar («no vol dir zero»).
-	'llistat_sense_lead'
+	'llistat_sense_lead',
+	// VOT DE BEA (2026-08-01): retirat el LLINDAR MÍNIM N de la capa origen. `gov_denom_minn`
+	// deia «On no hi és, és perquè hi viuen menys de 50 persones…» i això avui seria FALS: el
+	// percentatge es publica per als 947, també a la Quar (44 hab). Una causa que ja no existeix
+	// no pot quedar-se al catàleg esperant que algú la torni a cablejar.
+	'gov_denom_minn'
 ];
 for (const k of I18N_GONE) {
 	ok(!(k in ca), `i18n '${k}' retirada però encara a ca.json (clau òrfena)`);
@@ -811,13 +820,16 @@ let nHeroLabels = 0;
 // motiu declarat a `kpis.js` amb els 947 municipis servits. Si un dia la dada deixa de sostenir
 // el text, cau aquí i no a la pantalla.
 //
-// (La premissa que va arribar al brief —«qui no té dada és zero»— és FALSA i aquesta secció
-// també ho fixa: els 4 municipis del Berguedà sense percentatge tenen recompte, i dos no són
-// zero —Fígols 5 de 41, la Quar 7 de 44—; tractar-los com a zero pintaria la Quar l'última
-// quan seria la 2a de la comarca.)
+// (La premissa que va arribar al brief de B3 —«qui no té dada és zero»— era FALSA, i el
+// 2026-08-01 la pregunta es tanca a l'arrel: retirat el llindar mínim N, els 4 municipis del
+// Berguedà que no tenien percentatge ja el tenen, i la Quar surt on és —2a de 31— en comptes
+// d'anar a parar al calaix dels «sense dada». Aquesta secció passa a vigilar les DUES causes que
+// queden, i que la retirada no es desfaci sense que ningú ho vegi.)
 const catDataset = read(resolve(REPO, 'data/web/municipis.catalunya.json'));
 const catMunis = catDataset.municipis ?? catDataset;
 let nDenomExplicat = 0;
+let nRecomptePintat = 0;
+let nRecompteDifereix = 0;
 {
 	// (a) CABLATGE: la línia existeix, el loader serveix el total i cada motiu declarat es pinta.
 	const loaderSrc = readFileSync(resolve(WEB, 'src/routes/municipi/[slug]/+page.ts'), 'utf8');
@@ -856,70 +868,176 @@ let nDenomExplicat = 0;
 		ok(pageSrc.includes(k), `el motiu '${k}' es declara però no es pinta enlloc`);
 	}
 
-	// (b) EL LLINDAR QUE EXPLIQUEM ÉS EL NOSTRE DE VERITAT. `demografia_min_n` viu al transform
-	//     (jurisdicció de Sondeig): aquí només es LLEGEIX, per no explicar a la pantalla un
-	//     llindar que allà ja s'ha mogut.
-	const dbtYml = readFileSync(resolve(REPO, 'packages/transform/dbt_project.yml'), 'utf8');
-	const minN = Number((dbtYml.match(/^\s*demografia_min_n:\s*(\d+)/m) ?? [])[1]);
+	// (b) LA CAUSA RETIRADA NO POT TORNAR PER LA PORTA DEL DARRERE (vot de Bea, 2026-08-01).
+	//     `gov_denom_minn` explicava un llindar NOSTRE («hi viuen menys de 50 persones») que ja
+	//     no suprimeix res. Retirar-lo del mapa de motius no basta: la manera realista que torni
+	//     és que algú re-cablegi el text o que el transform torni a emetre NULLs sense que ningú
+	//     ho miri. Aquestes tres guardes tanquen les dues portes.
 	ok(
-		Number.isInteger(minN) && minN === GOVERN_DENOM_MIN_N,
-		`GOVERN_DENOM_MIN_N (${GOVERN_DENOM_MIN_N}) divergeix de demografia_min_n del transform (${minN})`
+		!Object.values(GOVERN_DENOM_REASON).includes('gov_denom_minn'),
+		`'gov_denom_minn' torna a ser un motiu declarat: el llindar mínim N està RETIRAT (doctrina ` +
+			`al capçal de semantic/metrics.yml) i la frase seria falsa per a la Quar i 8 pobles més`
 	);
-
-	// (c) EL MOTIU 'minn' ÉS VERITAT ALS 947: cap municipi sense percentatge d'origen arriba al
-	//     llindar, i cap que l'arribi es queda sense. Si això es trenca, la frase «hi viuen menys
-	//     de 50 persones» passa a ser falsa per a algun poble concret.
-	for (const [i, g] of Object.entries(govern)) {
-		const cell = g.metrics?.pct_nacionalitat_estrangera;
-		if (!cell) continue;
-		const pob = catMunis[i]?.values?.poblacio;
-		if (typeof pob !== 'number') continue;
-		if (cell.valor === null) {
-			ok(
-				pob < GOVERN_DENOM_MIN_N,
-				`${i} sense % de nacionalitat i amb ${pob} hab (≥ ${GOVERN_DENOM_MIN_N}): el motiu ` +
-					`'gov_denom_minn' seria FALS per a aquest municipi`
-			);
-		} else {
-			ok(
-				pob >= GOVERN_DENOM_MIN_N,
-				`${i} amb % de nacionalitat i només ${pob} hab: el llindar declarat no s'estaria aplicant`
-			);
-		}
+	for (const [nom, src] of [
+		['la fitxa', pageSrc],
+		['el llistat', readFileSync(resolve(WEB, 'src/routes/comarca/[slug]/[metrica]/+page.svelte'), 'utf8')],
+		['kpis.js', readFileSync(resolve(WEB, 'src/lib/govern/kpis.js'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, ' ')]
+	]) {
+		ok(
+			!/m\.gov_denom_minn\b/.test(String(src)),
+			`${nom} torna a pintar 'gov_denom_minn': explicaria una supressió que ja no fem`
+		);
 	}
-	// …i el cas fundacional, la Quar (08177): 7 persones de nacionalitat estrangera sobre 44 hab
-	// = 15,9 %, que la faria la 2a de la comarca. Tractar-la com a zero —la premissa que va
-	// arribar al brief— la pintaria l'ÚLTIMA. Per això la línia diu «no vol dir zero».
+	// …i la var del transform ja no pot ser la coartada: si algú la llegís des d'aquí per tornar
+	// a explicar una supressió, estaria explicant el que no passa. Es comprova que el front NO la
+	// llegeix (`demografia_min_n` viu a `packages/transform/`, jurisdicció de Sondeig, i allà
+	// sobreviu com a bandera de CONFIANÇA — marcar no és suprimir).
+	{
+		const kpisSrc = readFileSync(resolve(WEB, 'src/lib/govern/kpis.js'), 'utf8');
+		const kpisCode = kpisSrc.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/(^|[^:])\/\/[^\n]*/g, '$1 ');
+		ok(
+			!/demografia_min_n/.test(kpisCode),
+			`el front torna a declarar el llindar 'demografia_min_n': ja no suprimeix res, i ` +
+				`llegir-lo per explicar una supressió seria explicar el que no passa`
+		);
+	}
+
+	// (c) LA CAPA ORIGEN NO TÉ FORATS NOSTRES, ALS 947. És la meitat que de debò protegeix: el
+	//     dia que una d'aquestes tornés a arribar amb NULL, la pantalla es quedaria sense causa
+	//     declarada (cauria al motiu NEUTRE) i ningú se n'assabentaria mirant la pantalla.
+	//     Verificat abans de retirar el llindar: la FONT no en calla cap —0 dels 947 sense
+	//     recompte ni sense denominador—, així que un NULL nou aquí seria una decisió NOSTRA.
+	for (const key of GOVERN_ORIGEN_KEYS) {
+		let senseValor = [];
+		for (const [i, g] of Object.entries(govern)) {
+			const cell = g.metrics?.[key];
+			if (cell && cell.valor === null) senseValor.push(i);
+		}
+		ok(
+			senseValor.length === 0,
+			`'${key}' torna a tenir forats (${senseValor.length}: ${senseValor.slice(0, 5).join(', ')}…): ` +
+				`el llindar mínim N està retirat i la FONT no en calla cap — el NULL seria nostre`
+		);
+		// I al DATASET servit, que és d'on beu la fitxa (el mart i el dataset poden divergir).
+		const senseDataset = Object.entries(catMunis).filter(
+			([, r]) => r?.values?.[key] == null
+		);
+		ok(
+			senseDataset.length === 0,
+			`'${key}' absent al dataset servit a ${senseDataset.length} municipis (p. ex. ` +
+				`${senseDataset.slice(0, 3).map(([i]) => i).join(', ')})`
+		);
+	}
+	// …i el cas fundacional, la Quar (08177), que ara diu el contrari del que deia: 7 persones
+	// amb nacionalitat estrangera sobre 44 hab = 15,91 %, LA 2a DEL BERGUEDÀ. Fins al 2026-08-01
+	// el nostre llindar li suprimia el percentatge i la treia del rang on és; el vot de Bea el va
+	// retirar («si tenim la dada la posem, no és cap drama») perquè la font publica obertament les
+	// dues xifres i amagar-ne la divisió no protegia ningú.
 	//
-	// ⚠️ El que NO pot dir és «el recompte sí que es publica»: el 7 viu a `mart_demografia`
-	// (`poblacio_nacionalitat_estrangera`) i NO arriba al web —no és al contracte servit ni a cap
-	// dataset—, així que a la fitxa de la Quar no hi ha cap xifra de nacionalitat. Aquesta guarda
-	// planta la frontera als DOS costats: mentre no se serveixi, el text no el pot prometre; i el
-	// dia que Sondeig el serveixi, cau per obligar a REESCRIURE la frase (que llavors es queda
-	// curta), no per castigar la millora — mateix patró que la nota «foto, no sèrie» (§9b).
+	// Aquesta guarda ancora les TRES xifres que un lector de la Quar ha de poder distingir —7 amb
+	// passaport, 15,91 %, 6 nascuts a l'estranger— perquè confondre'n dues era l'error real que
+	// va motivar tot això: es veia un «6» al costat d'un «n. d.» i es concloïa que els estrangers
+	// eren 6. Són conjunts diferents i el 7 ≠ 6 ho demostra en aquest mateix poble.
 	{
 		const QUAR = '08177';
 		const v = catMunis[QUAR]?.values ?? {};
+		const cellQuar = govern[QUAR]?.metrics?.pct_nacionalitat_estrangera;
 		ok(
-			govern[QUAR]?.metrics?.pct_nacionalitat_estrangera?.valor === null,
-			`la Quar (${QUAR}) hauria de tenir el PERCENTATGE suprimit pel llindar mínim N`
+			cellQuar?.valor === 15.91,
+			`la Quar (${QUAR}) hauria de publicar el 15,91 % de nacionalitat (mart: ${cellQuar?.valor})`
 		);
 		ok(
-			v.poblacio_nacionalitat_estrangera === undefined,
-			`el web ja serveix 'poblacio_nacionalitat_estrangera': la línia del denominador s'ha ` +
-				`d'actualitzar per DIR que el recompte es publica (ara només diu que no vol dir zero)`
+			cellQuar?.rang === 2 && cellQuar?.n_amb_dada === 31,
+			`la Quar hauria de ser la 2a de 31 al Berguedà (mart: ${cellQuar?.rang} de ` +
+				`${cellQuar?.n_amb_dada}) — era exactament el que el llindar amagava`
 		);
 		ok(
-			!/recompte|recuento/i.test(`${ca.gov_denom_minn} ${es.gov_denom_minn}`),
-			`la línia del denominador promet un RECOMPTE que el web no serveix per a nacionalitat`
+			v.poblacio_nacionalitat_estrangera === 7 && v.poblacio === 44,
+			`la Quar sense el RECOMPTE servit (7 de 44 hab): ${v.poblacio_nacionalitat_estrangera} ` +
+				`de ${v.poblacio}. És el numerador, i als pobles petits és el que es pot llegir.`
 		);
-		// El que la Quar SÍ que té: la partició de lloc de naixement, amb els seus recomptes. La
-		// seva fitxa no és muda, i això és el que sosté que un percentatge suprimit no és un forat.
+		ok(
+			v.poblacio_nascuda_estranger === 6 &&
+				v.poblacio_nascuda_estranger !== v.poblacio_nacionalitat_estrangera,
+			`a la Quar els nascuts a l'estranger (${v.poblacio_nascuda_estranger}) i els de ` +
+				`nacionalitat estrangera (${v.poblacio_nacionalitat_estrangera}) haurien de ser 6 i 7: ` +
+				`si coincidissin, l'àncora deixaria de provar que són conjunts diferents`
+		);
+		// El que la Quar ja tenia: la partició de lloc de naixement, amb els seus recomptes. Ara
+		// les dues lectures d'origen tenen recompte, i per això es poden comparar sense confondre's.
 		ok(
 			NAIX_BAR_KEYS.every((k) => typeof v[k] === 'number') &&
 				NAIX_BAR_KEYS.reduce((a, k) => a + v[k], 0) === v.poblacio,
 			`la Quar (${QUAR}) sense la partició de lloc de naixement servida (recomptes citables)`
 		);
+	}
+
+	// (c-bis) EL RECOMPTE ES PINTA, I EL DENOMINADOR QUE L'ACOMPANYA ÉS EL DE VERITAT.
+	//     La frase diu «{n} de {total} habitants», o sigui que afirma que el padró és el
+	//     denominador del percentatge servit. Avui és cert als 947 (comprovat aquí, no suposat);
+	//     el dia que la font canviï de denominador, la frase passaria a ser una procedència falsa
+	//     ben maquetada i aquesta guarda cau abans que es publiqui.
+	{
+		ok(
+			Object.keys(GOVERN_RECOMPTE).length > 0,
+			`cap percentatge amb recompte declarat: la línia del numerador no s'exerciria mai`
+		);
+		for (const [pctKey, spec] of Object.entries(GOVERN_RECOMPTE)) {
+			ok(
+				!!ca[spec.msg] && !!es[spec.msg],
+				`i18n '${spec.msg}' absent (ca/es): el recompte de '${pctKey}' no es podria dir`
+			);
+			for (const dict of [ca, es]) {
+				ok(
+					/\{n\}/.test(String(dict[spec.msg])) && /\{total\}/.test(String(dict[spec.msg])),
+					`'${spec.msg}' sense {n} o sense {total}: un recompte sense la seva base no és ` +
+						`procedència, és una xifra solta`
+				);
+			}
+			ok(
+				pageSrc.includes(spec.msg) && /recompteLinia\(/.test(pageSrc),
+				`el recompte de '${pctKey}' es declara a kpis.js però la fitxa no el pinta`
+			);
+			let nPintables = 0;
+			for (const [i, r] of Object.entries(catMunis)) {
+				const n = r?.values?.[spec.comptador];
+				const total = r?.values?.[GOVERN_RECOMPTE_BASE];
+				const pct = r?.values?.[pctKey];
+				ok(
+					typeof n === 'number' && typeof total === 'number' && total > 0,
+					`${i}: '${spec.comptador}' o '${GOVERN_RECOMPTE_BASE}' no servits (${n} / ${total})`
+				);
+				if (typeof n !== 'number' || typeof total !== 'number' || !total) continue;
+				if (typeof pct !== 'number') continue;
+				// Sense arrodonir a mà: el mart arrodoneix a 2 decimals, i es compara igual.
+				ok(
+					Math.abs(Math.round((n / total) * 10000) / 100 - pct) < 0.005,
+					`${i}: '${pctKey}' servit (${pct}) NO és ${n}/${total} — la frase «{n} de {total} ` +
+						`habitants» estaria pintant un denominador que no és el del percentatge`
+				);
+				nPintables++;
+			}
+			ok(
+				nPintables === Object.keys(catMunis).length,
+				`el recompte de '${pctKey}' només es pot pintar a ${nPintables} dels ` +
+					`${Object.keys(catMunis).length} municipis`
+			);
+			nRecomptePintat += nPintables;
+		}
+		// Els dos recomptes d'origen NO són el mateix conjunt, i la pantalla els pinta de costat:
+		// si mai coincidissin a tot Catalunya, tenir-ne dos amb rètols diferents seria enganyós.
+		const difereixen = Object.values(catMunis).filter(
+			(r) =>
+				typeof r?.values?.poblacio_nacionalitat_estrangera === 'number' &&
+				typeof r?.values?.poblacio_nascuda_estranger === 'number' &&
+				r.values.poblacio_nacionalitat_estrangera !== r.values.poblacio_nascuda_estranger
+		).length;
+		ok(
+			difereixen > 0,
+			`enlloc no difereixen els de nacionalitat estrangera i els nascuts a l'estranger: ` +
+				`pintar-los com a xifres distintes no estaria justificat`
+		);
+		nRecompteDifereix = difereixen;
 	}
 
 	// (d) EL MOTIU 'ratio' ÉS VERITAT: on no hi ha índex d'envelliment, és que no hi ha ningú de
@@ -934,19 +1052,32 @@ let nDenomExplicat = 0;
 		);
 	}
 
-	// (e) EL MOTIU 'font' NO ÉS EL NOSTRE LLINDAR. La renda la calla l'INE, no nosaltres: hi ha
-	//     municipis per sota del llindar amb renda i per sobre sense. Si un dia el patró es
-	//     tornés el del llindar, aquest text hauria de canviar (ens atribuiria una prudència que
-	//     no és nostra) — i aquesta guarda cau per obligar-hi.
+	// (e) EL MOTIU 'font' NO ÉS CAP LLINDAR DE MIDA. La renda la calla l'INE, no nosaltres, i la
+	//     prova és que l'absència NO va per població: hi ha municipis més petits amb renda que
+	//     alguns dels que no en tenen. Fins avui això es comprovava contra el nostre llindar dels
+	//     50 hab; retirat el llindar, la prova es fa SENSE cap constant — la comparació és entre
+	//     la dada i la dada. Si un dia el patró es tornés el d'una mida mínima, aquest text
+	//     s'hauria de reescriure (ens atribuiria una prudència que no és nostra) i cau aquí.
 	{
 		const senseRenda = Object.entries(govern).filter(
 			([, g]) => g.metrics?.renda_neta_persona && g.metrics.renda_neta_persona.valor === null
 		);
 		ok(senseRenda.length > 0, `cap municipi sense renda: el motiu 'gov_denom_font' no s'exerceix`);
+		const pobDe = (i) => catMunis[i]?.values?.poblacio;
+		const senseMax = senseRenda
+			.map(([i]) => [i, pobDe(i)])
+			.filter(([, p]) => typeof p === 'number')
+			.sort((a, b) => b[1] - a[1])[0];
+		const ambMin = Object.entries(govern)
+			.filter(([, g]) => g.metrics?.renda_neta_persona?.valor != null)
+			.map(([i]) => [i, pobDe(i)])
+			.filter(([, p]) => typeof p === 'number')
+			.sort((a, b) => a[1] - b[1])[0];
 		ok(
-			senseRenda.some(([i]) => (catMunis[i]?.values?.poblacio ?? 0) >= GOVERN_DENOM_MIN_N),
-			`tots els municipis sense renda són per sota del llindar mínim N: el motiu declarat ` +
-				`('la font no la publica') ja no distingiria de 'gov_denom_minn'`
+			!!senseMax && !!ambMin && ambMin[1] < senseMax[1],
+			`l'absència de renda va per MIDA (el més petit amb renda, ${ambMin?.[0]} amb ` +
+				`${ambMin?.[1]} hab, no és més petit que el més gran sense, ${senseMax?.[0]} amb ` +
+				`${senseMax?.[1]} hab): el motiu 'la font no la publica' semblaria un llindar nostre`
 		);
 	}
 
@@ -968,19 +1099,57 @@ let nDenomExplicat = 0;
 	}
 	ok(nDenomExplicat > 0, `cap cel·la amb denominador incomplet: la línia nova no s'exerciria mai`);
 
-	// (g) LA POBLA, l'àncora de Bea: nacionalitat «6 de 27» AMB explicació (27 < 31) i vidre
-	//     «17 de 31» SENSE (no li'n cal). Si això s'inverteix, la pantalla explicaria de més o de
-	//     menys exactament on Bea mirarà.
+	// (g) LES DUES ÀNCORES, ara que el llindar ha marxat.
+	//
+	//     LA POBLA (àncora de Bea) ja NO explica cap denominador: retirat el llindar, les seves
+	//     nou mètriques cobreixen el Berguedà sencer i la nacionalitat passa de «6 de 27» a
+	//     «8 de 31» — que és exactament el que Bea demanava a B3 («no pot ser sobre 27»). Aquesta
+	//     meitat de l'àncora es queda per vigilar que no s'expliqui de MÉS: cap línia de
+	//     denominador on la cobertura és sencera.
 	const bergTot = comarcaSize['Berguedà'] ?? 0;
 	ok(bergTot === 31, `el Berguedà hauria de tenir 31 municipis a l'agrupació, en té ${bergTot}`);
-	ok(
-		govern[POBLA]?.metrics?.pct_nacionalitat_estrangera?.n_amb_dada === 27,
-		`la nacionalitat de la Pobla hauria de ser «de 27» (4 munis sota el llindar)`
-	);
-	ok(
-		govern[POBLA]?.metrics?.vidre_hab?.n_amb_dada === bergTot,
-		`el vidre de la Pobla hauria de ser «de ${bergTot}» (cobertura sencera, sense explicació)`
-	);
+	for (const k of ['pct_nacionalitat_estrangera', 'vidre_hab']) {
+		ok(
+			govern[POBLA]?.metrics?.[k]?.n_amb_dada === bergTot,
+			`'${k}' a la Pobla hauria de ser «de ${bergTot}» (cobertura sencera, sense explicació); ` +
+				`és de ${govern[POBLA]?.metrics?.[k]?.n_amb_dada}`
+		);
+	}
+	//     LA FEBRÓ (43057, Baix Camp) és l'àncora NOVA de la meitat contrària: és l'únic municipi
+	//     que porta els DOS motius supervivents a la mateixa fitxa — la renda que la FONT calla i
+	//     l'índex d'envelliment que no es pot dividir (no hi viu ningú de 0 a 14). Sense una
+	//     àncora així, la línia del denominador es podria morir sense que cap guarda ho notés,
+	//     perquè la Pobla ja no l'exerceix. I la seva nacionalitat (23 de 28) exercita el cas
+	//     contrari al mateix poble: 35 habitants amb percentatge publicat i sense explicació.
+	{
+		const FEBRO = '43057';
+		const gf = govern[FEBRO];
+		ok(!!gf, `la Febró (${FEBRO}) absent del govern servit: l'àncora dels dos motius es perd`);
+		if (gf) {
+			const baixCamp = comarcaSize[gf.comarca] ?? 0;
+			for (const [k, motiu] of [
+				['renda_neta_persona', 'gov_denom_font'],
+				['index_envelliment', 'gov_denom_ratio']
+			]) {
+				const cell = gf.metrics?.[k];
+				ok(
+					cell?.valor === null && cell?.n_amb_dada > 0 && cell.n_amb_dada < baixCamp,
+					`la Febró hauria de tenir '${k}' sense valor i amb denominador incomplet ` +
+						`(${cell?.n_amb_dada} de ${baixCamp}) per exercir el motiu '${motiu}'`
+				);
+				ok(
+					GOVERN_DENOM_REASON[k] === motiu,
+					`'${k}' ja no declara el motiu '${motiu}': l'àncora de la Febró deixaria de provar-lo`
+				);
+			}
+			const nac = gf.metrics?.pct_nacionalitat_estrangera;
+			ok(
+				nac?.valor != null && nac?.n_amb_dada === baixCamp,
+				`la Febró (35 hab) hauria de publicar la nacionalitat amb cobertura sencera ` +
+					`(${nac?.valor}, ${nac?.n_amb_dada} de ${baixCamp}): és un dels 9 que el llindar amagava`
+			);
+		}
+	}
 }
 
 // ── R-PINTA · LES DUES REFERÈNCIES, AMB EL SEU DENOMINADOR I SENSE INTERCANVIAR-LOS ─────────
@@ -1261,6 +1430,8 @@ let nRefsPonderadaNoHab = 0;
 let nLlistes = 0;
 let nLlistaFiles = 0;
 let nLlistaSense = 0;
+/** Quines MÈTRIQUES tenen calaix de «sense dada» (per no admetre'n una tercera en silenci). */
+const llistesSense = [];
 let nEmpatsLlista = 0;
 let nComarquesArticle = 0;
 {
@@ -1520,6 +1691,7 @@ let nComarquesArticle = 0;
 							`(${cell?.valor}) — desapareixeria una xifra que tenim`
 					);
 					nLlistaSense++;
+					llistesSense.push(metrica);
 				}
 				// I NO estan ordenats per res que insinuï un valor: la seva clau és el nom.
 				const nomsSense = L.sense.map((s) => nomIndex(s.nom));
@@ -1619,11 +1791,24 @@ let nComarquesArticle = 0;
 		/\{#each ll\.sense as mu/.test(llistaSrc),
 		`el llistat ja no pinta el bloc dels municipis sense dada: tornarien a desaparèixer`
 	);
+	// …i quants n'hi ha, comptat a mà i no a ull. Eren 30 (9 del nostre llindar + 20 de renda +
+	// la Febró); retirat el llindar (2026-08-01) en queden 21, i les 9 files que marxen d'aquest
+	// calaix són municipis que ara SURTEN A LA LLISTA ORDENADA, amb el seu rang. La xifra es
+	// declara sencera perquè un canvi silenciós de cobertura no passi per «millora».
 	ok(
-		nLlistaSense === 30,
-		`s'esperaven 30 municipis sense dada a tot Catalunya (5 causes de renda, nacionalitat i ` +
-			`l'envelliment de la Febró) i n'hi ha ${nLlistaSense}`
+		nLlistaSense === 21,
+		`s'esperaven 21 municipis sense dada a tot Catalunya (20 de renda, que la FONT calla, + ` +
+			`l'índex d'envelliment de la Febró, que no es pot dividir) i n'hi ha ${nLlistaSense}`
 	);
+	// I que les úniques mètriques amb calaix són aquestes DUES: si un dia n'aparegués una tercera
+	// sense causa declarada, els seus municipis cauríen al motiu neutre sense que ningú ho veiés.
+	{
+		const ambCalaix = [...new Set(llistesSense)].sort();
+		ok(
+			JSON.stringify(ambCalaix) === JSON.stringify(['index_envelliment', 'renda_neta_persona']),
+			`el calaix «sense dada» ja no és només de renda i envelliment: ${ambCalaix.join(', ')}`
+		);
+	}
 	// L'ÀNCORA DE BEA al llistat: la Pobla, 17 de 31 al vidre del Berguedà.
 	{
 		const p = resolve(LLISTA_DIR, 'bergueda', 'vidre-hab.json');
@@ -1670,11 +1855,17 @@ console.log(
 		`B2: el hero de la home no porta cap xifra escrita a ma (${nHeroLabels + 1} cotes, les dues ` +
 		`numeriques comptades del loader) i «31 municipis» no hi es. ` +
 		`B3: el rang es pinta des d'UN snippet als tres llocs; ${nDenomExplicat} cel·les amb ` +
-		`denominador incomplet porten explicacio, i els tres motius declarats s'han contrastat amb ` +
-		`els 947 (llindar minim N = ${GOVERN_DENOM_MIN_N}, el mateix del transform; cap muni sense ` +
-		`% d'origen hi arriba i cap que hi arribi se'l queda; sense index d'envelliment nomes on ` +
-		`pob_0_14 = 0; la renda la calla la FONT, no el nostre llindar). La Pobla: nacionalitat ` +
-		`«de 27» amb explicacio, vidre «de 31» sense. ` +
+		`denominador incomplet porten explicacio, i els DOS motius que queden s'han contrastat amb ` +
+		`els 947 (sense index d'envelliment nomes on pob_0_14 = 0; la renda la calla la FONT i no ` +
+		`va per mida). La Pobla ja no explica cap denominador (nacionalitat i vidre, «de 31»), i ` +
+		`l'ancora dels motius es la Febro, que porta els dos a la mateixa fitxa. ` +
+		`LLINDAR MINIM N RETIRAT (vot de Bea 2026-08-01): 'gov_denom_minn' fora del mapa, fora dels ` +
+		`catalegs i sense cap punt de crida; ${GOVERN_ORIGEN_KEYS.length} percentatges d'origen amb ` +
+		`cobertura SENCERA al mart i al dataset; el RECOMPTE es pinta al costat del percentatge als ` +
+		`${nRecomptePintat} municipis i el seu denominador (padro) s'ha comprovat que ES el del ` +
+		`percentatge servit, un a un; els de nacionalitat estrangera i els nascuts a l'estranger ` +
+		`difereixen a ${nRecompteDifereix} municipis (conjunts diferents, retols diferents); la Quar ` +
+		`15,91 % · 7 de 44 hab · 6 nascuts fora · 2a de 31 al Bergueda. ` +
 		`R-PINTA (B+D): ${nRefsPintades} referencies pintables als 947, TOTES amb el seu ` +
 		`denominador — la mediana sobre els MUNICIPIS del rang, la ponderada sobre el seu propi ` +
 		`pes i mai sobre municipis; ${nRefsPonderadaNoHab} ponderades amb un pes que NO son ` +

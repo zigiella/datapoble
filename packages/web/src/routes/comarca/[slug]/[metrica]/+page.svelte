@@ -13,11 +13,14 @@
 	 *  · **Cada xifra amb font O fórmula i el seu denominador** (C6 §8.1): la procedència de la
 	 *    mètrica surt del contracte (viatja amb l'artefacte), la mediana es diu sobre els
 	 *    MUNICIPIS del rang i la ponderada sobre les unitats del seu propi pes.
-	 *  · **El denominador honest**: si la comarca té 31 municipis i 27 tenen la xifra, es diu, i
-	 *    els 4 que no la tenen **hi surten igualment** amb el motiu (n'hi ha TRES de diferents).
-	 *    Van en un bloc a part al FINAL i SENSE ordenar (esmena de Bea): «no vol dir zero» —
-	 *    la Quar, tractada com un 0, sortiria l'ÚLTIMA quan pel seu recompte seria la 2a (7 de 44
-	 *    hab; xifra del MART, encara no servida al web, i per això aquí no es pot pintar).
+	 *  · **El denominador honest**: si la comarca té 28 municipis i 27 tenen la xifra, es diu, i
+	 *    el que no la té **hi surt igualment**, amb el motiu (en queden DOS de diferents: la FONT
+	 *    que calla la renda i la divisió impossible de l'envelliment). Van en un bloc a part al
+	 *    FINAL i SENSE ordenar, i des del vot de Bea del 2026-08-01 diuen «sense dada» i prou:
+	 *    aquí l'explicació era soroll; a la TARGETA de la fitxa segueix viva.
+	 *    (2026-08-01: la tercera causa, el nostre llindar mínim N, ha desaparegut — els
+	 *    percentatges d'origen es publiquen per als 947, i per això la Quar surt a la llista del
+	 *    Berguedà com el que és, la 2a, en comptes d'anar a parar al calaix del final.)
 	 *  · **Els empats no pinten un guanyador fals**: `empat` ve del mart i es marca a la fila.
 	 */
 	import Espina from '$lib/components/Espina.svelte';
@@ -28,7 +31,6 @@
 	import {
 		GOVERN_DENOM_REASON,
 		GOVERN_DENOM_REASON_DEFAULT,
-		GOVERN_DENOM_MIN_N,
 		governReferences,
 		governUnit,
 		metricaSlug,
@@ -64,7 +66,6 @@
 	/** Denominador incomplet → cal explicar-lo, amb el motiu REAL de la mètrica (mai un d'inventat). */
 	const denomIncomplet = $derived(ll.n_amb_dada > 0 && ll.n_amb_dada < ll.n_comarca);
 	const DENOM_TXT: Record<string, () => string> = {
-		gov_denom_minn: () => m.gov_denom_minn({ n: String(GOVERN_DENOM_MIN_N) }),
 		gov_denom_font: () => m.gov_denom_font(),
 		gov_denom_ratio: () => m.gov_denom_ratio(),
 		gov_denom_nd: () => m.gov_denom_nd()

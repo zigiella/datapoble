@@ -49,7 +49,8 @@
 		E13_LLINDAR,
 		GOVERN_DENOM_REASON,
 		GOVERN_DENOM_REASON_DEFAULT,
-		GOVERN_DENOM_MIN_N,
+		GOVERN_RECOMPTE,
+		GOVERN_RECOMPTE_BASE,
 		governReferences,
 		governUnit,
 		metricaSlug,
@@ -329,17 +330,20 @@
 	const govNote = (k: string | undefined): string => (k ? (GOV_NOTE[k]?.() ?? '') : '');
 
 	// ── B3 · EL DENOMINADOR DEL RANG, LLEGIBLE (esmena de Bea, 2026-07-31) ────────────────────
-	// «El rang de nacionalitat estrangera al Berguedà no pot ser sobre 27.» El denominador SÍ que
-	// ha de ser 27 —tractar com a zero els 4 municipis sense percentatge pintaria la Quar (7
-	// estrangers de 44 hab = 15,9 %, la 2a de la comarca) com l'ÚLTIMA, o sigui el contrari de la
-	// veritat sobre un poble concret—, però la incomoditat de fons és bona: «6 de 27» al costat de
-	// «8 de 31» sembla arbitrari si no s'explica. Per això, quan el denominador del rang és més
-	// petit que la comarca sencera, la targeta ho diu i en dona el MOTIU (`kpis.js` el declara per
-	// mètrica; els motius són diferents i confondre'ls seria mentir amb bona intenció).
-	// Res d'això calcula cap rang: es compara `n_amb_dada` —LLEGIT del mart— amb el nombre de
-	// municipis de la comarca, i es tria un text. (C6 §4 intacte.)
+	// Quan el denominador del rang és més petit que la comarca sencera, «6 de 27» al costat de
+	// «8 de 31» sembla arbitrari si no s'explica. Per això la targeta ho diu i en dona el MOTIU
+	// (`kpis.js` el declara per mètrica; els motius són diferents i confondre'ls seria mentir amb
+	// bona intenció). Res d'això calcula cap rang: es compara `n_amb_dada` —LLEGIT del mart— amb
+	// el nombre de municipis de la comarca, i es tria un text. (C6 §4 intacte.)
+	//
+	// 2026-08-01 · LA PREGUNTA DE BEA A B3 ES TANCA A L'ARREL. «El rang de nacionalitat al
+	// Berguedà no pot ser sobre 27»: ja no ho és. Retirat el llindar mínim N (vot de Bea), els
+	// percentatges d'origen es publiquen per als 947 i la nacionalitat de la Pobla és «8 de 31»,
+	// amb la Quar 2a de la comarca. La causa 'gov_denom_minn' ha desaparegut d'aquest mapa i el
+	// seu text, dels catàlegs i18n. El mecanisme es queda viu perquè els altres DOS motius sí que
+	// tenen forats de veritat: la renda que la FONT calla i la divisió impossible de
+	// l'envelliment. Àncora nova: la Febró (43057) porta els dos a la mateixa fitxa.
 	const GOV_DENOM: Record<string, () => string> = {
-		gov_denom_minn: () => m.gov_denom_minn({ n: String(GOVERN_DENOM_MIN_N) }),
 		gov_denom_font: () => m.gov_denom_font(),
 		gov_denom_ratio: () => m.gov_denom_ratio(),
 		gov_denom_nd: () => m.gov_denom_nd()
@@ -352,6 +356,32 @@
 	/** La comarca té més municipis que els que tenen la xifra → cal explicar el denominador. */
 	const denomIncomplet = (n: number | undefined): boolean =>
 		comarcaMunis > 0 && typeof n === 'number' && n > 0 && n < comarcaMunis;
+
+	// ── EL RECOMPTE AL COSTAT DEL PERCENTATGE (2026-08-01) ───────────────────────────────────
+	// Retirat el llindar, la nacionalitat estrangera es publica als 947 — també allà on el
+	// percentatge és el més fràgil. Als pobles petits el numerador diu més que el quocient: «7 de
+	// 44 habitants» s'entén i «15,91 %» sobre 44 persones enganya la vista. Les DUES xifres es
+	// pinten: el % gran (que és el que el rang ordena) i el recompte a sota, amb el seu rètol
+	// —«passaport no espanyol»— perquè no es confongui amb els «nascuts a l'estranger» de la
+	// targeta del costat, que a la Quar són 6 i no 7 (conjunts diferents).
+	// Cap càlcul (C6 §4): les dues xifres venen servides i el mapa de `kpis.js` diu quina va amb
+	// quina; `verify-govern` comprova als 947 que el % servit és exactament aquest quocient.
+	const GOV_RECOMPTE_MSG: Record<string, (a: { n: string; total: string }) => string> = {
+		gov_nac_recompte: (a) => m.gov_nac_recompte(a)
+	};
+	function recompteLinia(key: string | undefined): string | null {
+		const spec = key ? GOVERN_RECOMPTE[key] : undefined;
+		if (!spec || !row) return null;
+		const n = row.values[spec.comptador as MetricKey];
+		const total = row.values[GOVERN_RECOMPTE_BASE as MetricKey];
+		if (typeof n !== 'number' || typeof total !== 'number') return null;
+		return (
+			GOV_RECOMPTE_MSG[spec.msg]?.({
+				n: formatInteger(n, locale),
+				total: formatInteger(total, locale)
+			}) ?? null
+		);
+	}
 
 	// ── R-PINTA · LES DUES REFERÈNCIES DE LA TARGETA (vot de Bea: «farem B+D») ────────────────
 	// Doctrina al capçal de `semantic/metrics.yml` («QUINES ES PINTEN»), mecànica a `kpis.js`
@@ -955,6 +985,14 @@
 										<p class="gov-kpi__v">
 											{fmt(row, kpi.key as MetricKey)}{#if gUnit(kpi.key)}<span class="u">{gUnit(kpi.key)}</span>{/if}
 										</p>
+										<!-- EL RECOMPTE, al costat del percentatge (2026-08-01) · retirat el llindar
+										     mínim N, la xifra es publica als 947 i als pobles petits el NUMERADOR és
+										     el que es pot llegir: «7 de 44 habitants» diu més que «15,91 %». Va amb
+										     el seu rètol («passaport no espanyol») per no confondre's amb els
+										     nascuts a l'estranger de la targeta del costat: a la Quar, 7 i 6. -->
+										{#if recompteLinia(kpi.key)}
+											<p class="gov-kpi__cru gov-kpi__cru--rec">{recompteLinia(kpi.key)}</p>
+										{/if}
 										<!-- V3 §10 · la traducció humana de l'índex d'envelliment (la fórmula ja hi és;
 										     la frase plana, no hi era). -->
 										{#if kpi.key === 'index_envelliment' && envellFrase()}
@@ -2261,6 +2299,13 @@
 		font-size: 0.78rem;
 		line-height: 1.45;
 		color: var(--dp-text-muted);
+	}
+	/* El RECOMPTE que acompanya un percentatge no és una nota al peu: als micromunicipis és la
+	   xifra que de debò es pot llegir («7 de 44 habitants» contra «15,91 %»). Va just sota el
+	   número gran i amb el color del text normal, no amb el de les fonts. */
+	.gov-kpi__cru--rec {
+		font-size: 0.83rem;
+		color: var(--dp-text);
 	}
 	/* V3 §9 · E13: el caveat de micromunicipi, amb filet d'avís (no d'error). */
 	.gov-kpi__note--e13 {
