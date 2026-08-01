@@ -1,3 +1,15 @@
+> # ⛔ RETIRAT el 2026-08-01 — LA CUA VIU A GITHUB ISSUES
+>
+> Aquest fitxer **ja no és la cua** i no s'hi torna a escriure. En passar de Cambium Charter a
+> Mycelia Relay v0.5, la cua assignada passa a **Issues reclamables** (etiqueta `ready`), perquè
+> Bea pugui deixar un encàrrec des del mòbil i perquè un agent cloud hi pugui deixar suggeriments.
+>
+> **Dues cues en paral·lel és pitjor que qualsevol de les dues:** ningú sap quina mana i la feina
+> es duplica o es perd. Per això la migració va ser d'una vegada (13 issues: #302–#314).
+>
+> El contingut **NO s'esborra**: és història i és dada. Aquí sota queda tal com estava, invalidat
+> però sencer. Per a la feina viva: https://github.com/zigiella/datapoble/issues
+
 # Cua — reconducció (rumbo decidit 2026-06-27)
 
 *Mètode: **Cambium Charter v0.5**. Es treballa de dalt a baix; cada tasca = un PR. Cada **fase** és
