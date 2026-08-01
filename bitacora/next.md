@@ -3,6 +3,64 @@
 *Mètode: **Cambium Charter v0.5**. Es treballa de dalt a baix; cada tasca = un PR. Cada **fase** és
 publicable per si sola.*
 
+> **✅ RETIRA-LLINDAR + D-DELTA (Sondeig) — FETES, PR obert (2026-08-01, branca
+> `sondeig/retira-llindar-origen`).** Bitàcola: `bitacora/2026-08-01_retira-llindar-origen_sondeig.md`
+> (números, taules i els dos diffs exactes de contracte).
+> **El llindar retirat:** `pct_nacionalitat_estrangera`, `pct_nascuda_estranger` i
+> `bretxa_naturalitzacio` es publiquen per als **947** (0 NULL, abans 9). `confianca_origen` intacta
+> (9 baixa / 197 mitjana / 741 alta) i `demografia_min_n` sobreviu **només com a bandera de
+> precisió**. Verificat pel meu compte: la font no en calla cap —**0 dels 947** sense
+> `nac_estrangera` ni sense denominador—; la Quar 7/44 = **15,91 %**, recalculat a mà.
+> **Quants canvien: 52 municipis canvien de rang** (9 que hi entren + 43 que baixen 1 o 2 posicions;
+> **cap comarca canvia de número 1**) i **100 canvien de denominador** (Berguedà 27→**31**, Baix Camp
+> 27→28, Conca de Barberà 19→22, Alt Urgell 18→19). **La Pobla passa de «6 de 27» a «8 de 31»** i la
+> **Quar és la 2a del Berguedà**. Mediana catalana 10,58→**10,51** (n 938→947); la del **Berguedà NO
+> es mou** (5,74) i està explicat per què (dos valors nous per sota i dos per damunt); la de la Conca
+> de Barberà és la que més (11,43→9,33). Cap de les altres 8 mètriques es mou ni un dígit.
+> **D-DELTA tancada:** files amb `valor_actual` NULL i delta publicat, **4 abans → 0 ara**. La guarda
+> s'ha escrit igualment (`verify_tendencia.py`), amb l'afinació que l'atur emmascarat **no** hi cau
+> (nivell publicat en interval ≠ nivell suprimit; la condició ingènua marcava 278 files legítimes).
+> **⛔ Forat que ningú havia vist i que la retirada posa a la vista:** 16 municipis no tenien **CAP
+> fila** de tendència de nacionalitat (absents, no `sense_serie`) perquè la FONT els reserva la sèrie
+> tots els anys. Ara hi surten amb el motiu escrit en ca/es + guarda nova de **cobertura per
+> municipi** (la de D10 només mirava «cada mètrica té alguna fila»: 931 de 947 hi passaven).
+> **⛔ Serrell gros: `mart_tendencia.parquet` estava ESTALE des de R-REFERENCIA.** El seu `kwh_hab`
+> coincidia amb el de `mart_municipi.parquet` en **30 dels 947**; regenerat, en 947. O sigui que **el
+> web publicava dos números diferents per a la mateixa mètrica del mateix municipi** (fitxa vs
+> tauler) a 917 municipis. Per això el diff és de 932 fitxers: **900 shards canvien NOMÉS pel
+> `kwh_hab`** i 20 pel canvi d'origen. Mateix forat que `mart_consum_electric` (el CI no corre `dbt
+> build` i aquest mart no té `--check`).
+> 🔴 **EL PR NO POT ANAR VERD TOT SOL — dues guardes cauen, cap de les dues és meva:**
+> **(a) `semantic/verify_contracte.py` (job data) · Talaia:** el caveat de `pct_nacionalitat_estrangera`
+> i el de `bretxa_naturalitzacio` afirmen «37 dels 938» i ara la bretxa negativa és **39 de 947**
+> (les dues noves: la Quar −2,27 i Cava −2,63; pitjor cas segueix sent Tornabous). **Diff exacte al
+> §6a de la bitàcola: només canvien 4 números.** La guarda E7a fent exactament la seva feina.
+> **(b) `npm run verify:govern` (job web) · Mirador:** **12 assercions**, totes les que va escriure
+> perquè caiguessin el dia que el llindar es mogués («cau per obligar a REESCRIURE la frase»). Llista
+> literal i què li toca (retirar `gov_denom_minn` del mapa de motius, els 30 munis sense dada passen
+> a **21**, i el copy de la Quar ja no necessita el «No vol dir zero») al §6b. `npm run check` i
+> `verify:docs` **passen**.
+> **➡️ Talaia (contracte) — el recompte al catàleg, BLOQUEJAT:** `poblacio_nacionalitat_estrangera`
+> **no és al contracte**, i `export_web_municipis.py` construeix el catàleg del contracte → sense
+> entrada, peta. **Entrada nova amb el YAML sencer al §7**, i el meu costat són 3 línies ja escrites.
+> **⛔ I una premissa de l'esmena de sota, FALSA en el sentit bo:** el recompte **JA se serveix** als
+> 947 shards del tauler (`tauler/08177.json` → `valor_actual: 7`, període 2021→2025) des de D7; el
+> que passa és que el front no el pinta i que **se serveix sense entrada al contracte** — una xifra
+> pública sense etiqueta, font ni data pròpies, que és el que la regla de ferro C6 §8.1 prohibeix.
+> És l'ÚNIC recompte de la dimensió `origen` en aquesta situació (auditats tots, taula al §7).
+> **➡️ Talaia (doctrina):** **14 municipis** tenen un delta sobre una finestra de **zero anys**
+> (`2025→2025`, delta 0,00, direcció «igual») perquè només hi ha un any amb dada. No és fals però un
+> zero que vol dir «només en tenim un punt» s'assembla massa a «no ha canviat». No ho toco: decidir
+> si una finestra d'un sol punt és una sèrie és doctrina. Recomanació i la llista dels 14, al §8.
+> **➡️ Talaia + Bea:** `mart_electoral.parquet` versionat és estale (31 files) i el model n'emet
+> **947**. **L'he restaurat i NO el committejo**: publicar la capa de vot dels 947 en un repo públic
+> és decisió editorial, no efecte lateral d'un `dbt build` meu (§9).
+> **📥 Handoffs rebuts i NO fets aquí** (segueixen vius): `n_comarca` a la cel·la de `mart_govern`
+> (Mirador, 3a vegada) i la unitat de `pes_ponderada` servida des del mart.
+> Verificat en LOCAL: `dbt build` 165/165 · tots els verificadors i tots els `--check` verds ·
+> ruff net · ingestió 21/21 (PYTHONPATH del MEU arbre, comprovat al `__file__`) · signals 182/182 ·
+> antifuita 5/5 · **guardes noves provades EN NEGATIU 3/3**. **NO fusiono jo.**
+>
 > **🔴 D-DELTA (doctrina escrita, EXECUCIÓ PENDENT) — suprimim el nivell i publiquem el moviment.**
 > Troballa de Mirador (B3), verificada per Talaia al shard servit de la Quar (08177):
 > `valor_actual: null` (nivell suprimit pel llindar de 50 hab) **i alhora** `delta: 1.62` pintat

@@ -109,8 +109,18 @@ export const NAIX_BAR_KEYS = [
  * targetes porten una nota visible: el denominador és minúscul i una sola persona o casa mou
  * el número. La llista i el llindar són DOCTRINA (contracte), no estil: si canvien allà,
  * canvien aquí i `verify-govern.mjs` cau si divergeixen del que el tauler pinta.
- * (El text de la nota — `gov_e13_micro` — està PENDENT DEL VOT de Bea: el concepte està
- * votat; la frase exacta, encara no.)
+ * (El text de la nota — `gov_e13_micro` — el va aprovar Bea amb les seves paraules: «En
+ * municipis de menys de 250 persones, aquesta dada pot ser poc precisa».)
+ *
+ * ⚠️ FORAT DE DOCTRINA OBERT (Mirador, 2026-08-01) → **Handoff a: Talaia**. En retirar el
+ * llindar mínim N, el capçal de `semantic/metrics.yml` diu que la precaució de PRECISIÓ «ja té
+ * el seu lloc: el caveat de micromunicipi (E13)». Però la llista de targetes que E13 declara
+ * (línies 145-146 d'aquell fitxer, mirall exacte d'aquesta constant) NO inclou els
+ * percentatges d'origen, així que avui el 15,91 % de la Quar es pinta SENSE cap nota de
+ * precisió. No ho arreglo pel meu compte: la llista és doctrina del contracte i
+ * `verify-govern.mjs` la compara literalment amb la del contracte (hi cauria). El que sí que
+ * he fet dins la meva jurisdicció és pintar el RECOMPTE al costat del percentatge
+ * (`GOVERN_RECOMPTE`), que és el que el contracte mateix recomana llegir als pobles petits.
  */
 export const E13_KEYS = ['kg_hab_any', 'kwh_hab', 'vidre_hab', 'rtc_per_1000hab', 'index_envelliment'];
 export const E13_LLINDAR = 250;
@@ -250,20 +260,28 @@ export function metricaFromSlug(slug, keys) {
  *
  * Aquest mapa declara, per mètrica, el MOTIU de l'absència. No és estil: cada entrada és una
  * afirmació verificable sobre la dada, i `verify-govern.mjs` la contrasta amb els 947 abans de
- * deixar-la publicar. Per això n'hi ha TRES i no una de sola: els motius són diferents i
+ * deixar-la publicar. Per això n'hi ha DUES i no una de sola: els motius són diferents i
  * atribuir-los malament seria mentir amb bona intenció.
  *
- *  · 'gov_denom_minn'   → LLINDAR NOSTRE (`demografia_min_n` = 50, `mart_demografia.sql`):
- *    per sota de 50 habitants no publiquem el percentatge d'origen perquè cada persona el mou
- *    2-4 punts i frega la identificació d'individus. Els RECOMPTES sí que es publiquen. És una
- *    decisió nostra, no un forat: als 9 municipis afectats de Catalunya, cap té 50 hab o més,
- *    i cap municipi de 50 hab o més es queda sense la xifra.
  *  · 'gov_denom_font'   → LÍMIT DE LA FONT: l'INE no publica renda per a certs municipis
- *    (ADRH). No és el nostre llindar —hi ha municipis de 38 hab amb renda i de 110 sense— i
- *    dir-ho com si ho fos ens atribuiria una prudència que no és nostra.
+ *    (ADRH). No és cap llindar de mida —Sant Jaume de Frontanyà (25 hab) TÉ renda i la Vajol
+ *    (110 hab) NO en té— i dir-ho com si ho fos ens atribuiria una prudència que no és nostra.
  *  · 'gov_denom_ratio'  → LA DIVISIÓ NO ES POT FER: l'índex d'envelliment és 65+/0-14, i a la
  *    Febró (Baix Camp) no hi viu ningú de 0 a 14 anys. No és secret ni absència de dada: és
  *    que el quocient no existeix.
+ *
+ * ⛔ CAUSA RETIRADA — 'gov_denom_minn', EL LLINDAR NOSTRE (vot de Bea, 2026-08-01: «si tenim la
+ * dada la posem, no és cap drama»). Fins avui aquest mapa deia que els percentatges d'origen
+ * faltaven als municipis de menys de 50 habitants perquè el percentatge assenyalaria veïns
+ * concrets. **Ja no falten a cap dels 947**: la doctrina vinculant és al capçal de
+ * `semantic/metrics.yml`, bloc «LLINDAR MINIM N DE LA CAPA ORIGEN: RETIRAT». Es va retirar
+ * perquè la FONT no calla res —0 dels 947 arriben sense recompte, i Idescat publica obertament
+ * el recompte i la població—, o sigui que suprimir-ne la divisió no protegia ningú: amagava un
+ * càlcul que qualsevol pot fer amb dues xifres públiques, i treia la Quar (15,91 %, la 2a del
+ * Berguedà) del rang on és. La precaució que SÍ que val —un percentatge sobre 44 persones és
+ * imprecís— és de PRECISIÓ, no de privacitat (vegeu E13_KEYS i la nota de sota).
+ * Perquè la causa no pugui tornar en silenci, `verify-govern.mjs` exerceix la COBERTURA de
+ * `GOVERN_ORIGEN_KEYS` sobre els 947 i cau el dia que una torni a tenir forats.
  *
  * Una mètrica que NO és en aquest mapa i tingui forats pinta el motiu NEUTRE («no en tenim la
  * xifra»): quedar-nos curts abans que inventar-ne la causa.
@@ -271,8 +289,6 @@ export function metricaFromSlug(slug, keys) {
  * @type {Record<string, string>}
  */
 export const GOVERN_DENOM_REASON = {
-	pct_nacionalitat_estrangera: 'gov_denom_minn',
-	pct_nascuda_estranger: 'gov_denom_minn',
 	renda_neta_persona: 'gov_denom_font',
 	index_envelliment: 'gov_denom_ratio'
 };
@@ -281,11 +297,45 @@ export const GOVERN_DENOM_REASON = {
 export const GOVERN_DENOM_REASON_DEFAULT = 'gov_denom_nd';
 
 /**
- * El llindar del motiu 'gov_denom_minn', DECLARAT aquí i no escrit al copy: és la var
- * `demografia_min_n` de `packages/transform/dbt_project.yml`, i si algú la mou allà,
- * `verify-govern.mjs` cau abans que la pantalla expliqui un llindar que ja no és el nostre.
+ * LA CAPA ORIGEN, SENSE FORATS NOSTRES (2026-08-01). Els percentatges que fins avui suprimíem
+ * pel llindar mínim N. Es declaren aquí —i no al verificador— perquè la guarda de no-retorn
+ * exerceixi la MATEIXA llista que el front dona per completa: si un dia una d'aquestes tornés a
+ * arribar amb NULL, el CI cau abans que la pantalla es quedi muda o s'inventi una causa.
+ * @type {string[]}
  */
-export const GOVERN_DENOM_MIN_N = 50;
+export const GOVERN_ORIGEN_KEYS = ['pct_nacionalitat_estrangera', 'pct_nascuda_estranger'];
+
+/**
+ * EL RECOMPTE AL COSTAT DEL PERCENTATGE (2026-08-01). Als pobles petits el numerador diu més
+ * que el quocient: «7 de 44 habitants» és més llegible —i menys fràgil— que «15,91 %».
+ *
+ * El mapa és `clau del percentatge → { comptador, msg }`: el `comptador` és la clau del recompte
+ * que n'és el NUMERADOR (així ho declara el contracte al caveat de
+ * `poblacio_nacionalitat_estrangera`) i `msg` és la clau i18n de la frase que el diu. La frase
+ * viatja amb la mètrica i NO és genèrica a propòsit: «passaport no espanyol» només val per a la
+ * nacionalitat, i una segona entrada amb aquest text seria una etiqueta falsa ben maquetada.
+ *
+ * Les dues xifres se serveixen; el front no en calcula cap (C6 §4). El denominador que es pinta
+ * al costat és el padró (`poblacio`), i `verify-govern.mjs` comprova als 947 que el percentatge
+ * servit és exactament aquest quocient — el dia que la font canviï de denominador, la frase
+ * deixaria de ser certa i el CI cau abans que es publiqui.
+ *
+ * `pct_nascuda_estranger` NO hi és a propòsit: el seu recompte ja es pinta, com a segment de la
+ * barra «D'on venim». Aquesta asimetria era justament el nus del problema — a la Quar es veia
+ * «6 nascuts a l'estranger» i, al costat, un percentatge de nacionalitat sense cap recompte, i
+ * un lector concloïa que el 6 eren els estrangers. Són conjunts diferents (7 amb passaport, 6
+ * nascuts fora), i ara els dos recomptes es veuen amb el seu rètol.
+ * @type {Record<string, {comptador: string, msg: string}>}
+ */
+export const GOVERN_RECOMPTE = {
+	pct_nacionalitat_estrangera: {
+		comptador: 'poblacio_nacionalitat_estrangera',
+		msg: 'gov_nac_recompte'
+	}
+};
+
+/** El denominador que la frase del recompte pinta al costat (padró servit, mai calculat). */
+export const GOVERN_RECOMPTE_BASE = 'poblacio';
 
 /**
  * R-PINTA · LES DUES REFERÈNCIES DE CADA TARGETA AMB RANG (vot de Bea 2026-07-31: «farem B+D»).

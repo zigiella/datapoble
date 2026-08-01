@@ -527,6 +527,37 @@
       },
       "status": "public"
     },
+    "poblacio_nacionalitat_estrangera": {
+      "key": "poblacio_nacionalitat_estrangera",
+      "label": {
+        "ca": "Població amb nacionalitat estrangera",
+        "es": "Población con nacionalidad extranjera"
+      },
+      "unit": {
+        "ca": "habitants",
+        "es": "habitantes"
+      },
+      "dimension": "origen",
+      "format": "integer",
+      "source": "Idescat — El municipi en xifres (EMEX) / Cens 2021",
+      "date": "2025",
+      "frescor": {
+        "actualitzacio": "anual",
+        "darrera_carrega": "2026-06-21",
+        "proces_refresc": "cap",
+        "font_frescor": "idescat_emex"
+      },
+      "formula": "directe",
+      "definicio": {
+        "ca": "Nombre de persones empadronades amb passaport no espanyol. És situació administrativa, NO lloc de naixement: qui es naturalitza surt d'aquest recompte sense moure's de casa.",
+        "es": "Número de personas empadronadas con pasaporte no español. Es situación administrativa, NO lugar de nacimiento: quien se naturaliza sale de este recuento sin moverse de casa."
+      },
+      "note": {
+        "ca": "És el NUMERADOR del % de nacionalitat estrangera, i es publica per als 947 municipis: la font el dona sencer. Als pobles petits val més llegir-lo que llegir el percentatge (7 persones de 44 diu més que «15,91 %»). Fins al 2026-08-01 aquesta xifra JA se servia als shards del tauler sense entrada al contracte —sense etiqueta, font ni data pròpies—, que és exactament el que la regla de la procedència existeix per impedir. Lectura ECOLÒGICA, mai individual.",
+        "es": "Es el NUMERADOR del % de nacionalidad extranjera, y se publica para los 947 municipios: la fuente lo da entero. En los pueblos pequeños vale más leerlo que leer el porcentaje (7 personas de 44 dice más que «15,91 %»). Hasta el 2026-08-01 esta cifra YA se servía en los shards del tablero sin entrada en el contrato —sin etiqueta, fuente ni fecha propias—, que es exactamente lo que la regla de la procedencia existe para impedir. Lectura ECOLÓGICA, nunca individual."
+      },
+      "status": "public"
+    },
     "pct_nacionalitat_estrangera": {
       "key": "pct_nacionalitat_estrangera",
       "label": {
@@ -553,8 +584,8 @@
         "es": "Peso de la población con nacionalidad extranjera (pasaporte no español) sobre el total. NO es lugar de nacimiento: es situación administrativa, reversible con la naturalización."
       },
       "note": {
-        "ca": "Normalment ≤ % nascuts a l'estranger —la diferència són els qui s'han naturalitzat—, però NO sempre: a 37 dels 938 municipis amb dada la supera (pitjor cas Tornabous, 27,42 vs 24,76). El mecanisme és banal: una criatura nascuda aquí de pares estrangers té passaport estranger i lloc de naixement català, així que suma a nacionalitat i no a naixement. Allà on passa, `bretxa_naturalitzacio` surt NEGATIVA i s'ha de llegir com això, no com un error. Lectura ECOLÒGICA, mai individual.",
-        "es": "Normalmente ≤ % nacidos en el extranjero —la diferencia son quienes se han naturalizado—, pero NO siempre: en 37 de los 938 municipios con dato lo supera (peor caso Tornabous, 27,42 vs 24,76). El mecanismo es banal: un niño nacido aquí de padres extranjeros tiene pasaporte extranjero y lugar de nacimiento catalán, así que suma a nacionalidad y no a nacimiento. Donde ocurre, `bretxa_naturalitzacio` sale NEGATIVA y debe leerse como eso, no como un error. Lectura ECOLÓGICA, nunca individual."
+        "ca": "Normalment ≤ % nascuts a l'estranger —la diferència són els qui s'han naturalitzat—, però NO sempre: a 39 dels 947 municipis amb dada la supera (pitjor cas Tornabous, 27,42 vs 24,76). El mecanisme és banal: una criatura nascuda aquí de pares estrangers té passaport estranger i lloc de naixement català, així que suma a nacionalitat i no a naixement. Allà on passa, `bretxa_naturalitzacio` surt NEGATIVA i s'ha de llegir com això, no com un error. Lectura ECOLÒGICA, mai individual.",
+        "es": "Normalmente ≤ % nacidos en el extranjero —la diferencia son quienes se han naturalizado—, pero NO siempre: en 39 de los 947 municipios con dato lo supera (peor caso Tornabous, 27,42 vs 24,76). El mecanismo es banal: un niño nacido aquí de padres extranjeros tiene pasaporte extranjero y lugar de nacimiento catalán, así que suma a nacionalidad y no a nacimiento. Donde ocurre, `bretxa_naturalitzacio` sale NEGATIVA y debe leerse como eso, no como un error. Lectura ECOLÓGICA, nunca individual."
       },
       "status": "public"
     },
@@ -584,8 +615,8 @@
         "es": "% nacidos en el extranjero − % nacionalidad extranjera. Aproxima a quien llegó de fuera y YA tiene nacionalidad española: señal de ARRAIGO (gente que viene, se queda y se arraiga), no un recuento de «forasteros»."
       },
       "note": {
-        "ca": "Com més alta, més població d'origen estranger ARRELADA (naturalitzada). Dona la volta al marc de l'«extranjería»: mesura integració, no amenaça. Lectura ecològica. Pot ser NEGATIVA i no és cap error: passa a 37 dels 938 municipis amb dada, quan hi ha més passaports estrangers que persones nascudes fora — típicament criatures nascudes aquí de pares estrangers. En aquests casos la mètrica NO mesura arrelament: no se'n pot llegir «poc arrelament», només que la naturalització encara no ha arribat a una població jove nascuda al municipi.",
-        "es": "Cuanto más alta, más población de origen extranjero ARRAIGADA (naturalizada). Da la vuelta al marco de la «extranjería»: mide integración, no amenaza. Lectura ecológica. Puede ser NEGATIVA y no es ningún error: ocurre en 37 de los 938 municipios con dato, cuando hay más pasaportes extranjeros que personas nacidas fuera — típicamente niños nacidos aquí de padres extranjeros. En esos casos la métrica NO mide arraigo: no puede leerse «poco arraigo», solo que la naturalización aún no ha alcanzado a una población joven nacida en el municipio."
+        "ca": "Com més alta, més població d'origen estranger ARRELADA (naturalitzada). Dona la volta al marc de l'«extranjería»: mesura integració, no amenaça. Lectura ecològica. Pot ser NEGATIVA i no és cap error: passa a 39 dels 947 municipis amb dada, quan hi ha més passaports estrangers que persones nascudes fora — típicament criatures nascudes aquí de pares estrangers. En aquests casos la mètrica NO mesura arrelament: no se'n pot llegir «poc arrelament», només que la naturalització encara no ha arribat a una població jove nascuda al municipi.",
+        "es": "Cuanto más alta, más población de origen extranjero ARRAIGADA (naturalizada). Da la vuelta al marco de la «extranjería»: mide integración, no amenaza. Lectura ecológica. Puede ser NEGATIVA y no es ningún error: ocurre en 39 de los 947 municipios con dato, cuando hay más pasaportes extranjeros que personas nacidas fuera — típicamente niños nacidos aquí de padres extranjeros. En esos casos la métrica NO mide arraigo: no puede leerse «poco arraigo», solo que la naturalización aún no ha alcanzado a una población joven nacida en el municipio."
       },
       "status": "public"
     },
@@ -1696,6 +1727,7 @@
         "poblacio_nascuda_catalunya": 2017,
         "poblacio_nascuda_resta_espanya": 85,
         "poblacio_nascuda_estranger": 161,
+        "poblacio_nacionalitat_estrangera": 136,
         "pct_nascuda_estranger": 7.11,
         "pct_nacionalitat_estrangera": 6.01,
         "bretxa_naturalitzacio": 1.1,
@@ -1758,6 +1790,7 @@
         "poblacio_nascuda_catalunya": 1741,
         "poblacio_nascuda_resta_espanya": 266,
         "poblacio_nascuda_estranger": 160,
+        "poblacio_nacionalitat_estrangera": 105,
         "pct_nascuda_estranger": 7.38,
         "pct_nacionalitat_estrangera": 4.85,
         "bretxa_naturalitzacio": 2.53,
@@ -1820,6 +1853,7 @@
         "poblacio_nascuda_catalunya": 12059,
         "poblacio_nascuda_resta_espanya": 1388,
         "poblacio_nascuda_estranger": 4092,
+        "poblacio_nacionalitat_estrangera": 3185,
         "pct_nascuda_estranger": 23.33,
         "pct_nacionalitat_estrangera": 18.16,
         "bretxa_naturalitzacio": 5.17,
@@ -1882,6 +1916,7 @@
         "poblacio_nascuda_catalunya": 356,
         "poblacio_nascuda_resta_espanya": 21,
         "poblacio_nascuda_estranger": 57,
+        "poblacio_nacionalitat_estrangera": 47,
         "pct_nascuda_estranger": 13.13,
         "pct_nacionalitat_estrangera": 10.83,
         "bretxa_naturalitzacio": 2.3,
@@ -1944,6 +1979,7 @@
         "poblacio_nascuda_catalunya": 89,
         "poblacio_nascuda_resta_espanya": 1,
         "poblacio_nascuda_estranger": 3,
+        "poblacio_nacionalitat_estrangera": 2,
         "pct_nascuda_estranger": 3.23,
         "pct_nacionalitat_estrangera": 2.15,
         "bretxa_naturalitzacio": 1.08,
@@ -2006,6 +2042,7 @@
         "poblacio_nascuda_catalunya": 1453,
         "poblacio_nascuda_resta_espanya": 72,
         "poblacio_nascuda_estranger": 140,
+        "poblacio_nacionalitat_estrangera": 120,
         "pct_nascuda_estranger": 8.41,
         "pct_nacionalitat_estrangera": 7.21,
         "bretxa_naturalitzacio": 1.2,
@@ -2068,6 +2105,7 @@
         "poblacio_nascuda_catalunya": 139,
         "poblacio_nascuda_resta_espanya": 7,
         "poblacio_nascuda_estranger": 5,
+        "poblacio_nacionalitat_estrangera": 2,
         "pct_nascuda_estranger": 3.31,
         "pct_nacionalitat_estrangera": 1.32,
         "bretxa_naturalitzacio": 1.99,
@@ -2130,6 +2168,7 @@
         "poblacio_nascuda_catalunya": 144,
         "poblacio_nascuda_resta_espanya": 9,
         "poblacio_nascuda_estranger": 13,
+        "poblacio_nacionalitat_estrangera": 10,
         "pct_nascuda_estranger": 7.83,
         "pct_nacionalitat_estrangera": 6.02,
         "bretxa_naturalitzacio": 1.81,
@@ -2192,6 +2231,7 @@
         "poblacio_nascuda_catalunya": 64,
         "poblacio_nascuda_resta_espanya": 2,
         "poblacio_nascuda_estranger": 2,
+        "poblacio_nacionalitat_estrangera": 1,
         "pct_nascuda_estranger": 2.94,
         "pct_nacionalitat_estrangera": 1.47,
         "bretxa_naturalitzacio": 1.47,
@@ -2254,6 +2294,7 @@
         "poblacio_nascuda_catalunya": 248,
         "poblacio_nascuda_resta_espanya": 3,
         "poblacio_nascuda_estranger": 9,
+        "poblacio_nacionalitat_estrangera": 8,
         "pct_nascuda_estranger": 3.46,
         "pct_nacionalitat_estrangera": 3.08,
         "bretxa_naturalitzacio": 0.38,
@@ -2316,9 +2357,10 @@
         "poblacio_nascuda_catalunya": 34,
         "poblacio_nascuda_resta_espanya": 1,
         "poblacio_nascuda_estranger": 6,
-        "pct_nascuda_estranger": null,
-        "pct_nacionalitat_estrangera": null,
-        "bretxa_naturalitzacio": null,
+        "poblacio_nacionalitat_estrangera": 5,
+        "pct_nascuda_estranger": 14.63,
+        "pct_nacionalitat_estrangera": 12.2,
+        "bretxa_naturalitzacio": 2.43,
         "delta_pct_estrangera_finestra": 3.11,
         "confianca_origen": "baixa"
       }
@@ -2378,6 +2420,7 @@
         "poblacio_nascuda_catalunya": 3895,
         "poblacio_nascuda_resta_espanya": 452,
         "poblacio_nascuda_estranger": 735,
+        "poblacio_nacionalitat_estrangera": 617,
         "pct_nascuda_estranger": 14.46,
         "pct_nacionalitat_estrangera": 12.14,
         "bretxa_naturalitzacio": 2.32,
@@ -2440,9 +2483,10 @@
         "poblacio_nascuda_catalunya": 26,
         "poblacio_nascuda_resta_espanya": 2,
         "poblacio_nascuda_estranger": 0,
-        "pct_nascuda_estranger": null,
-        "pct_nacionalitat_estrangera": null,
-        "bretxa_naturalitzacio": null,
+        "poblacio_nacionalitat_estrangera": 0,
+        "pct_nascuda_estranger": 0,
+        "pct_nacionalitat_estrangera": 0,
+        "bretxa_naturalitzacio": 0,
         "delta_pct_estrangera_finestra": null,
         "confianca_origen": "baixa"
       }
@@ -2502,6 +2546,7 @@
         "poblacio_nascuda_catalunya": 709,
         "poblacio_nascuda_resta_espanya": 117,
         "poblacio_nascuda_estranger": 136,
+        "poblacio_nacionalitat_estrangera": 86,
         "pct_nascuda_estranger": 14.14,
         "pct_nacionalitat_estrangera": 8.94,
         "bretxa_naturalitzacio": 5.2,
@@ -2564,6 +2609,7 @@
         "poblacio_nascuda_catalunya": 128,
         "poblacio_nascuda_resta_espanya": 2,
         "poblacio_nascuda_estranger": 3,
+        "poblacio_nacionalitat_estrangera": 3,
         "pct_nascuda_estranger": 2.26,
         "pct_nacionalitat_estrangera": 2.26,
         "bretxa_naturalitzacio": 0,
@@ -2626,6 +2672,7 @@
         "poblacio_nascuda_catalunya": 409,
         "poblacio_nascuda_resta_espanya": 17,
         "poblacio_nascuda_estranger": 45,
+        "poblacio_nacionalitat_estrangera": 39,
         "pct_nascuda_estranger": 9.55,
         "pct_nacionalitat_estrangera": 8.28,
         "bretxa_naturalitzacio": 1.27,
@@ -2688,6 +2735,7 @@
         "poblacio_nascuda_catalunya": 141,
         "poblacio_nascuda_resta_espanya": 4,
         "poblacio_nascuda_estranger": 18,
+        "poblacio_nacionalitat_estrangera": 12,
         "pct_nascuda_estranger": 11.04,
         "pct_nacionalitat_estrangera": 7.36,
         "bretxa_naturalitzacio": 3.68,
@@ -2750,6 +2798,7 @@
         "poblacio_nascuda_catalunya": 773,
         "poblacio_nascuda_resta_espanya": 60,
         "poblacio_nascuda_estranger": 93,
+        "poblacio_nacionalitat_estrangera": 72,
         "pct_nascuda_estranger": 10.04,
         "pct_nacionalitat_estrangera": 7.78,
         "bretxa_naturalitzacio": 2.26,
@@ -2812,6 +2861,7 @@
         "poblacio_nascuda_catalunya": 846,
         "poblacio_nascuda_resta_espanya": 126,
         "poblacio_nascuda_estranger": 134,
+        "poblacio_nacionalitat_estrangera": 106,
         "pct_nascuda_estranger": 12.12,
         "pct_nacionalitat_estrangera": 9.58,
         "bretxa_naturalitzacio": 2.54,
@@ -2874,6 +2924,7 @@
         "poblacio_nascuda_catalunya": 3377,
         "poblacio_nascuda_resta_espanya": 434,
         "poblacio_nascuda_estranger": 747,
+        "poblacio_nacionalitat_estrangera": 572,
         "pct_nascuda_estranger": 16.39,
         "pct_nacionalitat_estrangera": 12.55,
         "bretxa_naturalitzacio": 3.84,
@@ -2936,9 +2987,10 @@
         "poblacio_nascuda_catalunya": 36,
         "poblacio_nascuda_resta_espanya": 2,
         "poblacio_nascuda_estranger": 6,
-        "pct_nascuda_estranger": null,
-        "pct_nacionalitat_estrangera": null,
-        "bretxa_naturalitzacio": null,
+        "poblacio_nacionalitat_estrangera": 7,
+        "pct_nascuda_estranger": 13.64,
+        "pct_nacionalitat_estrangera": 15.91,
+        "bretxa_naturalitzacio": -2.27,
         "delta_pct_estrangera_finestra": 1.62,
         "confianca_origen": "baixa"
       }
@@ -2998,6 +3050,7 @@
         "poblacio_nascuda_catalunya": 144,
         "poblacio_nascuda_resta_espanya": 4,
         "poblacio_nascuda_estranger": 5,
+        "poblacio_nacionalitat_estrangera": 5,
         "pct_nascuda_estranger": 3.27,
         "pct_nacionalitat_estrangera": 3.27,
         "bretxa_naturalitzacio": 0,
@@ -3060,6 +3113,7 @@
         "poblacio_nascuda_catalunya": 260,
         "poblacio_nascuda_resta_espanya": 18,
         "poblacio_nascuda_estranger": 23,
+        "poblacio_nacionalitat_estrangera": 14,
         "pct_nascuda_estranger": 7.64,
         "pct_nacionalitat_estrangera": 4.65,
         "bretxa_naturalitzacio": 2.99,
@@ -3122,9 +3176,10 @@
         "poblacio_nascuda_catalunya": 21,
         "poblacio_nascuda_resta_espanya": 2,
         "poblacio_nascuda_estranger": 2,
-        "pct_nascuda_estranger": null,
-        "pct_nacionalitat_estrangera": null,
-        "bretxa_naturalitzacio": null,
+        "poblacio_nacionalitat_estrangera": 0,
+        "pct_nascuda_estranger": 8,
+        "pct_nacionalitat_estrangera": 0,
+        "bretxa_naturalitzacio": 8,
         "delta_pct_estrangera_finestra": null,
         "confianca_origen": "baixa"
       }
@@ -3184,6 +3239,7 @@
         "poblacio_nascuda_catalunya": 171,
         "poblacio_nascuda_resta_espanya": 6,
         "poblacio_nascuda_estranger": 2,
+        "poblacio_nacionalitat_estrangera": 1,
         "pct_nascuda_estranger": 1.12,
         "pct_nacionalitat_estrangera": 0.56,
         "bretxa_naturalitzacio": 0.56,
@@ -3246,6 +3302,7 @@
         "poblacio_nascuda_catalunya": 982,
         "poblacio_nascuda_resta_espanya": 147,
         "poblacio_nascuda_estranger": 107,
+        "poblacio_nacionalitat_estrangera": 71,
         "pct_nascuda_estranger": 8.66,
         "pct_nacionalitat_estrangera": 5.74,
         "bretxa_naturalitzacio": 2.92,
@@ -3308,6 +3365,7 @@
         "poblacio_nascuda_catalunya": 231,
         "poblacio_nascuda_resta_espanya": 18,
         "poblacio_nascuda_estranger": 11,
+        "poblacio_nacionalitat_estrangera": 3,
         "pct_nascuda_estranger": 4.23,
         "pct_nacionalitat_estrangera": 1.15,
         "bretxa_naturalitzacio": 3.08,
@@ -3370,6 +3428,7 @@
         "poblacio_nascuda_catalunya": 385,
         "poblacio_nascuda_resta_espanya": 28,
         "poblacio_nascuda_estranger": 17,
+        "poblacio_nacionalitat_estrangera": 13,
         "pct_nascuda_estranger": 3.95,
         "pct_nacionalitat_estrangera": 3.02,
         "bretxa_naturalitzacio": 0.93,
@@ -3432,6 +3491,7 @@
         "poblacio_nascuda_catalunya": 167,
         "poblacio_nascuda_resta_espanya": 2,
         "poblacio_nascuda_estranger": 9,
+        "poblacio_nacionalitat_estrangera": 8,
         "pct_nascuda_estranger": 5.06,
         "pct_nacionalitat_estrangera": 4.49,
         "bretxa_naturalitzacio": 0.57,
@@ -3494,6 +3554,7 @@
         "poblacio_nascuda_catalunya": 226,
         "poblacio_nascuda_resta_espanya": 7,
         "poblacio_nascuda_estranger": 1,
+        "poblacio_nacionalitat_estrangera": 0,
         "pct_nascuda_estranger": 0.43,
         "pct_nacionalitat_estrangera": 0,
         "bretxa_naturalitzacio": 0.43,
@@ -3556,6 +3617,7 @@
         "poblacio_nascuda_catalunya": 168,
         "poblacio_nascuda_resta_espanya": 15,
         "poblacio_nascuda_estranger": 24,
+        "poblacio_nacionalitat_estrangera": 20,
         "pct_nascuda_estranger": 11.59,
         "pct_nacionalitat_estrangera": 9.66,
         "bretxa_naturalitzacio": 1.93,

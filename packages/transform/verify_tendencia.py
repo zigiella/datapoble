@@ -56,6 +56,13 @@ from tauler_kpis import metriques_del_tauler  # noqa: E402
 N_MUNICIPIS = 947
 
 AMB_SERIE = {"atur_registrat", "pct_nacionalitat_estrangera", "poblacio_nacionalitat_estrangera"}
+# SÈRIE PARCIAL (2026-08-01) · les úniques mètriques que poden dur els DOS estats alhora,
+# perquè la cobertura de la FONT varia per municipi: Idescat publica la foto de nacionalitat
+# per als 947 però reserva la SÈRIE anual a 16 d'ells (tots els anys). Fins avui aquests 16
+# no tenien CAP fila —absents, no 'sense_serie'—, i el forat es veia poc perquè el llindar
+# mínim N també els amagava el nivell. Retirat el llindar (vot de Bea), publicar el nivell i
+# callar l'evolució sense dir-ho seria el defecte exacte que aquest fitxer guarda.
+SERIE_PARCIAL = {"pct_nacionalitat_estrangera", "poblacio_nacionalitat_estrangera"}
 SENSE_SERIE = {
     "poblacio", "pob_0_14", "pob_15_64", "pob_65_84", "pob_85_mes", "index_envelliment",
     "renda_neta_persona", "pct_noprincipal", "kg_hab_any", "kwh_hab", "vidre_hab",
@@ -152,6 +159,20 @@ def main() -> int:  # noqa: C901 — un verificador és una llista de guardes, n
           f"mètriques del tauler no declarades ni a AMB_SERIE ni a SENSE_SERIE: "
           f"{sorted(no_declarades)}")
 
+    # --- 1c. CAP TARGETA SENSE FILA **PER MUNICIPI** (2026-08-01) ---
+    # La guarda de D10 (1b) comprova que cada mètrica pintada té ALGUNA fila; això deixava
+    # passar un forat més fi i real: `pct_nacionalitat_estrangera` en tenia 931 de 947, i els
+    # 16 que faltaven eren absents del shard del seu municipi. Al navegador, una mètrica
+    # absent i una mètrica «no ha canviat» s'assemblen massa. El conjunt esperat segueix
+    # sent el del front (kpis.js), i ara es creua amb els 947.
+    cobertura = df.groupby("metric")["ine5"].nunique()
+    forats = {m: int(cobertura.get(m, 0)) for m in sorted(pintades)
+              if int(cobertura.get(m, 0)) != N_MUNICIPIS}
+    check(not forats,
+          f"{len(forats)} mètriques del tauler que NO cobreixen els {N_MUNICIPIS} municipis: "
+          f"{forats} — el municipi que falta no veu ni el valor ni el motiu; si la font no "
+          f"en serveix la sèrie, la fila ha d'existir com a 'sense_serie' amb el motiu escrit")
+
     # --- 2. CAP FLETXA SENSE PERÍODE (la regla de Bea) ---
     amb_fletxa = df[df["direccio"].notna()]
     sense_periode = amb_fletxa[amb_fletxa["periode_anterior"].isna()
@@ -162,6 +183,27 @@ def main() -> int:  # noqa: C901 — un verificador és una llista de guardes, n
     amb_delta = df[df["delta"].notna()]
     check(amb_delta["periode_anterior"].notna().all(),
           "hi ha delta sense període de comparació declarat")
+
+    # --- 2b. CAP MOVIMENT D'UN NIVELL QUE NO PUBLIQUEM (D-DELTA) ---
+    # Doctrina vinculant al capçal de `semantic/metrics.yml`, bloc «DELTA D'UN NIVELL
+    # SUPRIMIT»: si el nivell no es publica, el seu delta tampoc. És la «regla del join
+    # heretada» aplicada al temps — un delta es deriva de dos nivells, i si els hem declarat
+    # impublicables, la seva diferència ho és igual. Cas fundacional: la Quar (08177), on el
+    # % de nacionalitat sortia «n. d.» i al costat s'hi pintava «↑ +1,62 punts · 2021→2025».
+    #
+    # Avui aquesta guarda no té cap cas viu a la capa d'origen (el llindar mínim N s'ha
+    # retirat, vot de Bea 2026-08-01, i el nivell es publica). Es queda EXACTAMENT per això:
+    # la incoherència va viure dotze dies sense que res petés, i la próxima supressió —vingui
+    # d'on vingui— no ha de poder repetir-la en silenci.
+    # ATENCIÓ a què NO és aquest cas: l'atur emmascarat també porta `valor_actual` NULL, però
+    # allà el nivell SÍ que es publica —com a interval [1,4]— i el que s'emet és `delta_min`/
+    # `delta_max`, mai un `delta` exacte (guarda 4). Un nivell publicat en interval no és un
+    # nivell suprimit; per això la condició mira el delta EXACTE.
+    nivell_mut = df[df["valor_actual"].isna() & df["delta"].notna()]
+    check(nivell_mut.empty,
+          f"{len(nivell_mut)} files amb valor_actual NULL i moviment publicat "
+          f"(p. ex. {nivell_mut[['ine5', 'metric']].head(3).values.tolist()}) — si el nivell "
+          f"no es publica, el delta que se'n deriva tampoc")
 
     # --- 3. Cap Δ inventat · cap NULL mut ---
     sense = df[df["estat"] == "sense_serie"]
@@ -178,11 +220,20 @@ def main() -> int:  # noqa: C901 — un verificador és una llista de guardes, n
           "hi ha una fila 'sense_serie' amb motiu_ca idèntic a motiu_es "
           "(o s'ha copiat el català al castellà, o falta traduir-lo)")
     check(sense["direccio"].isna().all(), "una fila 'sense_serie' porta direcció")
-    check(set(sense["metric"].unique()) == SENSE_SERIE,
+    check(set(sense["metric"].unique()) == SENSE_SERIE | SERIE_PARCIAL,
           f"conjunt 'sense_serie' inesperat: {sorted(set(sense['metric'].unique()))}")
     amb = df[df["estat"] == "amb_serie"]
     check(set(amb["metric"].unique()) == AMB_SERIE,
           f"conjunt 'amb_serie' inesperat: {sorted(set(amb['metric'].unique()))}")
+    # Una mètrica només pot dur els DOS estats si està DECLARADA com a sèrie parcial: si no,
+    # el que hi ha és una absència silenciosa a mitges (uns municipis amb sèrie i uns altres
+    # sense, i ningú que hagi escrit per què).
+    tots_dos = set(sense["metric"].unique()) & set(amb["metric"].unique())
+    check(tots_dos <= SERIE_PARCIAL,
+          f"mètriques amb 'amb_serie' i 'sense_serie' alhora sense declarar-se parcials: "
+          f"{sorted(tots_dos - SERIE_PARCIAL)}")
+    check(SERIE_PARCIAL <= AMB_SERIE,
+          f"una mètrica declarada parcial no consta a AMB_SERIE: {sorted(SERIE_PARCIAL - AMB_SERIE)}")
     check(amb["comparacio"].notna().all(), "hi ha 'amb_serie' sense dir quina comparació és")
     check(amb["motiu_ca"].isna().all() and amb["motiu_es"].isna().all(),
           "una fila 'amb_serie' porta motiu de sense-sèrie")
