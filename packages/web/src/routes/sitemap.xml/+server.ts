@@ -6,6 +6,7 @@
  * lloc va `noindex`; això és la bastida perquè al llançament només calgui treure el noindex.
  */
 import { toSlug } from '$lib/contract/slug';
+import { GOVERN_RANK_KEYS, metricaSlug } from '$lib/govern/kpis';
 import type { CatalegData } from '$lib/contract/cataleg';
 import type { ComarquesData } from '$lib/contract/comarques';
 import type { RequestHandler } from './$types';
@@ -41,14 +42,20 @@ export const GET: RequestHandler = async ({ fetch }) => {
 		muniRoutes = [];
 	}
 
-	// Pàgines de comarca (43) i vegueria (8): prerenderitzades, entren al sitemap.
+	// Pàgines de comarca (43) i vegueria (8): prerenderitzades, entren al sitemap. W2 hi suma els
+	// LLISTATS per comarca × mètrica (43 × 9 = 387), que també són pàgines reals amb URL pròpia:
+	// deixar-los fora seria publicar-los i no dir-ho. Mateixa font que `entries()` de la ruta.
 	let terrRoutes: string[] = [];
 	try {
 		const res = await fetch('/data/comarques.json');
 		if (res.ok) {
 			const data = (await res.json()) as ComarquesData;
+			const comarques = data.comarques.map((c) => toSlug(c.nom));
 			terrRoutes = [
-				...data.comarques.map((c) => `/comarca/${toSlug(c.nom)}/`),
+				...comarques.map((slug) => `/comarca/${slug}/`),
+				...comarques.flatMap((slug) =>
+					GOVERN_RANK_KEYS.map((k) => `/comarca/${slug}/${metricaSlug(k)}/`)
+				),
 				...data.vegueries.map((v) => `/vegueria/${toSlug(v.nom)}/`)
 			];
 		}

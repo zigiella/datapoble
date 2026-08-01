@@ -28,9 +28,12 @@
 	import { browser } from '$app/environment';
 	import ContourField from '$lib/components/ContourField.svelte';
 	import { currentLocale, pick, localizeHref } from '$lib/i18n';
-	import { formatMetric, formatDecimal, formatInteger } from '$lib/format';
+	import { formatMetric, formatDecimal, formatInteger, formatBoardValue } from '$lib/format';
 	import { provenanceOf } from '$lib/map/provenance';
 	import { toSlug, slugForIne5, nomCanonic, nomIndex } from '$lib/contract/slug';
+	// W2 · l'article de la comarca («del Berguedà», «de l'Alt Empordà»): taula lèxica + una
+	// funció, compartida amb el llistat per comarca i exercida sobre les 43 pel verificador.
+	import { deComarca } from '$lib/contract/comarca-nom.js';
 	import Espina from '$lib/components/Espina.svelte';
 	import MirallConstel from '$lib/components/MirallConstel.svelte';
 	import { m } from '$lib/paraglide/messages';
@@ -38,6 +41,7 @@
 	import type { LectTo } from '$lib/contract/lectures';
 	import {
 		GOVERN_KPIS,
+		GOVERN_RANK_KEYS,
 		PRESENCIA_KEY,
 		EDATS_BANDS,
 		NAIX_BAR_KEYS,
@@ -47,6 +51,8 @@
 		GOVERN_DENOM_REASON_DEFAULT,
 		GOVERN_DENOM_MIN_N,
 		governReferences,
+		governUnit,
+		metricaSlug,
 		provenanceLine
 	} from '$lib/govern/kpis';
 	import type { GovernCell, GovernEntry } from '$lib/contract/govern';
@@ -267,12 +273,10 @@
 
 	// Formata SENSE el símbol de percentatge (el «%» el posa el markup com a unitat petita, com al
 	// Resum, per no duplicar-lo). La resta de formats deleguen a formatMetric (contracte).
+	// (La regla viu a `$lib/format` perquè el LLISTAT per comarca (W2) formati la MATEIXA xifra
+	// exactament igual: dues còpies serien la mateixa dada amb dos nombres de decimals.)
 	function fmtValue(value: MetricValue | undefined, def: MetricDef): string {
-		if (value === null || value === undefined) return m.value_not_available();
-		if (def.format === 'percent' && typeof value === 'number') {
-			return formatDecimal(value, locale, 1);
-		}
-		return formatMetric(value, def, locale) ?? m.value_not_available();
+		return formatBoardValue(value, def, locale) ?? m.value_not_available();
 	}
 
 	// Valor d'una mètrica per al municipi, formatat al locale (sense unitat).
@@ -306,22 +310,10 @@
 	// Def del contracte per a una clau (les claus del descriptor són strings JS).
 	const gDef = (key: string): MetricDef => dataset.metrics[key as MetricKey];
 	// Unitat curta editorial per a la targeta (mateixa pràctica que SHORT_UNIT; % pel format).
-	const GOV_UNIT: Record<string, string> = {
-		poblacio: 'hab.',
-		renda_neta_persona: '€',
-		kwh_hab: 'kWh',
-		kg_hab_any: 'kg',
-		vidre_hab: 'kg',
-		rtc_per_1000hab: '‰',
-		// D11 · les tres xifres de lloc de naixement són persones, com la població de la qual són
-		// partició (nascuts a Catalunya + resta d'Espanya + estranger = `poblacio`, exacte als 947).
-		poblacio_nascuda_catalunya: 'hab.',
-		poblacio_nascuda_resta_espanya: 'hab.',
-		poblacio_nascuda_estranger: 'hab.'
-	};
+	// W2: la taula viu a `kpis.js` (`GOVERN_UNIT`/`governUnit`) perquè el LLISTAT per comarca
+	// pinti la mateixa unitat sota la mateixa xifra; aquí només s'hi lliga la def del contracte.
 	function gUnit(key: string): string {
-		if (gDef(key)?.format === 'percent') return '%';
-		return GOV_UNIT[key] ?? '';
+		return governUnit(key, gDef(key));
 	}
 
 	// ── D11 · NOTES DE LÍMIT per targeta (E11) ────────────────────────────────────────────────
@@ -367,8 +359,19 @@
 	// es resolen els textos i es formaten les xifres: cap càlcul (C6 §4), cap denominador
 	// escrit a mà (C6 §8.1). La xifra es formata amb la MATEIXA def del contracte que el valor
 	// gran de la targeta, perquè les tres siguin comparables dígit a dígit.
+	//
+	// VOT DE BEA (2026-07-31): la mediana duu el NOM DE LA COMARCA escrit — «mediana del
+	// Berguedà», no «mediana comarcal». Això arrossegava `gov_rang_cap` (que deia « · per valor a
+	// {comarca}» just a sobre) i hauria pintat el nom DUES vegades a la mateixa targeta; per això
+	// `gov_rang_cap` ha passat a « · per valor» i la comarca es diu UNA sola vegada, aquí, on
+	// també importa (una mediana sense el seu perímetre no vol dir res). L'article el resol
+	// `deComarca` amb la seva taula de gènere: una funció, no un `if` per comarca. Si la comarca
+	// no hi és, es cau al rètol sense nom (`gov_ref_comarca_nd`) en comptes d'inventar l'article.
 	const REF_LABEL: Record<string, () => string> = {
-		gov_ref_comarca: () => m.gov_ref_comarca(),
+		gov_ref_comarca: () => {
+			const c = deComarca(govern?.comarca ?? '', locale);
+			return c ? m.gov_ref_comarca({ comarca: c }) : m.gov_ref_comarca_nd();
+		},
 		gov_ref_catalunya: () => m.gov_ref_catalunya()
 	};
 	// El denominador d'una MEDIANA es diu en municipis; el d'una PONDERADA, en unitats del seu
@@ -395,6 +398,19 @@
 		}
 		return out;
 	}
+	// ── W2 · EL RANG, CLICABLE (petició de Bea: «hem de poder clicar cada vegada que posi rang») ─
+	// Destí: el llistat d'aquella mètrica a aquella comarca. Es construeix del NOM de comarca que
+	// serveix el mart i de la CLAU de la mètrica (`metricaSlug`, derivada del contracte): cap URL
+	// escrita a mà, i per tant cap manera que l'enllaç i la pàgina parlin de coses diferents.
+	// Retorna `null` —i el rang es pinta sense enllaç— si falta la comarca o si la clau no és
+	// rankejable: un enllaç trencat seria pitjor que cap enllaç.
+	const rankKeys = new Set<string>(GOVERN_RANK_KEYS);
+	function rangHref(key: string | undefined): string | null {
+		const com = govern?.comarca;
+		if (!com || !key || !rankKeys.has(key)) return null;
+		return localizeHref(`/comarca/${toSlug(com)}/${metricaSlug(key)}`);
+	}
+
 	// Prefixa el signe a una variació ja formatada (la negativa ja porta el «−» d'Intl).
 	function signed(s: string): string {
 		return s.startsWith('-') || s.startsWith('−') ? s : `+${s}`;
@@ -726,18 +742,47 @@
      la línia que fa LLEGIBLE el denominador quan no és tota la comarca. Els tres llocs que
      pinten rang (capçalera de presència, targeta de mètrica, % de la barra de naixement)
      comparteixen aquest snippet perquè no puguin divergir: fins avui era el mateix marcatge
-     copiat tres vegades. `key` només serveix per triar el MOTIU de l'absència. -->
+     copiat tres vegades. `key` només serveix per triar el MOTIU de l'absència.
+
+     W2 (petició de Bea, 2026-07-31): «hem de poder clicar cada vegada que posi rang i accedir a
+     cada llistat». Com que TOTS els rangs de la fitxa passen per aquí, fer-ho clicable en aquest
+     únic lloc ho fa clicable a TOTS — no hi ha cap rang pintat fora d'aquest snippet, i
+     `verify-govern.mjs` ho vigila. L'enllaç porta a `/comarca/<comarca>/<metrica>/`, on el «k de
+     n» s'obre en la llista sencera. El destí es construeix del NOM de la comarca que serveix el
+     mart i de la CLAU de la mètrica: cap URL escrita a mà. Si la clau no és rankejable (cas
+     impossible amb `rang != null`, però la doctrina no depèn de la sort), es pinta el rang tal
+     com abans, sense enllaç: un enllaç trencat és pitjor que cap enllaç. -->
+<!-- El COS del rang («k de n» + el seu rètol), en un snippet propi perquè l'enllaç de W2 el
+     pugui embolcallar sense DUPLICAR el marcatge: amb dues còpies (amb enllaç i sense) tornaria
+     a ser possible que una divergís de l'altra, que és el que aquest snippet existeix per
+     impedir. `verify-govern.mjs` compta que el marcatge hi surti UNA sola vegada. -->
+{#snippet rangCos(cell: GovernCell)}
+	<span class="gov-kpi__rankk"
+		>{m.gov_rang_val({ k: String(cell.rang), n: String(cell.n_amb_dada) })}</span
+	>
+	<span class="gov-kpi__rankl"
+		>{m.gov_rang_label()}{#if cell.empat} · {m.gov_rang_empat()}{/if}{m.gov_rang_cap()}</span
+	>
+{/snippet}
+
 {#snippet rangComarcal(cell: GovernCell | null, key: string | undefined)}
 	{#if cell && cell.rang != null}
+		{@const href = rangHref(key)}
 		<p class="gov-kpi__rank">
-			<span class="gov-kpi__rankk"
-				>{m.gov_rang_val({ k: String(cell.rang), n: String(cell.n_amb_dada) })}</span
-			>
-			<span class="gov-kpi__rankl"
-				>{m.gov_rang_label()}{#if cell.empat} · {m.gov_rang_empat()}{/if}{m.gov_rang_cap({
-					comarca: govern?.comarca ?? ''
-				})}</span
-			>
+			{#if href}
+				<a
+					class="gov-kpi__ranka"
+					{href}
+					aria-label={m.gov_rang_llink({
+						n: String(cell.n_amb_dada),
+						comarca: deComarca(govern?.comarca ?? '', locale) ?? (govern?.comarca ?? '')
+					})}
+				>
+					{@render rangCos(cell)}
+				</a>
+			{:else}
+				{@render rangCos(cell)}
+			{/if}
 		</p>
 		{#if denomIncomplet(cell.n_amb_dada)}
 			<p class="gov-kpi__denom">
@@ -748,9 +793,11 @@
 		<!-- R-PINTA · LES DUES REFERÈNCIES (vot de Bea: «farem B+D»). Van DINS el bloc del rang,
 		     no en un lloc propi: la comparació és la mateixa pregunta que el «k de n» —«contra
 		     qui»— i separar-les tornaria a obrir la porta a tres còpies divergents. Així hereten
-		     la posició del rang a cada punt de crida i, sobretot, la seva ADJACÈNCIA: la línia de
-		     dalt ja ha dit de quina comarca parlem («per valor a Barcelonès»), i per això el
-		     rètol pot ser «mediana comarcal» sense repetir-ne el nom ni patir amb l'article.
+		     la posició del rang a cada punt de crida i, sobretot, la seva ADJACÈNCIA.
+		     VOT DE BEA (2026-07-31): el rètol de la mediana duu ara el NOM DE LA COMARCA escrit
+		     («mediana del Berguedà»), i és AQUÍ on la targeta el diu — una sola vegada. Per això
+		     `gov_rang_cap`, la línia de sobre, ha deixat de dir-lo (« · per valor a {comarca}» →
+		     « · per valor»): amb les dues, el nom hi sortia dues vegades seguides.
 		     Ordre: la COMARCAL primer (mateix perímetre que el rang: el lector acaba de llegir
 		     «de 31» i la mediana d'aquests mateixos 31 és la lectura següent), la CATALANA a
 		     sota com a ancoratge igual a totes les targetes.
@@ -1768,6 +1815,32 @@
 		text-transform: uppercase;
 		letter-spacing: 0.04em;
 		color: var(--dp-text-subtle);
+	}
+	/* W2 · el rang, clicable cap al llistat de la comarca. L'enllaç ABRAÇA el «k de n» i el seu
+	   rètol perquè la zona de clic sigui tot el bloc, i es marca amb un subratllat discret al
+	   rètol: el número ja crida prou l'atenció i no volem que sembli una altra xifra. */
+	.gov-kpi__ranka {
+		display: flex;
+		align-items: baseline;
+		gap: 7px;
+		flex-wrap: wrap;
+		text-decoration: none;
+		color: inherit;
+		border-radius: var(--dp-radius-sm);
+	}
+	.gov-kpi__ranka .gov-kpi__rankl {
+		border-bottom: 1px dotted var(--dp-border-strong);
+	}
+	.gov-kpi__ranka:hover .gov-kpi__rankk {
+		background: color-mix(in srgb, var(--dp-forest) 24%, var(--dp-bg));
+	}
+	.gov-kpi__ranka:hover .gov-kpi__rankl {
+		color: var(--dp-text);
+		border-bottom-style: solid;
+	}
+	.gov-kpi__ranka:focus-visible {
+		outline: 2px solid var(--dp-border-strong);
+		outline-offset: 2px;
 	}
 	.gov-kpi__norank {
 		margin: 2px 0 0;

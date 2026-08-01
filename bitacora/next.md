@@ -35,6 +35,48 @@ publicable per si sola.*
 >    Ja hi ha la dada (mart_govern: valor, rang, n_amb_dada, medianes i ponderades per als 947 × 9)
 >    i ja hi ha l'índex de comarques (#295). Falta la ruta i la pàgina. → **Mirador**.
 >
+> **✅ VOTS 1-3 + W2 (Mirador) — FETS, PR obert (2026-08-01, branca `mirador/w2-rang-clicable`).**
+> Bitàcola: `bitacora/2026-08-01_w2-rang-clicable_mirador.md`.
+> **Copy:** «mitjana de Catalunya» intacta. La mediana duu el nom escrit — «mediana del Berguedà»,
+> «de l'Alt Empordà», «de la Garrotxa», «de les Garrigues», «d'Osona» — amb una **taula lèxica de
+> gènere de les 43 comarques + UNA funció** (`contract/comarca-nom.js`), perquè el gènere és lèxic
+> i no es dedueix del nom (Garrotxa femenina / Garraf masculí; Anoia amb article / Osona sense).
+> **L'arrossegament de `gov_rang_cap`, resolt traient-hi el nom:** passa de « · per valor a
+> {comarca}» a « · per valor», i la comarca es diu **una sola vegada per targeta** (guardat sobre
+> les 43 × 2 locales).
+> **W2:** ruta `/comarca/[slug]/[metrica]/` — el llistat és una VISTA d'una comarca, no un nivell
+> nou de l'espina, així que el breadcrumb i l'índex #295 es reaprofiten; el slug de mètrica es
+> DERIVA de la clau del contracte (`vidre_hab` → `vidre-hab`), sense cap segona taula de noms.
+> **Cost del build MESURAT abans de decidir: 5.933 → 7.484 fitxers (+1.551 = 1.161 HTML + 387
+> JSON), +48,5 MB; el 37 % del límit de 20.000 de Cloudflare.** Es prerenderitza tot (i sota
+> demanda no era opció: `adapter-static`, sense servidor en runtime). Cada llistat pesa 44 kB
+> perquè fa **un sol `fetch`** — la pàgina de comarca que ja hi havia en pesa 1,8 MB per carregar
+> la geometria, i aquell error no s'ha repetit.
+> **Ordre = el `rang` LLEGIT, mai un `sort` pel valor** (ordenar pel valor hauria desfet els **220
+> empats** que declara el mart). **Els 30 municipis sense dada de tot Catalunya hi surten
+> igualment**, en bloc a part al final, sense ordenar i amb el seu motiu — les **tres** causes
+> exercides (llindar nostre · la font que la calla · divisió impossible).
+> Verificat: check 0/0 · build verd · verify:govern (secció W2 nova: **387 llistats exercits un a
+> un contra el mart**) · verify:docs · **guardes noves provades EN NEGATIU 19/19** · al navegador,
+> la Pobla → vidre del Berguedà **17a de 31**, Barcelona → Barcelonès, nacionalitat al Berguedà
+> 27 de 31 amb els 4 al final, ca i es · **cap error de consola** · `noindex` intacte.
+> **NO fusiono jo.**
+> ⛔ **Dues premisses menors del brief, falses:** (1) «3 locales» → en són **2** (ca, es); el build
+> n'emet 3 còpies perquè hi ha la ruta canònica de fallback — l'aritmètica de 1.161 és correcta,
+> el motiu no. (2) «2,3 GB» → **2,42 GiB** (els 5.900 fitxers, clavats). Cap de les dues canvia la
+> decisió; les anoto perquè totes dues xifres es van escriure sense mesurar-les.
+> ⚠️ **COPY PENDENT DEL VOT DE BEA** (funciona, però la frase és seva): `gov_rang_cap` = « · per
+> valor» (¿o « · ordenats pel valor»?) · el text del bloc «sense aquesta xifra» · i la contracció
+> **castellana** sobre topònim català («del Alt Empordà», «de las Garrigues», «de Osona»).
+> ➡️ **Handoff a: Sondeig** — `n_comarca` a la cel·la de `mart_govern` (**segona vegada**: ara el
+> recompte de municipis de la comarca viu duplicat a la web, al loader de la fitxa i al prebuild
+> del llistat). I el recompte de nacionalitat al catàleg servit, que segueix obert.
+> 💡 **Candidata a següent tasca (Mirador):** `/comarca/[slug]/` encara no enllaça els seus 9
+> llistats — hi arribes des de la fitxa d'un municipi, però no des de la comarca. Tres línies.
+> 💡 **Candidata (Mirador):** la pàgina de comarca pesa **1,8 MB** perquè incrusta la geometria
+> sencera a cadascuna de les seves 129 còpies (76 MB de build per 43 pàgines). Es pot partir com
+> s'han partit el govern i el tauler.
+>
 > **✅ B+D PINTAT (#298, 2026-07-31) — i el meu brief hi portava una premissa falsa.**
 > Cada targeta amb rang mostra la **mediana comarcal** (mateix perímetre que el «k de n») i la
 > **mitjana ponderada de Catalunya** (ancoratge oficial), amb el seu denominador cadascuna.

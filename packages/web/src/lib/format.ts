@@ -56,6 +56,26 @@ export function formatYear(value: number | string, locale: Locale): string {
 }
 
 /**
+ * Xifra del TAULER DE DADES: com `formatMetric`, però SENSE el símbol de percentatge — el
+ * markup del tauler el pinta com a unitat petita al costat, i posar-l'hi aquí el duplicaria.
+ *
+ * Viu aquí, i no dins d'una pàgina, perquè la fitxa del municipi i el LLISTAT per comarca
+ * (W2) han de formatar la mateixa xifra exactament igual: si divergissin, la mateixa dada es
+ * llegiria amb dos nombres de decimals segons per on hi arribes.
+ *
+ * Retorna `null` quan no hi ha valor, perquè qui la crida triï el text de «sense dada» (i18n).
+ */
+export function formatBoardValue(
+	value: MetricValue | undefined,
+	def: Pick<MetricDef, 'format'>,
+	locale: Locale
+): string | null {
+	if (value === null || value === undefined) return null;
+	if (def.format === 'percent' && typeof value === 'number') return formatDecimal(value, locale, 1);
+	return formatMetric(value, def, locale);
+}
+
+/**
  * Formata el valor d'una mètrica segons el seu `format` declarat al contracte.
  * Retorna `null` perquè el cridador decideixi com mostrar "no disponible" (i18n).
  */
