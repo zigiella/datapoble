@@ -1,0 +1,71 @@
+name: Tarea para agente
+about: Contrato durable para trabajo local, cloud o híbrido
+title: "[TASK] "
+labels: ["agent-task", "ready"]
+body:
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objetivo
+      description: Resultado que debe existir al terminar.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Criterios de aceptación
+      description: Condiciones observables de cierre.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Alcance y exclusiones
+      description: Rutas, componentes y acciones permitidas; qué queda fuera.
+    validations:
+      required: true
+  - type: dropdown
+    id: runtime
+    attributes:
+      label: Entorno de ejecución
+      options: [local, cloud, either, hybrid]
+    validations:
+      required: true
+  - type: dropdown
+    id: data
+    attributes:
+      label: Clase de datos más restrictiva
+      description: De los materiales que toca esta tarea, la clase más restrictiva de .relay.yml (data_map). Sus derechos van con ella.
+      options: [repository, cloud-ok, local-only, synthetic-only]
+    validations:
+      required: true
+  - type: textarea
+    id: prior_state
+    attributes:
+      label: Estado de partida
+      description: Qué criterios están ya cubiertos por trabajo anterior, por qué ruta y por qué commit. Vacío si la tarea empieza en cero. Al instalar Relay sobre un proyecto en marcha, esto evita rehacer o sustituir trabajo existente.
+      placeholder: "Criterios 1-4 cubiertos en docs/… (commit abc1234). Pendientes: 5, 6, 7."
+  - type: input
+    id: owner
+    attributes:
+      label: Propietaria inicial
+      description: Nombre de la agente y su arnés. Si es una mano puntual, basta arnés+entorno.
+      placeholder: "xenia (claude-local), codex-cloud, cursor-cloud…"
+    validations:
+      required: true
+  - type: input
+    id: referencias
+    attributes:
+      label: Referencias a visitar
+      description: Rutas o enlaces que hay que leer para esta tarea (documentos del repo, notas de un grafo si el proyecto usa alguno). Vacío si no aplica.
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verificación esperada
+      description: Tests, consultas, evaluación humana o evidencia.
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencias y bloqueos conocidos

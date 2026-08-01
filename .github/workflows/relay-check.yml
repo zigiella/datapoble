@@ -1,0 +1,59 @@
+name: Relay check
+
+# Materializa los checks que .relay.yml declara y que se pueden comprobar sin humano.
+# Avisa por defecto; pon STRICT=1 (abajo) cuando el equipo quiera que bloquee.
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  contrato:
+    runs-on: ubuntu-latest
+    env:
+      STRICT: "0"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Comprueba el cuerpo del PR
+        run: |
+          BODY=$(jq -r '.pull_request.body // ""' "$GITHUB_EVENT_PATH")
+          DRAFT=$(jq -r '.pull_request.draft' "$GITHUB_EVENT_PATH")
+          LABELS=$(jq -r '[.pull_request.labels[].name] | join(",")' "$GITHUB_EVENT_PATH")
+          if [ "$DRAFT" = "true" ]; then echo "PR en borrador: no se comprueba todavia."; exit 0; fi
+
+          # Solo se comprueban los PR que cruzan entornos o cambian de manos: un
+          # aviso que salta en todos los PR se deja de leer, y el dia que importa
+          # nadie lo mira. Pon la etiqueta 'relevo' cuando la tarea cruce.
+          case ",$LABELS," in
+            *,relevo,*|*,working-cloud,*|*,paused-local,*) ;;
+            *) echo "PR sin cruce de entornos: fuera del alcance de relay-check."; exit 0 ;;
+          esac
+
+          avisos=0
+          aviso() { echo "::warning::$1"; avisos=$((avisos+1)); }
+
+          # 1. Enlaza un issue (Closes #N, Issue: #N o una referencia #N cualquiera)
+          echo "$BODY" | grep -Eqi '#[0-9]+' || aviso "El PR no enlaza ningun issue: en Relay el issue es el contrato."
+
+          # 2. Evidencia declarada, no seccion vacia
+          EV=$(echo "$BODY" | sed -n '/^#\+ *Evidencia/,/^#\+ /p' | sed '1d;$d' | tr -d '[:space:]')
+          [ -n "$EV" ] || aviso "La seccion Evidencia esta vacia: declara que comprobaste y que no."
+
+          # 3. Clase de datos declarada
+          echo "$BODY" | grep -Eqi 'repository|cloud-ok|local-only|synthetic-only' \
+            || aviso "No se declara la clase de datos utilizada."
+
+          # 4. Relevo o pendientes: que quede dicho si la tarea sigue viva
+          echo "$BODY" | grep -Eqi 'handoff|pendiente' \
+            || aviso "Sin bloque de relevo ni pendientes: si la tarea continua, la siguiente agente no sabra por donde."
+
+          if [ "$avisos" -gt 0 ]; then
+            echo "$avisos aviso(s) de contrato Relay."
+            [ "$STRICT" = "1" ] && exit 1
+          else
+            echo "Contrato Relay: PR completo."
+          fi

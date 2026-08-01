@@ -1,19 +1,37 @@
-<!-- Closes #N -->
+## Issue
 
-## Qué hace
-(Una o dos frases. Qué issue cierra.)
+Closes #
 
-## Frente / jurisdicción
-- [ ] Cambios dentro de mi frente (sin tocar código ajeno sin handoff)
+## Propietaria y entorno
 
-## Checklist
-- [ ] CI en verde
-- [ ] Identity-inline (commit firmado por mi agente)
-- [ ] Tests para el caso (si aplica)
-- [ ] Bitácora si la decisión cruza frentes
-- [ ] *Out of scope* respetado (no scope creep)
-- [ ] Sin secretos en el diff
-- [ ] Claims marcados (validado / contrato / roadmap)
+- Agente/arnés:
+- Entorno: local | cloud | híbrido
+- Rama:
 
-## Notas para review
-(Lo que la revisora debe mirar con atención.)
+## Qué cambia
+
+
+## Evidencia
+
+- Comprobaciones ejecutadas:
+- Resultados:
+- No comprobado y motivo:
+
+## Política de datos
+
+- Material tocado (nombre en `data_map`):
+- Clase y derechos: repository | cloud-ok | local-only | synthetic-only · libre | solo-agregado | no-reproducir | no-sale
+- Confirmo que respeté los derechos del material: no salió nada que no debiera salir [ ]
+
+## Conocimiento reusable
+
+- [ ] Nada que sobreviva a esta tarea.
+- [ ] Deja una lección o decisión que merece sobrevivir (dónde queda escrita): 
+
+## Handoff o pendientes
+
+
+## Revisión humana
+
+- [ ] El cambio hacia fuera, irreversible o costoso ha sido aprobado.
+- [ ] El PR está listo para integrar.
