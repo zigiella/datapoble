@@ -252,7 +252,13 @@ const I18N_GONE = [
 	// W5 · la porta morta de la home i el seu copy («Resta de Catalunya · 947 municipis», que
 	// etiquetava el TOTAL com si fos la resta). `home_porta_soon` ja era òrfena abans d'avui:
 	// no la pintava ningú des de feia temps i ningú se n'havia adonat.
-	'home_porta_proxim', 'home_porta_proxim_sub', 'home_porta_soon'
+	'home_porta_proxim', 'home_porta_proxim_sub', 'home_porta_soon',
+	// VOT DE BEA (2026-08-01): al llistat, els que no tenen la xifra diuen «sense dada» i prou —
+	// «el motiu no pot ser tant explícit». Retirada la prosa del perquè (`llistat_sense_lead`).
+	// La doctrina NO s'afluixa: hi surten igualment, no s'ordenen com si fossin 0 i diuen «sense
+	// dada», mai un buit. El que es retira és l'explicació, que en una llista era soroll; a la
+	// TARGETA de la fitxa segueix viva, que és on Bea la va demanar («no vol dir zero»).
+	'llistat_sense_lead'
 ];
 for (const k of I18N_GONE) {
 	ok(!(k in ca), `i18n '${k}' retirada però encara a ca.json (clau òrfena)`);
@@ -1601,7 +1607,7 @@ let nComarquesArticle = 0;
 	);
 	for (const k of [
 		'llistat_eyebrow', 'llistat_title', 'llistat_meta', 'llistat_lead_tots', 'llistat_lead_parcial',
-		'llistat_taula_title', 'llistat_sense_title', 'llistat_sense_lead', 'llistat_sense_val',
+		'llistat_taula_title', 'llistat_sense_title', 'llistat_sense_val',
 		'llistat_tornar', 'llistat_altres', 'llistat_muni_aria'
 	]) {
 		ok(!!ca[k] && !!es[k], `i18n '${k}' absent (ca/es)`);
