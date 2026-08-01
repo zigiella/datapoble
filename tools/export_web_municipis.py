@@ -69,6 +69,7 @@ METRIC_KEYS = [
     # Origen: composició i arrelament (capa sensible; lectura ecològica, mai individual).
     "poblacio_nascuda_catalunya", "poblacio_nascuda_resta_espanya",
     "poblacio_nascuda_estranger", "pct_nascuda_estranger",
+    "poblacio_nacionalitat_estrangera",
     "pct_nacionalitat_estrangera", "bretxa_naturalitzacio",
     "delta_pct_estrangera_finestra", "confianca_origen",
     "rtc_total", "rtc_hut", "rtc_per_1000hab", "rtc_per_100hab_viv",
@@ -111,6 +112,7 @@ FORMAT_BY_KEY = {
     # Origen (composició i arrelament): comptes enters, %s en 0-100, bretxa/delta en punts.
     "poblacio_nascuda_catalunya": "integer", "poblacio_nascuda_resta_espanya": "integer",
     "poblacio_nascuda_estranger": "integer", "pct_nascuda_estranger": "percent",
+    "poblacio_nacionalitat_estrangera": "integer",
     "pct_nacionalitat_estrangera": "percent", "bretxa_naturalitzacio": "decimal",
     "delta_pct_estrangera_finestra": "decimal", "confianca_origen": "text",
     "rtc_total": "integer", "rtc_hut": "integer", "rtc_per_1000hab": "decimal",
@@ -184,6 +186,7 @@ COL_DEMOG = {
     "poblacio_nascuda_catalunya": "poblacio_nascuda_catalunya",
     "poblacio_nascuda_resta_espanya": "poblacio_nascuda_resta_espanya",
     "poblacio_nascuda_estranger": "poblacio_nascuda_estranger",
+    "poblacio_nacionalitat_estrangera": "poblacio_nacionalitat_estrangera",
     "pct_nascuda_estranger": "pct_nascuda_estranger",
     "pct_nacionalitat_estrangera": "pct_nacionalitat_estrangera",
     "bretxa_naturalitzacio": "bretxa_naturalitzacio",
