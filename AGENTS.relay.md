@@ -6,7 +6,11 @@ Estas reglas complementan el `AGENTS.md` del proyecto. Ante conflicto, mandan la
 
 1. Abre el issue asignado.
 2. Comprueba objetivo, criterio de aceptación, alcance, entorno y política de datos.
-3. **Verifica el estado de partida contra el repositorio.** Una tarea puede estar hecha en parte: es lo normal al instalar Relay sobre un proyecto en marcha. Si el issue declara cobertura previa, compruébala en el código antes de escribir; si difiere, corrige el issue **antes** de trabajar, no después. Rehacer trabajo existente, o sustituirlo por otra versión creyendo que partías de cero, es el fallo más caro de esta fase.
+3. **Contrasta el encargo contra el repositorio.** Un encargo trae dos clases de afirmación, y las dos pueden ser falsas:
+   - **Qué está hecho ya.** Una tarea puede estar hecha en parte: es lo normal al instalar Relay sobre un proyecto en marcha. Si el issue declara cobertura previa, compruébala en el código antes de escribir. Rehacer trabajo existente, o sustituirlo por otra versión creyendo que partías de cero, es el fallo más caro de esta fase.
+   - **Cómo funciona el sistema.** «El ingestor ya trae el año», «esos recuentos sí se publican», «esta métrica se expresa sobre habitantes». Quien te asigna escribe de memoria, y de memoria se equivoca sin querer y con total seguridad en el tono.
+
+   Si algo difiere, **corrige el issue antes de trabajar, no después**, y dilo en la entrega. Contradecir a quien te asignó no es insubordinación: es la parte del trabajo que solo puede hacer quien tiene el código delante. Obedecer al pie de la letra una premisa falsa no produce un error visible, produce **un resultado bien acabado y falso**, que es peor. Y funciona en las dos direcciones: una casilla de estado que dice «hecho» de algo que nadie hizo también es un encargo falso.
 4. Confirma que no existe otra escritora activa sobre la misma tarea o rama.
 5. Crea o recupera la rama que fije `.relay.yml`. Si tu arnés impone su propio espacio de nombres y no puedes cumplir el patrón, usa el suyo y **declara la rama real en el relevo**: el patrón existe para que la rama se encuentre, no es una ley que justifique no entregar.
 6. Si el proyecto usa un grafo de conocimiento, lee **solo** las notas enlazadas desde el issue. Si no lo usa, tus reglas duras y clases de datos viven en el `REGLAS.md` de este repositorio: Relay no necesita grafo.
@@ -21,8 +25,11 @@ Estas reglas complementan el `AGENTS.md` del proyecto. Ante conflicto, mandan la
 - Publica checkpoints cuando el trabajo pueda perderse o continuar en otro entorno.
 - No escribas secretos, credenciales, rutas locales ni datos `local-only`. Y antes de derivar algo de un material, mira sus **derechos** en `data_map`, no solo su clase.
 - Declara las comprobaciones reales. Un check no ejecutado se marca como no ejecutado.
-- **Clase y derechos son dos ejes, y los derechos viajan con el dato.** La clase dice **dónde** puede estar (`repository`, `cloud-ok`, `local-only`, `synthetic-only`); los derechos dicen **qué puedes hacer con él** (`libre`, `solo-agregado`, `no-reproducir`, `no-sale`), y valen igual aunque la clase no restrinja nada. Un material puede vivir legítimamente en el repositorio y ser obra ajena que se lee pero no se reproduce: eso es `repository` + `no-reproducir`, y si tu esquema no lo admite, el esquema está mal. Cada material, con sus rutas, está en `data_map` de `.relay.yml`.
-- **Lo que el proyecto publica deliberadamente no es `local-only`.** Si algo ya está en la web o en un repositorio público, protegerlo como local es una ficción que obliga a despublicar para cumplirla. Lo protegido suele ser la materia prima, no el producto.
+- **Clase y derechos son dos ejes, y los derechos viajan con el dato.** La clase dice **dónde** puede estar (`repository`, `cloud-ok`, `local-only`, `synthetic-only`); los derechos dicen **qué puedes hacer con él** (`libre`, `solo-agregado`, `no-reproducir`, `no-publicar`, `no-sale`), y valen igual aunque la clase no restrinja nada. Un material puede vivir legítimamente en el repositorio y ser obra ajena que se lee pero no se reproduce: eso es `repository` + `no-reproducir`, y si tu esquema no lo admite, el esquema está mal. Cada material, con sus rutas, está en `data_map` de `.relay.yml`.
+- **La clase más restrictiva no arrastra los derechos más restrictivos.** Son ejes independientes también al mirarlos: si tu tarea toca un material `local-only` + `libre` y otro `repository` + `no-publicar`, la clase que declaras es `local-only` y el derecho que te va a morder es `no-publicar`. Míralos material por material, no por el peor de una sola columna.
+- **Lo que el proyecto publica deliberadamente no es `local-only`.** Si algo ya está en la web o en un repositorio público, protegerlo como local es una ficción que obliga a despublicar para cumplirla. Lo protegido suele ser la materia prima, no el producto. Para eso está `no-publicar`: material que puede estar donde está y que una decisión editorial mantiene fuera de lo que se sirve.
+- **La membrana se cruza también por consecuencia.** La lista de lo que escala nombra actos —publicar, desplegar, enviar, gastar—, pero una tarea de propósito rutinario puede cruzarla por efecto lateral: refrescar un almacén desactualizado es mantenimiento, y publica todo lo que ese almacén sirve. Pregúntate no solo *qué estoy haciendo* sino **qué queda publicado, desplegado o gastado cuando esto entre**. Si la respuesta cruza, para y escala, aunque tu tarea no se llamara así.
+- **Una guarda que no has visto caer no es una guarda.** Si tu cambio añade una comprobación —un test, un validador, una regla de CI—, pruébala en negativo: inyecta el fallo y compruébala caer, con el mensaje correcto. Un verificador que nunca ha fallado no demuestra que el sistema esté bien; demuestra que nadie lo ha mirado, y mientras tanto tapa lo que debería enseñar.
 - **Ampliar el alcance se declara, no se cuela.** Si descubres que hace falta algo que el issue no pedía, hazlo si es reversible y dilo en la entrega como ampliación; nunca en silencio.
 
 ## Cuando no puedes cumplir el entorno declarado
@@ -96,7 +103,7 @@ El par **Comprobado con / No comprobado** es lo que de verdad sostiene el relevo
 
 **No es rutinario, y por tanto escala a la dirección:**
 
-- lo que cruza la membrana: publicar, desplegar, enviar, gastar;
+- lo que cruza la membrana: publicar, desplegar, enviar, gastar — **y lo que la cruza por consecuencia**, aunque el propósito de la tarea fuera rutinario: mira qué queda publicado, desplegado o gastado cuando el PR entre, no solo qué dice que hace;
 - lo que cambia reglas duras del proyecto o doctrina;
 - **lo que toca las comprobaciones o los permisos** (CI, validadores, protección de ramas, secretos): quien controla los checks controla toda la verificación futura;
 - lo que barre medio repositorio de una vez.
@@ -105,6 +112,6 @@ Y una regla que vale más que la lista, porque la lista nunca está completa: **
 
 ## Cierre
 
-El PR incluye alcance, evidencia, limitaciones, impacto sobre Mycelia y pendientes. La tarea termina al integrarse el PR o al cerrarse explícitamente el issue, no cuando una agente dice que ha acabado.
+El PR incluye alcance, evidencia, limitaciones, conocimiento reusable y pendientes. La tarea termina al integrarse el PR o al cerrarse explícitamente el issue, no cuando una agente dice que ha acabado.
 
 **Un issue con relevo vivo no se cierra.** `Closes #N` solo cuando el criterio de aceptación está completo: si tu PR cubre una parte y el `HANDOFF` deja "Siguiente acción" sin ejecutar, entrega **sin** `Closes` y deja el issue abierto. Si te encuentras un issue **cerrado con relevo vivo** (pasa cuando un merge parcial lo cerró), reábrelo; si no puedes, entrega sin `Closes`, enlaza el issue y dilo en la entrega. Que la plataforma lo marque cerrado no significa que el trabajo esté terminado.

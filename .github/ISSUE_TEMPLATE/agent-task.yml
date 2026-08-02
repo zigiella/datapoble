@@ -35,8 +35,23 @@ body:
     id: data
     attributes:
       label: Clase de datos más restrictiva
-      description: De los materiales que toca esta tarea, la clase más restrictiva de .relay.yml (data_map). Sus derechos van con ella.
+      description: De los materiales que toca esta tarea, la clase más restrictiva declarada en data_map (.relay.yml). Dice dónde puede estar el dato, y solo eso.
       options: [repository, cloud-ok, local-only, synthetic-only]
+    validations:
+      required: true
+  - type: textarea
+    id: data_rights
+    attributes:
+      label: Materiales y derechos
+      description: >-
+        Cada material que toca la tarea, con su clase y sus derechos. Hace falta porque son dos ejes
+        independientes y la clase más restrictiva NO arrastra los derechos más restrictivos: una tarea
+        que toque un material local-only + libre y otro repository + no-publicar declara arriba
+        "local-only", y sin esta casilla "no-publicar" no aparecería en ninguna parte del contrato que
+        la agente lee.
+      placeholder: |
+        capa-electoral: repository · no-publicar
+        muestras-brutas: local-only · solo-agregado
     validations:
       required: true
   - type: textarea

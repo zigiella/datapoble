@@ -1,4 +1,4 @@
-version: 0.5
+version: 0.6.1
 
 project:
   tracker: github-issues
@@ -58,6 +58,7 @@ data_rights:
   libre: "Sin restriccion de derivacion"
   solo-agregado: "Sale agregado o anonimizado, nunca el dato individual"
   no-reproducir: "Se puede leer y usar; no copiar ni reproducir su contenido"
+  no-publicar: "Se puede leer y procesar; no sale al producto"
   no-sale: "Ni se copia, ni se imprime, ni se deriva"
 
 # EL MAPA. Vacio no vale: mientras lo este, nadie sabe que puede ver una agente
@@ -117,10 +118,9 @@ data_map:
   # Retinguda de l'agent amb test de regressio, fora de l'allow-list de SQL i fora
   # del web. El parquet versionat es del pilot (31 files) i NO es reconstrueix:
   # publicar la capa de vot dels 947 es decisio editorial de la direccio.
-  # (Vegeu la nota d'adopcio: aquesta entrada tensa el vocabulari de drets.)
   capa-electoral:
     clase: repository
-    derechos: no-sale
+    derechos: no-publicar
     rutas: ["data/marts/mart_electoral.parquet"]
 
   # MATERIA PRIMERA. Ingesta de fonts oficials obertes (ARC, Idescat/EMEX, SEPE,

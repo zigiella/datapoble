@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 
 CLASES = {"repository", "cloud-ok", "local-only", "synthetic-only"}
-DERECHOS = {"libre", "solo-agregado", "no-reproducir", "no-sale"}
+DERECHOS = {"libre", "solo-agregado", "no-reproducir", "no-publicar", "no-sale"}
 
 
 def main() -> int:
@@ -51,10 +51,20 @@ def main() -> int:
 
     # La version se ha quedado atras tres veces seguidas al preparar releases:
     # deja de ser mala suerte y pasa a ser comprobacion.
+    #
+    # Pero SOLO contra el CHANGELOG de Relay. Sin este filtro, la guarda comparaba la
+    # version de Relay con la del PROYECTO ANFITRION en cualquier repositorio con su
+    # propio CHANGELOG.md en la raiz -- que son casi todos-- y daba rojo por algo que
+    # no es un fallo. Un check que salta donde no debe se acaba ignorando donde si
+    # debe. (Encontrado al escribir las instrucciones de migracion a 0.6 para otro
+    # equipo, 2026-08-02: la guarda era nuestra y el rojo iba a ser suyo.)
     cambios = ruta.parent / "CHANGELOG.md"
     if cambios.exists():
-        cabecera = re.search(r"^##\s+([0-9]+\.[0-9.]*[0-9])", cambios.read_text(encoding="utf-8"), re.M)
-        if cabecera and str(cfg.get("version")) != cabecera.group(1):
+        texto = cambios.read_text(encoding="utf-8")
+        titulo = re.search(r"^#\s+(.+)$", texto, re.M)
+        es_de_relay = titulo is not None and "relay" in titulo.group(1).lower()
+        cabecera = re.search(r"^##\s+([0-9]+\.[0-9.]*[0-9])", texto, re.M)
+        if es_de_relay and cabecera and str(cfg.get("version")) != cabecera.group(1):
             fallos.append(
                 f"version del fichero ({cfg.get('version')}) distinta de la ultima del CHANGELOG "
                 f"({cabecera.group(1)}): una de las dos miente")
