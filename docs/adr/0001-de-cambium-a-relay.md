@@ -84,3 +84,30 @@ dubte, pregunta.**
 - `relay-check` corre al CI però **no és una porta**: avisa, amb `STRICT=0`, i només mira els PR
   amb etiqueta `relevo`. La porta de `main` segueix sent el CI de datapoble.
 - Un `data_map` buit **no valida**, a propòsit. Comprovat abans d'omplir-lo.
+
+## Seguiment · el que hem tornat al mètode (2026-08-01)
+
+La direcció ho va demanar així: *«tot allò que t'agradava i era útil, no ho perdis. Ho reintegres
+amb lo nou i fas una carta explicant el teu cas.»* Fet a
+**[zigiella/mycelia-relay#6](https://github.com/zigiella/mycelia-relay/pull/6)**, amb el cas sencer
+a `docs/casos/datapoble-desde-cambium.md` d'aquell repo. Quatre propostes, cadascuna amb el seu
+número:
+
+1. **Un camp «l'encàrrec, contrastat» al PR template.** En una sola sessió, tres encàrrecs meus
+   portaven una premissa falsa i les tres les va caçar qui les executava; cap va arribar a
+   producció. Contradir amunt té un cost social que una casella elimina. **És la que més defensem:
+   no era de Cambium, era dels nostres `role.md` — o sigui que no demanem que ens tornin res, sinó
+   que ho tinguin ells.**
+2. **Un dret nou, `no-publicar`.** Els quatre drets barregen «què puc fer amb el fitxer» i «què pot
+   publicar el producte». La nostra capa electoral no encaixa en cap.
+3. **La membrana es creua per efecte lateral**, no només per intenció. És el que substitueix, en
+   part, el que ens donava la jurisdicció rígida: la valla va aturar coses reals i el que la
+   reemplaci no pot ser només la bona voluntat.
+4. **L'execució de la pròpia adopció no escala** — i la transcripció de les regles dures sí que
+   l'hauria de revisar qui les va escriure. Jo vaig transcriure les de seguretat de la meva
+   direcció sense que ningú les mirés.
+
+**El que NO hem perdut i no cal demanar:** les regles dures són senceres a `REGLAS.md`, els
+`role.md` es van quedar on eren, i l'obligació de cada front de dir què ha trobat fals al seu
+encàrrec segueix escrita a tots cinc.
+
