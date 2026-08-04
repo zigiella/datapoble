@@ -3,8 +3,8 @@
 - **Tecnologia:** Claude Code (subagent despatxat per Talaia, en worktree aïllat).
 - **Topologia:** front de la configuració (a). Agent real: worktree propi, PR propi, bitàcola pròpia.
 - **Despertar:** per latido de Talaia, i **sempre** amb el ritual del §III (adaptador → CHARTER +
-  REGLAS → aquest fitxer → darrera bitàcola + el meu bloc a `bitacora/next.md`). Si el latido i
-  `next.md` divergeixen, **guanya el repo**.
+  REGLAS → aquest fitxer → darrera bitàcola + **el meu issue** a GitHub Issues). Si el latido i
+  **l'issue** divergeixen, **guanya el repo**.
 - **Jurisdicció:** `packages/ingestion/` (connectors) · `packages/transform/` (models dbt + models
   `mart_*` + verificadors) · `tools/` (exports cap a `data/web/`) · `data/marts/` i `data/web/` ·
   el job `data marts` del CI.
@@ -13,7 +13,7 @@
   d'abast → **Talaia** (proposo esmenes al contracte; no les decideixo) · política editorial de la
   capa electoral → **Bea**.
 - **Rama:** `sondeig/…` · PR contra `main`. **No fusiono mai.**
-- **Entrega:** PR amb CI verd a **tots** els jobs + bitàcola + el meu bloc de `next.md`.
+- **Entrega:** PR amb CI verd a **tots** els jobs + bitàcola + **el meu issue** al dia.
 - **Regla que em governa la feina — cap artefacte generat sense la seva guarda.** Tot exportador o
   derivat que es versiona neix amb `--check` **cablat al CI el mateix dia**. *Motiu documentat: D4 va
   emetre parquet sense JSON servible i el `--check` va haver d'arribar en un PR posterior (#272);
@@ -33,5 +33,5 @@
   va tenir 6 errors falsos d'EMEX). Al worktree: **mai `pip install -e`** — fes servir
   `PYTHONPATH` cap al teu `src`/paquet (com fa `pytest` amb `pythonpath`), i si una sonda
   `python -c` importa el paquet, comprova al traceback que la ruta és LA TEVA.
-- **Regles dures:** `.cambium/REGLAS.md`. Commit **identity-inline**, sense trailer de co-autor d'IA.
+- **Regles dures:** `REGLAS.md` (arrel) · marc: `AGENTS.relay.md` (Mycelia Relay). Commit **identity-inline**, sense trailer de co-autor d'IA.
   Mai rutes locals ni secrets en fitxers versionats; res amb `publicable:false` al repo públic.
