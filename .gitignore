@@ -59,3 +59,9 @@ out/
 
 # Sortida local de l'eina llegat export_bergueda_bundle (no es committeja; regenerable)
 data/export/
+
+# --- Worktrees d'agent (Claude Code) ---
+# NOMÉS els worktrees: `.claude/launch.json` SÍ que es versiona (config del servidor de preview).
+# Cada worktree arrossega el seu node_modules i el seu packages/web/build (~2,3 GB): trenta
+# sessions van arribar a ocupar 75 GB. Es netegen en acabar la sessió (vegeu talaia_role.md).
+.claude/worktrees/
