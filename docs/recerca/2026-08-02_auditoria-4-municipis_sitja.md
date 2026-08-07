@@ -18,10 +18,12 @@ més és **de la cohort del GiroStudi**, així que serveix doble):
 Abans del detall, perquè no quedin enterrades:
 
 1. **🔴 Un error NOSTRE, viu i publicat.** La fitxa diu que Idescat no publica l'ETCA «per a
-   municipis <1.000 hab». **És fals: 16 municipis de menys de 1.000 la tenen**, el més petit de
-   **489 habitants** (ETCA 1.016). El criteri real no és la població del municipi. On l'ETCA falta,
-   estem donant **una explicació que sona bé i no és la certa** — exactament el que portem tota la
-   sessió corregint. *(Verificat sobre els 947.)*
+   municipis <1.000 hab». **El criteri oficial no és aquest:** Idescat publica per als municipis de
+   1.000 habitants o més **«ja sigui població padronal o població ETCA»** — un **O**, no un I. Per
+   això **16 municipis de padró <1.000 la tenen** (Colera, 489 habitants, +526 d'estacional) i només
+   **1 de ≥1.000 no la té**. Guardiola quadra al dígit: base 951 + 54 = **1.005**; el seu veí Olvan
+   (926) queda fora. On l'ETCA falta, estem donant **una explicació que sona bé i no és la certa**.
+   *(Verificat sobre els 947. Detall i llista de fitxers a corregir: `…_millores-a-fer_sitja.md`.)*
 2. **✅ Validació externa que no teníem.** XIFRA i nosaltres donem **exactament les mateixes xifres**
    d'Olot i Castellfollit (població i estrangeria, al decimal). És el primer contrast independent de
    les nostres dades.
@@ -175,7 +177,7 @@ Posats de costat, els nostres números fan visible una cosa que una taula sola n
 
 | | Què | Qui |
 |---|---|---|
-| **1** | 🔴 **Corregir el text de l'ETCA**: no és «<1.000 hab», i 16 municipis ho desmenteixen. Trobar el criteri real o dir honestament que no el sabem | Talaia + Mirador |
+| **1** | 🔴 **Corregir el text de l'ETCA**: el criteri és «padró **O** població ETCA ≥1.000». 7 missatges × 2 idiomes + 4 docs + la costura del contracte d'abast | Talaia + Mirador |
 | **2** | **Places turístiques** del RTC (informe anterior): Guardiola en seria el cas estrella | Sondeig |
 | **3** | **Resoldre la discrepància de l'índex d'envelliment** amb XIFRA (259,6 vs 244,76) abans que ho vegi un tercer | Sondeig |
 | **4** | **Pressupost municipal** — el forat més gran. Font oberta: Ministeri d'Hisenda, el mateix que fa servir XIFRA | Sondeig |
