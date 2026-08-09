@@ -19,7 +19,7 @@ amb `BASE` = el consum/generació d'un resident «normal». Al Berguedà la base
 de l'escala:** aquesta base única NO val per a tot Catalunya. Aquest document mesura QUANT falla i
 construeix la correcció (**Nivell C**: esperats per covariables + bandes d'incertesa).
 
-**Validació externa:** ETCA/EPE d'Idescat (població estacional equivalent, base 2021, munis ≥1.000
+**Validació externa:** ETCA/EPE d'Idescat (població estacional equivalent, base 2021; Idescat la publica a partir dels 1.000 hab comptant el padró o bé la població ETCA
 hab). **Go/no-go (decisió Bea 2026-06-11):** publicar presència ABSOLUTA només si el tipus valida
 amb ρ≥0,7 i error≤15%; si no, índexs/rangs relatius + «encara no ho mesurem prou bé aquí».
 

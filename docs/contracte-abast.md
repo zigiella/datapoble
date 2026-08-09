@@ -62,7 +62,7 @@ munició. La postura ha de ser **deliberada**, amb una **nota de mètode** sobre
 *Frase ÚNICA de validació. Tota referència a «validat» (web, dossier, metodologia, cua) hi apunta;
 no es repeteix a mà —una font, no dotze còpies que es contradiran.*
 
-> La pernocta està validada contra l'ETCA d'Idescat als **9 municipis del Berguedà de ≥1.000 hab**
+> La pernocta està validada contra l'ETCA d'Idescat als **9 municipis del Berguedà que tenen ETCA**
 > (ρ=0,967; error medià 8,2%, **dins de mostra**). Als **22 municipis petits no hi ha ETCA**:
 > l'estimació no té validació oficial, i és on l'error creix. La **generalització** del model és la
 > cobertura de la banda **fora de mostra** (interval nominal del 80% → 78,4% empíric), no el 8,2%.

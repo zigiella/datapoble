@@ -93,7 +93,7 @@ El resultat, honest:
 - **Error medià del 12%** → **passa** el llindar que ens vam fixar (ρ ≥ 0,7 i error ≤ 15%).
 - Clavat als grans i estables (Berga i Puig-reig, error per sota de l'1%); però **sobreestimem força els petits** (Cercs +46%, Casserres +42%).
 
-És exactament la mena de resultat que volem poder dir en veu alta: *funciona, i aquí és on encara no.* Els municipis turístics extrems (els més interessants) no tenen ETCA municipal perquè Idescat només la publica per a pobles de més de 1.000 habitants —ho diem clarament i no els forcem una xifra que no podem validar.
+És exactament la mena de resultat que volem poder dir en veu alta: *funciona, i aquí és on encara no.* Els municipis turístics extrems (els més interessants) no tenen ETCA municipal perquè Idescat la publica a partir dels 1.000 habitants, comptant el padró o bé la població ETCA —ho diem clarament i no els forcem una xifra que no podem validar.
 
 ## La fulla de ruta
 

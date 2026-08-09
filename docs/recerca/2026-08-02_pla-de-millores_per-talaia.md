@@ -60,7 +60,7 @@ d'auditoria.**
 
 ## A · Correccions · coses que avui diuen alguna cosa falsa o imprecisa
 
-### A1 · El criteri de l'ETCA 🔴
+### A1 · El criteri de l'ETCA ✅ CORREGIT
 
 **On, exactament** (línies idèntiques als dos idiomes, verificat):
 
@@ -89,6 +89,37 @@ que no és el mateix conjunt. Això és doctrina i el vot final és de Bea.
 `grep -rn` sobre `packages/web/src` i `docs/`.
 
 **Cost:** mig dia · **Qui:** Talaia (doctrina) + Mirador (còpia).
+
+> #### Correcció (Talaia, 2026-08-09) · el diagnòstic era bo, i es quedava curt per tres bandes
+>
+> **1 · Les rutes no servien.** La taula «On, exactament» apunta a
+> `packages/web/src/lib/paraglide/messages/*.js`, que és **sortida del compilador i està al
+> `.gitignore`**. La font són `packages/web/messages/ca.json` i `es.json`. Sis claus, no sis línies:
+> `gov_pres_etca_absent` (la targeta), `met_validacio_nota`, `met_valid_canon`,
+> `met_valid_canon_curt`, `met_val_nucli_fet`, `met_rang_2`.
+>
+> **2 · Faltaven dos fitxers** que el `grep` de l'auditoria no va agafar:
+> `docs/metodologia-presencia-catalunya.md` i `docs/pla-llancament-2026-06.md`.
+>
+> **3 · El criteri té una peça més.** [Idescat, metodologia de les
+> EPE](https://www.idescat.cat/pub/?id=epe&m=m): *«els municipis de 1.000 habitants o més (ja sigui
+> població resident o població ETCA)»* — l'**o bé** que deies — **i a més**: *«Si un any la població
+> d'un municipi supera els 1.000 habitants, en els anys posteriors es difonen dades encara que no
+> superi aquesta xifra.»* És a dir, hi ha **arrossegament**: un cop dins, s'hi queda.
+>
+> **La prova ja era a casa nostra, i és més forta que Guardiola.** Els nostres propis docs diuen
+> «els **≥1.000 hab** (486) es validen contra l'ETCA». Però **només 471** municipis catalans arriben
+> a 1.000 de padró. **486 − 471 = 15 municipis** amb ETCA que no arriben al llindar de padró. El
+> nombre que fèiem servir per il·lustrar el criteri era el que el desmentia.
+>
+> I la conseqüència és tranquil·litzadora: **486 + 441 = 927**, o sigui que el codi **ja partia
+> correctament per «té ETCA / no en té»**. L'error era només l'etiqueta. **No s'ha tocat cap càlcul
+> ni cap xifra**: s'ha anomenat bé el conjunt.
+>
+> **El que NO he tocat, perquè és el teu vot i no el meu:** la costura del *model* a
+> `docs/contracte-abast.md` (22, 45, 46) i `met_regim_cap` («a ≥1.000 hab deixem parlar Idescat. El
+> límit, el marquem nosaltres»). Aquestes descriuen on cedim la paraula nosaltres, no on publica
+> Idescat, i canviar-les és canviar doctrina. Tenies raó a marcar-ho com a decisió de la direcció.
 
 ---
 
