@@ -92,7 +92,7 @@ que no és el mateix conjunt. Això és doctrina i el vot final és de Bea.
 
 ---
 
-### A2 · L'índex d'envelliment no quadra amb XIFRA 🔴
+### A2 · L'índex d'envelliment no quadra amb XIFRA ✅ RESOLT
 
 | | Castellfollit de la Roca |
 |---|---|
@@ -110,6 +110,41 @@ diferents (65+/0-14 no és universal) · numerador o denominador d'una altra dat
 Si no es pot resoldre, **es diu al glossari** i s'acaba: el «no ho sabem» és resposta vàlida.
 
 **Cost:** 1 dia · **Qui:** Sondeig.
+
+> #### Resolució (Talaia, 2026-08-09) · no és un error nostre: són franges diferents
+>
+> **Cap de les tres hipòtesis, i alhora la segona.** No és vintage: les nostres franges surten de
+> l'API d'Idescat EMEX amb `any=2025` i coincideixen al dígit (0-14 = 99 · 65-84 = 211 · 85+ = 46 ·
+> total 960). El que no coincideix és **on parteix la franja**.
+>
+> XIFRA té el **mateix numerador** que nosaltres (257) i un denominador de **105**. Es resol amb el
+> segon índex que dona el §B3:
+>
+> | | nosaltres (0-14 / 15-64) | XIFRA (0-15 / 16-64) | XIFRA publica |
+> |---|---|---|---|
+> | envelliment | 257/99 = **259,60** | 257/105 = **244,7619** | **244,76** ✔ |
+> | dependència | 356/604 = **58,94** | 362/598 = **60,5351** | **60,54** ✔ |
+>
+> Dos índexs independents, les mateixes franges inferides, i **105 + 598 + 257 = 960**, la població
+> exacta. No és casualitat: XIFRA parteix la infància a 0-15 i l'edat activa a 16-64.
+>
+> **Qui té raó: nosaltres**, i no per criteri propi sinó perquè és la definició de la font.
+> [Idescat, metodologia dels indicadors demogràfics](https://www.idescat.cat/pub/?id=inddt&m=m):
+> *«Població de 65 anys i més per cada 100 habitants de menys de 15 anys.»* La nostra fórmula és
+> aquesta, literal. **No es toca cap xifra.** El que faltava era el `caveat`, i s'ha escrit al
+> contracte: qui compari amb XIFRA ha de saber per què surt un 6% de diferència.
+>
+> **B3 queda desbloquejat, i a mitges.** Amb les franges que tenim (0-14 / 15-64 / 65-84 / 85+) i les
+> definicions literals d'Idescat en surten **dos dels quatre** índexs, sense font nova i sense cap
+> divisió per zero a 947 municipis: **dependència global** `(0-14 + 65+)/15-64` i
+> **sobreenvelliment** `85+/65+` (Castellfollit: 58,94 i 17,90). Els altres dos **no**, i cal dir-ho:
+> el **recanvi d'actius** demana 60-64 i 15-19, i la **potencialitat** demana dones per edat —
+> franges que avui no baixem. Publicar-ne dos i declarar per què falten els altres dos és la
+> resposta honesta; inventar-los amb franges aproximades, no.
+>
+> **Un cas límit trobat pel camí:** **1 municipi de 947 té zero habitants de 0 a 14 anys.** L'índex
+> d'envelliment hi és una divisió per zero — no un infinit ni un 0. Ha d'anar a `sense_dada` amb
+> motiu, i qualsevol índex derivat que es construeixi ha de portar la mateixa guarda.
 
 ---
 
@@ -205,10 +240,17 @@ mensual, des de 2006.**
 Dependència · recanvi · sobreenvelliment · potencialitat. **Surten de les franges d'edat que ja
 tenim.** XIFRA els dona (Castellfollit: dependència 60,54 · recanvi 133,96).
 
-> ⚠️ **Bloquejat per A2.** Si el nostre envelliment ja discrepa amb el seu, els derivats també ho
-> faran, i multiplicarem la discrepància per quatre.
+> ~~⚠️ **Bloquejat per A2.** Si el nostre envelliment ja discrepa amb el seu, els derivats també ho
+> faran, i multiplicarem la discrepància per quatre.~~
+>
+> ✅ **Desbloquejat (A2 resolt, 2026-08-09), i a mitges.** La discrepància era de franges, no de
+> dada: la nostra fórmula és la literal d'Idescat. Amb les franges d'avui en surten **dos** dels
+> quatre — **dependència global** i **sobreenvelliment** — i **dos no**: el **recanvi** demana 60-64
+> i 15-19, i la **potencialitat** demana dones per edat. Es publiquen els dos que es poden sostenir
+> i es declara per què falten els altres dos. Guarda obligatòria: **1 municipi té 0 habitants de
+> 0-14** i qualsevol quocient que el prengui de denominador va a `sense_dada` amb motiu.
 
-**Qui:** Sondeig · **Dependència: A2.**
+**Qui:** Sondeig · ~~**Dependència: A2.**~~ lliure.
 
 ---
 
