@@ -49,10 +49,10 @@ Catalunya** amb ETCA. `R² = 0,41` a escala Catalunya — més baix que en el lo
   territorial**. Cada municipi hereta la incertesa del seu tipus, que varia molt: corona ≈[−10,+9]%,
   metropolità dens i litoral metropolità estrets, **interior rural** ≈[−18,+17]% i **litoral
   vacacional** ample ≈[−20,+26]% (l'estacionalitat de platja, que el consum anual no veu).
-- **Municipis sense ETCA (<1.000 hab):** no es poden validar contra la dada oficial → es publiquen
+- **Municipis sense ETCA:** no es poden validar contra la dada oficial → es publiquen
   amb **banda eixamplada** i marcats com a estimació **sense validació oficial**.
-- **Validació externa = ETCA** (Idescat, *Estimacions de població ETCA/EPE*), disponible per a
-  municipis ≥1.000 hab. On hi ha ETCA, la mostrem **al costat** de la nostra estimació com a prova
+- **Validació externa = ETCA** (Idescat, *Estimacions de població ETCA/EPE*), que Idescat publica a partir dels
+  1.000 habitants comptant el padró **o bé** la població ETCA. On hi ha ETCA, la mostrem **al costat** de la nostra estimació com a prova
   de fiabilitat (no la substituïm: el mètode és el producte).
 - **Robustesa**: validació *held-out* (leave-one-out) — el model encerta igual en municipis que no
   ha vist (cobertura ≈70% dins ±15%, in-sample = held-out, caiguda 0 pts). **No és sobreajust.**
@@ -61,8 +61,8 @@ Catalunya** amb ETCA. `R² = 0,41` a escala Catalunya — més baix que en el lo
 - **Regla**: presència **absoluta** (xifra) només si el tipus valida amb **ρ≥0,7 i error≤15%**;
   si no, **rang** + «encara no ho mesurem prou bé aquí». Avui: **rang per a tothom**.
 - **Abast publicat**: **tota Catalunya** — **927 municipis** amb senyal elèctric i covariables
-  (artefacte `data/web/pernocta-catalunya.json`). Els **≥1.000 hab** (486) es validen contra l'ETCA;
-  els **<1.000 hab** (441) es donen amb banda més ampla i **sense validació oficial**. Els ~20 munis
+  (artefacte `data/web/pernocta-catalunya.json`). Els **486 que tenen ETCA** es validen contra ella;
+  els **441 que no en tenen** es donen amb banda més ampla i **sense validació oficial**. Els ~20 munis
   sense senyal elèctric/renda queden «sense dades».
 - **Classificació litoral OFICIAL**: els **70 municipis costaners** de la llista de Territori
   (Generalitat) derivada al perímetre del PPOL (Llei 8/2020). Afecta quin tipus de banda hereta cada

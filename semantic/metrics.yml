@@ -499,6 +499,19 @@ metrics:
     table: mart_municipi
     column: index_envelliment
     visibility: public
+    caveat:
+      ca: "Les franges no són universals i la xifra en depèn. Fem servir la definició literal
+        d'Idescat (65 anys i més per cada 100 habitants de MENYS DE 15). XIFRA (Diputació de Girona)
+        parteix a 0-15 i publica un valor un ~6% més baix del mateix municipi i el mateix any: a
+        Castellfollit de la Roca, 244,76 contra els nostres 259,60, amb el mateix numerador (257) i
+        un denominador de 105 en comptes de 99. Cap de les dues és errònia; comparar-les sense dir-ho
+        sí. Verificat contra l'API d'EMEX el 2026-08-09 (any 2025)."
+      es: "Los tramos no son universales y la cifra depende de ellos. Usamos la definición literal
+        de Idescat (65 años y más por cada 100 habitantes de MENOS DE 15). XIFRA (Diputació de
+        Girona) corta en 0-15 y publica un valor un ~6% más bajo del mismo municipio y el mismo año:
+        en Castellfollit de la Roca, 244,76 frente a nuestros 259,60, con el mismo numerador (257) y
+        un denominador de 105 en lugar de 99. Ninguna de las dos es errónea; compararlas sin decirlo
+        sí. Verificado contra la API de EMEX el 2026-08-09 (año 2025)."
 
   densitat_hab_km2:
     label: {ca: Densitat de població, es: Densidad de población}
