@@ -151,19 +151,21 @@
 	}
 	const toDot = (to: LectTo) => (to === 'mesura' ? 'dot--measured' : 'dot--derived');
 
-	// Claus d'evidència → etiquetes humanes. Primer mètriques del contracte; després els fets
-	// COMPOSTOS (pernocta en rang, validació ETCA, tipus de territori) que el relat cita però que
-	// no són mètriques; la resta, tal qual (mai una clau snake_case crua a l'usuari si es pot evitar).
-	const EV_COMPOSITE: Record<string, () => string> = {
-		pernocta_rang: () => m.muni_ev_pernocta_rang(),
-		etca_idescat: () => m.muni_ev_etca_idescat(),
-		tipus_territorial: () => m.muni_ev_tipus_territorial()
-	};
+	// Claus d'evidència → etiquetes humanes. NOMÉS mètriques del contracte.
+	//
+	// A3 (2026-08-10) · aquí hi havia un `EV_COMPOSITE` que donava etiqueta maca a tres claus que
+	// NO són mètriques: `pernocta_rang`, `etca_idescat` i `tipus_territorial`. Les dues primeres
+	// se les va INVENTAR el model —no existeixen enlloc del contracte ni de les dades— i aquesta
+	// taula feia que l'evidència fabricada arribés al lector amb bon aspecte en comptes de
+	// semblar trencada. La tercera és real però és la classe residual que agrupa el 87% del país
+	// (de 25 habitants a Lleida): no informa i el contracte diu que no s'ha de citar.
+	//
+	// Ara una clau desconeguda surt CRUA, a propòsit: ha de cantar. La porta de veritat és
+	// l'evidència tancada del generador (E7b/#302), i això n'és la xarxa de seguretat.
 	function evidLabels(keys: string[] | undefined): string[] {
 		return (keys ?? []).map((k) => {
 			const def = dataset.metrics[k as MetricKey];
-			if (def) return pick(def.label, locale);
-			return EV_COMPOSITE[k]?.() ?? k;
+			return def ? pick(def.label, locale) : k;
 		});
 	}
 

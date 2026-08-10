@@ -354,10 +354,13 @@ metrics:
     visibility: public
 
   hab_noprincipal:
-    label: {ca: Habitatges no principals, es: Viviendas no principales}
+    label: {ca: "Habitatges no principals (segona residència + buits)",
+            es: "Viviendas no principales (segunda residencia + vacías)"}
     definicio:
-      ca: Secundàries + buides (no residència habitual). Senyal estructural de segona residència.
-      es: Secundarias + vacías (no residencia habitual). Señal estructural de segunda residencia.
+      ca: "Habitatges que no són residència habitual. Hi caben DUES coses que la font no separa:
+        la segona residència i l'habitatge buit."
+      es: "Viviendas que no son residencia habitual. Caben DOS cosas que la fuente no separa:
+        la segunda residencia y la vivienda vacía."
     dimension: vivenda
     unit: {ca: habitatges, es: viviendas}
     formula: directe
@@ -369,13 +372,31 @@ metrics:
     # CENS D'HABITATGE 2021 (decennal) i NO canviarà fins al pròxim cens.
     actualitzacio: puntual
     visibility: public
+    caveat:
+      ca: "Aquesta xifra en barreja dues que un ajuntament NO tracta igual: la segona residència
+        (algú hi ve i hi gasta) i l'habitatge buit (ningú no hi és). Són polítiques oposades i aquí
+        van sumades. No és una decisió nostra: la font no ho separa — verificat el 2026-08-10 contra
+        la taula «Habitatges familiars. Per tipus» d'Idescat EMEX (any 2021), que només publica
+        Principals, No principals i Total. Si algun dia se separen caldrà una altra font, i encara no
+        hem comprovat que n'hi hagi cap que ho doni per municipi. Fins llavors, un percentatge alt
+        NO vol dir «poble de segones residències»."
+      es: "Esta cifra mezcla dos que un ayuntamiento NO trata igual: la segunda residencia (alguien
+        viene y gasta) y la vivienda vacía (no hay nadie). Son políticas opuestas y aquí van sumadas.
+        No es una decisión nuestra: la fuente no lo separa — verificado el 2026-08-10 contra la tabla
+        «Habitatges familiars. Per tipus» de Idescat EMEX (año 2021), que solo publica Principales, No
+        principales y Total. Si algún día se separan hará falta otra fuente, y todavía no hemos
+        comprobado que exista ninguna que lo dé por municipio. Hasta entonces, un porcentaje alto NO
+        significa «pueblo de segundas residencias»."
     synonyms: {ca: [segona residència, buides], es: [segunda residencia, vacías]}
 
   pct_noprincipal:
-    label: {ca: "% habitatge no principal", es: "% vivienda no principal"}
+    label: {ca: "% habitatge no principal (segona residència + buits)",
+            es: "% vivienda no principal (segunda residencia + vacías)"}
     definicio:
-      ca: Pes de l'habitatge no principal sobre el total.
-      es: Peso de la vivienda no principal sobre el total.
+      ca: "Quina part del parc d'habitatges no és residència habitual. Hi caben la segona residència
+        i l'habitatge buit, que la font no separa."
+      es: "Qué parte del parque de viviendas no es residencia habitual. Caben la segunda residencia
+        y la vivienda vacía, que la fuente no separa."
     dimension: vivenda
     unit: "%"
     formula: "hab_noprincipal / hab_total * 100"
@@ -385,6 +406,17 @@ metrics:
     table: mart_municipi
     column: pct_noprincipal
     visibility: public
+    caveat:
+      ca: "Barreja segona residència i habitatge buit, que són polítiques oposades i que la font no
+        separa (Idescat EMEX, taula «Habitatges familiars. Per tipus», 2021: només Principals, No
+        principals i Total — verificat el 2026-08-10). Un percentatge alt NO vol dir «poble de segones
+        residències». A més, el denominador és el parc de 2021 i el Cens d'habitatge és decennal: la
+        xifra no es mourà fins al pròxim cens, encara que el poble sí que s'hagi mogut."
+      es: "Mezcla segunda residencia y vivienda vacía, que son políticas opuestas y que la fuente no
+        separa (Idescat EMEX, tabla «Habitatges familiars. Per tipus», 2021: solo Principales, No
+        principales y Total — verificado el 2026-08-10). Un porcentaje alto NO significa «pueblo de
+        segundas residencias». Además, el denominador es el parque de 2021 y el Censo de vivienda es
+        decenal: la cifra no se moverá hasta el próximo censo, aunque el pueblo sí se haya movido."
 
   hab_per_hab:
     label: {ca: Habitatges per habitant, es: Viviendas por habitante}
@@ -1334,8 +1366,22 @@ metrics:
     column: tipus_territorial
     visibility: public
     caveat:
-      ca: "Determinista i traçable (cada regla surt d'una llista oficial), però NO és una classificació oficial: és la nostra. 'interior_rural' és la classe RESIDUAL — hi cau tot el que no encaixa en cap regla anterior, així que agrupa municipis molt diferents entre si (804 dels 947). El tipus 'agroindustrial' està pendent de dada fina i de moment cau també a interior_rural. 20 municipis no en tenen: es diu, no s'omple."
-      es: "Determinista y trazable (cada regla sale de una lista oficial), pero NO es una clasificación oficial: es la nuestra. 'interior_rural' es la clase RESIDUAL — ahí cae todo lo que no encaja en ninguna regla anterior, así que agrupa municipios muy distintos entre sí (804 de 947). El tipo 'agroindustrial' está pendiente de dato fino y de momento cae también en interior_rural. 20 municipios no lo tienen: se dice, no se rellena."
+      ca: "Determinista i traçable (cada regla surt d'una llista oficial), però NO és una classificació
+        oficial: és la nostra. I la seva feblesa està MESURADA (2026-08-10): 'interior_rural' és la classe
+        RESIDUAL i s'hi ha acumulat el 87% del país — 804 dels 927 municipis amb tipus, des de Sant Jaume
+        de Frontanyà (25 habitants) fins a LLEIDA (147.369), amb una mediana de 802. Una classe que conté
+        Lleida i un poble de 25 habitants no informa de res per si sola. Serveix per triar la banda del
+        model de presència (avui aturat); NO és una xifra de lectura i una lectura pública no l'ha de citar
+        com a evidència. El tipus 'agroindustrial' està pendent de dada fina i de moment cau també a
+        interior_rural. 20 municipis no en tenen: es diu, no s'omple."
+      es: "Determinista y trazable (cada regla sale de una lista oficial), pero NO es una clasificación
+        oficial: es la nuestra. Y su debilidad está MEDIDA (2026-08-10): 'interior_rural' es la clase
+        RESIDUAL y ha acumulado el 87% del país — 804 de los 927 municipios con tipo, desde Sant Jaume de
+        Frontanyà (25 habitantes) hasta LLEIDA (147.369), con una mediana de 802. Una clase que contiene
+        Lleida y un pueblo de 25 habitantes no informa de nada por sí sola. Sirve para elegir la banda del
+        modelo de presencia (hoy detenido); NO es una cifra de lectura y una lectura pública no debe citarla
+        como evidencia. El tipo 'agroindustrial' está pendiente de dato fino y de momento cae también en
+        interior_rural. 20 municipios no lo tienen: se dice, no se rellena."
     synonyms: {ca: [tipus territorial, tipus de territori, rural, litoral, metropolità], es: [tipo territorial, tipo de territorio, rural, litoral, metropolitano]}
 
   tipologia:

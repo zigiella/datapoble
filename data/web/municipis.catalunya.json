@@ -225,8 +225,8 @@
     "hab_noprincipal": {
       "key": "hab_noprincipal",
       "label": {
-        "ca": "Habitatges no principals",
-        "es": "Viviendas no principales"
+        "ca": "Habitatges no principals (segona residència + buits)",
+        "es": "Viviendas no principales (segunda residencia + vacías)"
       },
       "unit": {
         "ca": "habitatges",
@@ -244,16 +244,20 @@
       },
       "formula": "directe",
       "definicio": {
-        "ca": "Secundàries + buides (no residència habitual). Senyal estructural de segona residència.",
-        "es": "Secundarias + vacías (no residencia habitual). Señal estructural de segunda residencia."
+        "ca": "Habitatges que no són residència habitual. Hi caben DUES coses que la font no separa: la segona residència i l'habitatge buit.",
+        "es": "Viviendas que no son residencia habitual. Caben DOS cosas que la fuente no separa: la segunda residencia y la vivienda vacía."
+      },
+      "note": {
+        "ca": "Aquesta xifra en barreja dues que un ajuntament NO tracta igual: la segona residència (algú hi ve i hi gasta) i l'habitatge buit (ningú no hi és). Són polítiques oposades i aquí van sumades. No és una decisió nostra: la font no ho separa — verificat el 2026-08-10 contra la taula «Habitatges familiars. Per tipus» d'Idescat EMEX (any 2021), que només publica Principals, No principals i Total. Si algun dia se separen caldrà una altra font, i encara no hem comprovat que n'hi hagi cap que ho doni per municipi. Fins llavors, un percentatge alt NO vol dir «poble de segones residències».",
+        "es": "Esta cifra mezcla dos que un ayuntamiento NO trata igual: la segunda residencia (alguien viene y gasta) y la vivienda vacía (no hay nadie). Son políticas opuestas y aquí van sumadas. No es una decisión nuestra: la fuente no lo separa — verificado el 2026-08-10 contra la tabla «Habitatges familiars. Per tipus» de Idescat EMEX (año 2021), que solo publica Principales, No principales y Total. Si algún día se separan hará falta otra fuente, y todavía no hemos comprobado que exista ninguna que lo dé por municipio. Hasta entonces, un porcentaje alto NO significa «pueblo de segundas residencias»."
       },
       "status": "public"
     },
     "pct_noprincipal": {
       "key": "pct_noprincipal",
       "label": {
-        "ca": "% habitatge no principal",
-        "es": "% vivienda no principal"
+        "ca": "% habitatge no principal (segona residència + buits)",
+        "es": "% vivienda no principal (segunda residencia + vacías)"
       },
       "unit": {
         "ca": "%",
@@ -271,8 +275,12 @@
       },
       "formula": "hab_noprincipal / hab_total * 100",
       "definicio": {
-        "ca": "Pes de l'habitatge no principal sobre el total.",
-        "es": "Peso de la vivienda no principal sobre el total."
+        "ca": "Quina part del parc d'habitatges no és residència habitual. Hi caben la segona residència i l'habitatge buit, que la font no separa.",
+        "es": "Qué parte del parque de viviendas no es residencia habitual. Caben la segunda residencia y la vivienda vacía, que la fuente no separa."
+      },
+      "note": {
+        "ca": "Barreja segona residència i habitatge buit, que són polítiques oposades i que la font no separa (Idescat EMEX, taula «Habitatges familiars. Per tipus», 2021: només Principals, No principals i Total — verificat el 2026-08-10). Un percentatge alt NO vol dir «poble de segones residències». A més, el denominador és el parc de 2021 i el Cens d'habitatge és decennal: la xifra no es mourà fins al pròxim cens, encara que el poble sí que s'hagi mogut.",
+        "es": "Mezcla segunda residencia y vivienda vacía, que son políticas opuestas y que la fuente no separa (Idescat EMEX, tabla «Habitatges familiars. Per tipus», 2021: solo Principales, No principales y Total — verificado el 2026-08-10). Un porcentaje alto NO significa «pueblo de segundas residencias». Además, el denominador es el parque de 2021 y el Censo de vivienda es decenal: la cifra no se moverá hasta el próximo censo, aunque el pueblo sí se haya movido."
       },
       "status": "public"
     },
