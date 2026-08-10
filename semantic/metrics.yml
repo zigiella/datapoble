@@ -387,7 +387,21 @@ metrics:
         principales y Total. Si algún día se separan hará falta otra fuente, y todavía no hemos
         comprobado que exista ninguna que lo dé por municipio. Hasta entonces, un porcentaje alto NO
         significa «pueblo de segundas residencias»."
-    synonyms: {ca: [segona residència, buides], es: [segunda residencia, vacías]}
+    # A L'ETIQUETA NO SE LI TOCA EL NOM SENSE MIRAR AIXÒ (après el 2026-08-10, a les evals).
+    # El router aparella exigint que la frase APAREGUI literalment a la pregunta i guanya la més
+    # llarga. En allargar l'etiqueta amb el parèntesi honest, «Habitatges no principals» va deixar
+    # d'existir com a terme i la pregunta «quants habitatges no principals té X?» va passar a
+    # respondre'S amb `hab_principal`: 71 en comptes de 205. L'etiqueta d'aquest projecte no és
+    # només còpia, és una CLAU D'APARELLAMENT. La frase plana ha de viure aquí, com a sinònim.
+    synonyms:
+      # EN PLURAL i prou. El singular «habitatge no principal» és la frase del PERCENTATGE
+      # (`pct_noprincipal`), i com que el normalitzador es menja el «%» les dues frases queden
+      # idèntiques; en empat de llargada guanya la que surt abans al fitxer, i el recompte li
+      # robava la pregunta al percentatge. Aquest recompte és plural: «habitatgeS no principalS».
+      ca: [habitatges no principals, no principals,
+           segona residència, segones residències, buides, habitatges buits]
+      es: [viviendas no principales, no principales,
+           segunda residencia, segundas residencias, vacías, viviendas vacías]
 
   pct_noprincipal:
     label: {ca: "% habitatge no principal (segona residència + buits)",
@@ -417,6 +431,18 @@ metrics:
         principales y Total — verificado el 2026-08-10). Un porcentaje alto NO significa «pueblo de
         segundas residencias». Además, el denominador es el parque de 2021 y el Censo de vivienda es
         decenal: la cifra no se moverá hasta el próximo censo, aunque el pueblo sí se haya movido."
+    # Vegeu la nota de `hab_noprincipal`: l'etiqueta és clau d'aparellament del router. Aquí, a
+    # més, un terme que comenci per «%» NO pot enganxar mai: el router hi posa `\b` davant, i
+    # entre un espai i un «%» no hi ha frontera de paraula. Abans funcionava de rebot, perquè en
+    # treure el «%» inicial de l'etiqueta quedava «habitatge no principal» net; en allargar
+    # l'etiqueta amb el parèntesi, aquella variant va passar a ser «habitatge no principal
+    # (segona residencia + buits)» i va deixar d'aparèixer a cap pregunta. La frase plana i en
+    # SINGULAR ha de viure aquí (el plural és del recompte, `hab_noprincipal`).
+    synonyms:
+      ca: [habitatge no principal, percentatge d'habitatge no principal,
+           pes de l'habitatge no principal]
+      es: [vivienda no principal, porcentaje de vivienda no principal,
+           peso de la vivienda no principal]
 
   hab_per_hab:
     label: {ca: Habitatges per habitant, es: Viviendas por habitante}
