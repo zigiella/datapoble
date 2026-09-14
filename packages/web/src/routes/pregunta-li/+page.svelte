@@ -22,7 +22,13 @@
 	import ContourField from '$lib/components/ContourField.svelte';
 	import { currentLocale } from '$lib/i18n';
 	import { m } from '$lib/paraglide/messages';
-	import { ask, type AskOutcome, type AskResponse, type RefusalReason } from '$lib/ask/api';
+	import {
+		ask,
+		ASK_EN_PAUSA,
+		type AskOutcome,
+		type AskResponse,
+		type RefusalReason
+	} from '$lib/ask/api';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -37,10 +43,13 @@
 		| { kind: 'answer'; res: AskResponse }
 		| { kind: 'refusal'; reason: RefusalReason | null; res: AskResponse | null }
 		| { kind: 'rate_limited'; retryAfter: number | null }
-		| { kind: 'unreachable' };
+		| { kind: 'unreachable' }
+		| { kind: 'paused' };
 
 	let question = $state('');
-	let view = $state<View>({ kind: 'idle' });
+	// Amb el servei en pausa (vegeu `ASK_EN_PAUSA`), l'avís surt DES DEL PRIMER MOMENT: no es
+	// deixa escriure una pregunta per respondre-la després amb un error.
+	let view = $state<View>(ASK_EN_PAUSA ? { kind: 'paused' } : { kind: 'idle' });
 	let pending: AbortController | null = null;
 
 	// Prefill des de la fitxa de municipi: `?q=` porta la pregunta ja escrita i la llança (l'usuari
@@ -49,12 +58,13 @@
 		const q = page.url.searchParams.get('q');
 		if (q && q.trim()) {
 			question = q.trim();
-			void submit();
+			// En pausa la pregunta es deixa escrita però NO es llança: no hi ha on enviar-la.
+			if (!ASK_EN_PAUSA) void submit();
 		}
 	});
 
 	const isLoading = $derived(view.kind === 'loading');
-	const canSubmit = $derived(question.trim().length > 0 && !isLoading);
+	const canSubmit = $derived(question.trim().length > 0 && !isLoading && !ASK_EN_PAUSA);
 
 	// ── Xips d'exemple ──────────────────────────────────────────────────────────
 	// Sis preguntes CURADES, totes sobre KPIs OFICIALS del tauler de govern
@@ -121,6 +131,10 @@
 
 	// Mapeja el resultat normalitzat de l'API a l'estat de vista.
 	function applyOutcome(outcome: AskOutcome): void {
+		if (outcome.kind === 'paused') {
+			view = { kind: 'paused' };
+			return;
+		}
 		if (outcome.kind === 'unreachable') {
 			view = { kind: 'unreachable' };
 			return;
@@ -139,7 +153,7 @@
 
 	async function submit(): Promise<void> {
 		const q = question.trim();
-		if (!q || isLoading) return;
+		if (!q || isLoading || ASK_EN_PAUSA) return;
 		// Cancel·la una petició anterior encara en vol (l'usuari ha tornat a preguntar).
 		pending?.abort();
 		pending = new AbortController();
@@ -221,7 +235,7 @@
 						autocomplete="off"
 						bind:value={question}
 						placeholder={m.pl_input_placeholder()}
-						disabled={isLoading}
+						disabled={isLoading || ASK_EN_PAUSA}
 						aria-describedby="pl-hint"
 					/>
 					<button class="btn btn-primary pl-submit" type="submit" disabled={!canSubmit}>
@@ -241,7 +255,7 @@
 								type="button"
 								class="pl-chip"
 								onclick={() => useExample(ex)}
-								disabled={isLoading}
+								disabled={isLoading || ASK_EN_PAUSA}
 							>
 								{ex}
 							</button>
@@ -406,6 +420,13 @@
 					{#if view.kind === 'refusal' && view.res?.text}
 						<p class="pl-refusal__detail">{view.res.text}</p>
 					{/if}
+				</div>
+			{:else if view.kind === 'paused'}
+				<!-- Servei EN PAUSA per decisió (no per caiguda): cap botó de «torna-ho a provar»,
+				     perquè no hi ha res a provar. La resta de l'observatori funciona igual. -->
+				<div class="pl-offline pl-paused">
+					<h2 class="pl-offline__h">{m.pl_paused_title()}</h2>
+					<p class="pl-offline__body">{m.pl_paused_body()}</p>
 				</div>
 			{:else if view.kind === 'unreachable'}
 				<!-- API no disponible: avís amable, mai una pantalla trencada. -->
