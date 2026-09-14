@@ -19,6 +19,7 @@
 	import { base } from '$app/paths';
 	import { page } from '$app/state';
 	import { m } from '$lib/paraglide/messages';
+	import { ASK_EN_PAUSA } from '$lib/ask/api';
 
 	let { children } = $props();
 
@@ -166,7 +167,7 @@
 			<ul>
 				<li><span class="foot-inert" aria-disabled="true">{m.foot_about_who()}</span></li>
 				<li><span class="foot-inert" aria-disabled="true">{m.foot_link_contract()}</span></li>
-				<li><a href={localizeHref('/pregunta-li')}>{m.foot_about_ask()} · {m.pl_experimental()}</a></li>
+				<li><a href={localizeHref('/pregunta-li')}>{m.foot_about_ask()} · {ASK_EN_PAUSA ? m.pl_paused_tag() : m.pl_experimental()}</a></li>
 			</ul>
 		</div>
 		<div class="ap-foot__ctl">

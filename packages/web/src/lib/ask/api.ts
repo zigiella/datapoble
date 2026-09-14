@@ -93,7 +93,20 @@ export interface AskResponse {
 export type AskOutcome =
 	| { kind: 'ok'; response: AskResponse }
 	| { kind: 'rate_limited'; retryAfter: number | null }
-	| { kind: 'unreachable' };
+	| { kind: 'unreachable' }
+	| { kind: 'paused' };
+
+/**
+ * PAUSA DEL SERVEI (2026-09-14). L'API (Render, `riusdegent-api`) està SUSPESA a propòsit per
+ * estalvi mentre el desenvolupament de Pregunta-li està aturat: `api.riusdegent.cat` respon 503.
+ * Amb la pausa activa el web NO fa cap crida a l'API —ni tan sols ho intenta— i la pàgina
+ * mostra un avís de pausa des del primer moment, en comptes de deixar escriure una pregunta i
+ * respondre amb un error. No és una caiguda: és una decisió, i així es diu.
+ *
+ * Reactivar: posar-ho a `false` (i tornar a encendre el servei). Ni una cosa ni l'altra sense
+ * l'OK de la direcció (Bea).
+ */
+export const ASK_EN_PAUSA = true;
 
 /**
  * Base de l'API, configurable via env pública de SvelteKit (`PUBLIC_API_BASE`).
@@ -138,6 +151,8 @@ export async function ask(
 	locale: Locale,
 	signal?: AbortSignal
 ): Promise<AskOutcome> {
+	// En pausa: cap crida. Ni fetch, ni 503, ni temps d'espera per a qui pregunta.
+	if (ASK_EN_PAUSA) return { kind: 'paused' };
 	const base = apiBase();
 	if (!base) return { kind: 'unreachable' };
 
